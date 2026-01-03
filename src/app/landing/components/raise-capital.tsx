@@ -71,79 +71,15 @@ export function RaiseCapital() {
             </Button>
           </div>
 
-          {/* Right Side - Big Dreams Card */}
+          {/* Right Side - Big Dreams Card (image includes text, person, and coins) */}
           <div className="relative w-full lg:w-[502px] h-[400px] lg:h-[462px] flex-shrink-0">
-            <div className="relative w-full h-full bg-[#0A2342] rounded-[10px] overflow-hidden">
-              {/* Background decorative elements would go here if needed */}
-              
-              {/* Big Dreams Text */}
-              <div 
-                className="absolute left-[37px] top-[48px] w-[271px] z-10"
-                style={{
-                  fontFamily: 'var(--font-rethink-sans)', // Using Rethink Sans instead of Clash Grotesk
-                  fontSize: '43px',
-                  lineHeight: '38px',
-                  fontWeight: 700,
-                  letterSpacing: '0.01em',
-                  color: '#FFFFFF',
-                }}
-              >
-                Big Dreams?
-                <br />
-                Small Steps.
-                <br />
-                <span className="text-[#B9C65B]">Collective</span>
-                <br />
-                <span className="text-[#B9C65B]">Power.</span>
-              </div>
-
-              {/* Person Image */}
-              <div className="absolute right-[-10px] bottom-[-32px] w-[293px] h-[418px]">
-                <Image
-                  src="/how_it_works/big_dreams.jpg"
-                  alt="Nigerian entrepreneur"
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-
-              {/* Decorative Coin 1 - Bottom Left */}
-              <div className="absolute left-[-78px] bottom-[110px] w-[160px] h-[152px] rotate-[-29deg]">
-                <div className="relative w-full h-full">
-                  {/* Coin circle - olive green with black border */}
-                  <div className="absolute inset-0 rounded-full bg-[#E7FFC5] border-[3px] border-black"></div>
-                  {/* Naira symbol */}
-                  <div className="absolute inset-0 flex items-center justify-center text-[80px] font-bold text-[#A7B832]">
-                    ₦
-                  </div>
-                </div>
-              </div>
-
-              {/* Decorative Coin 2 - Top Right (smaller) */}
-              <div className="absolute right-[120px] top-[280px] w-[62px] h-[58px]">
-                <div className="relative w-full h-full">
-                  {/* Coin circle */}
-                  <div className="absolute inset-0 rounded-full bg-[#E7FFC5] border-[2px] border-black"></div>
-                  {/* Naira symbol */}
-                  <div className="absolute inset-0 flex items-center justify-center text-[32px] font-bold text-[#A7B832]">
-                    ₦
-                  </div>
-                </div>
-              </div>
-
-              {/* Decorative Coin 3 - Bottom Right */}
-              <div className="absolute right-[400px] bottom-[108px] w-[132px] h-[117px]">
-                <div className="relative w-full h-full">
-                  {/* Coin circle */}
-                  <div className="absolute inset-0 rounded-full bg-[#E7FFC5] border-[2px] border-black"></div>
-                  {/* Naira symbol */}
-                  <div className="absolute inset-0 flex items-center justify-center text-[64px] font-bold text-[#A7B832]">
-                    ₦
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Image
+              src="/how_it_works/big_dreams.jpg"
+              alt="Big Dreams? Small Steps. Collective Power."
+              fill
+              className="object-contain rounded-[10px]"
+              unoptimized
+            />
           </div>
         </div>
       </div>
