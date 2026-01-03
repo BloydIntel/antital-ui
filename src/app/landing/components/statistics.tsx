@@ -44,7 +44,7 @@ function StatCard({ amount, description }: { amount: string; description: string
     <div className="flex flex-col items-center">
       {/* Amount - Rethink Sans, 500 weight, 48px from Figma */}
       <div
-        className="text-[#292929] text-center"
+        className="text-foreground text-center"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
@@ -58,7 +58,7 @@ function StatCard({ amount, description }: { amount: string; description: string
 
       {/* Description - DM Sans, 400 weight, 16px from Figma */}
       <div
-        className="text-[#292929] text-center"
+        className="text-muted-foreground text-center"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,

@@ -104,7 +104,7 @@ export function InvestmentOpportunities() {
           <div className="flex flex-col items-start gap-2 max-w-[821px]">
             {/* Section Title */}
             <h2
-              className="text-[#212121] w-full"
+              className="text-foreground w-full"
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
                 fontWeight: 500,
@@ -118,7 +118,7 @@ export function InvestmentOpportunities() {
 
             {/* Section Subtitle */}
             <p
-              className="text-[#505050] w-full"
+              className="text-muted-foreground w-full"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
@@ -143,7 +143,7 @@ export function InvestmentOpportunities() {
             {/* View All Button - no shadow on hover */}
             <Button
               variant="outline"
-              className="bg-white border-[#A8A8A8] text-[#11110F] hover:bg-[#A7B832] hover:text-[#11110F] hover:border-[#A7B832] h-12 px-4 rounded-lg shadow-none hover:shadow-none transition-all duration-300"
+              className="bg-background border-[#A8A8A8] text-foreground hover:bg-[#A7B832] hover:text-[#11110F] hover:border-[#A7B832] h-12 px-4 rounded-lg shadow-none hover:shadow-none transition-all duration-300"
               style={{
                 width: '192px',
                 fontFamily: 'var(--font-rethink-sans)',

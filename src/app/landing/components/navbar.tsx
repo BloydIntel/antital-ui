@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -8,6 +8,7 @@ import { Menu, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { useTheme } from '@/hooks/use-theme'
 
 // Navigation items based on your Figma design
 const navigationItems = [
@@ -49,6 +50,29 @@ const handleNavClick = (href: string, e: React.MouseEvent, callback?: () => void
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const { theme } = useTheme()
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
+
+  // Resolve system theme to actual light/dark
+  useEffect(() => {
+    if (theme === 'system') {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      setResolvedTheme(systemTheme)
+      
+      // Listen for system theme changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handler = (e: MediaQueryListEvent) => {
+        setResolvedTheme(e.matches ? 'dark' : 'light')
+      }
+      mediaQuery.addEventListener('change', handler)
+      return () => mediaQuery.removeEventListener('change', handler)
+    } else {
+      setResolvedTheme(theme as 'light' | 'dark')
+    }
+  }, [theme])
+
+  // Choose logo based on theme
+  const logoSrc = resolvedTheme === 'dark' ? '/icons/antital_logo_white.svg' : '/antital_logo.svg'
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-background">
@@ -59,7 +83,7 @@ export function Navbar() {
           {/* Logo Container - positioned at far left, slightly smaller on md screens */}
           <Link href="/" className="flex items-center h-12 shrink-0">
             <Image
-              src="/antital_logo.svg"
+              src={logoSrc}
               alt="Antital"
               width={108}
               height={32}
@@ -131,7 +155,7 @@ export function Navbar() {
             </Button>
             <Button 
               variant="outline"
-              className="border-[#A8A8A8] text-[#11110F] hover:text-foreground bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
+              className="border-[#A8A8A8] text-foreground hover:bg-accent bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
               asChild
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
@@ -157,7 +181,7 @@ export function Navbar() {
                 {/* Mobile Logo */}
                 <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
                   <Image
-                    src="/antital_logo.svg"
+                    src={logoSrc}
                     alt="Antital"
                     width={108}
                     height={32}
@@ -208,7 +232,7 @@ export function Navbar() {
                   </Button>
                   <Button 
                     variant="outline"
-                    className="w-full border-border text-muted-foreground hover:text-foreground"
+                    className="w-full border-border text-foreground hover:bg-accent"
                     asChild
                   >
                     <Link href="/raise-funds" onClick={() => setIsOpen(false)}>

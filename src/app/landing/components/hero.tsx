@@ -34,7 +34,7 @@ export function Hero() {
 
               {/* Subheading */}
               <p 
-                className="text-[#3D3D3D] max-w-[542px]"
+                className="text-muted-foreground max-w-[542px]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,

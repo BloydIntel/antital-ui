@@ -50,11 +50,11 @@ export function KnowledgeBase() {
         {/* Header Container */}
         <div className="flex flex-col items-start gap-2 mb-[56px] max-w-[600px]">
           {/* Header Title */}
-          <h2 className="font-rethink-sans font-medium text-[36px] leading-[43px] tracking-[-0.01em] text-[#01100E]">
+          <h2 className="font-rethink-sans font-medium text-[36px] leading-[43px] tracking-[-0.01em] text-foreground">
             Become a smarter investor.
           </h2>
           {/* Header Description */}
-          <p className="font-dm-sans font-normal text-lg leading-[23px] tracking-[-0.01em] text-[#505050]">
+          <p className="font-dm-sans font-normal text-lg leading-[23px] tracking-[-0.01em] text-muted-foreground">
             Our Knowledge Base provides everything you need to know about equity crowdfunding, risk management, and the African startup ecosystem.
           </p>
         </div>

@@ -63,12 +63,12 @@ export function NewLaunches() {
           {/* Section Description */}
           <div className="flex flex-col items-start gap-2 max-w-[821px]"> {/* gap: 8px */}
             <h2
-              className="font-rethink-sans font-medium text-[36px] leading-[43px] tracking-[-0.01em] text-[#212121]"
+              className="font-rethink-sans font-medium text-[36px] leading-[43px] tracking-[-0.01em] text-foreground"
             >
               New launches
             </h2>
             <p
-              className="font-dm-sans font-normal text-[18px] leading-[23px] tracking-[-0.01em] text-[#505050]"
+              className="font-dm-sans font-normal text-[18px] leading-[23px] tracking-[-0.01em] text-muted-foreground"
             >
               The deals that have recently opened for investment
             </p>
@@ -90,7 +90,7 @@ export function NewLaunches() {
             <Button
               variant="outline"
               className={cn(
-                "w-[192px] h-12 px-4 py-2 rounded-lg border border-[#A8A8A8] text-[#11110F] bg-white",
+                "w-[192px] h-12 px-4 py-2 rounded-lg border border-[#A8A8A8] text-foreground bg-background",
                 "font-rethink-sans text-base font-medium leading-[21px] transition-all duration-300 ease-in-out",
                 "shadow-none hover:bg-[#A7B832] hover:text-[#11110F] hover:border-[#A7B832] hover:shadow-none"
               )}
