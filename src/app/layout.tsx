@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${rethinkSans.variable} antialiased`}>
-      <body className={dmSans.className}>
+      <body className={dmSans.className} suppressHydrationWarning>
         <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
           <SidebarConfigProvider>
             {children}

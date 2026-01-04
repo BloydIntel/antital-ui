@@ -13,7 +13,7 @@ import { useTheme } from '@/hooks/use-theme'
 // Navigation items based on your Figma design
 const navigationItems = [
   { name: 'Home', href: '/' },
-  { name: 'About Us', href: '#about' },
+  { name: 'About Us', href: '/about' },
   { name: 'Explore', href: '#explore' },
   { name: 'Knowledge-Base', href: '#knowledge-base' },
 ]
@@ -77,7 +77,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-background">
       {/* Header Container - responsive padding, height: 80px */}
-      <div className="w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-4 h-20">
+      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-4 h-20">
         {/* Header Content - tight spacing on smaller screens */}
         <div className="flex items-center gap-1 md:gap-2 lg:gap-4 xl:gap-6 h-12">
           {/* Logo Container - positioned at far left, slightly smaller on md screens */}
@@ -168,39 +168,33 @@ export function Navbar() {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - pushed to the right */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
+            <SheetTrigger asChild className="lg:hidden ml-auto">
+              <Button variant="ghost" className="h-12 w-12 p-0 focus-visible:outline-none focus-visible:ring-0">
+                <Menu className="!h-8 !w-8" strokeWidth={2.5} />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col gap-6 mt-8">
-                {/* Mobile Logo */}
-                <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-                  <Image
-                    src={logoSrc}
-                    alt="Antital"
-                    width={108}
-                    height={32}
-                    className="h-7 w-auto"
-                  />
-                </Link>
-
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] pt-16">
+              <div className="flex flex-col gap-8">
                 {/* Mobile Search */}
                 <div className="relative">
                   <Input
                     type="search"
                     placeholder="Search for anything..."
-                    className="pl-4 pr-10 bg-background border-border rounded-md"
+                    className="h-12 pl-4 pr-10 bg-[#F4F5F7] border-[#EAEAEA] rounded-md text-foreground placeholder:text-[#A2A3A1]"
+                    style={{
+                      fontFamily: 'var(--font-dm-sans)',
+                      fontSize: '14px',
+                      lineHeight: '17px',
+                    }}
                   />
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#A2A3A1]" />
                 </div>
 
                 {/* Mobile Navigation */}
-                <nav className="flex flex-col gap-4">
+                <nav className="flex flex-col gap-1">
                   {navigationItems.map((item) => {
                     const isActive = isNavItemActive(item.href, pathname)
                     return (
@@ -208,11 +202,17 @@ export function Navbar() {
                         key={item.name}
                         href={item.href}
                         onClick={(e) => handleNavClick(item.href, e, () => setIsOpen(false))}
-                        className={`text-base font-medium transition-colors ${
+                        className={`px-4 py-3 rounded-lg transition-colors ${
                           isActive
-                            ? 'text-primary'
-                            : 'text-muted-foreground hover:text-foreground'
+                            ? 'text-[#A7B832] bg-[#A7B832]/10'
+                            : 'text-[#858585] hover:text-foreground hover:bg-accent'
                         }`}
+                        style={{
+                          fontFamily: isActive ? 'var(--font-rethink-sans)' : 'var(--font-dm-sans)',
+                          fontSize: '16px',
+                          lineHeight: '21px',
+                          fontWeight: isActive ? 500 : 400,
+                        }}
                       >
                         {item.name}
                       </Link>
@@ -220,10 +220,19 @@ export function Navbar() {
                   })}
                 </nav>
 
+                {/* Divider */}
+                <div className="border-t border-[#EAEAEA]" />
+
                 {/* Mobile Actions - Invest now first, then Raise funds */}
-                <div className="flex flex-col gap-3 pt-4 border-t">
+                <div className="flex flex-col gap-3">
                   <Button 
-                    className="w-full bg-[#365852] hover:bg-[#365852]/90 text-white font-medium"
+                    className="w-full h-12 bg-[#365852] hover:bg-[#365852]/90 text-white rounded-lg"
+                    style={{
+                      fontFamily: 'var(--font-rethink-sans)',
+                      fontSize: '16px',
+                      lineHeight: '21px',
+                      fontWeight: 500,
+                    }}
                     asChild
                   >
                     <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>
@@ -232,7 +241,13 @@ export function Navbar() {
                   </Button>
                   <Button 
                     variant="outline"
-                    className="w-full border-border text-foreground hover:bg-accent"
+                    className="w-full h-12 border-[#A8A8A8] text-foreground hover:bg-accent rounded-lg"
+                    style={{
+                      fontFamily: 'var(--font-rethink-sans)',
+                      fontSize: '16px',
+                      lineHeight: '21px',
+                      fontWeight: 500,
+                    }}
                     asChild
                   >
                     <Link href="/raise-funds" onClick={() => setIsOpen(false)}>
