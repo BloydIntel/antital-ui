@@ -4,8 +4,8 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { InvestmentCard, InvestmentCardData } from '@/components/investment/organisms/investment-card'
 
-// Investment opportunities data based on your Figma design
-const investmentData: InvestmentCardData[] = [
+// All investment opportunities data - shared across pages
+export const allInvestmentData: InvestmentCardData[] = [
   {
     id: '1',
     name: 'GreenTech Solutions',
@@ -90,9 +90,100 @@ const investmentData: InvestmentCardData[] = [
     goal: 500000,
     percentage: 50,
   },
+  {
+    id: '7',
+    name: 'FinTech Innovators',
+    category: 'Finance',
+    description: 'Blockchain-based banking solutions for seamless transactions',
+    image: '/investments/fintech_innovators.jpg',
+    risk: 'high',
+    investors: 75,
+    daysLeft: 1200,
+    minInvestment: 12000,
+    raised: 1500000,
+    goal: 1800000,
+    percentage: 85,
+  },
+  {
+    id: '8',
+    name: 'TravelEasy Solutions',
+    category: 'Travel',
+    description: 'AI-powered travel itinerary planner for personalized experiences',
+    image: '/investments/Travel_easy.jpg',
+    risk: 'low',
+    investors: 130,
+    daysLeft: 700,
+    minInvestment: 4000,
+    raised: 350000,
+    goal: 1000000,
+    percentage: 35,
+  },
+  {
+    id: '9',
+    name: 'SmartHome Technologies',
+    category: 'Home Automation',
+    description: 'Integrated home automation system for security and energy efficiency',
+    image: '/investments/smart_home_technologies.jpg',
+    risk: 'moderate',
+    investors: 200,
+    daysLeft: 600,
+    minInvestment: 8000,
+    raised: 900000,
+    goal: 1500000,
+    percentage: 70,
+  },
+  {
+    id: '10',
+    name: 'EventTech Solutions',
+    category: 'Events',
+    description: 'Virtual reality event hosting platform for immersive experiences',
+    image: '/investments/event_tech_solutions.jpg',
+    risk: 'moderate',
+    investors: 95,
+    daysLeft: 1800,
+    minInvestment: 6000,
+    raised: 750000,
+    goal: 1350000,
+    percentage: 55,
+  },
+  {
+    id: '11',
+    name: 'EcoFashion Brands',
+    category: 'Fashion',
+    description: 'Sustainable clothing line made from recycled materials',
+    image: '/investments/eco_fashion_brands.jpg',
+    risk: 'high',
+    investors: 160,
+    daysLeft: 800,
+    minInvestment: 3500,
+    raised: 500000,
+    goal: 1200000,
+    percentage: 45,
+  },
+  {
+    id: '12',
+    name: 'Wellness Apps',
+    category: 'Health & Wellness',
+    description: 'Mental health app with personalized resources and community support',
+    image: '/investments/well_ness_apps.jpg',
+    risk: 'low',
+    investors: 100,
+    daysLeft: 900,
+    minInvestment: 2500,
+    raised: 300000,
+    goal: 1000000,
+    percentage: 30,
+  },
 ]
 
-export function InvestmentOpportunities() {
+interface InvestmentOpportunitiesProps {
+  limit?: number
+}
+
+export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps) {
+  // Show first 6 on home page, all 12 on explore page
+  const displayData = limit ? allInvestmentData.slice(0, limit) : allInvestmentData
+
   return (
     <section className="w-full bg-background">
       {/* Main Container - padding: 62px 0px, gap: 92px from Figma */}
@@ -135,7 +226,7 @@ export function InvestmentOpportunities() {
           <div className="flex flex-col items-center gap-12 w-full">
             {/* Projects List - 3 cards per row on desktop */}
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 place-items-center">
-              {investmentData.map((investment) => (
+              {displayData.map((investment) => (
                 <InvestmentCard key={investment.id} data={investment} />
               ))}
             </div>

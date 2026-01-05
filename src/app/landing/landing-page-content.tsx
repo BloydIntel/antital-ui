@@ -28,8 +28,8 @@ export function LandingPageContent() {
         {/* Statistics Section */}
         <Statistics />
 
-        {/* Investment Opportunities Section */}
-        <InvestmentOpportunities />
+        {/* Investment Opportunities Section - Show first 6 only */}
+        <InvestmentOpportunities limit={6} />
 
         {/* How It Works Section */}
         <HowItWorks />
