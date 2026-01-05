@@ -53,5 +53,3 @@ export function ValueCard({ title, description }: ValueCardProps) {
     </div>
   );
 }
-
-
