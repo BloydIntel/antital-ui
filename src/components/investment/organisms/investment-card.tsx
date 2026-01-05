@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { RiskBadge } from '../atoms/risk-badge'
 import { StatItem } from '../molecules/stat-item'
@@ -28,6 +29,7 @@ interface InvestmentCardProps {
 
 export function InvestmentCard({ data }: InvestmentCardProps) {
   const {
+    id,
     name,
     category,
     description,
@@ -157,8 +159,11 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
                 fontSize: '16px',
                 lineHeight: '21px',
               }}
+              asChild
             >
-              View Details
+              <Link href={`/explore/${id}`}>
+                View Details
+              </Link>
             </Button>
           </div>
         </div>

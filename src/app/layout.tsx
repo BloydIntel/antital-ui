@@ -3,6 +3,7 @@ import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarConfigProvider } from "@/contexts/sidebar-context";
+import { FaviconHandler } from "@/components/favicon-handler";
 import { rethinkSans, dmSans } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${rethinkSans.variable} antialiased`}>
       <body className={dmSans.className} suppressHydrationWarning>
+        <FaviconHandler />
         <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
           <SidebarConfigProvider>
             {children}
