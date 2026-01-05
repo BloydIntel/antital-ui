@@ -4,6 +4,33 @@ import { SearchBar } from '../molecules/search-bar'
 import { FilterDropdown } from '../molecules/filter-dropdown'
 
 export function HeroSection() {
+  // Handler function for search
+  const handleSearch = (query: string) => {
+    console.log('Search query:', query)
+    // TODO: Implement search logic
+  }
+
+  // Handler functions for filter changes
+  const handleSectorChange = (value: string) => {
+    console.log('Sector filter changed:', value)
+    // TODO: Implement filter logic
+  }
+
+  const handleRiskChange = (value: string) => {
+    console.log('Risk filter changed:', value)
+    // TODO: Implement filter logic
+  }
+
+  const handleTrendingChange = (value: string) => {
+    console.log('Trending filter changed:', value)
+    // TODO: Implement filter logic
+  }
+
+  const handleInvestmentChange = (value: string) => {
+    console.log('Investment filter changed:', value)
+    // TODO: Implement filter logic
+  }
+
   const filterOptions = {
     sectors: [
       { value: 'all-sectors', label: 'All Sectors' },
@@ -80,7 +107,7 @@ export function HeroSection() {
           </div>
 
           {/* Search Bar */}
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
 
           {/* Filter Dropdowns - Separate row below search */}
           <div className="flex flex-wrap items-center gap-4 justify-center w-full max-w-[662px]">
@@ -89,26 +116,28 @@ export function HeroSection() {
               placeholder="All Sectors"
               width="w-[142px]"
               options={filterOptions.sectors}
-              rounded="rounded"
+              onValueChange={handleSectorChange}
             />
             <FilterDropdown
               defaultValue="all-risk"
               placeholder="All Risk Levels"
               width="w-[165px]"
               options={filterOptions.risk}
+              onValueChange={handleRiskChange}
             />
             <FilterDropdown
               defaultValue="trending"
               placeholder="Trending"
               width="w-[127px]"
               options={filterOptions.trending}
+              onValueChange={handleTrendingChange}
             />
             <FilterDropdown
               defaultValue="min-investment"
               placeholder="Min Investment"
               width="w-[180px]"
               options={filterOptions.investment}
-              rounded="rounded-t"
+              onValueChange={handleInvestmentChange}
             />
           </div>
         </div>

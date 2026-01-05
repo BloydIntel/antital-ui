@@ -4,7 +4,6 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
 
 export function CTASection() {
   return (
@@ -19,7 +18,7 @@ export function CTASection() {
             <div className="absolute top-4 left-0 w-[110px] h-[110px]">
               <Image
                 src="/explore/hands_dropping_coin.png"
-                alt=""
+                alt="Hands dropping coins into a container, symbolizing investment and wealth building"
                 fill
                 className="object-contain"
                 unoptimized
@@ -29,7 +28,7 @@ export function CTASection() {
             <div className="absolute bottom-4 left-0 w-full h-[140px]">
               <Image
                 src="/explore/coins_in_glass.png"
-                alt=""
+                alt="Coins collected in a glass container, representing savings and accumulated wealth"
                 fill
                 className="object-contain"
                 unoptimized
@@ -43,7 +42,7 @@ export function CTASection() {
             <div className="absolute top-4 right-0 w-[110px] h-[110px]">
               <Image
                 src="/explore/hands_dropping_coin2.png"
-                alt=""
+                alt="Hands dropping coins, representing active investment and financial growth"
                 fill
                 className="object-contain"
                 unoptimized
@@ -53,7 +52,7 @@ export function CTASection() {
             <div className="absolute bottom-4 right-0 w-full h-[140px]">
               <Image
                 src="/explore/piggy_bank.png"
-                alt=""
+                alt="Piggy bank symbolizing savings, financial security, and long-term wealth accumulation"
                 fill
                 className="object-contain"
                 unoptimized

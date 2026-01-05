@@ -13,6 +13,7 @@ interface FilterDropdownProps {
   width: string
   options: { value: string; label: string }[]
   rounded?: 'rounded' | 'rounded-lg' | 'rounded-t'
+  onValueChange?: (value: string) => void
 }
 
 export function FilterDropdown({
@@ -21,9 +22,10 @@ export function FilterDropdown({
   width,
   options,
   rounded = 'rounded-lg',
+  onValueChange,
 }: FilterDropdownProps) {
   return (
-    <Select defaultValue={defaultValue}>
+    <Select defaultValue={defaultValue} onValueChange={onValueChange}>
       <SelectTrigger
         className={`h-[42px] ${width} bg-white border-0 ${rounded} text-[#858585] hover:bg-white/90`}
         style={{
