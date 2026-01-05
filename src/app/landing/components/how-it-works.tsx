@@ -62,7 +62,7 @@ export function HowItWorks() {
   return (
     <section className="w-full bg-background">
       {/* Main Container - padding: 62px 0px, gap: 92px from Figma */}
-      <div className="w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-16 flex flex-col items-center gap-16 lg:gap-[92px]">
+      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-16 flex flex-col items-center gap-16 lg:gap-[92px]">
         
         {/* Content Container - padding: 32px, gap: 56px, bg: #F4F5F7 from Figma */}
         <div 

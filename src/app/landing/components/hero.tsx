@@ -10,7 +10,7 @@ export function Hero() {
   return (
     <section className="w-full bg-background">
       {/* Main Container - padding: 0px 104px 62px from Figma */}
-      <div className="w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] pt-12 lg:pt-16 pb-16">
+      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] pt-12 lg:pt-16 pb-16">
         {/* Content Container - gap: 32px from Figma */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           

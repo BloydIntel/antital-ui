@@ -7,9 +7,9 @@ import { ButtonGroup } from '@/components/secondary-market/molecules/button-grou
 
 export function SecondaryMarket() {
   return (
-    <section className="w-full h-[800px] bg-[#042E27] relative overflow-hidden">
+    <section className="w-full min-h-[600px] lg:h-[800px] bg-[#042E27] relative overflow-hidden">
       {/* Main Container */}
-      <div className="w-full max-w-[1440px] mx-auto h-full relative px-4 md:px-6 lg:px-12 xl:px-[104px]">
+      <div className="w-full max-w-[1440px] mx-auto h-full relative px-4 md:px-6 lg:px-12 xl:px-[104px] py-16 lg:py-0">
         
         {/* Left Side - Image on green background (includes yellow card with text) */}
         <div className="absolute left-0 lg:left-4 xl:left-8 top-[105px] w-[646px] h-[700px] hidden lg:block">
@@ -23,7 +23,7 @@ export function SecondaryMarket() {
         </div>
 
         {/* Right Side - Content */}
-        <div className="absolute right-4 md:right-6 lg:right-12 xl:right-[104px] top-1/2 -translate-y-1/2 w-full lg:w-[608px] px-4 lg:px-0">
+        <div className="relative lg:absolute lg:right-12 xl:right-[104px] lg:top-1/2 lg:-translate-y-1/2 w-full lg:w-[608px]">
           <div className="flex flex-col items-start gap-8">
             {/* Text Content */}
             <ContentBlock

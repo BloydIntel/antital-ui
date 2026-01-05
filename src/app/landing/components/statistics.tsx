@@ -22,7 +22,7 @@ export function Statistics() {
   return (
     <section className="w-full bg-background">
       {/* Statistics Container - padding: 48px 0px from Figma */}
-      <div className="w-full mx-auto px-4 py-12">
+      <div className="w-full max-w-[1440px] mx-auto px-4 py-12">
         {/* Stats Grid - gap: 104px from Figma */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 lg:gap-[104px]">
           {statisticsData.map((stat, index) => (

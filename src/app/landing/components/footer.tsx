@@ -1,12 +1,13 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function Footer() {
+  const [showDisclaimers, setShowDisclaimers] = useState(false);
   return (
     <footer className="w-full bg-[#11110F] py-16">
       {/* Main Container */}
@@ -153,14 +154,6 @@ export function Footer() {
             <p className="text-[#C5C9D1] text-sm leading-[17px]">
               Antital is registered with the Securities and Exchange Commission (SEC) Nigeria and compliant with all applicable regulations. All investments carry risk of loss. Past performance does not guarantee future results.
             </p>
-
-            {/* Divider */}
-            <div className="w-full h-px bg-[#F7F7F7]/20" />
-
-            {/* Copyright */}
-            <p className="text-[#C5C9D1] text-sm leading-[17px]">
-              Copyright © 2025 Antital. All rights reserved.
-            </p>
           </div>
 
           {/* Right - Footer Links */}
@@ -226,6 +219,117 @@ export function Footer() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Disclaimer Section */}
+        <div className="w-full pt-8">
+          <div className="relative">
+            {/* Disclaimer Content - Always show preview, expand on click */}
+            <div className="flex flex-col gap-4 pb-4">
+              <div className="text-[#C5C9D1] text-xs leading-[17px] space-y-3">
+                {/* Preview - Always visible */}
+                <div className={showDisclaimers ? '' : 'relative pb-16'}>
+                  <div className={showDisclaimers ? '' : 'opacity-100'}>
+                    <p>
+                      *Includes funds deployed through investment platforms, funds, and firms within the Antital ecosystem.
+                    </p>
+                    <p>
+                      1 Represents users of antital.com, limited partners of Antital Capital Adviser vehicles, and clients of other affiliates.
+                    </p>
+                    <p>
+                      2 Includes aggregate figures from Antital platform to date, including investment opportunities presented by Antital Portal LLC, Antital Broker LLC, and Antital Core LLC.
+                    </p>
+                    <p>
+                      The testimonials, statements, and opinions presented here are applicable to the individuals depicted. Unique experiences and past performances do not guarantee future results.
+                    </p>
+                  </div>
+
+                  {/* Floating Button - Only visible when collapsed */}
+                  {!showDisclaimers && (
+                    <div className="absolute bottom-0 left-0 right-0 flex justify-center pt-8 pb-2" style={{ background: 'linear-gradient(to bottom, rgba(17, 17, 15, 0), rgba(17, 17, 15, 0.95) 30%, #11110F)' }}>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowDisclaimers(true)}
+                        className="border-[#C5C9D1] text-[#C5C9D1] hover:bg-[#C5C9D1]/10 hover:text-[#F7F7F7] bg-[#11110F] rounded-md"
+                        style={{
+                          fontFamily: 'var(--font-dm-sans)',
+                          fontSize: '14px',
+                          lineHeight: '17px',
+                          fontWeight: 400,
+                          padding: '8px 16px',
+                        }}
+                      >
+                        Show disclaimers
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Full Content - Only visible when expanded */}
+                {showDisclaimers && (
+                  <>
+                    <p>
+                      This site (the "Site") is owned and maintained by Antital Inc., which is not a registered broker-dealer. Antital Inc. does not give investment advice, endorsement, analysis or recommendations with respect to any securities. All securities listed here are being offered by, and all information included on this Site is the responsibility of, the applicable issuer of such securities. The intermediary facilitating the offering will be identified in such offering's documentation.
+                    </p>
+                    <p>
+                      All related securities activity is conducted by Antital Broker LLC, a registered broker-dealer, Member of SEC Nigeria, an affiliate of Antital Inc. and Antital Portal LLC, located in Lagos, Nigeria. Please check our background on SEC Nigeria's database.
+                    </p>
+                    <p>
+                      Certain pages discussing the mechanics and providing educational materials regarding equity crowdfunding offerings may refer to Antital Broker LLC and Antital Portal LLC collectively as "Antital", solely for explanatory purposes.
+                    </p>
+                    <p>
+                      Neither Antital Inc., Antital Portal LLC nor Antital Broker LLC make investment recommendations and no communication, through this Site, or in any other medium, should be construed as a recommendation for any security offered on or off this investment platform. Investment opportunities posted on this Site are private placements of securities that are not publicly traded, involve a high degree of risk, may lose value including the total loss of invested capital, are subject to holding period requirements and are intended for investors who do not need a liquid investment. Past performance is not indicative of future results. Investors must be able to afford the loss of their entire investment. Only qualified investors, who understand the risks of early-stage investment and who meet Antital's investment criteria may invest. Investors may be restricted to only Accredited Investors or non-Nigerian persons, to invest in offerings hosted by Antital Broker.
+                    </p>
+                    <p>
+                      Neither Antital Inc., Antital Portal LLC nor Antital Broker LLC, nor any of their officers, directors, agents and employees make any warranty, express or implied, of any kind whatsoever related to the adequacy, accuracy or completeness of any information on this Site or the use of information on this site. Offers to sell securities can only be made through official offering documents that contain important information about the investment and the issuers, including risks. Investors should carefully read the offering documents. Investors should conduct their own due diligence and are encouraged to consult with their tax, legal and financial advisors.
+                    </p>
+                    <p>
+                      By accessing the Site and any pages thereof, you agree to be bound by Antital Portal's Terms of Use and Privacy Policy and/or Antital Broker's Terms of Use and Privacy Policy. All issuers offering securities under regulation crowdfunding as hosted by Antital Portal LLC are listed on the All Companies Page. The inclusion or exclusion of an issuer on the Platform Page and/or Antital's Homepage, which includes offerings conducted under regulation crowdfunding as well as other exemptions from registration, is not based upon any endorsement or recommendation by Antital Inc, Antital Portal LLC, or Antital Broker LLC, nor any of their affiliates, officers, directors, agents, and employees. Rather, issuers of securities may, in their sole discretion, opt-out of being listed on the Platform Page and Homepage.
+                    </p>
+                    <p>
+                      Investors should verify any issuer information they consider important before making an investment.
+                    </p>
+                    <p>
+                      Investments in private companies are particularly risky and may result in total loss of invested capital. Past performance of a security or a company does not guarantee future results or returns. Only investors who understand the risks of early stage investment and who meet Antital's investment criteria may invest.
+                    </p>
+                    <p>
+                      Neither Antital Inc., Antital Portal LLC nor Antital Broker LLC verify information provided by companies on this Site and makes no assurance as to the completeness or accuracy of any such information. Additional information about companies fundraising on the Site can be found by searching the SEC Nigeria database, or the offering documentation located on the Site when the offering does not require an SEC filing.
+                    </p>
+                    <p>
+                      Antital and its affiliates are not and do not operate or act as a bank. All funds are held in NDIC-insured escrow accounts. Digital assets and investment products are not insured by the NDIC, may lose value, and are not deposits or other obligations of any bank and are not guaranteed by any bank. Terms and conditions apply.
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Show/Hide Disclaimers Button - Only visible when expanded */}
+            {showDisclaimers && (
+              <div className="flex justify-center pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDisclaimers(false)}
+                  className="border-[#C5C9D1] text-[#C5C9D1] hover:bg-[#C5C9D1]/10 hover:text-[#F7F7F7] bg-transparent rounded-md"
+                  style={{
+                    fontFamily: 'var(--font-dm-sans)',
+                    fontSize: '14px',
+                    lineHeight: '17px',
+                    fontWeight: 400,
+                    padding: '8px 16px',
+                  }}
+                >
+                  Hide disclaimers
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Copyright - At the very bottom */}
+        <div className="w-full pt-8 border-t border-[#F7F7F7]/20">
+          <p className="text-[#C5C9D1] text-sm leading-[17px] text-center">
+            Copyright © 2025 Antital. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
