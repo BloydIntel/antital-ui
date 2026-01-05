@@ -4,16 +4,16 @@ import { FeaturePoint } from '@/components/investment/molecules/feature-point'
 export function MarketTractionSection() {
   // Hardcoded data for now
   const heading = 'Strong Market Traction & Financials'
-  const mainDescription = 'At the core of NEXUS AI is the "Quantum-Sync Engine", a patent-pending algorithm that processes real-time data from disparate sources (weather, traffic, consumer sentiment) to create a single, unified supply chain forecast. This technology is 20x faster than competitors\' legacy systems.'
+  const mainDescription = 'NEXUS AI has demonstrated exceptional market traction with consistent revenue growth, strong customer retention, and expanding market presence. Our financial performance reflects a scalable, high-margin business model with clear path to profitability.'
   
   const features = [
     {
-      label: 'Scalability',
-      description: 'Our platform is built on a modular microservices architecture, allowing us to onboard new clients and expand into new sectors (e.g., e-commerce, healthcare logistics) with minimal friction and no performance degradation. We project a 300% increase in user capacity within the next 18 months.',
+      label: 'Revenue Growth',
+      description: 'We have achieved 150% year-over-year revenue growth, with ARR increasing from ₦675M in FY 2024 to a projected ₦15.75B by FY 2027. Our customer base has grown from 12 clients in 2023 to 50+ active clients today, with a 95% retention rate.',
     },
     {
-      label: 'Defensible Moat',
-      description: 'Our proprietary dataset, accumulated over three years of beta testing with 50 pilot companies, gives us an insurmountable data advantage that improves the Quantum-Sync Engine\'s accuracy with every new transaction.',
+      label: 'Market Expansion',
+      description: 'We have successfully expanded from serving only Nigerian SMEs to now operating in three West African markets. Our pipeline includes 120+ qualified leads, with conversion rates improving quarter-over-quarter as we refine our sales process and product-market fit.',
     },
   ]
 

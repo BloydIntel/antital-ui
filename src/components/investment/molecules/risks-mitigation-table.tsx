@@ -76,7 +76,7 @@ export function RisksMitigationTable() {
                 color: '#858585',
               }}
             >
-              Description
+              Mitigation
             </th>
           </tr>
         </thead>

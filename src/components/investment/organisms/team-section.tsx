@@ -7,7 +7,7 @@ export function TeamSection() {
     {
       name: 'Dr. Eleanor Vance',
       title: 'CEO & Co-founder',
-      bio: '20 years in global logistics and supply chain optimization. Former VP of Operations at TransGlobal Freight, where she managed a $500M annual budget and spearheaded the adoption of AI modeling. Ph.D. in Operations Research from MIT.',
+      bio: '20 years in global logistics and supply chain optimization. Former VP of Operations at TransGlobal Freight, where she managed a ₦750B annual budget and spearheaded the adoption of AI modeling. Ph.D. in Operations Research from MIT.',
       imagePath: '/avatars/dr_eleanor.jpg',
     },
     {

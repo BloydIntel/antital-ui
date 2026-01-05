@@ -11,9 +11,9 @@ export function FinancialMetricsTable() {
   const metrics: FinancialMetric[] = [
     {
       metric: 'Annual Recurring Revenue (ARR)',
-      fy2024: '$450,000',
-      fy2025: '$1,500,000',
-      fy2027: '$10,500,000',
+      fy2024: '₦675,000,000',
+      fy2025: '₦2,250,000,000',
+      fy2027: '₦15,750,000,000',
     },
     {
       metric: 'Gross Margin (%)',
@@ -23,15 +23,15 @@ export function FinancialMetricsTable() {
     },
     {
       metric: 'Customer Acquisition Cost (CAC)',
-      fy2024: '$3,000',
-      fy2025: '$2,500',
-      fy2027: '$35,000',
+      fy2024: '₦4,500,000',
+      fy2025: '₦3,750,000',
+      fy2027: '₦2,250,000',
     },
     {
       metric: 'Customer Lifetime Value (LTV)',
-      fy2024: '$24,000',
-      fy2025: '$28,000',
-      fy2027: '$35,000',
+      fy2024: '₦36,000,000',
+      fy2025: '₦42,000,000',
+      fy2027: '₦52,500,000',
     },
     {
       metric: 'LTV:CAC Ratio',

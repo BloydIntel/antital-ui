@@ -50,7 +50,7 @@ export function DocumentsTable() {
     },
     {
       title: 'Previous Series',
-      description: 'Pre-Seed Round: Closed Q1 2023. Total Raised: $500,000 from Angel Investors.',
+      description: 'Pre-Seed Round: Closed Q1 2023. Total Raised: ₦750,000,000 from Angel Investors.',
       action: {
         type: 'empty',
       },

@@ -6,7 +6,7 @@ export function UpdatesSection() {
   const updates = [
     {
       date: 'Today',
-      title: '🎉 75% Goal Reached! Only $625K left 🎉',
+      title: '🎉 75% Goal Reached! Only ₦937.5M left 🎉',
       body: "Thank you to our 310 investors who have joined us! We are on track to close early. We're hosting a Founder AMA this Friday to answer all final questions before the final push.",
       likeCount: 45,
     },
@@ -19,7 +19,7 @@ export function UpdatesSection() {
     {
       date: '27 Sept 2025',
       title: 'Major Client Acquisition: Signed "Agri-West Produce"',
-      body: "We've secured a 3-year contract with Agri-West, a key player in West African fresh produce distribution. This validates our expansion into the cold chain logistics sector. ARR impact: +$80,000.",
+      body: "We've secured a 3-year contract with Agri-West, a key player in West African fresh produce distribution. This validates our expansion into the cold chain logistics sector. ARR impact: +₦120,000,000.",
       likeCount: 2,
     },
     {

@@ -6,21 +6,21 @@ export function HighlightsSection() {
   // Hardcoded data for now
   const highlightCards = [
     {
-      amount: '+₦1M Revenue',
-      description: 'Earned over the past 12 months',
+      amount: '₦675M ARR',
+      description: 'Annual Recurring Revenue as of FY 2024',
     },
     {
-      amount: '+₦1M Revenue',
-      description: 'Earned over the past 12 months',
+      amount: '50+ Clients',
+      description: 'Active clients across West African markets',
     },
   ]
 
   const highlightItems = [
-    { number: 1, text: 'Lifetime revenue of ₦1M Revenue' },
-    { number: 2, text: 'Monthly revenue of ₦200K Revenue' },
-    { number: 3, text: 'Annual growth rate of 15%' },
-    { number: 4, text: 'Customer acquisition cost of ₦50K' },
-    { number: 5, text: 'Projected revenue for next quarter ₦300K Revenue' },
+    { number: 1, text: 'Lifetime revenue of ₦2.1B across all clients' },
+    { number: 2, text: 'Average monthly revenue per client: ₦11.25M' },
+    { number: 3, text: 'Annual growth rate of 150% year-over-year' },
+    { number: 4, text: 'Customer acquisition cost (CAC) of ₦4.5M' },
+    { number: 5, text: 'Projected ARR for FY 2025: ₦2.25B' },
   ]
 
   return (

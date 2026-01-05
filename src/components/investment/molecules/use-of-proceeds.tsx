@@ -58,7 +58,7 @@ export function UseOfProceeds() {
           marginBottom: '8px',
         }}
       >
-        This section details how the $2.5M being raised in the Seed Plus round will be strategically allocated to achieve product and market acceleration.
+        This section details how the ₦3.75B being raised in the Seed Plus round will be strategically allocated to achieve product and market acceleration.
       </p>
 
       <ul

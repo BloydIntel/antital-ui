@@ -7,11 +7,11 @@ interface NavigationTabsProps {
 
 export function NavigationTabs({ activeTab = 'overview', onTabChange }: NavigationTabsProps) {
   const tabs = [
-    { id: 'overview', label: 'Overview', width: '95px' },
-    { id: 'details', label: 'Details', width: '76px' },
-    { id: 'updates', label: 'Updates', width: '88px' },
-    { id: 'testimonials', label: 'What people are saying', width: '202px' },
-    { id: 'questions', label: 'Ask a question', width: '135px' },
+    { id: 'overview', label: 'Overview', width: '95px', disabled: false },
+    { id: 'details', label: 'Details', width: '76px', disabled: false },
+    { id: 'updates', label: 'Updates', width: '88px', disabled: false },
+    { id: 'testimonials', label: 'What people are saying', width: '202px', disabled: true },
+    { id: 'questions', label: 'Ask a question', width: '135px', disabled: false },
   ]
 
   return (
@@ -25,8 +25,9 @@ export function NavigationTabs({ activeTab = 'overview', onTabChange }: Navigati
       {tabs.map((tab) => (
         <button
           key={tab.id}
-          onClick={() => onTabChange?.(tab.id)}
-          className="flex flex-row justify-center items-center px-3 py-2 flex-shrink-0"
+          onClick={() => !tab.disabled && onTabChange?.(tab.id)}
+          disabled={tab.disabled}
+          className="flex flex-row justify-center items-center px-3 py-2 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             width: tab.width,
             minWidth: tab.width,
@@ -40,7 +41,7 @@ export function NavigationTabs({ activeTab = 'overview', onTabChange }: Navigati
               fontWeight: 500,
               fontSize: '16px',
               lineHeight: '21px',
-              color: activeTab === tab.id ? '#2C2C2C' : '#505050',
+              color: activeTab === tab.id ? '#2C2C2C' : tab.disabled ? '#858585' : '#505050',
             }}
           >
             {tab.label}
