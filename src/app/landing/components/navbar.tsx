@@ -14,7 +14,7 @@ import { useTheme } from '@/hooks/use-theme'
 const navigationItems = [
   { name: 'Home', href: '/' },
   { name: 'About Us', href: '/about' },
-  { name: 'Explore', href: '#explore' },
+  { name: 'Explore', href: '/explore' },
   { name: 'Knowledge-Base', href: '#knowledge-base' },
 ]
 
