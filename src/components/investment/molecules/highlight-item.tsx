@@ -39,13 +39,13 @@ export function HighlightItem({ number, text }: HighlightItemProps) {
 
       {/* Text */}
       <span
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '20px',
           lineHeight: '24px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         {text}

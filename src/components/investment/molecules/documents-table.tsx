@@ -72,40 +72,37 @@ export function DocumentsTable() {
             }}
           >
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               Document Title
             </th>
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               Description
             </th>
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               Action/Link
@@ -121,42 +118,39 @@ export function DocumentsTable() {
               }}
             >
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                   verticalAlign: 'top',
                 }}
               >
                 {doc.title}
               </td>
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                   verticalAlign: 'top',
                 }}
               >
                 {doc.description}
               </td>
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                   verticalAlign: 'top',
                 }}
               >

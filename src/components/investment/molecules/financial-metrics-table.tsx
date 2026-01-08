@@ -62,53 +62,49 @@ export function FinancialMetricsTable() {
             }}
           >
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               Key financial metrics
             </th>
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               FY 2024 (Actual)
             </th>
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               FY 2025 (Projected)
             </th>
             <th
-              className="text-left py-3 px-4"
+              className="text-left py-3 px-4 text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
               }}
             >
               FY 2027 (Projected)
@@ -124,53 +120,49 @@ export function FinancialMetricsTable() {
               }}
             >
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 {metric.metric}
               </td>
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 {metric.fy2024}
               </td>
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 {metric.fy2025}
               </td>
               <td
-                className="py-3 px-4"
+                className="py-3 px-4 text-foreground"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 {metric.fy2027}

@@ -51,13 +51,13 @@ export function TeamMember({ name, title, bio, imagePath }: TeamMemberProps) {
         >
           {/* Name */}
           <span
+            className="text-foreground"
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: 700,
               fontSize: '20px',
               lineHeight: '24px',
               letterSpacing: '-0.01em',
-              color: '#2C2C2C',
             }}
           >
             {name}
@@ -65,13 +65,13 @@ export function TeamMember({ name, title, bio, imagePath }: TeamMemberProps) {
 
           {/* Title */}
           <span
+            className="text-muted-foreground"
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: 400,
               fontSize: '16px',
               lineHeight: '21px',
               letterSpacing: '-0.01em',
-              color: '#858585',
             }}
           >
             {title}
@@ -80,14 +80,13 @@ export function TeamMember({ name, title, bio, imagePath }: TeamMemberProps) {
 
         {/* Biography */}
         <p
-          className="w-full"
+          className="w-full text-muted-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '16px',
             lineHeight: '21px',
             letterSpacing: '0.01em',
-            color: '#505050',
           }}
         >
           {bio}

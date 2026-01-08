@@ -41,7 +41,7 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
         >
           {/* Label */}
           <span
-            className="transition-colors duration-300 ease-in-out"
+            className="transition-colors duration-300 ease-in-out text-[#858585] dark:text-[#858585]"
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: 400,
@@ -56,14 +56,13 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
 
           {/* Value */}
           <span
-            className="transition-all duration-300 ease-in-out"
+            className="transition-all duration-300 ease-in-out text-[#2C2C2C] dark:text-[#2C2C2C]"
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: isHovered ? 600 : 400,
               fontSize: '20px',
               lineHeight: '24px',
               letterSpacing: '-0.01em',
-              color: '#2C2C2C',
             }}
           >
             {value}
@@ -72,14 +71,13 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
           {/* Description - appears on hover */}
           {description && (
             <span
-              className="transition-all duration-300 ease-in-out overflow-hidden"
+              className="transition-all duration-300 ease-in-out overflow-hidden text-[#858585] dark:text-[#858585]"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '17px',
                 letterSpacing: '-0.01em',
-                color: '#858585',
                 maxHeight: isHovered ? '100px' : '0px',
                 opacity: isHovered ? 1 : 0,
                 marginTop: isHovered ? '8px' : '0px',

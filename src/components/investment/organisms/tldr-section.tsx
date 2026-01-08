@@ -15,13 +15,13 @@ export function TLDRSection() {
     >
       {/* Heading */}
       <h2
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
           fontSize: '36px',
           lineHeight: '43px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         {heading}
@@ -29,14 +29,13 @@ export function TLDRSection() {
 
       {/* Summary Paragraph */}
       <p
-        className="w-full"
+        className="w-full text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#505050',
           maxWidth: '816px',
         }}
       >

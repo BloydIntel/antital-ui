@@ -42,13 +42,13 @@ export function HighlightCard({ amount, description, icon }: HighlightCardProps)
       >
         {/* Revenue Amount */}
         <span
+          className="text-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 700,
             fontSize: '20px',
             lineHeight: '24px',
             letterSpacing: '-0.01em',
-            color: '#2C2C2C',
           }}
         >
           {amount}
@@ -56,13 +56,13 @@ export function HighlightCard({ amount, description, icon }: HighlightCardProps)
 
         {/* Revenue Description */}
         <span
+          className="text-muted-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '14px',
             lineHeight: '17px',
             letterSpacing: '-0.01em',
-            color: '#858585',
           }}
         >
           {description}

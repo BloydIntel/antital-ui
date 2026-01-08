@@ -12,13 +12,13 @@ export function RisksMitigationSection() {
     >
       {/* Section Heading */}
       <h2
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
           fontSize: '36px',
           lineHeight: '43px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         Risks & Mitigation (Full Disclosure)
@@ -26,14 +26,13 @@ export function RisksMitigationSection() {
 
       {/* Introductory Paragraph */}
       <p
-        className="w-full"
+        className="w-full text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#505050',
         }}
       >
         We maintain transparency with our investors by detailing potential risks and our strategies to manage them.
