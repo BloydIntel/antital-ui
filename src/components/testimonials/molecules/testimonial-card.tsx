@@ -1,6 +1,5 @@
 import React from 'react';
 import { Avatar } from '@/components/testimonials/atoms/avatar';
-import { QuoteIcon } from '@/components/testimonials/atoms/quote-icon';
 import { cn } from '@/lib/utils';
 
 interface TestimonialCardProps {
@@ -34,7 +33,7 @@ export function TestimonialCard({
             transformOrigin: 'center center',
           }}
         >
-          "
+          &quot;
         </div>
 
         {/* Testimonial Text */}

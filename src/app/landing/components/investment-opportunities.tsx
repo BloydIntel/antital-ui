@@ -33,7 +33,7 @@ export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps)
                 letterSpacing: '-0.01em',
               }}
             >
-              Invest in tomorrow's success stories today
+              Invest in tomorrow&apos;s success stories today
             </h2>
 
             {/* Section Subtitle */}
@@ -47,7 +47,7 @@ export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps)
                 letterSpacing: '-0.01em',
               }}
             >
-              Get early access to carefully verified startups before they become household names. From fintech innovations to agriculture solutions, discover the businesses shaping Nigeria's future.
+              Get early access to carefully verified startups before they become household names. From fintech innovations to agriculture solutions, discover the businesses shaping Nigeria&apos;s future.
             </p>
           </div>
 

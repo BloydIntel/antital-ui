@@ -147,9 +147,9 @@ export function AboutPageContent() {
                       letterSpacing: '-0.01em',
                     }}
                   >
-                    We're a micro-investment marketplace connecting you with rigorously vetted early-stage startups and innovative small businesses. Our meticulous 6-step assessment ensures you invest in promising ventures, not empty promises.
+                    We&apos;re a micro-investment marketplace connecting you with rigorously vetted early-stage startups and innovative small businesses. Our meticulous 6-step assessment ensures you invest in promising ventures, not empty promises.
                     <br /><br />
-                    At Antital, we're leveling the playing field, empowering every Nigerian to participate in wealth creation and drive economic growth.
+                    At Antital, we&apos;re leveling the playing field, empowering every Nigerian to participate in wealth creation and drive economic growth.
                   </p>
                 </div>
               </div>
@@ -166,7 +166,7 @@ export function AboutPageContent() {
                     letterSpacing: '-0.01em',
                   }}
                 >
-                  " Traditional investment has locked out average earners for too long. While the wealthy access high-growth startups through exclusive networks, most Nigerians are left with savings accounts earning 5% or risky schemes promising unrealistic returns.
+                  &quot; Traditional investment has locked out average earners for too long. While the wealthy access high-growth startups through exclusive networks, most Nigerians are left with savings accounts earning 5% or risky schemes promising unrealistic returns.
                 </p>
               </div>
             </div>
@@ -226,7 +226,7 @@ export function AboutPageContent() {
                     letterSpacing: '-0.01em',
                   }}
                 >
-                  We've built the most secure, accessible, and transparent investment platform in Nigeria.
+                  We&apos;ve built the most secure, accessible, and transparent investment platform in Nigeria.
                 </p>
               </div>
 
