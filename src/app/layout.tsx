@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${rethinkSans.variable} antialiased`}>
-      <body className={dmSans.className} suppressHydrationWarning>
+    <html lang="en" className={`${dmSans.variable} ${rethinkSans.variable} antialiased overflow-x-hidden`}>
+      <body className={`${dmSans.className} overflow-x-hidden`} suppressHydrationWarning>
         <FaviconHandler />
         <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
           <SidebarConfigProvider>
