@@ -92,8 +92,8 @@ export function NewLaunches() {
               className={cn(
                 "w-[192px] h-12 px-4 py-2 rounded-lg border border-[#A8A8A8] text-foreground bg-background dark:bg-background",
                 "font-rethink-sans text-base font-medium leading-[21px] transition-all duration-300 ease-in-out",
-                "shadow-none hover:!bg-[#A7B832] hover:!text-[#11110F] hover:!border-[#A7B832] hover:shadow-none",
-                "dark:hover:!bg-[#A7B832] dark:hover:!text-[#11110F] dark:hover:!border-[#A7B832]"
+                "shadow-none [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] [&:hover]:shadow-none",
+                "dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832]"
               )}
               asChild
             >

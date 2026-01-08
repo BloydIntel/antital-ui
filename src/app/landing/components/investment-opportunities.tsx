@@ -63,7 +63,7 @@ export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps)
             {/* View All Button - no shadow on hover */}
             <Button
               variant="outline"
-              className="bg-background dark:bg-background border-[#A8A8A8] text-foreground hover:!bg-[#A7B832] hover:!text-[#11110F] hover:!border-[#A7B832] dark:hover:!bg-[#A7B832] dark:hover:!text-[#11110F] dark:hover:!border-[#A7B832] h-12 px-4 rounded-lg shadow-none hover:shadow-none transition-all duration-300"
+              className="bg-background dark:bg-background border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] h-12 px-4 rounded-lg shadow-none [&:hover]:shadow-none transition-all duration-300"
               style={{
                 width: '192px',
                 fontFamily: 'var(--font-rethink-sans)',
