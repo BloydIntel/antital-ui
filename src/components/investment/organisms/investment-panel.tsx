@@ -37,13 +37,13 @@ export function InvestmentPanel() {
             {/* Target Header */}
             <div className="flex flex-row justify-between items-center w-full">
               <span
+                className="text-[#2C2C2C] dark:text-[#2C2C2C]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '20px',
                   lineHeight: '24px',
                   letterSpacing: '-0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 Target
@@ -51,13 +51,13 @@ export function InvestmentPanel() {
               <div className="flex flex-row items-center gap-2">
                 <Gauge className="w-6 h-6" style={{ color: '#A4D65E' }} />
                 <span
+                  className="text-[#000000] dark:text-[#000000]"
                   style={{
                     fontFamily: 'var(--font-dm-sans)',
                     fontWeight: 400,
                     fontSize: '20px',
                     lineHeight: '24px',
                     letterSpacing: '-0.01em',
-                    color: '#000000',
                   }}
                 >
                   4.5
@@ -78,25 +78,25 @@ export function InvestmentPanel() {
             {/* Amount Raised */}
             <div className="flex flex-col items-start gap-2">
               <span
+                className="text-[#2C2C2C] dark:text-[#2C2C2C]"
                 style={{
                   fontFamily: 'var(--font-rethink-sans)',
                   fontWeight: 500,
                   fontSize: '24px',
                   lineHeight: '29px',
                   letterSpacing: '-0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 ₦7,381,254
               </span>
               <span
+                className="text-[#858585] dark:text-[#858585]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '14px',
                   lineHeight: '17px',
                   letterSpacing: '-0.01em',
-                  color: '#858585',
                 }}
               >
                 raised from 341+ investors
@@ -122,25 +122,25 @@ export function InvestmentPanel() {
               }}
             >
               <span
+                className="text-[#2C2C2C] dark:text-[#2C2C2C]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '20px',
                   lineHeight: '24px',
                   letterSpacing: '-0.01em',
-                  color: '#2C2C2C',
                 }}
               >
                 Invest
               </span>
               <span
+                className="text-[#858585] dark:text-[#858585]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '16px',
                   lineHeight: '21px',
                   letterSpacing: '0.01em',
-                  color: '#858585',
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -152,13 +152,13 @@ export function InvestmentPanel() {
             <div className="relative" style={{ width: '176px', height: '44px' }}>
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 <span
+                  className="text-[#858585] dark:text-[#858585]"
                   style={{
                     fontFamily: 'var(--font-dm-sans)',
                     fontWeight: 400,
                     fontSize: '16px',
                     lineHeight: '21px',
                     letterSpacing: '0.01em',
-                    color: '#858585',
                   }}
                 >
                   ₦
@@ -167,14 +167,13 @@ export function InvestmentPanel() {
               <Input
                 type="number"
                 placeholder="0"
-                className="w-full h-11 border border-[#B9CCFF] rounded pl-8 pr-3"
+                className="w-full h-11 border border-[#B9CCFF] rounded pl-8 pr-3 text-[#2A2A2A] dark:text-[#2A2A2A]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
                   fontSize: '20px',
                   lineHeight: '24px',
                   letterSpacing: '-0.01em',
-                  color: '#2A2A2A',
                 }}
               />
             </div>

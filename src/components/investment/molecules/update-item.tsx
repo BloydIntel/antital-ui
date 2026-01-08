@@ -33,13 +33,13 @@ export function UpdateItem({ date, title, body, likeCount }: UpdateItemProps) {
         }}
       >
         <span
+          className="text-muted-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '14px',
             lineHeight: '17px',
             letterSpacing: '-0.01em',
-            color: '#858585',
           }}
         >
           {date}
@@ -48,18 +48,17 @@ export function UpdateItem({ date, title, body, likeCount }: UpdateItemProps) {
 
       {/* Content Box */}
       <div
-        className="flex-1 bg-white border border-[#EAEAEA] rounded p-4"
+        className="flex-1 bg-background border border-[#EAEAEA] rounded p-4"
       >
         {/* Title */}
         <h3
-          className="mb-2"
+          className="mb-2 text-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 500,
             fontSize: '18px',
             lineHeight: '22px',
             letterSpacing: '-0.01em',
-            color: '#2C2C2C',
           }}
         >
           {title}
@@ -67,14 +66,13 @@ export function UpdateItem({ date, title, body, likeCount }: UpdateItemProps) {
 
         {/* Body Text */}
         <p
-          className="mb-3"
+          className="mb-3 text-muted-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '16px',
             lineHeight: '21px',
             letterSpacing: '0.01em',
-            color: '#505050',
           }}
         >
           {body}
@@ -83,14 +81,13 @@ export function UpdateItem({ date, title, body, likeCount }: UpdateItemProps) {
         {/* Like Button */}
         <button
           onClick={handleLike}
-          className="flex flex-row items-center gap-2 px-3 py-1.5 border border-[#EAEAEA] rounded hover:bg-[#F4F5F7] transition-colors"
+          className="flex flex-row items-center gap-2 px-3 py-1.5 border border-[#EAEAEA] rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '14px',
             lineHeight: '17px',
             letterSpacing: '-0.01em',
-            color: '#505050',
           }}
         >
           <ThumbsUp

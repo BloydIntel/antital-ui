@@ -60,13 +60,13 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
                 <div className="flex flex-col gap-12 w-full mt-16">
                   {/* Main Heading - Company Name */}
                   <h1
+                    className="text-[#042E27] dark:text-[#A7B832]"
                     style={{
                       fontFamily: 'var(--font-rethink-sans)',
                       fontWeight: 700,
                       fontSize: '48px',
                       lineHeight: '58px',
                       letterSpacing: '-0.01em',
-                      color: '#042E27',
                     }}
                   >
                     NEXUS AI

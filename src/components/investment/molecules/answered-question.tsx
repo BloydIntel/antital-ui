@@ -16,14 +16,13 @@ export function AnsweredQuestion({ question, answeredBy, answer }: AnsweredQuest
     >
       {/* Question */}
       <div
-        className="w-full"
+        className="w-full text-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 700,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#2C2C2C',
         }}
       >
         <span style={{ fontWeight: 700 }}>Q:</span> {question}
@@ -31,14 +30,13 @@ export function AnsweredQuestion({ question, answeredBy, answer }: AnsweredQuest
 
       {/* Answered By */}
       <div
-        className="w-full"
+        className="w-full text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '14px',
           lineHeight: '17px',
           letterSpacing: '-0.01em',
-          color: '#858585',
         }}
       >
         Answered by: {answeredBy}
@@ -46,14 +44,13 @@ export function AnsweredQuestion({ question, answeredBy, answer }: AnsweredQuest
 
       {/* Answer */}
       <div
-        className="w-full"
+        className="w-full text-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#2C2C2C',
         }}
       >
         <span style={{ fontWeight: 500 }}>Ans:</span> {answer}

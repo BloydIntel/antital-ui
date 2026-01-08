@@ -24,13 +24,13 @@ export function AskQuestionSection() {
     >
       {/* Section Heading */}
       <h2
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
           fontSize: '36px',
           lineHeight: '43px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         Ask a Question
@@ -38,14 +38,13 @@ export function AskQuestionSection() {
 
       {/* Explanatory Paragraph */}
       <p
-        className="w-full"
+        className="w-full text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#505050',
         }}
       >
         Use the form below to ask the NEXUS AI team a direct question. We aim to post answers to all unique, relevant questions within 48 hours.

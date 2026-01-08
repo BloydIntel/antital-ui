@@ -36,12 +36,18 @@ export function NavigationTabs({ activeTab = 'overview', onTabChange }: Navigati
           }}
         >
           <span
+            className={
+              activeTab === tab.id
+                ? 'text-[#2C2C2C] dark:text-white'
+                : tab.disabled
+                  ? 'text-[#858585] dark:text-[#666666]'
+                  : 'text-[#505050] dark:text-[#AAAAAA]'
+            }
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: 500,
               fontSize: '16px',
               lineHeight: '21px',
-              color: activeTab === tab.id ? '#2C2C2C' : tab.disabled ? '#858585' : '#505050',
             }}
           >
             {tab.label}

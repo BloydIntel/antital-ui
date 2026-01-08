@@ -157,7 +157,7 @@ export function AboutPageContent() {
               {/* Right Card - Quote */}
               <div className="w-full lg:w-[599px] h-auto lg:h-[352px] flex items-center">
                 <p
-                  className="text-[#1F1F1F]"
+                  className="text-foreground"
                   style={{
                     fontFamily: 'var(--font-rethink-sans)',
                     fontWeight: 500,
@@ -205,7 +205,7 @@ export function AboutPageContent() {
               {/* Header */}
               <div className="flex flex-col items-start gap-2 w-full max-w-[713px]">
                 <h2
-                  className="text-[#01100E]"
+                  className="text-foreground"
                   style={{
                     fontFamily: 'var(--font-rethink-sans)',
                     fontWeight: 500,
@@ -217,7 +217,7 @@ export function AboutPageContent() {
                   Why Choose Antital?
                 </h2>
                 <p
-                  className="text-[#505050]"
+                  className="text-muted-foreground"
                   style={{
                     fontFamily: 'var(--font-dm-sans)',
                     fontWeight: 400,

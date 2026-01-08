@@ -6,7 +6,7 @@ export function DealTermsSection() {
   return (
     <div className="w-full lg:w-auto">
       <div
-        className="flex flex-col items-start bg-white border border-[#EAEAEA] rounded overflow-hidden"
+        className="flex flex-col items-start bg-white dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-[#404040] rounded overflow-hidden"
         style={{
           width: '400px',
           height: 'auto',
@@ -18,13 +18,13 @@ export function DealTermsSection() {
       >
         {/* Deal Terms Heading */}
         <h3
+          className="text-[#2C2C2C] dark:text-white"
           style={{
             fontFamily: 'var(--font-rethink-sans)',
             fontWeight: 500,
             fontSize: '28px',
             lineHeight: '34px',
             letterSpacing: '-0.01em',
-            color: '#2C2C2C',
             width: '100%',
           }}
         >

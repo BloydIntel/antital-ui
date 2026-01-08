@@ -34,27 +34,26 @@ export function UseOfProceeds() {
       }}
     >
       <h3
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
           fontSize: '28px',
           lineHeight: '34px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         Use of Proceeds
       </h3>
 
       <p
-        className="w-full"
+        className="w-full text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#505050',
           marginBottom: '8px',
         }}
       >
@@ -80,6 +79,7 @@ export function UseOfProceeds() {
           >
             {/* Bullet point */}
             <span
+              className="text-foreground"
               style={{
                 position: 'absolute',
                 left: '0',
@@ -88,32 +88,31 @@ export function UseOfProceeds() {
                 fontSize: '16px',
                 lineHeight: '21px',
                 letterSpacing: '0.01em',
-                color: '#2C2C2C',
               }}
             >
               •
             </span>
             {/* Content with label and description */}
             <span
+              className="text-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 500,
                 fontSize: '16px',
                 lineHeight: '21px',
                 letterSpacing: '0.01em',
-                color: '#2C2C2C',
               }}
             >
               {item.percentage} {item.category}:
             </span>
             <span
+              className="text-muted-foreground"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
                 fontSize: '16px',
                 lineHeight: '21px',
                 letterSpacing: '0.01em',
-                color: '#505050',
               }}
             >
               {' '}{item.description}

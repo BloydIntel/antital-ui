@@ -151,7 +151,7 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
             {/* View Details Button - width: 365px, height: 48px from Figma */}
             <Button
               variant="outline"
-              className="h-12 bg-white border-[#365852] text-[#365852] hover:bg-[#365852] hover:text-white hover:border-[#365852] rounded-lg shadow-none hover:shadow-[0_6px_0px_rgba(0,0,0,0.25)] transition-all duration-300"
+              className="h-12 bg-white dark:bg-white border-[#365852] text-[#365852] [&:hover]:bg-[#365852] [&:hover]:text-white [&:hover]:border-[#365852] dark:[&:hover]:bg-[#365852] dark:[&:hover]:text-white dark:[&:hover]:border-[#365852] rounded-lg shadow-none [&:hover]:shadow-[0_6px_0px_rgba(0,0,0,0.25)] transition-all duration-300"
               style={{
                 width: '365px',
                 fontFamily: 'var(--font-rethink-sans)',

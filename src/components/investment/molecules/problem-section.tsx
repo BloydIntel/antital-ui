@@ -16,7 +16,7 @@ export function ProblemSection({ title, description }: ProblemSectionProps) {
     >
       {/* Heading */}
       <h2
-        className="text-[#2C2C2C]"
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
@@ -30,7 +30,7 @@ export function ProblemSection({ title, description }: ProblemSectionProps) {
 
       {/* Description */}
       <p
-        className="text-[#505050]"
+        className="text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,

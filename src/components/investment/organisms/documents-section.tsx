@@ -13,13 +13,13 @@ export function DocumentsSection() {
     >
       {/* Section Heading */}
       <h2
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
           fontSize: '36px',
           lineHeight: '43px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         Prospectus & Corporate Information
@@ -33,14 +33,13 @@ export function DocumentsSection() {
         }}
       >
         <p
-          className="w-full"
+          className="w-full text-muted-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '16px',
             lineHeight: '21px',
             letterSpacing: '0.01em',
-            color: '#505050',
           }}
         >
           Prospectus (Downloadable PDF): Full legal document outlining the investment instrument, company structure, and risk disclosures.
@@ -72,14 +71,13 @@ export function DocumentsSection() {
         }}
       >
         <p
-          className="w-full"
+          className="w-full text-muted-foreground"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '16px',
             lineHeight: '21px',
             letterSpacing: '0.01em',
-            color: '#505050',
           }}
         >
           Corporate Information: Incorporated in Lagos, Nigeria (C-Corp) in 2024. Primary Jurisdiction: Nigeria. Corporate Registration ID: NEX-NG-800532.

@@ -13,13 +13,13 @@ export function FinancialsSection() {
     >
       {/* Section Heading */}
       <h2
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontWeight: 500,
           fontSize: '36px',
           lineHeight: '43px',
           letterSpacing: '-0.01em',
-          color: '#2C2C2C',
         }}
       >
         Financials

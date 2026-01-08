@@ -15,13 +15,13 @@ export function FeaturePoint({ label, description }: FeaturePointProps) {
     >
       {/* Label */}
       <span
+        className="text-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 500,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#2C2C2C',
         }}
       >
         {label}
@@ -29,13 +29,13 @@ export function FeaturePoint({ label, description }: FeaturePointProps) {
 
       {/* Description */}
       <span
+        className="text-muted-foreground"
         style={{
           fontFamily: 'var(--font-dm-sans)',
           fontWeight: 400,
           fontSize: '16px',
           lineHeight: '21px',
           letterSpacing: '0.01em',
-          color: '#858585',
         }}
       >
         {description}
