@@ -9,7 +9,7 @@ interface HighlightCardProps {
 export function HighlightCard({ amount, description, icon }: HighlightCardProps) {
   return (
     <div
-      className="relative flex flex-row items-center px-4 py-8 bg-[#F3ECFF] rounded"
+      className="relative flex flex-row items-center px-4 py-8 bg-[#F3ECFF] dark:bg-[#3D2F5A] rounded"
       style={{
         width: '296px',
         height: '113px',
@@ -42,7 +42,7 @@ export function HighlightCard({ amount, description, icon }: HighlightCardProps)
       >
         {/* Revenue Amount */}
         <span
-          className="text-foreground"
+          className="text-[#2C2C2C] dark:text-white"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 700,
@@ -56,7 +56,7 @@ export function HighlightCard({ amount, description, icon }: HighlightCardProps)
 
         {/* Revenue Description */}
         <span
-          className="text-muted-foreground"
+          className="text-[#858585] dark:text-[#D1D1D1]"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,

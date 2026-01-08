@@ -155,7 +155,7 @@ export function Navbar() {
             </Button>
             <Button 
               variant="outline"
-              className="border-[#A8A8A8] text-foreground hover:bg-accent bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
+              className="border-[#A8A8A8] text-foreground hover:!bg-[#A7B832] hover:!text-[#11110F] hover:!border-[#A7B832] dark:hover:!bg-[#A7B832] dark:hover:!text-[#11110F] dark:hover:!border-[#A7B832] bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
               asChild
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
@@ -241,7 +241,7 @@ export function Navbar() {
                   </Button>
                   <Button 
                     variant="outline"
-                    className="w-full h-12 border-[#A8A8A8] text-foreground hover:bg-accent rounded-lg"
+                    className="w-full h-12 border-[#A8A8A8] text-foreground hover:!bg-[#A7B832] hover:!text-[#11110F] hover:!border-[#A7B832] dark:hover:!bg-[#A7B832] dark:hover:!text-[#11110F] dark:hover:!border-[#A7B832] rounded-lg"
                     style={{
                       fontFamily: 'var(--font-rethink-sans)',
                       fontSize: '16px',

@@ -17,20 +17,20 @@ export function HighlightItem({ number, text }: HighlightItemProps) {
     >
       {/* Number Badge */}
       <div
-        className="flex flex-col justify-center items-center p-2 border border-[#A8A8A8] rounded"
+        className="flex flex-col justify-center items-center p-2 border border-[#A8A8A8] dark:border-[#666666] rounded"
         style={{
           width: '88px',
           height: '40px',
         }}
       >
         <span
+          className="text-[#2A2E0C] dark:text-[#A7B832]"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '20px',
             lineHeight: '24px',
             letterSpacing: '-0.01em',
-            color: '#2A2E0C',
           }}
         >
           {number}
