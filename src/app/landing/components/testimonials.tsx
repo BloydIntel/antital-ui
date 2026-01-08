@@ -76,7 +76,7 @@ export function Testimonials() {
           <p
             className="font-dm-sans font-normal text-lg leading-[23px] tracking-[-0.01em] text-[#505050]"
           >
-            Hear from the investors and founders building Africa's future with Antital.
+            Hear from the investors and founders building Africa&apos;s future with Antital.
           </p>
         </div>
 
