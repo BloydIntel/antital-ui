@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ThemeProviderContext } from "@/contexts/theme-context"
+import { IS_DEVELOPMENT } from "@/config/env"
 
 type Theme = "dark" | "light" | "system"
 
@@ -17,12 +18,11 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const isDevelopment = process.env.NODE_ENV === 'development'
   
   const [theme, setTheme] = React.useState<Theme>(
     () => {
       // In production, force light mode
-      if (!isDevelopment) {
+      if (!IS_DEVELOPMENT) {
         return "light"
       }
       // In development, use stored theme or default
@@ -39,7 +39,7 @@ export function ThemeProvider({
       root.classList.remove("light", "dark")
 
       // In production, always use light mode
-      if (!isDevelopment) {
+      if (!IS_DEVELOPMENT) {
         root.classList.add("light")
         return
       }
@@ -60,20 +60,26 @@ export function ThemeProvider({
     applyTheme()
 
     // Listen for system theme changes (only in development)
-    if (isDevelopment && theme === "system") {
+    if (IS_DEVELOPMENT && theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
       const handleChange = () => applyTheme()
       
       mediaQuery.addEventListener("change", handleChange)
       return () => mediaQuery.removeEventListener("change", handleChange)
     }
-  }, [theme, isDevelopment])
+  }, [theme])
 
   const value = {
-    theme: isDevelopment ? theme : "light",
+    theme: IS_DEVELOPMENT ? theme : "light",
     setTheme: (newTheme: Theme) => {
       // Only allow theme changes in development
-      if (!isDevelopment) {
+      if (!IS_DEVELOPMENT) {
+        // In production, theme changes are disabled and silently ignored.
+        // This is intentional because:
+        // 1. The theme toggle UI is already hidden in production (see mode-toggle.tsx)
+        // 2. Production builds should always use light mode for consistency
+        // 3. No user-facing UI should trigger this in production
+        // If you need to debug theme changes, check that NODE_ENV is set to "development"
         return
       }
       if (typeof window !== "undefined") {

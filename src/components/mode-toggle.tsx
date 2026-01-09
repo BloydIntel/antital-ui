@@ -6,6 +6,7 @@ import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/hooks/use-theme"
 import { useCircularTransition } from "@/hooks/use-circular-transition"
+import { IS_DEVELOPMENT } from "@/config/env"
 import "./theme-customizer/circular-transition.css"
 
 interface ModeToggleProps {
@@ -13,7 +14,6 @@ interface ModeToggleProps {
 }
 
 export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
-  const isDevelopment = process.env.NODE_ENV === 'development'
   const { theme } = useTheme()
   const { toggleTheme } = useCircularTransition()
 
@@ -51,7 +51,7 @@ export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
   }
 
   // Hide in production - return null after all hooks are called
-  if (!isDevelopment) {
+  if (!IS_DEVELOPMENT) {
     return null
   }
 
