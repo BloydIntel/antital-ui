@@ -22,6 +22,8 @@ import { RisksMitigationSection } from '@/components/investment/organisms/risks-
 import { DocumentsSection } from '@/components/investment/organisms/documents-section'
 import { UpdatesSection } from '@/components/investment/organisms/updates-section'
 import { AskQuestionSection } from '@/components/investment/organisms/ask-question-section'
+import { MediaThumbnails } from '@/components/investment/molecules/media-thumbnails'
+import { TestimonialsSection } from '@/components/investment/organisms/testimonials-section'
 
 interface InvestmentDetailPageContentProps {
   investment: InvestmentCardData
@@ -89,6 +91,11 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
               <div className="flex flex-col w-full lg:w-auto lg:flex-1" style={{ maxWidth: '816px' }}>
                 <VideoSection />
                 
+                {/* Media Thumbnails and Like/Share */}
+                <div className="w-full mt-4">
+                  <MediaThumbnails />
+                </div>
+                
                 {/* Left Side Content Below Video */}
                 <div className="flex flex-col gap-12 w-full mt-16">
                   {/* Main Heading - Company Name */}
@@ -154,7 +161,7 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
                   {/* Tab Content - Testimonials */}
                   {activeTab === 'testimonials' && (
                     <>
-                      {/* Testimonials content will go here - placeholder for now */}
+                      <TestimonialsSection />
                     </>
                   )}
 

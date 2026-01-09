@@ -17,10 +17,11 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
   return (
     <div
       className="flex flex-col items-start w-full transition-all duration-300 ease-in-out"
+      className="border-b border-[#EAEAEA] dark:border-[#404040]"
       style={{
         padding: '16px 0px',
         gap: '16px',
-        borderBottom: isLast ? 'none' : '1px solid #EAEAEA',
+        borderBottom: isLast ? 'none' : undefined,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -41,14 +42,13 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
         >
           {/* Label */}
           <span
-            className="transition-colors duration-300 ease-in-out text-[#858585] dark:text-[#858585]"
+            className="transition-colors duration-300 ease-in-out text-[#858585] dark:text-gray-400"
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: 400,
               fontSize: '14px',
               lineHeight: '17px',
               letterSpacing: '-0.01em',
-              color: isHovered ? '#505050' : '#858585',
             }}
           >
             {label}
@@ -56,7 +56,7 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
 
           {/* Value */}
           <span
-            className="transition-all duration-300 ease-in-out text-[#2C2C2C] dark:text-[#2C2C2C]"
+            className="transition-all duration-300 ease-in-out text-[#2C2C2C] dark:text-white"
             style={{
               fontFamily: 'var(--font-dm-sans)',
               fontWeight: isHovered ? 600 : 400,
@@ -71,7 +71,7 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
           {/* Description - appears on hover */}
           {description && (
             <span
-              className="transition-all duration-300 ease-in-out overflow-hidden text-[#858585] dark:text-[#858585]"
+              className="transition-all duration-300 ease-in-out overflow-hidden text-[#858585] dark:text-gray-400"
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
@@ -91,11 +91,10 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
         {/* Info Icon */}
         {showInfo && (
           <Info
-            className="flex-shrink-0 self-start transition-opacity duration-300 ease-in-out"
+            className="flex-shrink-0 self-start transition-opacity duration-300 ease-in-out text-[#858585] dark:text-gray-400"
             style={{
               width: '24px',
               height: '24px',
-              color: '#858585',
               opacity: isHovered ? 1 : 0.87,
               marginTop: '8px',
             }}

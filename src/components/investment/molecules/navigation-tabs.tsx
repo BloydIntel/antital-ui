@@ -10,7 +10,7 @@ export function NavigationTabs({ activeTab = 'overview', onTabChange }: Navigati
     { id: 'overview', label: 'Overview', width: '95px', disabled: false },
     { id: 'details', label: 'Details', width: '76px', disabled: false },
     { id: 'updates', label: 'Updates', width: '88px', disabled: false },
-    { id: 'testimonials', label: 'What people are saying', width: '202px', disabled: true },
+    { id: 'testimonials', label: 'What people are saying', width: '202px', disabled: false },
     { id: 'questions', label: 'Ask a question', width: '135px', disabled: false },
   ]
 
