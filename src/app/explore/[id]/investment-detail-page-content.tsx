@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Navbar } from '@/app/landing/components/navbar'
 import { Footer } from '@/app/landing/components/footer'
 import { InvestmentCardData } from '@/components/investment/organisms/investment-card'
@@ -22,6 +22,8 @@ import { RisksMitigationSection } from '@/components/investment/organisms/risks-
 import { DocumentsSection } from '@/components/investment/organisms/documents-section'
 import { UpdatesSection } from '@/components/investment/organisms/updates-section'
 import { AskQuestionSection } from '@/components/investment/organisms/ask-question-section'
+import { MediaThumbnails } from '@/components/investment/molecules/media-thumbnails'
+import { TestimonialsSection } from '@/components/investment/organisms/testimonials-section'
 
 interface InvestmentDetailPageContentProps {
   investment: InvestmentCardData
@@ -29,6 +31,45 @@ interface InvestmentDetailPageContentProps {
 
 export function InvestmentDetailPageContent({ investment: _investment }: InvestmentDetailPageContentProps) {
   const [activeTab, setActiveTab] = useState('overview')
+  
+  // Prevent iOS overscroll bounce
+  const lastTouchYRef = useRef(0)
+  
+  useEffect(() => {
+    const preventOverscroll = (e: TouchEvent) => {
+      const touch = e.touches[0] || e.changedTouches[0]
+      if (!touch) return
+      
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const scrollHeight = document.documentElement.scrollHeight
+      const clientHeight = document.documentElement.clientHeight
+      
+      // At top and trying to scroll up
+      if (scrollTop === 0 && touch.clientY > lastTouchYRef.current) {
+        e.preventDefault()
+      }
+      // At bottom and trying to scroll down
+      if (scrollTop + clientHeight >= scrollHeight - 1 && touch.clientY < lastTouchYRef.current) {
+        e.preventDefault()
+      }
+      
+      lastTouchYRef.current = touch.clientY
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches[0]) {
+        lastTouchYRef.current = e.touches[0].clientY
+      }
+    }
+    
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchmove', preventOverscroll, { passive: false })
+    
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', preventOverscroll)
+    }
+  }, [])
   
   // Hardcoded data for now - will refactor later
   const daysLeft = 14
@@ -41,7 +82,7 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
       <Navbar />
 
       {/* Main Content */}
-      <main className="w-full">
+      <main className="w-full pb-20 lg:pb-0">
         <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-8 lg:py-16">
           {/* First Section - Days Left Badge and Problem Section */}
           <section className="relative w-full">
@@ -53,8 +94,13 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
           <section className="w-full mt-16">
             <div className="flex flex-col lg:flex-row gap-8 w-full items-start">
               {/* Left Column */}
-              <div className="flex flex-col w-full lg:w-auto" style={{ maxWidth: '816px' }}>
+              <div className="flex flex-col w-full lg:w-auto lg:flex-1" style={{ maxWidth: '816px' }}>
                 <VideoSection />
+                
+                {/* Media Thumbnails and Like/Share */}
+                <div className="w-full mt-4">
+                  <MediaThumbnails />
+                </div>
                 
                 {/* Left Side Content Below Video */}
                 <div className="flex flex-col gap-12 w-full mt-16">
@@ -121,7 +167,7 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
                   {/* Tab Content - Testimonials */}
                   {activeTab === 'testimonials' && (
                     <>
-                      {/* Testimonials content will go here - placeholder for now */}
+                      <TestimonialsSection />
                     </>
                   )}
 
@@ -139,7 +185,7 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
 
                   {/* Start Trading Button - not shown for Questions tab */}
                   {activeTab !== 'questions' && (
-                    <div className="w-full" style={{ maxWidth: '816px', marginTop: '32px' }}>
+                    <div className="w-full lg:block hidden" style={{ maxWidth: '816px', marginTop: '32px' }}>
                       <ActionButton
                         text="Start trading"
                         variant="primary"
@@ -152,7 +198,7 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
               </div>
 
               {/* Right Column */}
-              <div className="flex flex-col items-start w-full lg:w-auto lg:sticky lg:top-8 lg:self-start">
+              <div className="flex flex-col items-start w-full lg:w-auto lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
                 {/* Investment Panel */}
                 <InvestmentPanel />
                 
@@ -176,6 +222,18 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
 
       {/* Footer */}
       <Footer />
+
+      {/* Mobile Sticky Start Trading Button - only visible on mobile and not on questions tab */}
+      {activeTab !== 'questions' && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-[#EAEAEA] p-4 shadow-lg">
+          <ActionButton
+            text="Start trading"
+            variant="primary"
+            width="100%"
+            height="48px"
+          />
+        </div>
+      )}
     </div>
   )
 }

@@ -17,8 +17,17 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  
   const [theme, setTheme] = React.useState<Theme>(
-    () => (typeof window !== "undefined" && localStorage.getItem(storageKey) as Theme) || defaultTheme
+    () => {
+      // In production, force light mode
+      if (!isDevelopment) {
+        return "light"
+      }
+      // In development, use stored theme or default
+      return (typeof window !== "undefined" && localStorage.getItem(storageKey) as Theme) || defaultTheme
+    }
   )
 
   React.useEffect(() => {
@@ -29,6 +38,13 @@ export function ThemeProvider({
     const applyTheme = () => {
       root.classList.remove("light", "dark")
 
+      // In production, always use light mode
+      if (!isDevelopment) {
+        root.classList.add("light")
+        return
+      }
+
+      // In development, apply theme normally
       if (theme === "system") {
         const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
           .matches
@@ -43,23 +59,27 @@ export function ThemeProvider({
 
     applyTheme()
 
-    // Listen for system theme changes
-    if (theme === "system") {
+    // Listen for system theme changes (only in development)
+    if (isDevelopment && theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
       const handleChange = () => applyTheme()
       
       mediaQuery.addEventListener("change", handleChange)
       return () => mediaQuery.removeEventListener("change", handleChange)
     }
-  }, [theme])
+  }, [theme, isDevelopment])
 
   const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem(storageKey, theme)
+    theme: isDevelopment ? theme : "light",
+    setTheme: (newTheme: Theme) => {
+      // Only allow theme changes in development
+      if (!isDevelopment) {
+        return
       }
-      setTheme(theme)
+      if (typeof window !== "undefined") {
+        localStorage.setItem(storageKey, newTheme)
+      }
+      setTheme(newTheme)
     },
   }
 

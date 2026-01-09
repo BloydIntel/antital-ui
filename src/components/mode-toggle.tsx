@@ -13,8 +13,14 @@ interface ModeToggleProps {
 }
 
 export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
+  const isDevelopment = process.env.NODE_ENV === 'development'
   const { theme } = useTheme()
   const { toggleTheme } = useCircularTransition()
+
+  // Hide in production
+  if (!isDevelopment) {
+    return null
+  }
 
   // Simple, reliable dark mode detection with re-sync
   const [isDarkMode, setIsDarkMode] = React.useState(false)
