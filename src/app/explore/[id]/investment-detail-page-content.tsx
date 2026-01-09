@@ -29,6 +29,27 @@ interface InvestmentDetailPageContentProps {
   investment: InvestmentCardData
 }
 
+/**
+ * Check if an element or its parents are scrollable.
+ * Recursively traverses the DOM tree and performs DOM queries (getComputedStyle, scrollHeight, clientHeight)
+ * on each element. This is a pure utility function moved outside the component to avoid function
+ * recreation on every render, but it is not memoized - it performs fresh DOM queries on every call.
+ */
+function isScrollableElement(element: Element | null): boolean {
+  if (!element || element === document.body || element === document.documentElement) {
+    return false
+  }
+  
+  const style = window.getComputedStyle(element)
+  const overflowY = style.overflowY
+  const hasScrollableContent = element.scrollHeight > element.clientHeight
+  
+  return (
+    (overflowY === 'scroll' || overflowY === 'auto') &&
+    hasScrollableContent
+  ) || isScrollableElement(element.parentElement)
+}
+
 export function InvestmentDetailPageContent({ investment }: InvestmentDetailPageContentProps) {
   // Investment data is available but not currently used - will be used for dynamic content later
   void investment
@@ -53,22 +74,6 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
       return
     }
     
-    // Check if element or its parents are scrollable (memoized check)
-    const isScrollableElement = (element: Element | null): boolean => {
-      if (!element || element === document.body || element === document.documentElement) {
-        return false
-      }
-      
-      const style = window.getComputedStyle(element)
-      const overflowY = style.overflowY
-      const hasScrollableContent = element.scrollHeight > element.clientHeight
-      
-      return (
-        (overflowY === 'scroll' || overflowY === 'auto') &&
-        hasScrollableContent
-      ) || isScrollableElement(element.parentElement)
-    }
-    
     const preventOverscroll = (e: TouchEvent) => {
       const touch = e.touches[0] || e.changedTouches[0]
       if (!touch) return
@@ -79,7 +84,6 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
         return
       }
       
-      // Cache scroll values to avoid multiple DOM reads
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       const scrollHeight = document.documentElement.scrollHeight
       const clientHeight = document.documentElement.clientHeight
@@ -153,29 +157,39 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
     
     // Use ResizeObserver for more accurate measurements when element is available
     let resizeObserver: ResizeObserver | null = null
+    let observerTimeoutId: NodeJS.Timeout | null = null
+    let observedElement: Element | null = null
+    
     if (typeof ResizeObserver !== 'undefined') {
       // Check again after a brief delay to ensure ref is attached
-      const observerTimeoutId = setTimeout(() => {
+      observerTimeoutId = setTimeout(() => {
         const currentElement = stickyButtonRef.current
         if (currentElement) {
+          observedElement = currentElement
           resizeObserver = new ResizeObserver(updateStickyButtonHeight)
           resizeObserver.observe(currentElement)
         }
       }, 10)
-
-      return () => {
-        clearTimeout(timeoutId)
-        clearTimeout(observerTimeoutId)
-        window.removeEventListener('resize', updateStickyButtonHeight)
-        if (resizeObserver && buttonElement) {
-          resizeObserver.unobserve(buttonElement)
-        }
-      }
     }
 
+    // Single cleanup function that handles both cases
     return () => {
+      // Clear all timeouts to prevent callbacks from firing after unmount
       clearTimeout(timeoutId)
+      if (observerTimeoutId) {
+        clearTimeout(observerTimeoutId)
+      }
+      
+      // Remove event listeners
       window.removeEventListener('resize', updateStickyButtonHeight)
+      
+      // Clean up ResizeObserver if it was created
+      // Use observedElement (captured when observer was created) or buttonElement (captured at effect start)
+      const elementToUnobserve = observedElement || buttonElement
+      if (resizeObserver && elementToUnobserve) {
+        resizeObserver.unobserve(elementToUnobserve)
+        resizeObserver.disconnect()
+      }
     }
   }, [activeTab]) // Re-measure when tab changes (button visibility changes)
   
