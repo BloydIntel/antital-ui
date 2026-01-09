@@ -17,11 +17,6 @@ export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
   const { theme } = useTheme()
   const { toggleTheme } = useCircularTransition()
 
-  // Hide in production
-  if (!isDevelopment) {
-    return null
-  }
-
   // Simple, reliable dark mode detection with re-sync
   const [isDarkMode, setIsDarkMode] = React.useState(false)
 
@@ -53,6 +48,11 @@ export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
 
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     toggleTheme(event)
+  }
+
+  // Hide in production - return null after all hooks are called
+  if (!isDevelopment) {
+    return null
   }
 
   return (

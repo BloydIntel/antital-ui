@@ -29,7 +29,9 @@ interface InvestmentDetailPageContentProps {
   investment: InvestmentCardData
 }
 
-export function InvestmentDetailPageContent({ investment: _investment }: InvestmentDetailPageContentProps) {
+export function InvestmentDetailPageContent({ investment }: InvestmentDetailPageContentProps) {
+  // Investment data is available but not currently used - will be used for dynamic content later
+  void investment
   const [activeTab, setActiveTab] = useState('overview')
   
   // Prevent iOS overscroll bounce
