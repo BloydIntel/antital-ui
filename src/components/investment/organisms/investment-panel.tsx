@@ -5,12 +5,11 @@ import { ActionButton } from '@/components/investment/molecules/action-button'
 
 export function InvestmentPanel() {
   return (
-    <div className="w-full lg:w-auto">
+    <div className="w-full max-w-full lg:w-auto lg:max-w-[400px]">
       {/* Investment Card */}
       <div
-        className="flex flex-col items-start bg-white dark:bg-white border border-[#EAEAEA] dark:border-[#404040] rounded"
+        className="flex flex-col items-start bg-white dark:bg-white border border-[#EAEAEA] dark:border-[#404040] rounded w-full max-w-full lg:w-[400px]"
         style={{
-          width: '400px',
           height: 'auto',
           minHeight: '369px',
           padding: '16px',
@@ -22,7 +21,6 @@ export function InvestmentPanel() {
         <div
           className="flex flex-col items-start w-full"
           style={{
-            width: '368px',
             gap: '24px',
           }}
         >
@@ -108,17 +106,16 @@ export function InvestmentPanel() {
           <div
             className="flex flex-row justify-between items-center w-full"
             style={{
-              gap: '111px',
-              width: '368px',
-              height: '53px',
+              gap: '16px',
+              minHeight: '53px',
             }}
           >
             {/* Invest Header */}
             <div
-              className="flex flex-col items-start"
+              className="flex flex-col items-start flex-shrink-0"
               style={{
                 gap: '8px',
-                width: '107px',
+                minWidth: '107px',
               }}
             >
               <span
@@ -149,7 +146,7 @@ export function InvestmentPanel() {
             </div>
 
             {/* Input Field */}
-            <div className="relative" style={{ width: '176px', height: '44px' }}>
+            <div className="relative flex-1 lg:max-w-[176px]" style={{ height: '44px' }}>
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 <span
                   className="text-[#858585]"
@@ -184,14 +181,13 @@ export function InvestmentPanel() {
             className="flex flex-col w-full"
             style={{
               gap: '8px',
-              width: '368px',
               marginBottom: '24px',
             }}
           >
             <ActionButton
               text="Start trading"
               variant="primary"
-              width="368px"
+              width="100%"
               height="48px"
             />
             <ActionButton
@@ -199,7 +195,7 @@ export function InvestmentPanel() {
               variant="outline"
               icon={Bookmark}
               iconPosition="left"
-              width="368px"
+              width="100%"
               height="48px"
             />
           </div>

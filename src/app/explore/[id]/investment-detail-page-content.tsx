@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { Navbar } from '@/app/landing/components/navbar'
 import { Footer } from '@/app/landing/components/footer'
 import { InvestmentCardData } from '@/components/investment/organisms/investment-card'
@@ -29,29 +29,88 @@ interface InvestmentDetailPageContentProps {
   investment: InvestmentCardData
 }
 
+/**
+ * Check if an element or its parents are scrollable.
+ * Recursively traverses the DOM tree and performs DOM queries (getComputedStyle, scrollHeight, clientHeight)
+ * on each element. This is a pure utility function moved outside the component to avoid function
+ * recreation on every render, but it is not memoized - it performs fresh DOM queries on every call.
+ */
+function isScrollableElement(element: Element | null): boolean {
+  if (!element || element === document.body || element === document.documentElement) {
+    return false
+  }
+  
+  const style = window.getComputedStyle(element)
+  const overflowY = style.overflowY
+  const hasScrollableContent = element.scrollHeight > element.clientHeight
+  
+  return (
+    (overflowY === 'scroll' || overflowY === 'auto') &&
+    hasScrollableContent
+  ) || isScrollableElement(element.parentElement)
+}
+
+/**
+ * Detect if the current device is iOS.
+ * This is a static device property that won't change during the session,
+ * so it's computed once at module load time.
+ */
+const IS_IOS = typeof window !== 'undefined' && (
+  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+)
+
 export function InvestmentDetailPageContent({ investment }: InvestmentDetailPageContentProps) {
   // Investment data is available but not currently used - will be used for dynamic content later
   void investment
   const [activeTab, setActiveTab] = useState('overview')
+  const [stickyButtonHeight, setStickyButtonHeight] = useState(0)
+  const stickyButtonRef = useRef<HTMLDivElement>(null)
   
-  // Prevent iOS overscroll bounce
+  // Prevent iOS overscroll bounce (CSS overscroll-behavior doesn't work reliably on iOS Safari)
+  // Only apply JavaScript fallback on iOS devices to avoid performance impact on other platforms
   const lastTouchYRef = useRef(0)
   
   useEffect(() => {
+    // Skip JavaScript handler on non-iOS devices - rely on CSS overscroll-behavior
+    if (!IS_IOS) {
+      return
+    }
+    
     const preventOverscroll = (e: TouchEvent) => {
       const touch = e.touches[0] || e.changedTouches[0]
       if (!touch) return
+      
+      // Early exit: Don't prevent scroll if user is interacting with a scrollable child element
+      const target = e.target as Element
+      if (target && isScrollableElement(target)) {
+        return
+      }
       
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       const scrollHeight = document.documentElement.scrollHeight
       const clientHeight = document.documentElement.clientHeight
       
-      // At top and trying to scroll up
-      if (scrollTop === 0 && touch.clientY > lastTouchYRef.current) {
+      // Early exit if not at boundaries (most common case)
+      const threshold = 5
+      const isAtTop = scrollTop <= threshold
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold
+      
+      if (!isAtTop && !isAtBottom) {
+        // Not at boundary, allow normal scroll - update lastTouchY and return
+        lastTouchYRef.current = touch.clientY
+        return
+      }
+      
+      // Only calculate delta if we're at a boundary
+      const touchDeltaY = touch.clientY - lastTouchYRef.current
+      
+      // At top and trying to scroll up - prevent overscroll
+      if (isAtTop && touchDeltaY > 0) {
         e.preventDefault()
       }
-      // At bottom and trying to scroll down
-      if (scrollTop + clientHeight >= scrollHeight - 1 && touch.clientY < lastTouchYRef.current) {
+      // At bottom and trying to scroll down - prevent overscroll
+      else if (isAtBottom && touchDeltaY < 0) {
         e.preventDefault()
       }
       
@@ -64,7 +123,9 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
       }
     }
     
+    // Use passive listeners where possible to improve scroll performance
     document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    // touchmove must be non-passive to allow preventDefault, but we minimize its impact
     document.addEventListener('touchmove', preventOverscroll, { passive: false })
     
     return () => {
@@ -72,6 +133,55 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
       document.removeEventListener('touchmove', preventOverscroll)
     }
   }, [])
+  
+  // Dynamically calculate sticky button height for mobile padding
+  // Use useLayoutEffect to ensure refs are available synchronously after DOM mutations
+  useLayoutEffect(() => {
+    // Capture ref value at effect execution time for cleanup
+    const buttonElement = stickyButtonRef.current
+    
+    const updateStickyButtonHeight = () => {
+      const currentElement = stickyButtonRef.current
+      if (currentElement) {
+        const height = currentElement.offsetHeight
+        setStickyButtonHeight(height)
+      } else {
+        // Reset height when button is not visible (e.g., on questions tab)
+        setStickyButtonHeight(0)
+      }
+    }
+
+    // Initial measurement - refs are guaranteed to be available in useLayoutEffect
+    updateStickyButtonHeight()
+
+    // Update on window resize
+    window.addEventListener('resize', updateStickyButtonHeight)
+    
+    // Use ResizeObserver for more accurate measurements when element is available
+    let resizeObserver: ResizeObserver | null = null
+    let observedElement: Element | null = null
+    
+    if (typeof ResizeObserver !== 'undefined' && buttonElement) {
+      // Ref is available synchronously in useLayoutEffect, so we can set up observer immediately
+      observedElement = buttonElement
+      resizeObserver = new ResizeObserver(updateStickyButtonHeight)
+      resizeObserver.observe(buttonElement)
+    }
+
+    // Cleanup function
+    return () => {
+      // Remove event listeners
+      window.removeEventListener('resize', updateStickyButtonHeight)
+      
+      // Clean up ResizeObserver if it was created
+      // Use observedElement (captured when observer was created) or buttonElement (captured at effect start)
+      const elementToUnobserve = observedElement || buttonElement
+      if (resizeObserver && elementToUnobserve) {
+        resizeObserver.unobserve(elementToUnobserve)
+        resizeObserver.disconnect()
+      }
+    }
+  }, [activeTab]) // Re-measure when tab changes (button visibility changes)
   
   // Hardcoded data for now - will refactor later
   const daysLeft = 14
@@ -84,7 +194,12 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
       <Navbar />
 
       {/* Main Content */}
-      <main className="w-full pb-20 lg:pb-0">
+      <main 
+        className="w-full lg:pb-0"
+        style={{
+          paddingBottom: stickyButtonHeight > 0 ? `${stickyButtonHeight}px` : '0px',
+        }}
+      >
         <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-8 lg:py-16">
           {/* First Section - Days Left Badge and Problem Section */}
           <section className="relative w-full">
@@ -200,20 +315,17 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
               </div>
 
               {/* Right Column */}
-              <div className="flex flex-col items-start w-full lg:w-auto lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
+              <div className="flex flex-col items-start w-full max-w-full lg:w-auto lg:max-w-[400px] lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
                 {/* Investment Panel */}
                 <InvestmentPanel />
                 
                 {/* Divider Line */}
                 <div
-                  className="w-full border-t border-[#EAEAEA] mt-8"
-                  style={{
-                    width: '400px',
-                  }}
+                  className="w-full lg:w-[400px] border-t border-[#EAEAEA] dark:border-[#404040] mt-8"
                 />
 
                 {/* Deal Terms Section */}
-                <div className="mt-8">
+                <div className="mt-8 w-full">
                   <DealTermsSection />
                 </div>
               </div>
@@ -227,7 +339,10 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
 
       {/* Mobile Sticky Start Trading Button - only visible on mobile and not on questions tab */}
       {activeTab !== 'questions' && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-[#EAEAEA] p-4 shadow-lg">
+        <div 
+          ref={stickyButtonRef}
+          className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-[#EAEAEA] p-4 shadow-lg"
+        >
           <ActionButton
             text="Start trading"
             variant="primary"
