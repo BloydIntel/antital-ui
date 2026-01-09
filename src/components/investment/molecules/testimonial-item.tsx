@@ -96,13 +96,12 @@ export function TestimonialItem({
             aria-label={liked ? 'Unlike' : 'Like'}
           >
             <ThumbsUp
-              className={liked ? 'text-[#6259C0]' : 'text-[#6259C0]'}
+              className="text-[#6259C0]"
               fill={liked ? '#6259C0' : 'none'}
               strokeWidth={liked ? 0 : 1.5}
               style={{
                 width: '24px',
                 height: '24px',
-                color: '#6259C0',
               }}
             />
             <span

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Navbar } from '@/app/landing/components/navbar'
 import { Footer } from '@/app/landing/components/footer'
 import { InvestmentCardData } from '@/components/investment/organisms/investment-card'
@@ -33,34 +33,40 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
   const [activeTab, setActiveTab] = useState('overview')
   
   // Prevent iOS overscroll bounce
+  const lastTouchYRef = useRef(0)
+  
   useEffect(() => {
-    let lastTouchY = 0
-    
     const preventOverscroll = (e: TouchEvent) => {
       const touch = e.touches[0] || e.changedTouches[0]
+      if (!touch) return
+      
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       const scrollHeight = document.documentElement.scrollHeight
       const clientHeight = document.documentElement.clientHeight
       
       // At top and trying to scroll up
-      if (scrollTop === 0 && touch.clientY > lastTouchY) {
+      if (scrollTop === 0 && touch.clientY > lastTouchYRef.current) {
         e.preventDefault()
       }
       // At bottom and trying to scroll down
-      if (scrollTop + clientHeight >= scrollHeight - 1 && touch.clientY < lastTouchY) {
+      if (scrollTop + clientHeight >= scrollHeight - 1 && touch.clientY < lastTouchYRef.current) {
         e.preventDefault()
       }
       
-      lastTouchY = touch.clientY
+      lastTouchYRef.current = touch.clientY
     }
 
-    document.addEventListener('touchstart', (e) => {
-      lastTouchY = e.touches[0].clientY
-    }, { passive: true })
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches[0]) {
+        lastTouchYRef.current = e.touches[0].clientY
+      }
+    }
     
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
     document.addEventListener('touchmove', preventOverscroll, { passive: false })
     
     return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
       document.removeEventListener('touchmove', preventOverscroll)
     }
   }, [])
@@ -192,7 +198,7 @@ export function InvestmentDetailPageContent({ investment: _investment }: Investm
               </div>
 
               {/* Right Column */}
-              <div className="flex flex-col items-start w-full lg:w-auto lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start" style={{ alignSelf: 'flex-start' }}>
+              <div className="flex flex-col items-start w-full lg:w-auto lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
                 {/* Investment Panel */}
                 <InvestmentPanel />
                 

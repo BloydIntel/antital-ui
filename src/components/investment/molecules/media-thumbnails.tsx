@@ -81,7 +81,7 @@ export function MediaThumbnails({
           aria-label={liked ? 'Unlike' : 'Like'}
         >
           <ThumbsUp
-            className={liked ? 'text-[#4A90E2]' : 'text-[#4A90E2]'}
+            className="text-[#4A90E2]"
             fill={liked ? '#4A90E2' : 'none'}
             style={{
               width: '24px',

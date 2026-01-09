@@ -16,12 +16,10 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
 
   return (
     <div
-      className="flex flex-col items-start w-full transition-all duration-300 ease-in-out"
-      className="border-b border-[#EAEAEA] dark:border-[#404040]"
+      className={`flex flex-col items-start w-full transition-all duration-300 ease-in-out ${isLast ? '' : 'border-b border-[#EAEAEA] dark:border-[#404040]'}`}
       style={{
         padding: '16px 0px',
         gap: '16px',
-        borderBottom: isLast ? 'none' : undefined,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
