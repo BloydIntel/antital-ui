@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { Navbar } from '@/app/landing/components/navbar'
 import { Footer } from '@/app/landing/components/footer'
 import { InvestmentCardData } from '@/components/investment/organisms/investment-card'
@@ -50,6 +50,16 @@ function isScrollableElement(element: Element | null): boolean {
   ) || isScrollableElement(element.parentElement)
 }
 
+/**
+ * Detect if the current device is iOS.
+ * This is a static device property that won't change during the session,
+ * so it's computed once at module load time.
+ */
+const IS_IOS = typeof window !== 'undefined' && (
+  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+)
+
 export function InvestmentDetailPageContent({ investment }: InvestmentDetailPageContentProps) {
   // Investment data is available but not currently used - will be used for dynamic content later
   void investment
@@ -60,17 +70,10 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
   // Prevent iOS overscroll bounce (CSS overscroll-behavior doesn't work reliably on iOS Safari)
   // Only apply JavaScript fallback on iOS devices to avoid performance impact on other platforms
   const lastTouchYRef = useRef(0)
-  const isIOSRef = useRef<boolean | null>(null)
   
   useEffect(() => {
-    // Detect iOS device (only once)
-    if (isIOSRef.current === null) {
-      isIOSRef.current = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    }
-    
     // Skip JavaScript handler on non-iOS devices - rely on CSS overscroll-behavior
-    if (!isIOSRef.current) {
+    if (!IS_IOS) {
       return
     }
     
@@ -132,7 +135,8 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
   }, [])
   
   // Dynamically calculate sticky button height for mobile padding
-  useEffect(() => {
+  // Use useLayoutEffect to ensure refs are available synchronously after DOM mutations
+  useLayoutEffect(() => {
     // Capture ref value at effect execution time for cleanup
     const buttonElement = stickyButtonRef.current
     
@@ -147,39 +151,25 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
       }
     }
 
-    // Use a small delay to ensure the ref is attached after render
-    const timeoutId = setTimeout(() => {
-      updateStickyButtonHeight()
-    }, 0)
+    // Initial measurement - refs are guaranteed to be available in useLayoutEffect
+    updateStickyButtonHeight()
 
     // Update on window resize
     window.addEventListener('resize', updateStickyButtonHeight)
     
     // Use ResizeObserver for more accurate measurements when element is available
     let resizeObserver: ResizeObserver | null = null
-    let observerTimeoutId: NodeJS.Timeout | null = null
     let observedElement: Element | null = null
     
-    if (typeof ResizeObserver !== 'undefined') {
-      // Check again after a brief delay to ensure ref is attached
-      observerTimeoutId = setTimeout(() => {
-        const currentElement = stickyButtonRef.current
-        if (currentElement) {
-          observedElement = currentElement
-          resizeObserver = new ResizeObserver(updateStickyButtonHeight)
-          resizeObserver.observe(currentElement)
-        }
-      }, 10)
+    if (typeof ResizeObserver !== 'undefined' && buttonElement) {
+      // Ref is available synchronously in useLayoutEffect, so we can set up observer immediately
+      observedElement = buttonElement
+      resizeObserver = new ResizeObserver(updateStickyButtonHeight)
+      resizeObserver.observe(buttonElement)
     }
 
-    // Single cleanup function that handles both cases
+    // Cleanup function
     return () => {
-      // Clear all timeouts to prevent callbacks from firing after unmount
-      clearTimeout(timeoutId)
-      if (observerTimeoutId) {
-        clearTimeout(observerTimeoutId)
-      }
-      
       // Remove event listeners
       window.removeEventListener('resize', updateStickyButtonHeight)
       
