@@ -13,7 +13,7 @@ interface FeatureCardProps {
 export function FeatureCard({ title, description, image, bgColor }: FeatureCardProps) {
   return (
     <div
-      className="flex flex-col items-start bg-white rounded"
+      className="flex flex-col items-start bg-white dark:bg-[#1A1A1A] rounded"
       style={{
         padding: '24px 16px 16px',
         gap: '16px',
@@ -39,7 +39,7 @@ export function FeatureCard({ title, description, image, bgColor }: FeatureCardP
 
         {/* Card Description - 16px, DM Sans 400, #505050 from Figma */}
         <p
-          className="text-[#505050] w-full"
+          className="text-[#505050] dark:text-muted-foreground w-full"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,

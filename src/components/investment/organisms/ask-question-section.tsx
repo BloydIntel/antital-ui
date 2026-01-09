@@ -63,15 +63,13 @@ export function AskQuestionSection() {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Submit your question"
-          className="w-full min-h-[200px] resize-none"
+          className="w-full min-h-[200px] resize-none bg-white dark:bg-white border border-[#EAEAEA] dark:border-[#404040] text-[#2C2C2C] dark:text-[#2C2C2C] placeholder:text-[#858585] dark:placeholder:text-[#858585]"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 400,
             fontSize: '16px',
             lineHeight: '21px',
             letterSpacing: '0.01em',
-            color: '#2C2C2C',
-            border: '1px solid #EAEAEA',
             borderRadius: '4px',
             padding: '16px',
           }}
@@ -80,7 +78,7 @@ export function AskQuestionSection() {
         {/* Submit Button */}
         <Button
           type="submit"
-          className="bg-white border border-[#A8A8A8] text-foreground hover:bg-[#A7B832] hover:text-[#11110F] hover:border-[#A7B832] rounded transition-colors"
+          className="bg-white dark:bg-white border border-[#A8A8A8] dark:border-[#404040] text-[#2C2C2C] dark:text-[#2C2C2C] hover:bg-[#A7B832] hover:text-[#11110F] hover:border-[#A7B832] dark:hover:bg-[#A7B832] dark:hover:text-[#11110F] dark:hover:border-[#A7B832] rounded transition-colors"
           style={{
             fontFamily: 'var(--font-dm-sans)',
             fontWeight: 500,

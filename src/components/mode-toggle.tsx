@@ -13,6 +13,7 @@ interface ModeToggleProps {
 }
 
 export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
+  const isDevelopment = process.env.NODE_ENV === 'development'
   const { theme } = useTheme()
   const { toggleTheme } = useCircularTransition()
 
@@ -47,6 +48,11 @@ export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
 
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     toggleTheme(event)
+  }
+
+  // Hide in production - return null after all hooks are called
+  if (!isDevelopment) {
+    return null
   }
 
   return (

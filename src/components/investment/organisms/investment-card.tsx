@@ -54,7 +54,7 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
       {/* Project Image Wrapper */}
       <div className="flex flex-col items-center gap-6 flex-1">
         {/* Project Image Container with Risk Badge */}
-        <div className="relative w-full h-[200px] rounded-lg overflow-hidden">
+        <Link href={`/explore/${id}`} className="relative w-full h-[200px] rounded-lg overflow-hidden cursor-pointer">
           <Image
             src={image}
             alt={name}
@@ -76,7 +76,7 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
               unoptimized
             />
           </div>
-        </div>
+        </Link>
 
         {/* Project Info Container */}
         <div className="flex flex-col items-start gap-6 w-full">
