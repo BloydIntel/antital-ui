@@ -4,11 +4,10 @@ import { ActionButton } from '@/components/investment/molecules/action-button'
 
 export function DealTermsSection() {
   return (
-    <div className="w-full lg:w-auto">
+    <div className="w-full max-w-full lg:w-auto lg:max-w-[400px]">
       <div
-        className="flex flex-col items-start bg-white dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-[#404040] rounded overflow-hidden"
+        className="flex flex-col items-start bg-white dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-[#404040] rounded overflow-hidden w-full max-w-full lg:w-[400px]"
         style={{
-          width: '400px',
           height: 'auto',
           padding: '16px',
           gap: '32px',
@@ -86,7 +85,7 @@ export function DealTermsSection() {
         <ActionButton
           text="Start trading"
           variant="primary"
-          width="368px"
+          width="100%"
           height="48px"
         />
       </div>

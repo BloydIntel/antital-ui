@@ -16,33 +16,23 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
 
   return (
     <div
-      className={`flex flex-col items-start w-full transition-all duration-300 ease-in-out ${isLast ? '' : 'border-b border-[#EAEAEA] dark:border-[#404040]'}`}
-      style={{
-        padding: '16px 0px',
-        gap: '16px',
-      }}
+      className={`flex flex-col items-start w-full py-4 gap-4 transition-all duration-300 ease-in-out ${isLast ? '' : 'border-b border-[#EAEAEA] dark:border-[#404040]'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div
-        className="flex flex-row justify-between items-center w-full"
-        style={{
-          gap: '16px',
-        }}
-      >
+      <div className="flex flex-row justify-between items-center w-full gap-4">
         {/* Label and Value */}
         <div
-          className="flex flex-col items-start flex-1 transition-all duration-300 ease-in-out"
+          className="flex flex-col items-start flex-1 gap-2 transition-all duration-300 ease-in-out"
           style={{
-            gap: '8px',
             minHeight: isHovered && description ? 'auto' : '49px',
+            fontFamily: 'var(--font-dm-sans)',
           }}
         >
           {/* Label */}
           <span
             className="transition-colors duration-300 ease-in-out text-[#858585] dark:text-gray-400"
             style={{
-              fontFamily: 'var(--font-dm-sans)',
               fontWeight: 400,
               fontSize: '14px',
               lineHeight: '17px',
@@ -56,7 +46,6 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
           <span
             className="transition-all duration-300 ease-in-out text-[#2C2C2C] dark:text-white"
             style={{
-              fontFamily: 'var(--font-dm-sans)',
               fontWeight: isHovered ? 600 : 400,
               fontSize: '20px',
               lineHeight: '24px',
@@ -71,7 +60,6 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
             <span
               className="transition-all duration-300 ease-in-out overflow-hidden text-[#858585] dark:text-gray-400"
               style={{
-                fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '17px',
@@ -89,12 +77,9 @@ export function DealTermItem({ label, value, description, showInfo = false, isLa
         {/* Info Icon */}
         {showInfo && (
           <Info
-            className="flex-shrink-0 self-start transition-opacity duration-300 ease-in-out text-[#858585] dark:text-gray-400"
+            className="flex-shrink-0 self-start w-6 h-6 mt-2 transition-opacity duration-300 ease-in-out text-[#858585] dark:text-gray-400"
             style={{
-              width: '24px',
-              height: '24px',
               opacity: isHovered ? 1 : 0.87,
-              marginTop: '8px',
             }}
           />
         )}
