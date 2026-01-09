@@ -120,7 +120,12 @@
     @apply border-border outline-ring/50;
   }
   html {
-    background-color: #11110F; /* Match footer dark background to prevent white overscroll */
+    background-color: var(--background);
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    width: 100%;
   }
   body {
     @apply bg-background text-foreground;
@@ -130,6 +135,11 @@
     letter-spacing: -0.01em; /* Letter spacing from Figma */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-rethink-sans), sans-serif;

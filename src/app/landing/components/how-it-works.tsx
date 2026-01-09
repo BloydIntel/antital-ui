@@ -66,11 +66,10 @@ export function HowItWorks() {
         
         {/* Content Container - padding: 32px, gap: 56px, bg: #F4F5F7 from Figma */}
         <div 
-          className="flex flex-col items-center w-full max-w-[1232px] rounded"
+          className="flex flex-col items-center w-full max-w-[1232px] rounded bg-[#F4F5F7] dark:bg-[#1A1A1A]"
           style={{
             padding: '32px',
             gap: '56px',
-            backgroundColor: '#F4F5F7',
           }}
         >
           {/* Section Header */}

@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${rethinkSans.variable} antialiased overflow-x-hidden`}>
-      <body className={`${dmSans.className} overflow-x-hidden`} suppressHydrationWarning>
+      <body className={dmSans.className} suppressHydrationWarning>
         <FaviconHandler />
         <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
           <SidebarConfigProvider>
