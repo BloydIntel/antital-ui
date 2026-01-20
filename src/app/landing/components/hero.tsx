@@ -49,7 +49,7 @@ export function Hero() {
 
             {/* Hero Button - width: 287px, height: 64px, background: #7A6FF0 from Figma */}
             <Button
-              className="bg-[#7A6FF0] hover:bg-[#7A6FF0]/90 text-white rounded-lg h-16 px-4 gap-2 transition-all w-full md:w-71.75"
+              className="bg-[#7A6FF0] hover:bg-[#7A6FF0]/90 text-white rounded-lg h-16 px-4 gap-2 transition-all w-full md:w-[287px]"
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
                 fontWeight: 500,
