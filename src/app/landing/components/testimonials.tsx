@@ -34,25 +34,23 @@ export function Testimonials() {
     if (!scrollContainer) return;
 
     let animationFrameId: number;
-    let scrollPosition = 0;
     const scrollSpeed = 0.5; // Pixels per frame
 
     const animate = () => {
-      // Only animate if not paused
-      if (!isPausedRef.current) {
-        scrollPosition += scrollSpeed;
-        
+      if (!isPausedRef.current && !isDraggingRef.current) {
         // Calculate the width of one set of testimonials
         const cardWidth = 625; // Width of each card
         const gap = 32; // Gap between cards
         const singleSetWidth = testimonialsData.length * (cardWidth + gap);
-        
-        // Reset scroll position when we've scrolled through one complete set
-        if (scrollPosition >= singleSetWidth) {
-          scrollPosition = 0;
+
+        const currentScroll = scrollContainer.scrollLeft;
+        let nextScroll = currentScroll + scrollSpeed;
+
+        if (nextScroll >= singleSetWidth) {
+          nextScroll = 0;
         }
-        
-        scrollContainer.scrollLeft = scrollPosition;
+
+        scrollContainer.scrollLeft = nextScroll;
       }
       
       animationFrameId = requestAnimationFrame(animate);
@@ -89,6 +87,8 @@ export function Testimonials() {
     };
   }, []);
 
+
+
   // ---- Mouse drag (desktop) ----
   const handleMouseEnter = () => {
     isPausedRef.current = true;
@@ -106,6 +106,13 @@ export function Testimonials() {
     scrollLeftRef.current = scrollRef.current.scrollLeft;
   };
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !scrollRef.current) return;
+
+    const walk = e.pageX - startXRef.current;
+    scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
   // ---- Touch drag (mobile) ----
   const handleTouchStart = (e: React.TouchEvent) => {
     isPausedRef.current = true;
@@ -116,6 +123,8 @@ export function Testimonials() {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDraggingRef.current || !scrollRef.current) return;
+
+    e.preventDefault();
 
     const walk = e.touches[0].pageX - startXRef.current;
     scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
@@ -132,12 +141,10 @@ export function Testimonials() {
     const step = 80;
 
     if (e.key === 'ArrowRight') {
-      isPausedRef.current = true;
       scrollRef.current.scrollLeft += step;
     }
 
     if (e.key === 'ArrowLeft') {
-      isPausedRef.current = true;
       scrollRef.current.scrollLeft -= step;
     }
   };
@@ -168,7 +175,7 @@ export function Testimonials() {
       {/* Scrolling Container - Full width, starts from left edge with padding */}
       <div
         ref={scrollRef}
-        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab active:cursor-grabbing"
+        className={`overflow-x-scroll overflow-y-visible relative w-full cursor-grab ${isDraggingRef.current ? 'cursor-grabbing' : 'cursor-grab'}`}
         style={{
           scrollBehavior: 'auto',
           scrollbarWidth: 'none',
@@ -180,6 +187,7 @@ export function Testimonials() {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
