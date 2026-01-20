@@ -24,8 +24,9 @@ const testimonialsData = [
 
 export function Testimonials() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isDraggingRef = useRef(false);
+  const animationRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
 
@@ -33,7 +34,6 @@ export function Testimonials() {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
-    let animationFrameId: number;
     const scrollSpeed = 0.5; // Pixels per frame
 
     const animate = () => {
@@ -52,15 +52,15 @@ export function Testimonials() {
 
         scrollContainer.scrollLeft = nextScroll;
       }
-      
-      animationFrameId = requestAnimationFrame(animate);
+
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animationFrameId = requestAnimationFrame(animate);
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
     };
   }, []);
@@ -87,8 +87,6 @@ export function Testimonials() {
     };
   }, []);
 
-
-
   // ---- Mouse drag (desktop) ----
   const handleMouseEnter = () => {
     isPausedRef.current = true;
@@ -111,6 +109,10 @@ export function Testimonials() {
 
     const walk = e.pageX - startXRef.current;
     scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
   };
 
   // ---- Touch drag (mobile) ----
@@ -175,7 +177,7 @@ export function Testimonials() {
       {/* Scrolling Container - Full width, starts from left edge with padding */}
       <div
         ref={scrollRef}
-        className={`overflow-x-scroll overflow-y-visible relative w-full cursor-grab ${isDraggingRef.current ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab active:cursor-grabbing"
         style={{
           scrollBehavior: 'auto',
           scrollbarWidth: 'none',
@@ -188,10 +190,12 @@ export function Testimonials() {
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+
         {/* Hide scrollbar for webkit browsers */}
         <style jsx>{`
           div::-webkit-scrollbar {
