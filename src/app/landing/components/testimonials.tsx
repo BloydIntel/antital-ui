@@ -24,40 +24,95 @@ const testimonialsData = [
 
 export function Testimonials() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const isPausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
-    let animationFrameId: number;
     let scrollPosition = 0;
     const scrollSpeed = 0.5; // Pixels per frame
 
     const animate = () => {
-      scrollPosition += scrollSpeed;
-      
-      // Calculate the width of one set of testimonials
-      const cardWidth = 625; // Width of each card
-      const gap = 32; // Gap between cards
-      const singleSetWidth = testimonialsData.length * (cardWidth + gap);
-      
-      // Reset scroll position when we've scrolled through one complete set
-      if (scrollPosition >= singleSetWidth) {
-        scrollPosition = 0;
+      if (!isPausedRef.current && !isDraggingRef.current) {
+        scrollPosition += scrollSpeed;
+
+        // Calculate the width of one set of testimonials
+        const cardWidth = 625; // Width of each card
+        const gap = 32; // Gap between cards
+        const singleSetWidth = testimonialsData.length * (cardWidth + gap);
+
+        // Reset scroll position when we've scrolled through one complete set
+        if (scrollPosition >= singleSetWidth) {
+          scrollPosition = 0;
+        }
+
+        scrollContainer.scrollLeft = scrollPosition;
       }
-      
-      scrollContainer.scrollLeft = scrollPosition;
-      animationFrameId = requestAnimationFrame(animate);
+
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animationFrameId = requestAnimationFrame(animate);
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
     };
   }, []);
+
+
+  // ---- Mouse drag (desktop) ----
+  const handleMouseEnter = () => {
+    isPausedRef.current = true;
+  };
+
+  const handleMouseLeave = () => {
+    isPausedRef.current = false;
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX;
+    scrollLeftRef.current = scrollRef.current!.scrollLeft;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current) return;
+
+    const walk = e.pageX - startXRef.current;
+    scrollRef.current!.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+  };
+
+  // ---- Touch drag (mobile) ----
+  const handleTouchStart = (e: React.TouchEvent) => {
+    isPausedRef.current = true;
+    isDraggingRef.current = true;
+    startXRef.current = e.touches[0].pageX;
+    scrollLeftRef.current = scrollRef.current!.scrollLeft;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current) return;
+
+    const walk = e.touches[0].pageX - startXRef.current;
+    scrollRef.current!.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleTouchEnd = () => {
+    isPausedRef.current = false;
+    isDraggingRef.current = false;
+  };
+
 
   // Duplicate testimonials for seamless infinite scroll
   const duplicatedTestimonials = [...testimonialsData, ...testimonialsData, ...testimonialsData];
@@ -85,14 +140,23 @@ export function Testimonials() {
       {/* Scrolling Container - Full width, starts from left edge with padding */}
       <div
         ref={scrollRef}
-        className="overflow-x-scroll overflow-y-visible relative w-full"
+        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab active:cursor-grabbing"
         style={{
           scrollBehavior: 'auto',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
         }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
+
         {/* Hide scrollbar for webkit browsers */}
         <style jsx>{`
           div::-webkit-scrollbar {
