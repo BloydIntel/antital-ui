@@ -29,7 +29,7 @@ export function ArticleCard({
         'flex flex-col justify-between items-start w-[296px] h-[448px] rounded transition-all duration-300 hover:scale-105',
         className
       )}
-      style={{ 
+      style={{
         backgroundColor: bgColor,
         padding: '24px 16px',
         gap: '32px',

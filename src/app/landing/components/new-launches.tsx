@@ -56,10 +56,10 @@ export function NewLaunches() {
   return (
     <section className="w-full bg-background py-[62px]"> {/* padding: 62px 0px, gap: 92px */}
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] flex flex-col items-center gap-[92px]">
-        
+
         {/* Section Header */}
         <div className="flex flex-col items-start gap-14 w-full max-w-[1232px]"> {/* Section Header Container, gap: 56px */}
-          
+
           {/* Section Description */}
           <div className="flex flex-col items-start gap-2 max-w-[821px]"> {/* gap: 8px */}
             <h2
@@ -76,11 +76,11 @@ export function NewLaunches() {
 
           {/* Projects Container */}
           <div className="flex flex-col items-center gap-12 w-full"> {/* gap: 48px */}
-            
+
             {/* Projects List - Horizontal scroll on mobile, grid on larger screens */}
-            <div className="flex flex-row overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 w-full pb-4 md:pb-0">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 place-items-center">
               {newLaunches.map((project) => (
-                <div key={project.id} className="flex-shrink-0 md:flex-shrink">
+                <div key={project.id}>
                   <InvestmentCard data={project} />
                 </div>
               ))}

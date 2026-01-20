@@ -10,7 +10,7 @@ export function SecondaryMarket() {
     <section className="w-full min-h-[600px] lg:h-[800px] bg-[#042E27] relative overflow-hidden">
       {/* Main Container */}
       <div className="w-full max-w-[1440px] mx-auto h-full relative px-4 md:px-6 lg:px-12 xl:px-[104px] py-16 lg:py-0">
-        
+
         {/* Left Side - Image on green background (includes yellow card with text) */}
         <div className="absolute left-0 lg:left-4 xl:left-8 top-[105px] w-[646px] h-[700px] hidden lg:block">
           <Image

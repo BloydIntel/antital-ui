@@ -58,7 +58,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative w-full min-h-[629px] flex flex-col items-center justify-center py-[124px] px-4 overflow-hidden">
+    <section className="relative w-full min-h-[629px] flex flex-col items-center justify-center py-[124px] px-4">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image

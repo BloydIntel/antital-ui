@@ -20,7 +20,11 @@ export function ContentBlock({ label, heading, description, className }: Content
 
       {/* Heading */}
       <h2
-        className="font-rethink-sans font-medium text-[64px] leading-[66px] tracking-[-0.01em] text-[#F4F5F7]"
+        className="font-rethink-sans font-medium leading-[66px] tracking-[-0.01em] text-[#F4F5F7]"
+        style={{
+          fontSize: 'clamp(48px, 6vw, 80px)', // Responsive, max 80px
+          lineHeight: '1.025', // 82/80 = 102%
+        }}
       >
         {heading}
       </h2>
