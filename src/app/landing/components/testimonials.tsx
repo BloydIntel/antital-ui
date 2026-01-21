@@ -58,8 +58,6 @@ export function Testimonials() {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-
-
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
@@ -91,8 +89,6 @@ export function Testimonials() {
       document.removeEventListener('mousemove', handleMouseMoveGlobal);
     };
   }, []);
-
-
 
   // ---- Mouse drag (desktop) ----
   const handleMouseEnter = () => {
@@ -129,8 +125,6 @@ export function Testimonials() {
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDraggingRef.current || !scrollRef.current) return;
 
-    e.preventDefault();
-
     const walk = e.touches[0].pageX - startXRef.current;
     scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
@@ -146,15 +140,15 @@ export function Testimonials() {
     const step = 80;
 
     if (e.key === 'ArrowRight') {
+      isPausedRef.current = true;
       scrollRef.current.scrollLeft += step;
     }
 
     if (e.key === 'ArrowLeft') {
+      isPausedRef.current = true;
       scrollRef.current.scrollLeft -= step;
     }
   };
-
-
 
   // Duplicate testimonials for seamless infinite scroll
   const duplicatedTestimonials = [...testimonialsData, ...testimonialsData, ...testimonialsData];
@@ -182,7 +176,7 @@ export function Testimonials() {
       {/* Scrolling Container - Full width, starts from left edge with padding */}
       <div
         ref={scrollRef}
-        className={`overflow-x-scroll overflow-y-visible relative w-full cursor-grab ${isDraggingRef.current ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab"
         style={{
           scrollBehavior: 'auto',
           scrollbarWidth: 'none',

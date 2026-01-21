@@ -77,7 +77,7 @@ export function NewLaunches() {
           {/* Projects Container */}
           <div className="flex flex-col items-center gap-12 w-full"> {/* gap: 48px */}
 
-            {/* Projects List - Horizontal scroll on mobile, grid on larger screens */}
+            {/* Projects List - Responsive grid: 1 column on mobile, 2 on md, 3 on lg */}
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 place-items-center">
               {newLaunches.map((project) => (
                 <div key={project.id}>
