@@ -107,13 +107,6 @@ export function Testimonials() {
     scrollLeftRef.current = scrollRef.current.scrollLeft;
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingRef.current || !scrollRef.current) return;
-
-    const walk = e.pageX - startXRef.current;
-    scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
-  };
-
   // ---- Touch drag (mobile) ----
   const handleTouchStart = (e: React.TouchEvent) => {
     isPausedRef.current = true;
@@ -176,7 +169,7 @@ export function Testimonials() {
       {/* Scrolling Container - Full width, starts from left edge with padding */}
       <div
         ref={scrollRef}
-        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab"
+        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab active:cursor-grabbing"
         style={{
           scrollBehavior: 'auto',
           scrollbarWidth: 'none',
@@ -188,7 +181,6 @@ export function Testimonials() {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
