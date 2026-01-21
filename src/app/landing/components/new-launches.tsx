@@ -2,6 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRef } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { InvestmentCard } from '@/components/investment/organisms/investment-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -53,6 +55,17 @@ const newLaunches = [
 ];
 
 export function NewLaunches() {
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -380, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({ left: 380, behavior: "smooth" });
+  };
+
   return (
     <section className="w-full bg-background py-[62px]"> {/* padding: 62px 0px, gap: 92px */}
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] flex flex-col items-center gap-[92px]">
@@ -78,12 +91,36 @@ export function NewLaunches() {
           <div className="flex flex-col items-center gap-12 w-full"> {/* gap: 48px */}
 
             {/* Projects List - Horizontal scroll on mobile, grid on larger screens */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 place-items-center">
+            <div
+              ref={scrollRef}
+              className="w-full flex gap-5 overflow-x-auto snap-x snap-mandatory
+                        md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible scrollbar-hide"
+            >
               {newLaunches.map((project) => (
-                <div key={project.id}>
+                <div
+                  key={project.id}
+                  className="flex-shrink-0 md:flex-shrink"
+                >
                   <InvestmentCard data={project} />
                 </div>
               ))}
+            </div>
+
+            {/* Mobile Navigation Buttons */}
+            <div className="md:hidden w-full flex justify-end gap-8 -mt-4">
+              <button
+                onClick={scrollLeft}
+                className="h-12 w-14 py-2 px-4 rounded-lg border border-[#A8A8A8] flex items-center justify-center hover:bg-[#F4F5F7] transition"
+              >
+                <ArrowLeft className="h-6 w-6 text-[#A8A8A8]" />
+              </button>
+
+              <button
+                onClick={scrollRight}
+                className="h-12 w-14 py-2 px-4 rounded-lg border border-[#A8A8A8] flex items-center justify-center hover:bg-[#F4F5F7] transition"
+              >
+                <ArrowRight className="h-6 w-6 text-[#A8A8A8]" />
+              </button>
             </div>
 
             {/* View All Button */}
@@ -100,6 +137,7 @@ export function NewLaunches() {
               <Link href="/investments/new">View all</Link>
             </Button>
           </div>
+
         </div>
       </div>
     </section>
