@@ -1,8 +1,7 @@
 "use client"
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Link from 'next/link';
-import { useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { InvestmentCard } from '@/components/investment/organisms/investment-card';
 import { Button } from '@/components/ui/button';
@@ -112,14 +111,14 @@ export function NewLaunches() {
                 onClick={scrollLeft}
                 className="h-12 w-14 py-2 px-4 rounded-lg border border-[#A8A8A8] flex items-center justify-center hover:bg-[#F4F5F7] transition"
               >
-                <ArrowLeft className="h-6 w-6 text-[#A8A8A8]" />
+                <ArrowLeft aria-label='Scroll left to previous investments' className="h-6 w-6 text-[#A8A8A8]" />
               </button>
 
               <button
                 onClick={scrollRight}
                 className="h-12 w-14 py-2 px-4 rounded-lg border border-[#A8A8A8] flex items-center justify-center hover:bg-[#F4F5F7] transition"
               >
-                <ArrowRight className="h-6 w-6 text-[#A8A8A8]" />
+                <ArrowRight aria-label='Scroll right to next investments' className="h-6 w-6 text-[#A8A8A8]" />
               </button>
             </div>
 

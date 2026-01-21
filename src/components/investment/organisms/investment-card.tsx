@@ -46,10 +46,6 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
   return (
     <div
       className="flex flex-col p-4 bg-white rounded-lg border border-[#F4F5F7] shadow-sm hover:border-[#D1D1D1] hover:shadow-lg transition-all duration-300 w-[358px] md:w-[397px] h-[600px]"
-    // style={{
-    //   width: '397px',
-    //   height: '600px',
-    // }}
     >
       {/* Project Image Wrapper */}
       <div className="flex flex-col items-center gap-6 flex-1">
