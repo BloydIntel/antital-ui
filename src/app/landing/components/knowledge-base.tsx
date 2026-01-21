@@ -70,7 +70,7 @@ export function KnowledgeBase() {
               bgColor={article.bgColor}
               imageBgColor={article.imageBgColor}
               href={article.href}
-              className="w-full md:w-[296px]"
+              className=""
             />
           ))}
         </div>
