@@ -24,6 +24,10 @@ const testimonialsData = [
 
 export function Testimonials() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const isPausedRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -34,19 +38,23 @@ export function Testimonials() {
     const scrollSpeed = 0.5; // Pixels per frame
 
     const animate = () => {
-      scrollPosition += scrollSpeed;
-      
-      // Calculate the width of one set of testimonials
-      const cardWidth = 625; // Width of each card
-      const gap = 32; // Gap between cards
-      const singleSetWidth = testimonialsData.length * (cardWidth + gap);
-      
-      // Reset scroll position when we've scrolled through one complete set
-      if (scrollPosition >= singleSetWidth) {
-        scrollPosition = 0;
+      // Only animate if not paused
+      if (!isPausedRef.current) {
+        scrollPosition += scrollSpeed;
+        
+        // Calculate the width of one set of testimonials
+        const cardWidth = 625; // Width of each card
+        const gap = 32; // Gap between cards
+        const singleSetWidth = testimonialsData.length * (cardWidth + gap);
+        
+        // Reset scroll position when we've scrolled through one complete set
+        if (scrollPosition >= singleSetWidth) {
+          scrollPosition = 0;
+        }
+        
+        scrollContainer.scrollLeft = scrollPosition;
       }
       
-      scrollContainer.scrollLeft = scrollPosition;
       animationFrameId = requestAnimationFrame(animate);
     };
 
@@ -58,6 +66,81 @@ export function Testimonials() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const handleMouseUpGlobal = () => {
+      isDraggingRef.current = false;
+    };
+
+    const handleMouseMoveGlobal = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      if (!scrollRef.current) return;
+
+      const walk = e.pageX - startXRef.current;
+      scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+    };
+
+    document.addEventListener('mouseup', handleMouseUpGlobal);
+    document.addEventListener('mousemove', handleMouseMoveGlobal);
+
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUpGlobal);
+      document.removeEventListener('mousemove', handleMouseMoveGlobal);
+    };
+  }, []);
+
+  // ---- Mouse drag (desktop) ----
+  const handleMouseEnter = () => {
+    isPausedRef.current = true;
+  };
+
+  const handleMouseLeave = () => {
+    isPausedRef.current = false;
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX;
+    scrollLeftRef.current = scrollRef.current.scrollLeft;
+  };
+
+  // ---- Touch drag (mobile) ----
+  const handleTouchStart = (e: React.TouchEvent) => {
+    isPausedRef.current = true;
+    isDraggingRef.current = true;
+    startXRef.current = e.touches[0].pageX;
+    scrollLeftRef.current = scrollRef.current!.scrollLeft;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current || !scrollRef.current) return;
+
+    const walk = e.touches[0].pageX - startXRef.current;
+    scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleTouchEnd = () => {
+    isPausedRef.current = false;
+    isDraggingRef.current = false;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!scrollRef.current) return;
+
+    const step = 80;
+
+    if (e.key === 'ArrowRight') {
+      isPausedRef.current = true;
+      scrollRef.current.scrollLeft += step;
+    }
+
+    if (e.key === 'ArrowLeft') {
+      isPausedRef.current = true;
+      scrollRef.current.scrollLeft -= step;
+    }
+  };
 
   // Duplicate testimonials for seamless infinite scroll
   const duplicatedTestimonials = [...testimonialsData, ...testimonialsData, ...testimonialsData];
@@ -85,13 +168,21 @@ export function Testimonials() {
       {/* Scrolling Container - Full width, starts from left edge with padding */}
       <div
         ref={scrollRef}
-        className="overflow-x-scroll overflow-y-visible relative w-full"
+        className="overflow-x-scroll overflow-y-visible relative w-full cursor-grab active:cursor-grabbing"
         style={{
           scrollBehavior: 'auto',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
         }}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Hide scrollbar for webkit browsers */}
         <style jsx>{`
