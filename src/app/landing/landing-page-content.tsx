@@ -21,7 +21,7 @@ export function LandingPageContent() {
       <Navbar />
 
       {/* Main Content */}
-      <main>
+      <main className="relative">
         {/* Hero Section */}
         <Hero />
 

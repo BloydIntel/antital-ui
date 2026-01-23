@@ -24,8 +24,15 @@ export function FilterDropdown({
   rounded = 'rounded-lg',
   onValueChange,
 }: FilterDropdownProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      // Scroll to top when dropdown opens
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <Select defaultValue={defaultValue} onValueChange={onValueChange}>
+    <Select defaultValue={defaultValue} onValueChange={onValueChange} onOpenChange={handleOpenChange}>
       <SelectTrigger
         className={`h-[42px] ${width} bg-white/95 dark:bg-black/60 backdrop-blur-sm border border-gray-200 dark:border-white/30 ${rounded} text-[#2C2C2C] dark:text-white hover:bg-white dark:hover:bg-black/70 focus:ring-2 focus:ring-gray-300 dark:focus:ring-white/50 shadow-lg [&_svg]:text-[#2C2C2C] [&_svg]:opacity-100 [&_[data-slot=select-value]]:text-[#2C2C2C] dark:[&_svg]:text-white dark:[&_[data-slot=select-value]]:text-white`}
         style={{
@@ -40,11 +47,12 @@ export function FilterDropdown({
         />
       </SelectTrigger>
       <SelectContent 
-        className="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#404040] shadow-xl"
+        className="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#404040] shadow-xl !z-[40]"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontSize: '16px',
           lineHeight: '21px',
+          zIndex: 40,
         }}
       >
         {options.map((option) => (

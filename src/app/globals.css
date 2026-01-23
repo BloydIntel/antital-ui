@@ -140,9 +140,9 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-dm-sans), sans-serif;
-    font-size: 20px;
-    /* Subheading/lead paragraph size from Figma */
-    line-height: 24px;
+    font-size: clamp(16px, 2.5vw, 20px);
+    /* Subheading/lead paragraph size from Figma - responsive */
+    line-height: 1.2;
     /* 120% line-height from Figma */
     letter-spacing: -0.01em;
     /* Letter spacing from Figma */
@@ -168,16 +168,16 @@
   }
 
   h1 {
-    font-size: 80px;
-    /* Main heading size from Figma */
-    line-height: 82px;
+    font-size: clamp(32px, 5vw, 80px);
+    /* Main heading size from Figma - responsive */
+    line-height: 1.025;
     /* 102% line-height from Figma */
   }
 
   h2 {
-    font-size: 48px;
-    /* Section heading size from Figma */
-    line-height: 58px;
+    font-size: clamp(28px, 3vw, 48px);
+    /* Section heading size from Figma - responsive */
+    line-height: 1.208;
     /* 120% line-height from Figma */
     font-weight: 500;
     /* Medium weight for h2 from Figma */
@@ -199,9 +199,9 @@
   p {
     font-family: var(--font-dm-sans), sans-serif;
     font-weight: 400;
-    font-size: 16px;
-    /* Default body text size from Figma */
-    line-height: 21px;
+    font-size: clamp(14px, 1.5vw, 16px);
+    /* Default body text size from Figma - responsive */
+    line-height: 1.3125;
     /* Body line-height from Figma */
   }
 
@@ -210,9 +210,9 @@
   .text-sm {
     font-family: var(--font-dm-sans), sans-serif;
     font-weight: 400;
-    font-size: 14px;
-    /* Small text size from Figma */
-    line-height: 17px;
+    font-size: clamp(12px, 1.2vw, 14px);
+    /* Small text size from Figma - responsive */
+    line-height: 1.214;
     /* Small text line-height from Figma */
   }
 }

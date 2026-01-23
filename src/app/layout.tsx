@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   title: "Antital - Turn your earnings into opportunities",
   description: "Antital connects everyday Nigerians with startups and small businesses. Making wealth creation simple, transparent, and inclusive.",
   keywords: ["investment", "startups", "nigeria", "wealth creation", "fintech", "micro-investment"],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 };
 
 export default function RootLayout({
