@@ -101,7 +101,7 @@ export function FAQ() {
           </div>
 
           {/* Content Container - Categories and FAQs */}
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-[330px] w-full">
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-[200px] xl:gap-[300px] w-full">
             {/* Left Side - Category Tabs */}
             <div className="flex flex-col items-start gap-4 w-full lg:w-[296px]">
               {categories.map((category) => (
@@ -115,7 +115,7 @@ export function FAQ() {
             </div>
 
             {/* Right Side - FAQ Items */}
-            <div className="flex flex-col items-start w-full lg:w-[606px]">
+            <div className="flex flex-col items-start w-full lg:w-[606px] xl:w-[1100px]">
               {faqData[activeCategory].map((faq, index) => (
                 <FaqItem
                   key={index}
