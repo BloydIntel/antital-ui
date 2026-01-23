@@ -20,8 +20,8 @@ export function SecondaryMarket() {
               alt="Not Just Investing, Belonging - People investing together"
               fill
               className="object-contain object-left lg:object-left"
-              unoptimized
-              priority
+              loading="lazy"
+              sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 50vw, 646px"
             />
           </div>
 

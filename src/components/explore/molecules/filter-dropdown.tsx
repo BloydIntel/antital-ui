@@ -47,12 +47,11 @@ export function FilterDropdown({
         />
       </SelectTrigger>
       <SelectContent 
-        className="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#404040] shadow-xl !z-[40]"
+        className="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#404040] shadow-xl"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
           fontSize: '16px',
           lineHeight: '21px',
-          zIndex: 40,
         }}
       >
         {options.map((option) => (
