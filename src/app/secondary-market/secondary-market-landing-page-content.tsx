@@ -4,6 +4,7 @@ import { Footer } from '@/app/landing/components/footer'
 import SecondaryMarketHero from '@/app/secondary-market/components/SecondaryMarketHero'
 import WhatIsTheAntitalSecondaryMarket from '@/app/secondary-market/components/WhatIsTheAntitalSecondaryMarket'
 import HowToInvest from '@/app/secondary-market/components/HowToInvest'
+import WhyTrade from '@/app/secondary-market/components/WhyTrade'
 
 export default function SecondaryMarketLandingPageContent() {
     return (
@@ -12,6 +13,7 @@ export default function SecondaryMarketLandingPageContent() {
             <SecondaryMarketHero />
             <WhatIsTheAntitalSecondaryMarket />
             <HowToInvest />
+            <WhyTrade />
             <Footer />
         </div>
     )
