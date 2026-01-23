@@ -45,11 +45,7 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
 
   return (
     <div
-      className="flex flex-col p-4 bg-white rounded-lg border border-[#F4F5F7] shadow-sm hover:border-[#D1D1D1] hover:shadow-lg transition-all duration-300"
-      style={{
-        width: '397px',
-        height: '600px',
-      }}
+      className="flex flex-col p-4 bg-white rounded-lg border border-[#F4F5F7] shadow-sm hover:border-[#D1D1D1] hover:shadow-lg transition-all duration-300 w-[358px] md:w-[397px] h-[600px]"
     >
       {/* Project Image Wrapper */}
       <div className="flex flex-col items-center gap-6 flex-1">
@@ -62,7 +58,7 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
             className="object-cover"
             sizes="365px"
           />
-          
+
           {/* Risk Badge - positioned absolutely on top right */}
           <RiskBadge risk={risk} />
 
@@ -133,8 +129,8 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
               <div className="flex items-start gap-2 w-full">
                 <StatItem label="Investors" value={investors} />
                 <StatItem label="Days Left" value={daysLeft} />
-                <StatItem 
-                  label="Min. Investment" 
+                <StatItem
+                  label="Min. Investment"
                   value={`₦${minInvestment.toLocaleString('en-NG')}`}
                   variant="bold"
                 />
@@ -151,9 +147,8 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
             {/* View Details Button - width: 365px, height: 48px from Figma */}
             <Button
               variant="outline"
-              className="h-12 bg-white dark:bg-white border-[#365852] text-[#365852] [&:hover]:bg-[#365852] [&:hover]:text-white [&:hover]:border-[#365852] dark:[&:hover]:bg-[#365852] dark:[&:hover]:text-white dark:[&:hover]:border-[#365852] rounded-lg shadow-none [&:hover]:shadow-[0_6px_0px_rgba(0,0,0,0.25)] transition-all duration-300"
+              className="h-12 w-[326px] md:w-[365px] bg-white dark:bg-white border-[#365852] text-[#365852] [&:hover]:bg-[#365852] [&:hover]:text-white [&:hover]:border-[#365852] dark:[&:hover]:bg-[#365852] dark:[&:hover]:text-white dark:[&:hover]:border-[#365852] rounded-lg shadow-none [&:hover]:shadow-[0_6px_0px_rgba(0,0,0,0.25)] transition-all duration-300"
               style={{
-                width: '365px',
                 fontFamily: 'var(--font-rethink-sans)',
                 fontWeight: 500,
                 fontSize: '16px',

@@ -13,13 +13,13 @@ export function Hero() {
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] pt-12 lg:pt-16 pb-16">
         {/* Content Container - gap: 32px from Figma */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-          
+
           {/* Left Content - Text and Button */}
           <div className="flex flex-col items-start gap-6 w-full lg:w-[594px] lg:shrink-0">
             {/* Text Content Container - gap: 24px from Figma */}
             <div className="flex flex-col items-start gap-6">
               {/* Main Heading */}
-              <h1 
+              <h1
                 className="text-foreground"
                 style={{
                   fontFamily: 'var(--font-rethink-sans)',
@@ -33,7 +33,7 @@ export function Hero() {
               </h1>
 
               {/* Subheading */}
-              <p 
+              <p
                 className="text-muted-foreground max-w-[542px]"
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
@@ -49,13 +49,12 @@ export function Hero() {
 
             {/* Hero Button - width: 287px, height: 64px, background: #7A6FF0 from Figma */}
             <Button
-              className="bg-[#7A6FF0] hover:bg-[#7A6FF0]/90 text-white rounded-lg h-16 px-4 gap-2 transition-all"
+              className="bg-[#7A6FF0] hover:bg-[#7A6FF0]/90 text-white rounded-lg h-16 px-4 gap-2 transition-all w-full md:w-[287px]"
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
                 fontWeight: 500,
                 fontSize: '16px',
                 lineHeight: '21px',
-                width: '287px',
               }}
               asChild
             >
