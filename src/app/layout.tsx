@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,6 +10,13 @@ export const metadata: Metadata = {
   title: "Antital - Turn your earnings into opportunities",
   description: "Antital connects everyday Nigerians with startups and small businesses. Making wealth creation simple, transparent, and inclusive.",
   keywords: ["investment", "startups", "nigeria", "wealth creation", "fintech", "micro-investment"],
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({

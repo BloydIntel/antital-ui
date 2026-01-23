@@ -44,28 +44,37 @@
 }
 
 :root {
-  --radius: 0.5rem; /* 8px - button border radius from Figma */
+  --radius: 0.5rem;
+  /* 8px - button border radius from Figma */
   --background: #FFFFFF;
-  --foreground: #11110F; /* Headline color from Figma */
+  --foreground: #11110F;
+  /* Headline color from Figma */
   --card: #FFFFFF;
   --card-foreground: #11110F;
   --popover: #FFFFFF;
   --popover-foreground: #11110F;
-  --primary: #A7B832; /* Primary color - Foundation/Primary/Olive Green/400 from Figma */
+  --primary: #A7B832;
+  /* Primary color - Foundation/Primary/Olive Green/400 from Figma */
   --primary-foreground: #FFFFFF;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: #3D3D3D; /* Subheading color from Figma */
-  --accent: #B9C65B; /* Accent color - Foundation/Primary/Olive Green/300 (lighter variant) */
+  --muted-foreground: #3D3D3D;
+  /* Subheading color from Figma */
+  --accent: #B9C65B;
+  /* Accent color - Foundation/Primary/Olive Green/300 (lighter variant) */
   --accent-foreground: #11110F;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #EAEAEA; /* Border color from Figma header */
+  --border: #EAEAEA;
+  /* Border color from Figma header */
   --input: #EAEAEA;
-  --ring: #A7B832; /* Focus ring uses primary green color */
+  --ring: #A7B832;
+  /* Focus ring uses primary green color */
   /* Custom green variants from Figma */
-  --primary-dark: #042E27; /* Foundation/Primary/DarkGreen/400 - for dark backgrounds */
-  --primary-dark-alt: #365852; /* Foundation/Primary/Dark Green/green-400 - for buttons */
+  --primary-dark: #042E27;
+  /* Foundation/Primary/DarkGreen/400 - for dark backgrounds */
+  --primary-dark-alt: #365852;
+  /* Foundation/Primary/Dark Green/green-400 - for buttons */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -119,6 +128,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   html {
     background-color: var(--background);
     overscroll-behavior: none;
@@ -126,12 +136,16 @@
     touch-action: pan-y;
     width: 100%;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-dm-sans), sans-serif;
-    font-size: 20px; /* Subheading/lead paragraph size from Figma */
-    line-height: 24px; /* 120% line-height from Figma */
-    letter-spacing: -0.01em; /* Letter spacing from Figma */
+    font-size: clamp(16px, 2.5vw, 20px);
+    /* Subheading/lead paragraph size from Figma - responsive */
+    line-height: 1.2;
+    /* 120% line-height from Figma */
+    letter-spacing: -0.01em;
+    /* Letter spacing from Figma */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior: none;
@@ -139,46 +153,84 @@
     -webkit-overflow-scrolling: touch;
     width: 100%;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-rethink-sans), sans-serif;
     color: var(--foreground);
     font-weight: 700;
-    letter-spacing: -0.01em; /* Letter spacing from Figma */
+    letter-spacing: -0.01em;
+    /* Letter spacing from Figma */
   }
+
   h1 {
-    font-size: 80px; /* Main heading size from Figma */
-    line-height: 82px; /* 102% line-height from Figma */
+    font-size: clamp(32px, 5vw, 80px);
+    /* Main heading size from Figma - responsive */
+    line-height: 1.025;
+    /* 102% line-height from Figma */
   }
+
   h2 {
-    font-size: 48px; /* Section heading size from Figma */
-    line-height: 58px; /* 120% line-height from Figma */
-    font-weight: 500; /* Medium weight for h2 from Figma */
+    font-size: clamp(28px, 3vw, 48px);
+    /* Section heading size from Figma - responsive */
+    line-height: 1.208;
+    /* 120% line-height from Figma */
+    font-weight: 500;
+    /* Medium weight for h2 from Figma */
   }
+
   /* Button and link typography */
-  button, a {
+  button,
+  a {
     font-family: var(--font-rethink-sans), sans-serif;
-    font-weight: 500; /* Medium weight for buttons from Figma */
-    font-size: 16px; /* Button text size from Figma */
-    line-height: 21px; /* Button line-height from Figma */
+    font-weight: 500;
+    /* Medium weight for buttons from Figma */
+    font-size: 16px;
+    /* Button text size from Figma */
+    line-height: 21px;
+    /* Button line-height from Figma */
   }
+
   /* Body text styles */
   p {
     font-family: var(--font-dm-sans), sans-serif;
     font-weight: 400;
-    font-size: 16px; /* Default body text size from Figma */
-    line-height: 21px; /* Body line-height from Figma */
+    font-size: clamp(14px, 1.5vw, 16px);
+    /* Default body text size from Figma - responsive */
+    line-height: 1.3125;
+    /* Body line-height from Figma */
   }
+
   /* Small text styles */
-  small, .text-sm {
+  small,
+  .text-sm {
     font-family: var(--font-dm-sans), sans-serif;
     font-weight: 400;
-    font-size: 14px; /* Small text size from Figma */
-    line-height: 17px; /* Small text line-height from Figma */
+    font-size: clamp(12px, 1.2vw, 14px);
+    /* Small text size from Figma - responsive */
+    line-height: 1.214;
+    /* Small text line-height from Figma */
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
 /* Ensure consistent font rendering across different DPI levels */
-@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+@media (-webkit-min-device-pixel-ratio: 1.5),
+(min-resolution: 144dpi) {
   body {
     -webkit-font-smoothing: subpixel-antialiased;
   }
@@ -192,13 +244,14 @@
 
 /* Fix for right-side inset variant support */
 @media (min-width: 768px) {
+
   /* Right sidebar inset variant - margin adjustments */
-  [data-side="right"][data-variant="inset"] ~ [data-slot="sidebar-inset"] {
+  [data-side="right"][data-variant="inset"]~[data-slot="sidebar-inset"] {
     margin-right: 0 !important;
   }
 
   /* Right sidebar inset variant - collapsed state margin */
-  [data-side="right"][data-variant="inset"][data-state="collapsed"] ~ [data-slot="sidebar-inset"] {
+  [data-side="right"][data-variant="inset"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
     margin-right: 0.5rem !important;
   }
 }
@@ -213,8 +266,10 @@ html {
   0% {
     transform: translateX(0);
   }
+
   100% {
-    transform: translateX(-144rem); /* 12 items * 12rem = 144rem */
+    transform: translateX(-144rem);
+    /* 12 items * 12rem = 144rem */
   }
 }
 

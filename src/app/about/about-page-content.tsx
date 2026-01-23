@@ -19,7 +19,7 @@ export function AboutPageContent() {
         {/* Hero Section */}
         <section className="relative w-full h-[512px] bg-[#042E27] overflow-hidden">
           <div className="w-full max-w-[1440px] mx-auto h-full relative px-4 md:px-6 lg:px-12 xl:px-[104px]">
-            
+
             {/* Left Side - Text Content */}
             <div className="absolute left-4 md:left-6 lg:left-12 xl:left-[104px] top-1/2 -translate-y-1/2 w-full max-w-[719px] flex flex-col gap-4 z-10">
               {/* Heading */}
@@ -54,12 +54,12 @@ export function AboutPageContent() {
             {/* Right Side - Lime Oval Background with People Image */}
             <div className="hidden lg:block absolute left-0 top-0 w-[1440px] h-[512px]">
               {/* Lime Green Background - Behind the people */}
-              <div 
-                 className="absolute z-10"
+              <div
+                className="absolute z-10"
                 style={{
-                    width: '590.89px',
-                    height: '380.92px',
-                    left: '870px',
+                  width: '590.89px',
+                  height: '380.92px',
+                  left: '870px',
                   top: '80px',
                   backgroundColor: '#A7B832',
                   borderRadius: '50%',
@@ -69,7 +69,7 @@ export function AboutPageContent() {
               />
 
               {/* People Image - On top */}
-              <div 
+              <div
                 className="absolute z-10"
                 style={{
                   width: '609.89px',
@@ -94,13 +94,13 @@ export function AboutPageContent() {
         <section className="w-full bg-background py-[62px]">
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
             <div className="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-[25px] w-full max-w-[1232px] mx-auto">
-              
+
               {/* Left Card - About Us */}
-              <div 
-                className="relative w-full lg:w-[608px] h-[352px] bg-[#042E27] rounded p-6 flex flex-col gap-6 overflow-hidden"
+              <div
+                className="relative w-full lg:w-[608px] h-[420px] md:h-[352px] bg-[#042E27] rounded p-6 flex flex-col gap-6 overflow-hidden"
               >
                 {/* Decorative Leaf - Bottom Left */}
-                <div 
+                <div
                   className="absolute"
                   style={{
                     width: '132.48px',
@@ -166,7 +166,7 @@ export function AboutPageContent() {
                     letterSpacing: '-0.01em',
                   }}
                 >
-                  &quot; Traditional investment has locked out average earners for too long. While the wealthy access high-growth startups through exclusive networks, most Nigerians are left with savings accounts earning 5% or risky schemes promising unrealistic returns.
+                  &quot; Traditional investment has locked out average earners for too long. While the wealthy access high-growth startups through exclusive networks, most Nigerians are left with savings accounts earning 5% or risky schemes promising unrealistic returns.&quot;
                 </p>
               </div>
             </div>
@@ -177,7 +177,7 @@ export function AboutPageContent() {
         <section className="w-full bg-background py-[62px]">
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
             <div className="flex flex-col lg:flex-row justify-center items-stretch gap-4 lg:gap-[15px] w-full max-w-[1232px] mx-auto">
-              
+
               <ValueCard
                 title="Our Mission"
                 description="Transform every Nigerian into a micro angel investor while empowering entrepreneurs to build the solutions our country needs."
@@ -201,7 +201,7 @@ export function AboutPageContent() {
         <section className="w-full bg-background py-[62px]">
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
             <div className="flex flex-col items-start gap-14 w-full max-w-[1232px] mx-auto">
-              
+
               {/* Header */}
               <div className="flex flex-col items-start gap-2 w-full max-w-[713px]">
                 <h2
@@ -232,7 +232,7 @@ export function AboutPageContent() {
 
               {/* Feature Cards Grid */}
               <div className="flex flex-col lg:flex-row items-stretch justify-center gap-4 w-full">
-                
+
                 <FeatureCard
                   icon={Briefcase}
                   label="Everyone Can Invest"
@@ -277,11 +277,11 @@ export function AboutPageContent() {
         {/* Ready to Start Building Wealth CTA Section */}
         <section className="w-full bg-background py-[62px]">
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
-            <div 
+            <div
               className="relative w-full max-w-[1232px] h-[361px] mx-auto bg-[#042E27] rounded-2xl overflow-visible flex items-center justify-center"
             >
               {/* Left Decorative Coins - Bottom Left */}
-              <div 
+              <div
                 className="absolute hidden lg:block"
                 style={{
                   left: '16px',
@@ -300,7 +300,7 @@ export function AboutPageContent() {
               </div>
 
               {/* Right Decorative Coins - Top Right */}
-              <div 
+              <div
                 className="absolute hidden lg:block"
                 style={{
                   left: '1040px',
@@ -319,7 +319,7 @@ export function AboutPageContent() {
               </div>
 
               {/* Center Content */}
-              <div className="relative z-10 flex flex-col items-center justify-center gap-8 w-full max-w-[670px] px-4">
+              <div className="relative z-10 flex flex-col items-center justify-center gap-8 w-full max-w-[670px] px-4 mb-6 md:mb-0">
                 {/* Text Container */}
                 <div className="flex flex-col items-center gap-4 w-full">
                   {/* Heading */}
