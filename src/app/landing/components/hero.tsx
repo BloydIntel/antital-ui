@@ -38,8 +38,8 @@ export function Hero() {
                 style={{
                   fontFamily: 'var(--font-dm-sans)',
                   fontWeight: 400,
-                  fontSize: '20px',
-                  lineHeight: '24px', // 120% from Figma
+                  fontSize: 'clamp(16px, 2vw, 20px)',
+                  lineHeight: '1.2', // 120% from Figma
                   letterSpacing: '-0.01em',
                 }}
               >

@@ -14,7 +14,7 @@ export function ExplorePageContent() {
       <Navbar />
 
       {/* Main Content */}
-      <main className="w-full">
+      <main className="w-full relative">
         <HeroSection />
         {/* Show all 12 investments on explore page */}
         <InvestmentOpportunities />

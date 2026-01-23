@@ -185,7 +185,7 @@ export function Navbar() {
                     className="h-12 pl-4 pr-10 bg-[#F4F5F7] border-[#EAEAEA] rounded-md text-foreground placeholder:text-[#A2A3A1]"
                     style={{
                       fontFamily: 'var(--font-dm-sans)',
-                      fontSize: '14px',
+                      fontSize: '16px', // Minimum 16px to prevent iOS auto-zoom
                       lineHeight: '17px',
                     }}
                   />
