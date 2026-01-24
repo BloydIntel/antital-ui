@@ -1,7 +1,8 @@
 "use client"
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Link from 'next/link';
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { InvestmentCard } from '@/components/investment/organisms/investment-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -53,13 +54,24 @@ const newLaunches = [
 ];
 
 export function NewLaunches() {
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -380, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({ left: 380, behavior: "smooth" });
+  };
+
   return (
     <section className="w-full bg-background py-[62px]"> {/* padding: 62px 0px, gap: 92px */}
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] flex flex-col items-center gap-[92px]">
-        
+
         {/* Section Header */}
         <div className="flex flex-col items-start gap-14 w-full max-w-[1232px]"> {/* Section Header Container, gap: 56px */}
-          
+
           {/* Section Description */}
           <div className="flex flex-col items-start gap-2 max-w-[821px]"> {/* gap: 8px */}
             <h2
@@ -76,14 +88,38 @@ export function NewLaunches() {
 
           {/* Projects Container */}
           <div className="flex flex-col items-center gap-12 w-full"> {/* gap: 48px */}
-            
+
             {/* Projects List - Horizontal scroll on mobile, grid on larger screens */}
-            <div className="flex flex-row overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 w-full pb-4 md:pb-0">
+            <div
+              ref={scrollRef}
+              className="w-full flex gap-5 overflow-x-auto snap-x snap-mandatory
+                        md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible scrollbar-hide"
+            >
               {newLaunches.map((project) => (
-                <div key={project.id} className="flex-shrink-0 md:flex-shrink">
+                <div
+                  key={project.id}
+                  className="flex-shrink-0 md:flex-shrink"
+                >
                   <InvestmentCard data={project} />
                 </div>
               ))}
+            </div>
+
+            {/* Mobile Navigation Buttons */}
+            <div className="md:hidden w-full flex justify-end gap-8 -mt-4">
+              <button
+                onClick={scrollLeft}
+                className="h-12 w-14 py-2 px-4 rounded-lg border border-[#A8A8A8] flex items-center justify-center hover:bg-[#F4F5F7] transition"
+              >
+                <ArrowLeft aria-label='Scroll left to previous investments' className="h-6 w-6 text-[#A8A8A8]" />
+              </button>
+
+              <button
+                onClick={scrollRight}
+                className="h-12 w-14 py-2 px-4 rounded-lg border border-[#A8A8A8] flex items-center justify-center hover:bg-[#F4F5F7] transition"
+              >
+                <ArrowRight aria-label='Scroll right to next investments' className="h-6 w-6 text-[#A8A8A8]" />
+              </button>
             </div>
 
             {/* View All Button */}
@@ -100,6 +136,7 @@ export function NewLaunches() {
               <Link href="/investments/new">View all</Link>
             </Button>
           </div>
+
         </div>
       </div>
     </section>

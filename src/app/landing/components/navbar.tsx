@@ -58,7 +58,7 @@ export function Navbar() {
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       setResolvedTheme(systemTheme)
-      
+
       // Listen for system theme changes
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       const handler = (e: MediaQueryListEvent) => {
@@ -102,11 +102,10 @@ export function Navbar() {
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleNavClick(item.href, e)}
-                  className={`px-2 lg:px-3 py-2 h-12 flex items-center transition-colors rounded-lg whitespace-nowrap ${
-                    isActive
-                      ? 'text-[#A7B832]' // Active link color from Figma
-                      : 'text-[#858585] hover:text-foreground' // Inactive link color from Figma
-                  }`}
+                  className={`px-2 lg:px-3 py-2 h-12 flex items-center transition-colors rounded-lg whitespace-nowrap ${isActive
+                    ? 'text-[#A7B832]' // Active link color from Figma
+                    : 'text-[#858585] hover:text-foreground' // Inactive link color from Figma
+                    }`}
                   style={{
                     fontFamily: isActive ? 'var(--font-rethink-sans)' : 'var(--font-dm-sans)',
                     fontSize: '15px',
@@ -141,7 +140,7 @@ export function Navbar() {
 
           {/* Account Actions - compact on smaller screens, don't shrink */}
           <div className="hidden lg:flex items-center gap-1.5 shrink-0">
-            <Button 
+            <Button
               className="bg-[#365852] hover:bg-[#365852]/90 text-white px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[100px] lg:min-w-[110px]"
               asChild
               style={{
@@ -153,7 +152,7 @@ export function Navbar() {
             >
               <Link href="/auth/sign-up">Invest now</Link>
             </Button>
-            <Button 
+            <Button
               variant="outline"
               className="border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
               asChild
@@ -176,7 +175,7 @@ export function Navbar() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] pt-16">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] pt-16 px-4">
               <div className="flex flex-col gap-8">
                 {/* Mobile Search */}
                 <div className="relative">
@@ -186,7 +185,7 @@ export function Navbar() {
                     className="h-12 pl-4 pr-10 bg-[#F4F5F7] border-[#EAEAEA] rounded-md text-foreground placeholder:text-[#A2A3A1]"
                     style={{
                       fontFamily: 'var(--font-dm-sans)',
-                      fontSize: '14px',
+                      fontSize: '16px', // Minimum 16px to prevent iOS auto-zoom
                       lineHeight: '17px',
                     }}
                   />
@@ -202,11 +201,10 @@ export function Navbar() {
                         key={item.name}
                         href={item.href}
                         onClick={(e) => handleNavClick(item.href, e, () => setIsOpen(false))}
-                        className={`px-4 py-3 rounded-lg transition-colors ${
-                          isActive
-                            ? 'text-[#A7B832] bg-[#A7B832]/10'
-                            : 'text-[#858585] hover:text-foreground hover:bg-accent'
-                        }`}
+                        className={`px-4 py-3 rounded-lg transition-colors ${isActive
+                          ? 'text-[#A7B832] bg-[#A7B832]/10'
+                          : 'text-[#858585] hover:text-foreground hover:bg-accent'
+                          }`}
                         style={{
                           fontFamily: isActive ? 'var(--font-rethink-sans)' : 'var(--font-dm-sans)',
                           fontSize: '16px',
@@ -225,7 +223,7 @@ export function Navbar() {
 
                 {/* Mobile Actions - Invest now first, then Raise funds */}
                 <div className="flex flex-col gap-3">
-                  <Button 
+                  <Button
                     className="w-full h-12 bg-[#365852] hover:bg-[#365852]/90 text-white rounded-lg"
                     style={{
                       fontFamily: 'var(--font-rethink-sans)',
@@ -239,7 +237,7 @@ export function Navbar() {
                       Invest now
                     </Link>
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
                     className="w-full h-12 border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] rounded-lg"
                     style={{

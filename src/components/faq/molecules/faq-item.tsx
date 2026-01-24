@@ -14,11 +14,11 @@ export function FaqItem({ question, answer, defaultOpen = false }: FaqItemProps)
   return (
     <div
       className={cn(
-        'flex flex-col items-start border-b border-[#D3D3D3] rounded transition-all py-4 px-5'
+        'flex flex-col items-start border-b border-[#D3D3D3] rounded transition-all py-4 px-5 w-full'
       )}
     >
       {/* Question and Answer Container - Icons aligned from top */}
-      <div className="flex flex-row justify-between items-start w-full gap-12">
+      <div className="flex flex-row justify-between items-start w-full">
         {/* Left Side - Question and Answer */}
         <div className={cn(
           'flex flex-col items-start flex-1',

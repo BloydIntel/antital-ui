@@ -25,7 +25,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-[848px] bg-[#F4F5F7] rounded-lg flex flex-row items-center overflow-hidden"
+      className="w-full max-w-[848px] bg-[#F4F5F7] rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center overflow-hidden"
     >
       {/* Search Input - Takes up most of the space */}
       <div className="relative flex-1 flex items-center">
@@ -35,10 +35,10 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           placeholder="Search companies, sectors, keywords..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-12 pl-12 pr-4 bg-transparent border-0 rounded-none text-foreground placeholder:text-[#A2A3A1] focus-visible:ring-0"
+          className="h-12 pl-12 pr-4 bg-transparent border-0 rounded-none sm:rounded-l-lg text-foreground placeholder:text-[#A2A3A1] focus-visible:ring-0"
           style={{
             fontFamily: 'var(--font-dm-sans)',
-            fontSize: '14px',
+            fontSize: 'clamp(14px, 1.2vw, 16px)',
             lineHeight: '17px',
             fontWeight: 400,
             letterSpacing: '-0.01em',
@@ -49,10 +49,10 @@ export function SearchBar({ onSearch }: SearchBarProps) {
       {/* Search Now Button - Integrated on the right */}
       <Button
         type="submit"
-        className="h-12 w-[119px] bg-[#03211C] hover:bg-[#03211C]/90 text-white rounded-none rounded-r-lg shrink-0"
+        className="h-12 w-full sm:w-[119px] bg-[#03211C] hover:bg-[#03211C]/90 text-white rounded-none rounded-b-lg sm:rounded-b-none sm:rounded-r-lg shrink-0"
         style={{
           fontFamily: 'var(--font-rethink-sans)',
-          fontSize: '16px',
+          fontSize: 'clamp(14px, 1.2vw, 16px)',
           lineHeight: '21px',
           fontWeight: 500,
         }}

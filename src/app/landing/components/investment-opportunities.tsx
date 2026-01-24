@@ -28,8 +28,8 @@ export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps)
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
                 fontWeight: 500,
-                fontSize: 'clamp(28px, 4vw, 36px)',
-                lineHeight: '43px',
+                fontSize: 'clamp(28px, 4vw, 48px)',
+                lineHeight: '1.208',
                 letterSpacing: '-0.01em',
               }}
             >
@@ -42,8 +42,8 @@ export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps)
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
-                fontSize: '18px',
-                lineHeight: '23px',
+                fontSize: 'clamp(14px, 1.8vw, 18px)',
+                lineHeight: '1.278',
                 letterSpacing: '-0.01em',
               }}
             >

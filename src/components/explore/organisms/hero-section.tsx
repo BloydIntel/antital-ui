@@ -58,7 +58,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative w-full min-h-[629px] flex flex-col items-center justify-center py-[124px] px-4 overflow-hidden">
+    <section className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[629px] flex flex-col items-center justify-center py-12 sm:py-16 lg:py-[124px] px-4">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -72,9 +72,9 @@ export function HeroSection() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center gap-[92px]">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center gap-8 sm:gap-12 lg:gap-[92px]">
         {/* Text and Search Container */}
-        <div className="flex flex-col items-center gap-6 w-full max-w-[848px]">
+        <div className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-[848px]">
           {/* Text Content */}
           <div className="flex flex-col items-center gap-4 w-full max-w-[719px]">
             {/* Main Heading */}
@@ -83,8 +83,8 @@ export function HeroSection() {
               style={{
                 fontFamily: 'var(--font-rethink-sans)',
                 fontWeight: 700,
-                fontSize: '48px',
-                lineHeight: '58px',
+                fontSize: 'clamp(28px, 4vw, 48px)',
+                lineHeight: '1.208',
                 letterSpacing: '-0.01em',
               }}
             >
@@ -97,8 +97,8 @@ export function HeroSection() {
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontWeight: 400,
-                fontSize: '18px',
-                lineHeight: '23px',
+                fontSize: 'clamp(14px, 1.8vw, 18px)',
+                lineHeight: '1.278',
                 letterSpacing: '-0.01em',
               }}
             >
@@ -110,32 +110,32 @@ export function HeroSection() {
           <SearchBar onSearch={handleSearch} />
 
           {/* Filter Dropdowns - Separate row below search */}
-          <div className="flex flex-wrap items-center gap-4 justify-center w-full max-w-[662px]">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 justify-center w-full max-w-[662px]">
             <FilterDropdown
               defaultValue="all-sectors"
               placeholder="All Sectors"
-              width="w-[142px]"
+              width="w-full sm:w-[142px]"
               options={filterOptions.sectors}
               onValueChange={handleSectorChange}
             />
             <FilterDropdown
               defaultValue="all-risk"
               placeholder="All Risk Levels"
-              width="w-[165px]"
+              width="w-full sm:w-[165px]"
               options={filterOptions.risk}
               onValueChange={handleRiskChange}
             />
             <FilterDropdown
               defaultValue="trending"
               placeholder="Trending"
-              width="w-[127px]"
+              width="w-full sm:w-[127px]"
               options={filterOptions.trending}
               onValueChange={handleTrendingChange}
             />
             <FilterDropdown
               defaultValue="min-investment"
               placeholder="Min Investment"
-              width="w-[180px]"
+              width="w-full sm:w-[180px]"
               options={filterOptions.investment}
               onValueChange={handleInvestmentChange}
             />

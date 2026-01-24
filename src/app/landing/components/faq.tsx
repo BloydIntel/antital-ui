@@ -80,7 +80,7 @@ export function FAQ() {
   const [activeCategory, setActiveCategory] = useState<'general' | 'pricing' | 'security'>('general');
 
   return (
-    <section className="w-full min-h-[982px] bg-[#042E27] py-[107px]">
+    <section className="w-full min-h-[800px] bg-[#042E27] py-[107px]">
       {/* Main Container */}
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
         <div className="flex flex-col items-start gap-20">
@@ -101,7 +101,7 @@ export function FAQ() {
           </div>
 
           {/* Content Container - Categories and FAQs */}
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-[330px] w-full">
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-[200px] xl:gap-[300px] w-full">
             {/* Left Side - Category Tabs */}
             <div className="flex flex-col items-start gap-4 w-full lg:w-[296px]">
               {categories.map((category) => (
@@ -115,7 +115,7 @@ export function FAQ() {
             </div>
 
             {/* Right Side - FAQ Items */}
-            <div className="flex flex-col items-start w-full lg:w-[606px]">
+            <div className="flex flex-col items-start w-full">
               {faqData[activeCategory].map((faq, index) => (
                 <FaqItem
                   key={index}
