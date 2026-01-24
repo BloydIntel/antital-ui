@@ -14,9 +14,9 @@ export default function SecondaryMarketHero() {
         <section className="bg-background flex justify-center items-center w-full md:h-[560px] pt-6 pb-30 md:py-[64px] gap-[62px] mx-auto lg:mx-0">
             <div>
                 {/* Content Container */}
-                <div className="w-[380px] md:w-[816px] md:h-[205px] gap-[24px]">
+                <div className="w-full md:w-[816px] md:h-[205px] gap-[24px]">
                     <h1
-                        className='text-foreground text-4xl w-[380px] md:text-[64px] md:w-[816px] md:h-[133px]'
+                        className='text-foreground text-4xl sm:text-6xl w-full md:text-[64px] md:w-[816px] md:h-[133px]'
                         style={{
                             fontFamily: "var(--font-rethink-sans)",
                             fontWeight: 500,
@@ -45,7 +45,7 @@ export default function SecondaryMarketHero() {
                 </div>
 
                 {/* Buttons Container */}
-                <div className="flex flex-col md:flex-row items-center justify-center w-[380px] md:w-[816px] h-[64px] gap-[24px] pt-30">
+                <div className="flex flex-col md:flex-row items-center justify-center w-full md:w-[816px] h-[64px] gap-[24px] pt-30">
                     {buttonDetails.map((action, index) => (
                         <Button
                             key={index}

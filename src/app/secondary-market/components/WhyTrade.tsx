@@ -51,10 +51,10 @@ const features = [
 
 export default function WhyTrade() {
     return (
-        <section>
+        <section className="py-32">
 
             {/* Layout Container */}
-            <div className="relative bg-[#F4F5F7] lg:w-[1232px] mx-auto my-15 md:my-27 px-4 py-8">
+            <div className="relative bg-[#F4F5F7] xl:w-[1232px] mx-auto px-4 py-8">
 
                 {/* Header Text */}
                 <h2
