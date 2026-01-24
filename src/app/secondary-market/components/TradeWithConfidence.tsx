@@ -4,6 +4,33 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 
+const tradeImages = [
+    {
+        src: "/secondary_market_landing_page/TradeWithConfidence-1.png",
+        width: 100,
+        height: 100,
+        className: "absolute top-[72px] left-[9px]",
+    },
+    {
+        src: "/secondary_market_landing_page/TradeWithConfidence-2.png",
+        width: 120,
+        height: 120,
+        className: "absolute top-[24px] right-[183px]",
+    },
+    {
+        src: "/secondary_market_landing_page/TradeWithConfidence-3.png",
+        width: 100,
+        height: 100,
+        className: "absolute top-[327px] left-[218px]",
+    },
+    {
+        src: "/secondary_market_landing_page/TradeWithConfidence-4.png",
+        width: 100,
+        height: 100,
+        className: "absolute top-[231px] right-[55px]",
+    },
+]
+
 export default function TradeWithConfidence() {
     return (
         <section>
@@ -66,34 +93,16 @@ export default function TradeWithConfidence() {
 
                     {/* Image Container */}
                     <div className="hidden lg:block">
-                        <Image
-                            src="/secondary_market_landing_page/TradeWithConfidence-1.png"
-                            alt="Trade With Confidence Image"
-                            width={100}
-                            height={100}
-                            className="absolute top-[72px] left-[9px]"
-                        />
-                        <Image
-                            src="/secondary_market_landing_page/TradeWithConfidence-2.png"
-                            alt="Trade With Confidence Image"
-                            width={120}
-                            height={120}
-                            className="absolute top-[24px] right-[183px]"
-                        />
-                        <Image
-                            src="/secondary_market_landing_page/TradeWithConfidence-3.png"
-                            alt="Trade With Confidence Image"
-                            width={100}
-                            height={100}
-                            className="absolute top-[327px] left-[218px]"
-                        />
-                        <Image
-                            src="/secondary_market_landing_page/TradeWithConfidence-4.png"
-                            alt="Trade With Confidence Image"
-                            width={100}
-                            height={100}
-                            className="absolute top-[231px] right-[55px]"
-                        />
+                        {tradeImages.map((img, index) => (
+                            <Image
+                                key={index}
+                                src={img.src}
+                                alt="Trade With Confidence Image"
+                                width={img.width}
+                                height={img.height}
+                                className={img.className}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
