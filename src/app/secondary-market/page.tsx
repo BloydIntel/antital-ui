@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     description: 'Explore the secondary market on Antital - buy and sell existing investments in startups and businesses.',
 }
 
-export default function page() {
+export default function Page() {
     return (
         <SecondaryMarketLandingPageContent />
     )

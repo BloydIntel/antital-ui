@@ -15,7 +15,7 @@ export default function HowToInvest() {
         <section>
             {/* Layout Container */}
             <div
-                className="flex flex-col lg:flex-row lg:gap-24 xl:w-[1232px]  mx-auto px-4 xl:px-0 pt-10 lg:pt-27"
+                className="flex flex-col lg:flex-row lg:gap-24 xl:w-[1232px]  mx-auto px-4 xl:px-0 pt-10 lg:pt-[108px]"
             >
                 {/* Content Container (Right) */}
                 <div

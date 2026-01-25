@@ -11,7 +11,7 @@ export default function SecondaryMarketHero() {
     ];
 
     return (
-        <section className="bg-background flex justify-center items-center w-full md:h-[560px] pt-6 pb-30 md:py-[64px] gap-[62px] mx-auto lg:mx-0">
+        <section className="bg-background flex justify-center items-center w-full md:h-[560px] pt-6 pb-[120px] md:py-[64px] gap-[62px] mx-auto lg:mx-0">
             <div>
                 {/* Content Container */}
                 <div className="w-full md:w-[816px] md:h-[205px] gap-[24px]">
@@ -45,7 +45,7 @@ export default function SecondaryMarketHero() {
                 </div>
 
                 {/* Buttons Container */}
-                <div className="flex flex-col md:flex-row items-center justify-center w-full md:w-[816px] h-[64px] gap-[24px] pt-30">
+                <div className="flex flex-col md:flex-row items-center justify-center w-full md:w-[816px] h-[64px] gap-[24px] pt-[120px]">
                     {buttonDetails.map((action, index) => (
                         <Button
                             key={index}

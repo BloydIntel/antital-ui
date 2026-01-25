@@ -4,7 +4,7 @@ import React from 'react'
 export default function ImportantRiskDisclosure() {
     return (
         <section>
-            <div className="flex flex-col-reverse lg:flex-row justify-between items-center xl:w-[1232px] mx-auto px-4 lg:py-32">
+            <div className="flex flex-col-reverse lg:flex-row justify-between items-center xl:w-[1232px] mx-auto px-4 pb-8 lg:py-32">
 
                 {/*Text Container */}
                 <div className="w-full lg:w-[608px]">

@@ -159,7 +159,7 @@ export function Testimonials({ className }: TestimonialsProps) {
   const duplicatedTestimonials = [...testimonialsData, ...testimonialsData, ...testimonialsData];
 
   return (
-    <section className={`w-full bg-white py-[62px] overflow-hidden ${className}`}>
+    <section className={`w-full bg-white py-[62px] overflow-hidden ${className ?? ''}`}>
       {/* Main Container */}
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
         {/* Section Header */}
