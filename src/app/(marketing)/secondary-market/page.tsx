@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import SecondaryMarketLandingPageContent from '@/app/secondary-market/secondary-market-landing-page-content'
+import SecondaryMarketLandingPageContent from '@/app/(marketing)/secondary-market/secondary-market-landing-page-content'
 
 export const metadata: Metadata = {
     title: 'Secondary Market | Antital',

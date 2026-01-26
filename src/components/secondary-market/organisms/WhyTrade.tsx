@@ -9,7 +9,6 @@ const features = [
         span: 1,
         width: 544,
         height: 281,
-        fit: "contain",
     },
     {
         title: "Market-Driven Pricing",
@@ -18,7 +17,6 @@ const features = [
         span: 1,
         width: 544,
         height: 281,
-        fit: "cover",
     },
     {
         title: "Shorter Investment Tenure",
@@ -27,7 +25,6 @@ const features = [
         span: 2,
         width: 1136,
         height: 302,
-        fit: "contain",
     },
     {
         title: "Portfolio Flexibility",
@@ -36,7 +33,6 @@ const features = [
         span: 1,
         width: 544,
         height: 281,
-        fit: "cover",
     },
     {
         title: "Regulated & Transparent",
@@ -45,11 +41,10 @@ const features = [
         span: 1,
         width: 544,
         height: 281,
-        fit: "cover",
     },
 ]
 
-export default function WhyTrade() {
+export function WhyTrade() {
     return (
         <section className="py-32">
 
@@ -114,17 +109,15 @@ export default function WhyTrade() {
                                 {item.desc}
                             </p>
 
-                            <div
-                                className=" w-full rounded-lg"
 
-                            >
-                                <Image
-                                    src={item.imageUrl}
-                                    alt={item.title}
-                                    width={item.width}
-                                    height={item.height}
-                                />
-                            </div>
+                            <Image
+                                src={item.imageUrl}
+                                alt={item.title}
+                                width={item.width}
+                                height={item.height}
+                                className="rounded-lg"
+                            />
+
                         </div>
                     ))}
                 </div>

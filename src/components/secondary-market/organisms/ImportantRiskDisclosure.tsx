@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
-export default function ImportantRiskDisclosure() {
+export function ImportantRiskDisclosure() {
     return (
         <section>
             <div className="flex flex-col-reverse lg:flex-row justify-between items-center xl:w-[1232px] mx-auto px-4 pb-8 lg:py-32">

@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-export default function SecondaryMarketHero() {
+export function SecondaryMarketHero() {
 
     const buttonDetails = [
         { href: "/invest1", label: "Invest Now", variant: "primary" },
@@ -52,7 +52,7 @@ export default function SecondaryMarketHero() {
                             className={`rounded-lg h-16 px-4 gap-2 flex flex-row items-center justify-between w-full transition-all
                                         ${action.variant === 'primary'
                                     ? "bg-[#7A6FF0] hover:bg-[#7A6FF0]/90 text-white"
-                                    : "bg-[#F2F1FE] hover:bg-[#F2F1FE]/90 text-[#5C53B4] border border-[#7A6FF0]"}`}
+                                    : "bg-[#F2F1FE] hover:bg-[#7A6FF0]/90 text-[#5C53B4] border border-[#7A6FF0]"}`}
                             style={{
                                 fontFamily: 'var(--font-rethink-sans)',
                                 fontWeight: 500,
