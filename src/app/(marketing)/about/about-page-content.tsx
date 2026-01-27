@@ -2,20 +2,13 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { Navbar } from '@/app/landing/components/navbar'
-import { Footer } from '@/app/landing/components/footer'
 import { ValueCard } from '@/components/about/molecules/value-card'
 import { FeatureCard } from '@/components/about/molecules/feature-card'
 import { Briefcase, ShieldCheck, TrendingUp, ArrowLeftRight } from 'lucide-react'
 
 export function AboutPageContent() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <Navbar />
-
-      {/* Main Content */}
-      <main className="w-full">
+    <div className="w-full">
         {/* Hero Section */}
         <section className="relative w-full h-[512px] bg-[#042E27] overflow-hidden">
           <div className="w-full max-w-[1440px] mx-auto h-full relative px-4 md:px-6 lg:px-12 xl:px-[104px]">
@@ -388,10 +381,6 @@ export function AboutPageContent() {
         </section>
 
         {/* More sections will go here */}
-      </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   )
 }

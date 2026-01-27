@@ -3,6 +3,10 @@
 import React, { useEffect, useRef } from 'react';
 import { TestimonialCard } from '@/components/testimonials/molecules/testimonial-card';
 
+interface TestimonialsProps {
+  className?: string;
+}
+
 // Testimonials data
 const testimonialsData = [
   {
@@ -22,7 +26,7 @@ const testimonialsData = [
   // We'll duplicate these for seamless infinite scroll
 ];
 
-export function Testimonials() {
+export function Testimonials({ className }: TestimonialsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
@@ -155,7 +159,7 @@ export function Testimonials() {
   const duplicatedTestimonials = [...testimonialsData, ...testimonialsData, ...testimonialsData];
 
   return (
-    <section className="w-full bg-white py-[62px] overflow-hidden">
+    <section className={`w-full bg-white py-[62px] overflow-hidden ${className ?? ''}`}>
       {/* Main Container */}
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
         {/* Section Header */}
