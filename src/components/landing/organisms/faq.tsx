@@ -103,7 +103,7 @@ export function FAQ() {
           {/* Content Container - Categories and FAQs */}
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-[200px] xl:gap-[300px] w-full">
             {/* Left Side - Category Tabs */}
-            <div className="flex flex-col items-start gap-4 w-full lg:w-[296px]">
+            <div className="flex flex-col items-start gap-4 w-full lg:w-[330px]">
               {categories.map((category) => (
                 <CategoryTab
                   key={category.id}

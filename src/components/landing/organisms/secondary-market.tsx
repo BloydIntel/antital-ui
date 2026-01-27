@@ -12,7 +12,7 @@ export function SecondaryMarket() {
       <div className="w-full max-w-[1440px] mx-auto h-full relative px-4 md:px-6 lg:px-12 xl:px-[104px] py-16 lg:py-20 xl:py-0">
         {/* Flex Container for responsive layout */}
         <div className="flex flex-col lg:flex-row items-center lg:items-center justify-between gap-8 lg:gap-12 xl:gap-16 h-full min-h-[600px] lg:min-h-[800px] overflow-x-hidden">
-          
+
           {/* Left Side - Image on green background (includes yellow card with text) */}
           <div className="relative w-full lg:flex-1 lg:max-w-[646px] xl:w-[646px] h-[400px] sm:h-[500px] lg:h-[700px] flex-shrink-0">
             <Image
@@ -38,7 +38,7 @@ export function SecondaryMarket() {
             <ButtonGroup
               primaryHref="/secondary-market/trade"
               primaryText="Start trading"
-              secondaryHref="/secondary-market/learn"
+              secondaryHref="/secondary-market"
               secondaryText="Learn more"
             />
           </div>

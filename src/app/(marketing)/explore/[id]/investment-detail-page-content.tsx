@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
-import { Navbar } from '@/app/landing/components/navbar'
-import { Footer } from '@/app/landing/components/footer'
 import { InvestmentCardData } from '@/components/investment/organisms/investment-card'
 import { VideoSection } from '@/components/investment/organisms/video-section'
 import { InvestmentPanel } from '@/components/investment/organisms/investment-panel'
@@ -189,17 +187,12 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
   const problemDescription = 'Current small and medium-sized enterprises (SMEs) struggle with a complex, fragmented supply chain management system, leading to an average 15% loss in operational efficiency and increased waste. Existing solutions are often too expensive for smaller players or lack the necessary AI-driven predictive capabilities. NEXUS AI is changing this. We provide an accessible, cloud-based platform that uses proprietary machine learning models to forecast inventory needs and optimize logistics routes with 98.5% accuracy, a significant leap over the industry standard of 85%.'
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <Navbar />
-
-      {/* Main Content */}
-      <main 
-        className="w-full lg:pb-0"
-        style={{
-          paddingBottom: stickyButtonHeight > 0 ? `${stickyButtonHeight}px` : '0px',
-        }}
-      >
+    <div 
+      className="w-full lg:pb-0"
+      style={{
+        paddingBottom: stickyButtonHeight > 0 ? `${stickyButtonHeight}px` : '0px',
+      }}
+    >
         <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px] py-8 lg:py-16">
           {/* First Section - Days Left Badge and Problem Section */}
           <section className="relative w-full">
@@ -332,10 +325,6 @@ export function InvestmentDetailPageContent({ investment }: InvestmentDetailPage
             </div>
           </section>
         </div>
-      </main>
-
-      {/* Footer */}
-      <Footer />
 
       {/* Mobile Sticky Start Trading Button - only visible on mobile and not on questions tab */}
       {activeTab !== 'questions' && (
