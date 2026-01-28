@@ -1,19 +1,44 @@
-import { LoginForm1 } from "./components/login-form-1"
-import { Logo } from "@/components/logo"
-import Link from "next/link"
+import { Metadata } from "next"
+import { LoginForm2 } from "./components/login-form-2"
+import Image from "next/image"
 
-export default function Page() {
+export const metadata: Metadata = {
+  title: 'Login | Antital',
+  description: 'Access your Antital account to explore startups, manage your portfolio, and stay updated with the latest market trends.',
+}
+
+export default function LoginPage() {
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <Link href="/" className="flex items-center gap-2 self-center font-medium">
-          <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
-            <Logo size={24} />
+    <div className="grid min-h-svh lg:grid-cols-5">
+
+      <div className="flex flex-col gap-4 p-6 md:p-10 col-span-3">
+
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-md">
+            <LoginForm2 />
           </div>
-          ShadcnStore
-        </Link>
-        <LoginForm1 />
+        </div>
+
+        <p className="text-center text-sm text-[#858585] "
+          style={{
+            fontFamily: "var(--font-dm-sans)",
+            fontWeight: 400,
+          }}
+        >
+          All rights reserved - Antital ©2025
+          |  Built by GADA Studios
+        </p>
       </div>
+
+      <div className="relative hidden lg:block col-span-2">
+        <Image
+          src="/Login-Image.png"
+          alt="Image"
+          width={600}
+          height={1024}
+        />
+      </div>
+
     </div>
   )
 }
