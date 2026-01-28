@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh max-h-[1024px] lg:grid-cols-5">
+    <div className="grid min-h-svh lg:grid-cols-5">
 
       <div className="flex flex-col gap-4 p-6 md:p-10 col-span-3">
 
@@ -19,11 +19,10 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-sm text-[#858585] -mb-6"
+        <p className="text-center text-sm text-[#858585] "
           style={{
             fontFamily: "var(--font-dm-sans)",
             fontWeight: 400,
-            letterSpacing: "-1%",
           }}
         >
           All rights reserved - Antital ©2025
