@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,12 +10,25 @@ import Image from "next/image"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff } from "lucide-react"
 
-export function LoginForm2({
+export function Login({
   className,
   ...props
 }: React.ComponentProps<"form">) {
 
   const [showPassword, setShowPassword] = useState(false)
+  const searchParams = useSearchParams()
+
+  const from = searchParams.get("from")
+
+  const isTrading = from === "trading"
+
+  const title = isTrading
+    ? "Create an Account to Invest In NEXUS AI"
+    : "Welcome back to Antital"
+
+  const description = isTrading
+    ? "Sign up in minutes and gain access to exclusive AI investment opportunities."
+    : "Welcome back! Discover new startups, manage your portfolio, and stay ahead of the market."
 
   return (
     <form className={cn("flex flex-col gap-4", className)} {...props} action="/dashboard">
@@ -27,7 +41,7 @@ export function LoginForm2({
           style={{
             fontFamily: "var(--font-clash-display)",
             fontWeight: 500,
-          }}>Welcome back to Antital</h1>
+          }}>{title}</h1>
 
         <p
           className="text-[#505050] leading-tight text-base"
@@ -36,7 +50,7 @@ export function LoginForm2({
             fontWeight: 400,
           }}
         >
-          Welcome back! Discover new startups, manage your portfolio, and stay ahead of the market.
+          {description}
         </p>
 
       </div>
@@ -96,7 +110,13 @@ export function LoginForm2({
 
         </div>
 
-        <Button type="submit" className="bg-[#042E27] w-full cursor-pointer transition-all duration-300 ease-in-out hover:h-[38px] hover:bg-[#042E27] hover:shadow-[0_5px_0_0_#042E27] hover:border-b-[1px] hover:border-[#7BA147]">
+        <Button
+          type="submit"
+          className="w-full max-w-[540px] h-12 px-4 py-2 gap-2 mb-[6px] rounded-lg font-medium text-base leading-[21px] shadow-none transition-all duration-300 border border-[#042E27] bg-[#042E27] text-white [&:hover]:bg-[#042E27] [&:hover]:text-white [&:hover]:border-[#042E27] [&:hover]:shadow-[0_6px_0px_#0C4037]"
+          style={{
+            fontFamily: "var(--font-rethink-sans)",
+          }}
+        >
           Login
         </Button>
 
@@ -108,7 +128,7 @@ export function LoginForm2({
           fontWeight: 400,
         }}
       >
-        Don&apos;t have an account?{" "}
+        Don&apos;t have an account yet?{" "}
         <a href="/auth/sign-up-2" className="text-[#7BA147]">
           Sign up
         </a>

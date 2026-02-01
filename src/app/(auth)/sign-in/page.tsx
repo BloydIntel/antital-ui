@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { LoginForm2 } from "./components/login-form-2"
+import { Login } from "./components/login"
 import Image from "next/image"
 
 export const metadata: Metadata = {
@@ -9,13 +9,13 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-5">
+    <div className="grid min-h-screen lg:grid-cols-5">
 
       <div className="flex flex-col gap-4 p-6 md:p-10 col-span-3">
 
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md">
-            <LoginForm2 />
+            <Login />
           </div>
         </div>
 
@@ -30,12 +30,14 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="relative hidden lg:block col-span-2">
+      <div className="relative hidden lg:block col-span-2 min-h-screen">
         <Image
           src="/Login-Image.png"
-          alt="Image"
-          width={600}
-          height={1024}
+          alt="Investment illustration"
+          fill
+          className="object-cover"
+          priority
+          sizes="(min-width: 1024px) 40vw, 0px"
         />
       </div>
 

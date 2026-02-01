@@ -2,8 +2,16 @@ import React from 'react'
 import { Gauge, Bookmark } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { ActionButton } from '@/components/investment/molecules/action-button'
+import { useRouter } from "next/navigation"
 
 export function InvestmentPanel() {
+
+  const router = useRouter()
+
+  const handleStartTrading = () => {
+    router.push("/sign-in?from=trading")
+  }
+
   return (
     <div className="w-full max-w-full lg:w-auto lg:max-w-[400px]">
       {/* Investment Card */}
@@ -25,7 +33,7 @@ export function InvestmentPanel() {
           }}
         >
           {/* Target Section */}
-            <div
+          <div
             className="flex flex-col items-start w-full border-b border-[#EAEAEA] dark:border-[#404040]"
             style={{
               gap: '24px',
@@ -189,6 +197,7 @@ export function InvestmentPanel() {
               variant="primary"
               width="100%"
               height="48px"
+              onClick={handleStartTrading}
             />
             <ActionButton
               text="Add to watchlist"
