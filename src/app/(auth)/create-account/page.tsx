@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import Image from "next/image"
+import { SelectUserType } from "@/components/create-account/organisms/select-user-type"
 
 export const metadata: Metadata = {
     title: 'Create Account | Antital',
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
     return (
-        <div className="grid min-h-svh lg:grid-cols-5">
+        <div className="grid min-h-screen lg:grid-cols-5">
+
 
             <div className="flex flex-col gap-4 p-6 md:p-10 col-span-3">
 
@@ -33,11 +35,11 @@ export default function LoginPage() {
                                     fontWeight: 400,
                                 }}
                             >
-                                Welcome back! Discover new startups, manage your portfolio, and stay ahead of the market.
+                                Select your account type to get started.
                             </p>
 
-                            <div className="grid gap-4">
-
+                            <div className="grid gap-4 pt-4">
+                                <SelectUserType />
                             </div>
 
                         </div>
@@ -57,12 +59,14 @@ export default function LoginPage() {
                 </p>
             </div>
 
-            <div className="relative hidden lg:block col-span-2">
+            <div className="relative hidden lg:block col-span-2 min-h-screen">
                 <Image
                     src="/create-account-page.png"
-                    alt="Image"
-                    width={600}
-                    height={1024}
+                    alt="Create Account illustration"
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(min-width: 1024px) 40vw, 0px"
                 />
             </div>
 
