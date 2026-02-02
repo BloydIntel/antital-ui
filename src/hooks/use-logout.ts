@@ -14,13 +14,13 @@ const useLogout = () => {
   return useMutation({
     mutationKey: ["logout"],
     mutationFn: authService.logout,
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSettled: () => {
+    onSuccess: () => {
       tokenStorage.clear();
       queryClient.invalidateQueries({ queryKey: CACHE_KEY_USER });
       router.push("/sign-in");
+    },
+    onError: (err) => {
+      toast.error(err.message);
     },
   });
 };

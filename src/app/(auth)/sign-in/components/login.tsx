@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,8 +19,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import useLogin from "@/hooks/use-login"
+import { ApiError } from "@/lib/api-error"
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -57,6 +58,16 @@ export function Login({
   function onSubmit(values: LoginValues) {
     loginMutation.mutate(values)
   }
+
+  useEffect(() => {
+    if (!loginMutation.isError || !(loginMutation.error instanceof ApiError))
+      return
+    const err = loginMutation.error as ApiError
+    ;(["email", "password"] as const).forEach((field) => {
+      const msg = err.getFieldError(field)
+      if (msg) form.setError(field, { message: msg })
+    })
+  }, [loginMutation.isError, loginMutation.error, form])
 
   return (
     <div className={cn("flex flex-col gap-4", className)} {...props}>
@@ -182,7 +193,14 @@ export function Login({
               fontFamily: "var(--font-rethink-sans)",
             }}
           >
-            {loginMutation.isPending ? "Logging in…" : "Login"}
+            {loginMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                Logging in…
+              </>
+            ) : (
+              "Login"
+            )}
           </Button>
         </form>
       </Form>

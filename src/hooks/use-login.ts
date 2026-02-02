@@ -16,11 +16,16 @@ const useLogin = () => {
   return useMutation<LoginResponse, Error, LoginRequest>({
     mutationKey: ["login"],
     mutationFn: authService.login,
-    onSuccess: (data) => {
-      tokenStorage.setAccessToken(data.token);
-      if (data.refreshToken) tokenStorage.setRefreshToken(data.refreshToken);
+    onSuccess: (data, variables) => {
+      const persistent = variables.remember === true;
+      tokenStorage.setAccessToken(data.token, persistent);
+      if (data.refreshToken)
+        tokenStorage.setRefreshToken(data.refreshToken, persistent);
       queryClient.invalidateQueries({ queryKey: CACHE_KEY_USER });
-      router.push("/dashboard");
+      // Defer redirect so the login button's loading state can paint before navigation
+      requestAnimationFrame(() => {
+        router.push("/dashboard");
+      });
     },
     onError: (err) => {
       toast.error(err.message);
