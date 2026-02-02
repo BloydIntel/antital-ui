@@ -1,3 +1,5 @@
+"use client"
+
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
@@ -6,6 +8,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
+      position="top-right"
+      richColors
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       style={
