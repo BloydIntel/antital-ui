@@ -4,7 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarConfigProvider } from "@/contexts/sidebar-context";
 import { FaviconHandler } from "@/components/favicon-handler";
+import { Toaster } from "@/components/ui/sonner";
 import { rethinkSans, dmSans } from "@/lib/fonts";
+import { QueryProvider } from "@/components/query-provider";
 
 export const metadata: Metadata = {
   title: "Antital - Turn your earnings into opportunities",
@@ -30,7 +32,8 @@ export default function RootLayout({
         <FaviconHandler />
         <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
           <SidebarConfigProvider>
-            {children}
+            <QueryProvider>{children}</QueryProvider>
+            <Toaster />
           </SidebarConfigProvider>
         </ThemeProvider>
       </body>

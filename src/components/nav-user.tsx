@@ -10,6 +10,7 @@ import {
 import Link from "next/link"
 
 import { Logo } from "@/components/logo"
+import useLogout from "@/hooks/use-logout"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +37,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const logoutMutation = useLogout()
 
   return (
     <SidebarMenu>
@@ -99,11 +101,13 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/auth/sign-in">
-                <LogOut />
-                Log out
-              </Link>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
+            >
+              <LogOut />
+              {logoutMutation.isPending ? "Logging out…" : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

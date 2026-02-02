@@ -30,6 +30,23 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
+## Environment variables
+
+Create a `.env.local` file in the project root for local development. It is gitignored and will not be committed.
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_API_URL` | Base URL for the API (e.g. `https://api.example.com`). If unset, requests use the current origin (relative URLs). | No (defaults to same origin) |
+
+Example:
+
+```bash
+# .env.local
+NEXT_PUBLIC_API_URL=https://api.example.com
+```
+
+For production, set these variables in your hosting provider’s environment (Vercel, etc.).
+
 ## Available Scripts
 
 - `pnpm dev` - Start development server with Turbopack

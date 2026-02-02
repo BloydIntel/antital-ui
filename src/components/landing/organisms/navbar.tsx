@@ -150,7 +150,7 @@ export function Navbar() {
                 fontWeight: 500,
               }}
             >
-              <Link href="/auth/sign-up">Invest now</Link>
+              <Link href="/sign-in">Invest now</Link>
             </Button>
             <Button
               variant="outline"
@@ -163,7 +163,7 @@ export function Navbar() {
                 fontWeight: 500,
               }}
             >
-              <Link href="/raise-funds">Raise funds</Link>
+              <Link href="/sign-in">Raise funds</Link>
             </Button>
           </div>
 
@@ -233,7 +233,7 @@ export function Navbar() {
                     }}
                     asChild
                   >
-                    <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>
+                    <Link href="/sign-in" onClick={() => setIsOpen(false)}>
                       Invest now
                     </Link>
                   </Button>
@@ -248,7 +248,7 @@ export function Navbar() {
                     }}
                     asChild
                   >
-                    <Link href="/raise-funds" onClick={() => setIsOpen(false)}>
+                    <Link href="/sign-in" onClick={() => setIsOpen(false)}>
                       Raise funds
                     </Link>
                   </Button>
