@@ -63,10 +63,10 @@ export function Login({
     if (!loginMutation.isError || !(loginMutation.error instanceof ApiError))
       return
     const err = loginMutation.error as ApiError
-    ;(["email", "password"] as const).forEach((field) => {
-      const msg = err.getFieldError(field)
-      if (msg) form.setError(field, { message: msg })
-    })
+      ; (["email", "password"] as const).forEach((field) => {
+        const msg = err.getFieldError(field)
+        if (msg) form.setError(field, { message: msg })
+      })
   }, [loginMutation.isError, loginMutation.error, form])
 
   return (
@@ -213,7 +213,7 @@ export function Login({
         }}
       >
         Don&apos;t have an account yet?{" "}
-        <a href="/auth/sign-up-2" className="text-[#7BA147]">
+        <a href="/create-account" className="text-[#7BA147]">
           Sign up
         </a>
       </div>
