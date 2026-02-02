@@ -36,9 +36,6 @@ export function SelectUserType() {
                     alt={type.alt}
                     title={type.title}
                     description={type.description}
-                    onClick={() => {
-                        console.log("Selected:", type.id)
-                    }}
                 />
             ))}
         </div>

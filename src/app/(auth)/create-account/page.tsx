@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     description: 'Create your account on Antital to get started.',
 }
 
-export default function LoginPage() {
+export default function CreateAccountPage() {
     return (
         <div className="grid min-h-screen lg:grid-cols-5">
 
