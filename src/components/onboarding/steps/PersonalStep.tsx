@@ -1,25 +1,25 @@
-"use client"
-
-import { useRouter } from "next/navigation"
+import { useOnboardingStore } from "@/store/onboardingStore";
+import { PersonalDetailsForm } from "@/components/onboarding/steps/PersonalDetailsForm";
+import { LocationForm } from "@/components/onboarding/steps/LocationForm";
+import { useRouter } from "next/navigation";
 
 export function PersonalStep() {
-    const router = useRouter()
+    const subStep = useOnboardingStore((s) => s.personalSubStep);
+    const setSubStep = useOnboardingStore((s) => s.setPersonalSubStep);
+    const router = useRouter();
+
+    if (subStep === "location") {
+        return (
+            <LocationForm
+                onBack={() => setSubStep("details")}
+                onNext={() => router.push('/onboarding/email')}
+            />
+        );
+    }
 
     return (
-        <div className="max-w-xl space-y-6">
-            <h1 className="text-3xl font-semibold">
-                Start Your Investment Journey
-            </h1>
-
-            <input className="input" placeholder="Nationality" />
-            <input className="input" placeholder="State" />
-
-            <button
-                className="btn-primary"
-                onClick={() => router.push("/onboarding/email")}
-            >
-                Continue
-            </button>
-        </div>
-    )
+        <PersonalDetailsForm
+            onNext={() => setSubStep("location")}
+        />
+    );
 }
