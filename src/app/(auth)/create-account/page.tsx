@@ -37,7 +37,7 @@ export default function CreateAccountPage() {
 
             <div className="relative hidden lg:block col-span-2 min-h-screen">
                 <Image
-                    src="/create-account-page.png"
+                    src="/create-account/create-account-page.png"
                     alt="Create Account illustration"
                     fill
                     className="object-cover"

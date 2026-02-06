@@ -8,7 +8,7 @@ interface PersonalDetailsProps {
 
 export function PersonalDetailsForm({ onNext }: PersonalDetailsProps) {
     return (
-        <section className="pt-[96px] px-[236px]">
+        <section>
 
             <div>
                 <h2 className="text-[36px] text-[#1B1B1B] leading-tight"
@@ -28,10 +28,9 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsProps) {
                 >
                     Join Nigerians building wealth through startup investing
                 </p>
-                <button onClick={onNext}>Next: Location</button>
             </div>
 
-            <div>
+            <div className="pt-[32px]">
                 <p className="text-[24px] text-[#1B1B1B] leading-tight pb-[25px]"
                     style={{
                         fontFamily: "var(--font-rethink-sans)",
@@ -46,14 +45,18 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsProps) {
                     <OnboardingInput label="First Name" type="text" placeholder="John" />
                     <OnboardingInput label="Last Name" type="text" placeholder="Doe" />
                 </div>
+
                 <OnboardingInput label="Email" type="email" placeholder="johndoe@email.com" />
+
                 <OnboardingInput label="Preferred Name/Alias" type="text" placeholder="John Doe" />
+
                 <div className="grid grid-cols-2 gap-4">
                     <OnboardingInput label="Phone Number" type="tel" placeholder="+234 90 1234 5678" />
                     <OnboardingInput label="Date of Birth" type="date" placeholder="DD/MM/YYYY" icon={Calendar} />
                 </div>
 
                 <OnboardingButton Label="Proceed" onClick={onNext} />
+
             </div>
 
         </section>

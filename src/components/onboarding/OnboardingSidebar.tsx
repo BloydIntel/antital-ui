@@ -78,7 +78,7 @@ export default function OnboardingSidebar() {
 
             <div className="mt-10">
                 <Image
-                    src="/Onboarding-page-illustration.png"
+                    src="/onboarding/Onboarding-page-illustration.png"
                     alt="Onboarding Illustration"
                     width={248}
                     height={210}

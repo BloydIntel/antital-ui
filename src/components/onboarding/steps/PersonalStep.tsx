@@ -11,7 +11,7 @@ export function PersonalStep() {
     if (subStep === "location") {
         return (
             <LocationForm
-                onBack={() => setSubStep("details")}
+
                 onNext={() => router.push('/onboarding/email')}
             />
         );
