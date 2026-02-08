@@ -1,8 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 import { Info } from 'lucide-react'
+import { OnboardingButton } from '../molecules/OnboardingButton'
 
-export function EmailStep() {
+interface EmailStepProps {
+    onNext: () => void;
+}
+
+export function EmailStep({ onNext }: EmailStepProps) {
     return (
         <section>
             <div className="flex flex-col items-center">
@@ -54,10 +59,15 @@ export function EmailStep() {
                     </p>
                 </div>
 
+                {/* Info Container */}
                 <div className="flex flex-row mt-[24px] bg-[#EDF4FC] border border-[#C7DDF6] rounded-sm p-[8px] max-w-[558px]">
-                    <Info className="h-6 w-6 text-[#1B1B1B] mr-2 text-[#3B73B5]" />
 
-                    <div className="flex flex-col gap-3">
+                    <div className="h-[24px] w-[24px]">
+                        <Info className="h-6 w-6 text-[#1B1B1B] text-[#3B73B5] " />
+                    </div>
+
+                    <div className="flex flex-col gap-3 ml-2">
+
                         <p className="text-[14px] text-[#3B73B5] leading-tight"
                             style={{
                                 fontFamily: "var(--font-dm-sans)",
@@ -76,7 +86,14 @@ export function EmailStep() {
                         </p>
 
                     </div>
+
                 </div>
+
+                <div className="grid grid-cols-2 gap-4 w-full">
+                    <OnboardingButton Label="Delete Account" variant="plain" />
+                    <OnboardingButton Label="Verify Email" onClick={onNext} />
+                </div>
+
             </div>
 
         </section>

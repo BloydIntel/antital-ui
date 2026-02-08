@@ -1,6 +1,6 @@
 import { useOnboardingStore } from "@/store/onboardingStore";
-import { PersonalDetailsForm } from "@/components/onboarding/steps/PersonalDetailsForm";
-import { LocationForm } from "@/components/onboarding/steps/LocationForm";
+import { PersonalDetailsForm } from "@/components/onboarding/organisms/PersonalDetailsForm";
+import { LocationForm } from "@/components/onboarding/organisms/LocationForm";
 import { useRouter } from "next/navigation";
 
 export function PersonalStep() {

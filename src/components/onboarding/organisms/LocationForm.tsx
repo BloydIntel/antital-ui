@@ -10,7 +10,7 @@ interface LocationFormProps {
 export function LocationForm({ onNext }: LocationFormProps) {
     return (
         <div>
-            <section>
+            <section className="max-w-[558px]">
 
                 <div>
                     <h2 className="text-[36px] text-[#1B1B1B] leading-tight"

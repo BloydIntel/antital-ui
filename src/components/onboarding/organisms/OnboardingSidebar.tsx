@@ -2,20 +2,21 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ONBOARDING_STEPS } from "./steps"
+import { ONBOARDING_STEPS } from "../steps"
 import { useOnboardingStore } from "@/store/onboardingStore"
 
 export default function OnboardingSidebar() {
     const currentStep = useOnboardingStore((s) => s.currentStep)
 
     return (
-        <nav className="pl-[66px] pt-[62px] pr-[34px] bg-[#F7FBF4] min-h-screen">
+        <nav className="flex flex-col justify-items-start pl-[66px] pt-[20px] pr-[34px] bg-[#F7FBF4] min-h-screen">
+
             <Image
                 src="/antital_logo.png"
                 alt="Antital Logo"
                 width={80}
                 height={80}
-                className="pb-[50px]"
+                className="pb-[20px]"
             />
 
             <ul className="space-y-0">
@@ -76,16 +77,20 @@ export default function OnboardingSidebar() {
                 })}
             </ul>
 
-            <div className="mt-10">
-                <Image
-                    src="/onboarding/Onboarding-page-illustration.png"
-                    alt="Onboarding Illustration"
-                    width={248}
-                    height={210}
-                    className="pb-[40px]"
-                />
+            <div
+            //  className="mt-10" 
+            >
+                <div className="w-[198px] h-[168px]">
+                    <Image
+                        src="/onboarding/Onboarding-page-illustration.png"
+                        alt="Onboarding Illustration"
+                        width={248}
+                        height={210}
+                        className="pb-[40px]"
+                    />
+                </div>
                 <p
-                    className="text-[#545C19] leading-tight text-[12px] w-[279px] pb-[24px] opacity-80"
+                    className="text-[#545C19] leading-tight text-[12px] w-[279px] py-[24px] opacity-80"
                     style={{
                         fontFamily: "var(--font-dm-sans)",
                         fontWeight: 400,

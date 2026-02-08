@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import StepRenderer from "@/components/onboarding/StepRenderer"
+import StepRenderer from "@/components/onboarding/organisms/StepRenderer"
 import { ONBOARDING_STEPS } from "@/components/onboarding/steps"
 import { useOnboardingStore } from "@/store/onboardingStore"
 
