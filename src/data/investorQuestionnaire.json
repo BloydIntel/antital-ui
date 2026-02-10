@@ -121,7 +121,8 @@
                     "Legal Settlement",
                     "Gifts/Donations",
                     "Other"
-                ]
+                ],
+                "info": "We are required by law to verify the source of funds used on our platform as part of anti-money laundering (AML) regulations. This information helps us ensure a safe, compliant, and trustworthy environment for all users and potential investors. All data is securely stored and handled in accordance with our privacy policy."
             },
             {
                 "label": "Do you confirm that you meet the SEC Nigeria criteria for a Sophisticated (Acclaimed) Investor?",
@@ -184,7 +185,8 @@
                     "Legal Settlement",
                     "Gifts/Donations",
                     "Other"
-                ]
+                ],
+                "info": "We are required by law to verify the source of funds used on our platform as part of anti-money laundering (AML) regulations. This information helps us ensure a safe, compliant, and trustworthy environment for all users and potential investors. All data is securely stored and handled in accordance with our privacy policy."
             },
             {
                 "label": "Do you confirm that you meet the SEC Nigeria criteria for a classification as a High-Net-Worth Investor and consent to being treated as such for the purpose of investment eligibility and offering access on this platform?",

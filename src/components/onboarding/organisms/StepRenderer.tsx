@@ -1,7 +1,7 @@
-import { PersonalStep } from "@/components/onboarding/organisms/PersonalStep"
-import { EmailStep } from "./EmailStep"
-import { InvestorStep } from "./InvestorStep"
-import { IdentityVerification } from "./IdentityVerification"
+import { PersonalStep } from "@/components/onboarding/organisms/personal-step/PersonalStep"
+import { EmailStep } from "@/components/onboarding/organisms/EmailStep"
+import { InvestorStep } from "@/components/onboarding/organisms/investor-step/InvestorStep"
+import { IdentityVerification } from "@/components/onboarding/organisms//kyc/IdentityVerification"
 import { useRouter } from "next/navigation"
 
 export default function StepRenderer({ step }: { step: string }) {
