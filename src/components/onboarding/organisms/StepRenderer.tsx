@@ -2,7 +2,9 @@ import { PersonalStep } from "@/components/onboarding/organisms/personal-step/Pe
 import { EmailStep } from "@/components/onboarding/organisms/EmailStep"
 import { InvestorStep } from "@/components/onboarding/organisms/investor-step/InvestorStep"
 import { IdentityVerification } from "@/components/onboarding/organisms//kyc/IdentityVerification"
+import { Review } from "@/components/onboarding/organisms/Review"
 import { useRouter } from "next/navigation"
+import { AccountActivation } from "@/components/onboarding/organisms/AccountActivation"
 
 export default function StepRenderer({ step }: { step: string }) {
 
@@ -16,7 +18,11 @@ export default function StepRenderer({ step }: { step: string }) {
         case "investor":
             return <InvestorStep onNext={() => router.push('/onboarding/kyc')} />
         case "kyc":
-            return <IdentityVerification />
+            return <IdentityVerification onNext={() => router.push('/onboarding/review')} />
+        case "review":
+            return <Review onBack={() => router.push('/onboarding/kyc')} onNext={() => router.push('/onboarding/activation')} />
+        case "activation":
+            return <AccountActivation />
         default:
             return <div>Step UI not ready</div>
     }

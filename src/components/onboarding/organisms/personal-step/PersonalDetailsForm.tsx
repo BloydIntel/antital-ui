@@ -1,12 +1,7 @@
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput'
 import { Calendar } from 'lucide-react'
-import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 
-interface PersonalDetailsProps {
-    onNext: () => void
-}
-
-export function PersonalDetailsForm({ onNext }: PersonalDetailsProps) {
+export function PersonalDetailsForm() {
     return (
         <section>
 
@@ -41,7 +36,7 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsProps) {
                     Personal Details
                 </p>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 lg:gap-4">
                     <OnboardingInput label="First Name" type="text" placeholder="John" />
                     <OnboardingInput label="Last Name" type="text" placeholder="Doe" />
                 </div>
@@ -50,12 +45,10 @@ export function PersonalDetailsForm({ onNext }: PersonalDetailsProps) {
 
                 <OnboardingInput label="Preferred Name/Alias" type="text" placeholder="John Doe" />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 lg:gap-4">
                     <OnboardingInput label="Phone Number" type="tel" placeholder="+234 90 1234 5678" />
                     <OnboardingInput label="Date of Birth" type="date" placeholder="DD/MM/YYYY" icon={Calendar} />
                 </div>
-
-                <OnboardingButton Label="Proceed" onClick={onNext} />
 
             </div>
 

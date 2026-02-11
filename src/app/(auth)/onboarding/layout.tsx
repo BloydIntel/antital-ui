@@ -27,7 +27,7 @@ export default function OnboardingLayout({
 
                 <div className="flex-1 flex flex-col justify-between items-center w-full">
 
-                    <div className="pt-[72px] px-[236px] min-h-screen">
+                    <div className=" pt-8 lg:pt-[72px] px-4 lg:px-[236px] min-h-screen">
 
                         {children}
 

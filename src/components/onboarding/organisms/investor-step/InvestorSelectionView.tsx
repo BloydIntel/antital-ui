@@ -47,8 +47,8 @@ export function InvestorSelectionView({ categories, selectedId, onSelect }: Prop
             </div>
 
             <div className="flex flex-row bg-[#EDF4FC] border border-[#C7DDF6] rounded-sm p-3 mb-8">
-                <Info className="h-6 w-6 text-[#3B73B5] shrink-0" />
-                <p className="ml-2 text-[14px] text-[#3B73B5] font-[family-name:var(--font-dm-sans)]">
+                <Info className="h-4 lg:h-6 w-4 lg:w-6 text-[#3B73B5] shrink-0" />
+                <p className="ml-2 text-[12px] lg:text-[14px] text-[#3B73B5] font-[family-name:var(--font-dm-sans)]">
                     Nigerian SEC regulations require us to categorize investors to ensure
                     appropriate investment limits and protections.
                 </p>

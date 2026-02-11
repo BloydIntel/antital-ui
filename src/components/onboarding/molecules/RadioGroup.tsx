@@ -20,7 +20,7 @@ export const RadioGroup = ({ options, name }: { options: string[], name: string 
                     </div>
                 </div>
 
-                <span className="text-[16px] text-[#1A1A1A] font-medium font-[family-name:var(--font-dm-sans)]">
+                <span className="text-[14px] lg:text-[16px] text-[#1A1A1A] font-[family-name:var(--font-dm-sans)]">
                     {option}
                 </span>
             </label>

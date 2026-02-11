@@ -1,13 +1,9 @@
 import { OnboardingInput } from "@/components/onboarding/molecules/OnboardingInput";
-import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 import { ChevronDown, House } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 
-interface LocationFormProps {
-    onNext: () => void;
-}
 
-export function LocationForm({ onNext }: LocationFormProps) {
+export function LocationForm() {
     return (
         <div>
             <section className="max-w-[558px]">
@@ -45,14 +41,14 @@ export function LocationForm({ onNext }: LocationFormProps) {
 
                     <OnboardingInput label="Nationality" type="text" placeholder="Nigeria" icon={ChevronDown} />
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid lg:grid-cols-2 lg:gap-4">
                         <OnboardingInput label="Country of Residence" type="text" placeholder="Nigeria" icon={ChevronDown} />
                         <OnboardingInput label="State of Residence" type="text" placeholder="Lagos" icon={ChevronDown} />
                     </div>
 
                     <OnboardingInput label="Residential Address" type="text" placeholder="23A Unity Crescent Lekki Phase 1,  Lagos State, Nigeria." icon={House} />
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid lg:grid-cols-2 lg:gap-4">
                         <OnboardingInput label="Create Password" type="password" placeholder="********" />
                         <OnboardingInput label="Confirm Password" type="password" placeholder="********" />
                     </div>
@@ -74,7 +70,7 @@ export function LocationForm({ onNext }: LocationFormProps) {
                         </p>
                     </div>
 
-                    <OnboardingButton Label="Create Account" onClick={onNext} />
+                    {/* <OnboardingButton Label="Create Account" onClick={onNext} /> */}
 
                 </div>
 

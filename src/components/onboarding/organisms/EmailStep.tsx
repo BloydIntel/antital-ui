@@ -63,12 +63,12 @@ export function EmailStep({ onNext }: EmailStepProps) {
                 <div className="flex flex-row mt-[24px] bg-[#EDF4FC] border border-[#C7DDF6] rounded-sm p-[8px] max-w-[558px]">
 
                     <div className="h-[24px] w-[24px]">
-                        <Info className="h-6 w-6 text-[#1B1B1B] text-[#3B73B5] " />
+                        <Info className="h-4 lg:h-6 w-4 lg:w-6 text-[#3B73B5] shrink-0" />
                     </div>
 
                     <div className="flex flex-col gap-3 ml-2">
 
-                        <p className="text-[14px] text-[#3B73B5] leading-tight"
+                        <p className="text-[12px] lg:text-[14px] text-[#3B73B5] leading-tight"
                             style={{
                                 fontFamily: "var(--font-dm-sans)",
                                 letterSpacing: "-1%",

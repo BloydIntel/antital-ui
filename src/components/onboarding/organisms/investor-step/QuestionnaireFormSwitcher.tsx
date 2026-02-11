@@ -37,7 +37,7 @@ const QuestionWrapper = ({ label, children, index, info }: { label: string; chil
 
             <div className="flex items-start justify-between">
 
-                <p className="text-[16px] text-[#1F1F1F] font-medium leading-tight font-[family-name:var(--font-dm-sans)]">
+                <p className="text-[14px] lg:text-[16px] text-[#1F1F1F] leading-tight font-[family-name:var(--font-dm-sans)]">
                     {letter}. {label}
                 </p>
 

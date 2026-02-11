@@ -1,15 +1,38 @@
 import { create } from "zustand"
+import { ONBOARDING_STEPS } from "@/components/onboarding/steps"
+
+type StepKey = (typeof ONBOARDING_STEPS)[number]["key"];
 
 type OnboardingState = {
-    personalSubStep: 'details' | 'location'
-    currentStep: string
-    setCurrentStep: (step: string) => void
-    setPersonalSubStep: (sub: 'details' | 'location') => void
+    // State
+    currentStep: StepKey
+    personalSubStep: number
+    kycSubStep: number
+
+    // Actions
+    setCurrentStep: (step: StepKey) => void
+    setPersonalSubStep: (index: number) => void
+    setKycSubStep: (index: number) => void
 }
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
-    currentStep: 'personal',
-    personalSubStep: 'details',
-    setCurrentStep: (step) => set({ currentStep: step }),
-    setPersonalSubStep: (sub) => set({ personalSubStep: sub }),
+    // Initial State
+    currentStep: ONBOARDING_STEPS[0].key as StepKey,
+    personalSubStep: 0,
+    kycSubStep: 0,
+
+    // Actions
+    setCurrentStep: (step) => set({
+        currentStep: step
+    }),
+
+    setPersonalSubStep: (index) => set({
+        personalSubStep: index,
+        currentStep: "personal"
+    }),
+
+    setKycSubStep: (index) => set({
+        kycSubStep: index,
+        currentStep: "kyc"
+    }),
 }))

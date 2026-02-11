@@ -1,9 +1,10 @@
 "use client"
 
 import React, { useState } from 'react';
-import { Info, Upload, ChevronUp, Home } from 'lucide-react';
+import { ChevronUp, Home } from 'lucide-react';
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput';
 import { SelectInput } from '@/components/onboarding/molecules/SelectInput';
+import { UploadSection } from '@/components/onboarding/molecules/UploadSection';
 
 export function DocumentUpload() {
     const [selectedIdLabel, setSelectedIdLabel] = useState("National ID Card");
@@ -69,26 +70,7 @@ export function DocumentUpload() {
                         className="pb-0"
                     />
 
-                    <div className="space-y-2">
-                        <p className="text-[16px] text-[#2C2C2C]" style={{ fontFamily: "var(--font-dm-sans)", fontWeight: 400, letterSpacing: "-1%" }}>
-                            Upload Government ID <span className="text-red-500">*</span>
-                        </p>
-                        <p className="text-[14px] text-gray-400" style={{ fontFamily: "var(--font-dm-sans)", fontWeight: 400, letterSpacing: "-1%" }}>
-                            Ensure all details are clearly visible
-                        </p>
-
-                        <div className="border-2 border-dashed border-[#E6EEDC] rounded-xl px-10 py-18 flex flex-col items-center justify-center bg-white hover:bg-gray-50 cursor-pointer transition-colors">
-                            <Upload className="w-8 h-8 text-gray-400 mb-3" />
-                            <p className="text-[14px] text-center text-gray-500 max-w-[446px]">
-                                Click here to upload, or drag and drop files (JPG&apos;s and PNG&apos;s are supported)
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-3 p-3 bg-[#F0F7FF] rounded-lg border border-[#D1E4F9]">
-                            <Info className="w-4 h-4 text-[#3E82D5]" />
-                            <p className="text-[12px] text-[#3E82D5]">Ensure the document is clear and all information is visible</p>
-                        </div>
-                    </div>
+                    <UploadSection label='Upload Government ID' desc='Ensure all details are clearly visible' />
                 </div>
             </div>
 
@@ -124,26 +106,7 @@ export function DocumentUpload() {
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <p className="text-[16px] text-[#2C2C2C]" style={{ fontFamily: "var(--font-dm-sans)", fontWeight: 400, letterSpacing: "-1%" }}>
-                            Upload Proof of Address <span className="text-red-500">*</span>
-                        </p>
-                        <p className="text-[14px] text-gray-400" style={{ fontFamily: "var(--font-dm-sans)", fontWeight: 400, letterSpacing: "-1%" }}>
-                            Document must show your current residential address
-                        </p>
-
-                        <div className="border-2 border-dashed border-[#E6EEDC] rounded-xl px-10 py-18 flex flex-col items-center justify-center bg-white hover:bg-gray-50 cursor-pointer transition-colors">
-                            <Upload className="w-8 h-8 text-gray-400 mb-3" />
-                            <p className="text-[14px] text-center text-gray-500 max-w-[446px]">
-                                Click here to upload, or drag and drop files (JPG&apos;s and PNG&apos;s are supported)
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-3 p-3 bg-[#F0F7FF] rounded-lg border border-[#D1E4F9]">
-                            <Info className="w-4 h-4 text-[#3E82D5]" />
-                            <p className="text-[12px] text-[#3E82D5]">Ensure the document is clear and all information is visible</p>
-                        </div>
-                    </div>
+                    <UploadSection label='Upload Proof of Address' desc='Document must show your current residential address' />
                 </div>
             </div>
         </div>

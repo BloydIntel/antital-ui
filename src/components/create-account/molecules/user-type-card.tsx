@@ -56,16 +56,16 @@ export function UserTypeCard(props: UserTypeCardProps) {
             {/* Text content area */}
             <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                    <span className="text-base font-normal text-[#2C2C2C]">
+                    <span className="text-[12px] lg:text-base font-normal text-[#2C2C2C]">
                         {title}
                     </span>
                     {subTitle && (
-                        <span className="text-[12px] text-[#858585] font-normal">
+                        <span className="text-[10px] lg:text-[12px] text-[#858585] font-normal">
                             {subTitle}
                         </span>
                     )}
                 </div>
-                <p className="text-[14px] text-[#858585] mt-1 leading-tight">
+                <p className="text-[12px] lg:text-[14px] text-[#858585] mt-1 leading-tight">
                     {description}
                 </p>
             </div>

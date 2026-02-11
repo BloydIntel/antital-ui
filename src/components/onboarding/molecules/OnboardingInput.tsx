@@ -46,7 +46,7 @@ export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
                         onBlur={(e) => {
                             if (isDate && !e.target.value) setInputType("text")
                         }}
-                        className={`w-full h-[48px] px-4 rounded-lg bg-[#F4F5F7] border-none text-[#1A1A1A] placeholder:text-[#858585] placeholder:text-[16px] focus:ring-2 focus:ring-[#0F3D2E] transition-all outline-none appearance-none
+                        className={`w-full h-[48px] px-4 rounded-lg bg-[#F4F5F7] border-none text-[#1A1A1A] placeholder:text-[#858585] placeholder:text-[12px] lg:placeholder:text-[16px] focus:ring-2 focus:ring-[#0F3D2E] transition-all outline-none appearance-none
                         ${error ? "ring-2 ring-red-500" : ""}
                         ${isDate ? `
                             [&::-webkit-calendar-picker-indicator]:opacity-0 
