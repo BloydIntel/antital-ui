@@ -16,7 +16,7 @@ export function UploadSection({ label, desc }: UploadSectionProps) {
                 {desc}
             </p>
 
-            <div className="border-2 border-dashed border-[#E6EEDC] rounded-xl px-10 py-18 flex flex-col items-center justify-center bg-white hover:bg-gray-50 cursor-pointer transition-colors">
+            <div className="border-2 border-dashed border-[#E6EEDC] rounded-xl px-10 py-[72px] flex flex-col items-center justify-center bg-white hover:bg-gray-50 cursor-pointer transition-colors">
                 <Upload className="w-8 h-8 text-gray-400 mb-3" />
                 <p className="text-[14px] text-center text-gray-500 max-w-[446px]">
                     Click here to upload, or drag and drop files (JPG&apos;s and PNG&apos;s are supported)

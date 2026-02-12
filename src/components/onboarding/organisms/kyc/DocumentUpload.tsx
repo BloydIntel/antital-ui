@@ -16,7 +16,7 @@ export function DocumentUpload() {
     const idOptions = [
         { label: 'National ID Card', value: 'national_id' },
         { label: 'International Passport', value: 'passport' },
-        { label: 'Voters Card', value: 'voters_card' },
+        { label: "Voter's Card", value: 'voters_card' },
     ];
 
     const handleIdChange = (value: string) => {

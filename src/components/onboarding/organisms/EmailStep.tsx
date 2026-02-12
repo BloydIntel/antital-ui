@@ -45,7 +45,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
                             letterSpacing: "-1%",
                         }}
                     >
-                        &apos;&apos;Antital undertakes thorough due diligence on all issuers and offerings, assessing key business, compliance, and governance factors to help ensure that only qualified projects are presented to investors. Our processes are designed to promote transparency and uphold regulatory standards in line with Nigerian SEC requirements.
+                        &quot;Antital undertakes thorough due diligence on all issuers and offerings, assessing key business, compliance, and governance factors to help ensure that only qualified projects are presented to investors. Our processes are designed to promote transparency and uphold regulatory standards in line with Nigerian SEC requirements.
                     </p>
 
                     <p className="text-[15px] text-[#858585] leading-tight"
@@ -55,7 +55,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
                         }}
                     >
                         However, crowdfunding investments remain high-risk and speculative. Returns or profits are not guaranteed, and you may lose some or all of the funds you invest. While offerings
-                        on this platform are genuine, undergo rigorous due diligence and are conducted in compliance with Nigerian SEC regulations, these measures do not eliminate investment risk.&apos;&apos;
+                        on this platform are genuine, undergo rigorous due diligence and are conducted in compliance with Nigerian SEC regulations, these measures do not eliminate investment risk.&quot;
                     </p>
                 </div>
 

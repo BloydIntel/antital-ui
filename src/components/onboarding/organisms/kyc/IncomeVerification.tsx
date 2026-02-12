@@ -9,9 +9,9 @@ const documentOptions = {
         "Bank statement (Last 3 months)"
     ],
     optionsSpan: [
-        "Recent payslips frm your employee",
-        "Annual tax assessment from FRIS",
-        "letter from your employee",
+        "Recent payslips from your employer",
+        "Annual tax assessment from FIRS",
+        "Letter from your employer",
         "Showing regular income deposits"
     ]
 };

@@ -1,3 +1,5 @@
+import { StepKey } from "@/components/onboarding/steps"
+
 type dataType = {
     nationality?: string
     state?: string
@@ -7,8 +9,7 @@ type dataType = {
     acceptedTerms?: boolean
 }
 
-
-export function validateStep(step: string, data: dataType): boolean {
+export function validateStep(step: StepKey, data: dataType): boolean {
     switch (step) {
         case "personal":
             return !!data?.nationality && !!data?.state
@@ -25,7 +26,11 @@ export function validateStep(step: string, data: dataType): boolean {
         case "review":
             return data?.acceptedTerms === true
 
+        case "activation":
+            return true
+
         default:
-            return false
+            const _exhaustiveCheck: never = step;
+            return _exhaustiveCheck;
     }
 }

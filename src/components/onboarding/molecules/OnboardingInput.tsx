@@ -13,8 +13,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
     ({ label, error, icon: Icon, type, className, placeholder, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false)
-        // Manage type internally to allow placeholder to show on date inputs
-        const [inputType, setInputType] = useState(type)
+
+        const [inputType, setInputType] = useState(type === "date" ? "text" : type)
 
         const isPassword = type === "password"
         const isDate = type === "date"

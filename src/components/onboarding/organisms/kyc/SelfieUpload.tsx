@@ -42,13 +42,11 @@ export function SelfieUpload() {
                     Label="Take Live Selfie"
                     variant="solid"
                     icon={<Camera size={20} />}
-                    onClick={() => console.log("Camera opened")}
                 />
                 <OnboardingButton
                     Label="Upload Photo"
                     variant="plain"
                     icon={<FileUp size={20} />}
-                    onClick={() => console.log("File picker opened")}
                 />
             </div>
         </div>

@@ -8,7 +8,7 @@ import { IncomeVerification } from '@/components/onboarding/organisms/kyc/Income
 import { OnboardingButton } from '../../molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
 
-interface IndentityVerificationProps {
+interface IdentityVerificationProps {
     onNext: () => void
 }
 
@@ -24,7 +24,7 @@ const subStepsHeader = [
     { title: "Income Verification", span: "(Optional)", desc: "Increase your investment limits with income verification" }
 ]
 
-export function IdentityVerification({ onNext }: IndentityVerificationProps) {
+export function IdentityVerification({ onNext }: IdentityVerificationProps) {
 
     const subStep = useOnboardingStore((s) => s.kycSubStep);
     const setSubStep = useOnboardingStore((s) => s.setKycSubStep);

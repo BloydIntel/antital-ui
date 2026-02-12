@@ -7,6 +7,7 @@ export const RadioGroup = ({ options, name }: { options: string[], name: string 
                     <input
                         type="radio"
                         name={name}
+                        value={option}
                         className="peer sr-only" // sr-only hides it visually but keeps it accessible
                     />
 

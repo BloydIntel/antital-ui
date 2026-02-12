@@ -1,12 +1,19 @@
+"use client"
+
+import { StepKey } from "@/components/onboarding/steps"
 import { PersonalStep } from "@/components/onboarding/organisms/personal-step/PersonalStep"
 import { EmailStep } from "@/components/onboarding/organisms/EmailStep"
 import { InvestorStep } from "@/components/onboarding/organisms/investor-step/InvestorStep"
-import { IdentityVerification } from "@/components/onboarding/organisms//kyc/IdentityVerification"
+import { IdentityVerification } from "@/components/onboarding/organisms/kyc/IdentityVerification"
 import { Review } from "@/components/onboarding/organisms/Review"
 import { useRouter } from "next/navigation"
 import { AccountActivation } from "@/components/onboarding/organisms/AccountActivation"
 
-export default function StepRenderer({ step }: { step: string }) {
+interface StepRendererProps {
+    step: StepKey
+}
+
+export default function StepRenderer({ step }: StepRendererProps) {
 
     const router = useRouter()
 
@@ -24,6 +31,6 @@ export default function StepRenderer({ step }: { step: string }) {
         case "activation":
             return <AccountActivation />
         default:
-            return <div>Step UI not ready</div>
+            return null
     }
 }

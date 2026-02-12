@@ -22,7 +22,7 @@ const userTypes: UserType[] = [
         id: "corporate",
         title: "Corporate Investor",
         description: "Invest as an organization",
-        iconType: "user"
+        iconType: "globe"
     },
     {
         id: "fundraiser",
