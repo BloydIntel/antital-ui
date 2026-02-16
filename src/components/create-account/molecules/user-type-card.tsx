@@ -1,6 +1,6 @@
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
-// Updated with your specific image sources
 const DEFAULT_IMAGES = {
     user: "/create-account/User-icon.png",
     globe: "/create-account/Globe-icon.png",
@@ -13,6 +13,7 @@ interface BaseProps {
     title: string
     subTitle?: string
     description: string
+    userPath?: string
     onClick?: () => void
 }
 
@@ -31,15 +32,26 @@ interface DefaultImageProps extends BaseProps {
 type UserTypeCardProps = CustomImageProps | DefaultImageProps
 
 export function UserTypeCard(props: UserTypeCardProps) {
-    const { title, subTitle, description, onClick, src, alt, cardType } = props
-
+    const { title, subTitle, description, src, alt, cardType, userPath, onClick } = props
+    const router = useRouter()
     const imageSrc = src || (cardType ? DEFAULT_IMAGES[cardType] : "")
     const imageAlt = alt || (cardType ? `${cardType} icon` : "icon")
+
+    const handleClick = () => {
+        if (onClick) {
+            onClick();
+            return;
+        }
+
+        if (userPath) {
+            router.push(`/onboarding/${userPath}`);
+        }
+    }
 
     return (
         <button
             type="button"
-            onClick={onClick}
+            onClick={handleClick}
             className="group w-full lg:w-[557px] lg:min-h-[82px] cursor-pointer flex gap-4 border border-gray-200 rounded-md p-4 bg-white text-left transition-all duration-200 hover:border-[#A7B832] hover:shadow-sm"
         >
             {/* Icon box */}

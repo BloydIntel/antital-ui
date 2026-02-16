@@ -17,7 +17,7 @@ export default function OnboardingLayout({
         <div className="min-h-screen flex">
 
             {/* Sidebar */}
-            <aside className="hidden lg:block sticky top-0 h-screen max-w-[410px] bg-[#F4FBEA] border-r border-[#E6EEDC]">
+            <aside className="hidden lg:block sticky top-0 h-screen  bg-[#F4FBEA] border-r border-[#E6EEDC]">
                 <OnboardingSidebar />
             </aside>
 
@@ -27,7 +27,7 @@ export default function OnboardingLayout({
 
                 <div className="flex-1 flex flex-col justify-between items-center w-full">
 
-                    <div className=" pt-8 lg:pt-[72px] px-4 lg:px-[236px] min-h-screen">
+                    <div className=" pt-8 lg:pt-[72px] px-4 lg:mx-auto min-h-screen">
 
                         {children}
 

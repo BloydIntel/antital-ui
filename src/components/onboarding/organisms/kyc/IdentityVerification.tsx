@@ -5,35 +5,25 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { DocumentUpload } from '@/components/onboarding/organisms/kyc/DocumentUpload'
 import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload'
 import { IncomeVerification } from '@/components/onboarding/organisms/kyc/IncomeVerification'
-import { OnboardingButton } from '../../molecules/OnboardingButton'
+import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
+import { KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
 
 interface IdentityVerificationProps {
     onNext: () => void
 }
 
-const KYC_SUB_STEPS = [
-    { id: 'docs', title: 'Government ID' },
-    { id: 'selfie', title: 'Selfie' },
-    { id: 'income', title: 'Income' }
-]
 
-const subStepsHeader = [
-    { title: "Identity Verification", desc: "Upload your ID, proof of address, and a selfie to complete verification." },
-    { title: "Selfie Verification", desc: "Take a live photo for identity confirmation" },
-    { title: "Income Verification", span: "(Optional)", desc: "Increase your investment limits with income verification" }
-]
 
 export function IdentityVerification({ onNext }: IdentityVerificationProps) {
 
     const subStep = useOnboardingStore((s) => s.kycSubStep);
     const setSubStep = useOnboardingStore((s) => s.setKycSubStep);
 
-    // 2. Pass numbers directly to the store actions
     const nextSubStep = () => setSubStep(Math.min(subStep + 1, KYC_SUB_STEPS.length - 1))
     const prevSubStep = () => setSubStep(Math.max(subStep - 1, 0))
 
-    const currentHeader = subStepsHeader[subStep]
+    const currentHeader = KYC_SUB_STEPS[subStep]
 
     return (
         <div className="w-full lg:w-[558px] flex flex-col gap-10">
@@ -56,7 +46,7 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
                 </div>
 
                 <p className="text-[16px] text-[#2C2C2C] leading-tight max-w-[500px] font-[family-name:var(--font-dm-sans)] tracking-[-1%]">
-                    {currentHeader.desc}
+                    {currentHeader.description}
                 </p>
             </div>
 
@@ -68,7 +58,7 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
 
             <div className="flex max-w-[558px] items-center justify-between pt-8 pb-10 border-t border-gray-50">
                 <OnboardingButton
-                    Label='Back'
+                    label='Back'
                     variant="plain"
                     onClick={prevSubStep}
                     disabled={subStep === 0}
@@ -86,7 +76,7 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
                 </div>
 
                 <OnboardingButton
-                    Label="Next"
+                    label="Next"
                     variant="solid"
                     onClick={subStep === 2 ? onNext : nextSubStep}
                     icon={<ArrowRight size={20} />}

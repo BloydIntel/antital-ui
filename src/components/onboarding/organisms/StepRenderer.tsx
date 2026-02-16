@@ -21,13 +21,13 @@ export default function StepRenderer({ step }: StepRendererProps) {
         case "personal":
             return <PersonalStep />
         case "email":
-            return <EmailStep onNext={() => router.push('/onboarding/investor')} />
+            return <EmailStep onNext={() => router.push('/onboarding/individual/investor')} />
         case "investor":
-            return <InvestorStep onNext={() => router.push('/onboarding/kyc')} />
+            return <InvestorStep onNext={() => router.push('/onboarding/individual/kyc')} />
         case "kyc":
-            return <IdentityVerification onNext={() => router.push('/onboarding/review')} />
+            return <IdentityVerification onNext={() => router.push('/onboarding/individual/review')} />
         case "review":
-            return <Review onBack={() => router.push('/onboarding/kyc')} onNext={() => router.push('/onboarding/activation')} />
+            return <Review onBack={() => router.push('/onboarding/individual/kyc')} onNext={() => router.push('/onboarding/individual/activation')} />
         case "activation":
             return <AccountActivation />
         default:

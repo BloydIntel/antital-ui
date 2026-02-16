@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Clock, Mail, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
+import { TYPOGRAPHY } from "@/constants/styles"
 
 const list = [
     {
@@ -29,34 +30,21 @@ export function AccountActivation() {
         <div className="max-w-[558px] flex flex-col items-center">
             <Image
                 src="/onboarding/congratulation.png"
-                alt="Caution Illustration"
+                alt="Application submitted successfully"
                 width={80}
                 height={80}
             />
 
-            <h4 className="text-[24px] text-center text-[#1F1F1F] leading-none pt-[16px]"
-                style={{
-                    fontFamily: "var(--font-rethink-sans)",
-                    fontWeight: 500,
-                    letterSpacing: "-1%",
-                }}
-
-            >
+            <h4 className="text-[24px] text-center text-[#1F1F1F] leading-none pt-[16px]" style={TYPOGRAPHY.heading}>
                 Individual Account Application Submitted Successfully!
             </h4>
 
-            <p className="text-[16px] text-center text-[#858585] leading-none py-[8px]"
-                style={{
-                    fontFamily: "var(--font-dm-sans)",
-                    letterSpacing: "-1%",
-                }}
-            >
+            <p className="text-[16px] text-center text-[#858585] leading-none py-[8px]" style={TYPOGRAPHY.body}>
                 Your documents have been received and are now under review by our compliance team.
             </p>
 
             <div className="w-full max-w-[600px] flex flex-col gap-4 mt-[32px]">
-                <h2 className="text-[18px] font-medium text-[#1B1B1B] mb-2"
-                    style={{ fontFamily: "var(--font-rethink-sans)" }}>
+                <h2 className="text-[18px] font-medium text-[#1B1B1B] mb-2" style={TYPOGRAPHY.body}>
                     What Happens Next
                 </h2>
 
@@ -88,7 +76,7 @@ export function AccountActivation() {
                 </div>
             </div>
 
-            <OnboardingButton Label="Return to Dashboard" className="mt-[32px]" />
+            <OnboardingButton label="Return to Dashboard" className="mt-[32px]" />
         </div>
     )
 }

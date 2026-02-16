@@ -3,8 +3,11 @@
 import React, { useEffect } from "react"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { ONBOARDING_STEPS, StepKey } from "@/components/onboarding/steps"
+import { ONBOARDING_STEPS, StepKey, isKnownOnboardingStep } from "@/components/onboarding/steps"
 import { useOnboardingStore } from "@/store/onboardingStore"
+import { KYC_SUB_STEPS } from "@/components/onboarding/subSteps"
+
+const LAST_ALLOWED_STEP_KEY = "onboarding_lastAllowedStep"
 
 export default function OnboardingSidebar() {
     const router = useRouter()
@@ -13,32 +16,37 @@ export default function OnboardingSidebar() {
     const currentStep = useOnboardingStore((state) => state.currentStep)
     const personalSubStep = useOnboardingStore((state) => state.personalSubStep)
     const kycSubStep = useOnboardingStore((state) => state.kycSubStep)
+    const emailVerified = useOnboardingStore((state) => state.emailVerified)
 
     const setCurrentStep = useOnboardingStore((state) => state.setCurrentStep)
     const setPersonalSubStep = useOnboardingStore((state) => state.setPersonalSubStep)
     const setKycSubStep = useOnboardingStore((state) => state.setKycSubStep)
+    const setLastAllowedStep = useOnboardingStore((state) => state.setLastAllowedStep)
 
     useEffect(() => {
-        const pathSegments = pathname.split("/")
-        const lastSegment = pathSegments[pathSegments.length - 1]
-        const isValidStep = (key: string): key is StepKey => {
-            return ONBOARDING_STEPS.some(s => s.key === key)
+        const urlPathParts = pathname.split("/")
+        const stepKeyFromUrl = urlPathParts[urlPathParts.length - 1]
+
+        if (isKnownOnboardingStep(stepKeyFromUrl) && stepKeyFromUrl !== currentStep) {
+            setCurrentStep(stepKeyFromUrl)
         }
 
-        if (isValidStep(lastSegment)) {
-            if (lastSegment !== currentStep) {
-
-                setCurrentStep(lastSegment)
-            }
+        if (stepKeyFromUrl === "personal" || stepKeyFromUrl === "email") {
+            setLastAllowedStep(stepKeyFromUrl)
+            sessionStorage.setItem(LAST_ALLOWED_STEP_KEY, stepKeyFromUrl)
         }
-    }, [pathname, currentStep, setCurrentStep])
+    }, [pathname, currentStep, setCurrentStep, setLastAllowedStep])
 
     const handleMainStepClick = (stepKey: StepKey) => {
         setCurrentStep(stepKey)
-        router.push(`/onboarding/${stepKey}`)
+        router.push(`/onboarding/individual/${stepKey}`)
     }
 
     const currentStepIndex = ONBOARDING_STEPS.findIndex(s => s.key === currentStep)
+
+    const stepsToShow = emailVerified
+        ? ONBOARDING_STEPS
+        : ONBOARDING_STEPS.slice(0, 2)
 
     const isShowingSubSteps = currentStep === "personal" || currentStep === "kyc"
 
@@ -58,10 +66,11 @@ export default function OnboardingSidebar() {
             <Image src="/antital_logo.png" alt="Antital Logo" width={80} height={80} className="pb-[20px]" />
 
             <ul className="space-y-0">
-                {ONBOARDING_STEPS.map((step, index) => {
-                    const isCompletedOrActive = index <= currentStepIndex
+                {stepsToShow.map((step, index) => {
+                    const fullIndex = ONBOARDING_STEPS.findIndex(s => s.key === step.key)
+                    const isCompletedOrActive = fullIndex <= currentStepIndex
                     const isCurrentPage = currentStep === step.key
-                    const isLast = index === ONBOARDING_STEPS.length - 1
+                    const isLast = index === stepsToShow.length - 1
 
                     return (
                         <li
@@ -69,7 +78,7 @@ export default function OnboardingSidebar() {
                             className={`relative transition-all duration-300 ${isShowingSubSteps ? "pb-2" : "pb-6"}`}
                         >
                             {!isLast && (
-                                <div className={`absolute left-[24px] top-[48px] bottom-0 w-[1.5px] -translate-x-1/2 ${index < currentStepIndex ? "bg-[#042E27]" : "bg-[#D1D5DB]"}`} />
+                                <div className={`absolute left-[24px] top-[48px] bottom-0 w-[1.5px] -translate-x-1/2 ${fullIndex < currentStepIndex ? "bg-[#042E27]" : "bg-[#D1D5DB]"}`} />
                             )}
 
                             <div className="flex items-center gap-4">
@@ -97,9 +106,9 @@ export default function OnboardingSidebar() {
 
                             {step.key === "kyc" && isCurrentPage && (
                                 <div className="ml-[64px] mt-1 flex flex-col space-y-1 items-start">
-                                    {['Upload your document', 'Selfie verification', 'Income verification'].map((label, idx) => (
+                                    {KYC_SUB_STEPS.map((step, idx) => (
                                         <button key={idx} onClick={() => setKycSubStep(idx)} className={`text-[15px] text-left transition-colors ${kycSubStep >= idx ? "font-medium text-[#4A4A4A]" : "text-[#A8A8A8]"}`}>
-                                            {label}
+                                            {step.title}
                                         </button>
                                     ))}
                                 </div>
@@ -111,7 +120,7 @@ export default function OnboardingSidebar() {
 
             <div className="mt-auto pb-10">
                 <div className="w-[198px] h-[168px] relative">
-                    <Image src={getStepAssets().src} alt="Illustration" fill className="object-contain" priority />
+                    <Image src={getStepAssets().src} alt="Illustration" fill className="object-contain" priority unoptimized />
                 </div>
                 <p className="text-[#545C19] leading-tight text-[12px] w-[279px] pt-[24px] opacity-80">
                     Tip: Your information helps us verify your account and keep things secure

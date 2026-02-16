@@ -1,5 +1,5 @@
 
-import { OnboardingClient } from "@/app/(auth)/onboarding/[step]/OnboardingClient"
+import { OnboardingClient } from "@/app/(auth)/onboarding/individual/[step]/OnboardingClient"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {

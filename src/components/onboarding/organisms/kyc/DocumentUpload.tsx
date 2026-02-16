@@ -5,6 +5,7 @@ import { ChevronUp, Home } from 'lucide-react';
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput';
 import { SelectInput } from '@/components/onboarding/molecules/SelectInput';
 import { UploadSection } from '@/components/onboarding/molecules/UploadSection';
+import { TYPOGRAPHY } from '@/constants/styles';
 
 export function DocumentUpload() {
     const [selectedIdLabel, setSelectedIdLabel] = useState("National ID Card");
@@ -33,11 +34,7 @@ export function DocumentUpload() {
                     onClick={() => setShowGovId(!showGovId)}
                 >
                     <h3 className="text-[20px] text-[#1B1B1B]"
-                        style={{
-                            fontFamily: "var(--font-dm-sans)",
-                            fontWeight: 400,
-                            letterSpacing: "-1%",
-                        }}
+                        style={TYPOGRAPHY.heading}
                     >Government-Issued Photo ID</h3>
                     <div className='border border-[#EAEAEA] rounded p-1 group-hover:bg-gray-50 transition-colors'>
                         <ChevronUp
@@ -48,7 +45,7 @@ export function DocumentUpload() {
                 </div>
 
                 {/* Collapsible Content */}
-                <div className={`space-y-4 transition-all duration-300 ease-in-out overflow-hidden ${showGovId ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0 invisible"
+                <div className={`space-y-4 px-1 transition-all duration-300 ease-in-out overflow-hidden ${showGovId ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0 invisible"
                     }`}>
                     <div>
                         <label
@@ -71,6 +68,12 @@ export function DocumentUpload() {
                     />
 
                     <UploadSection label='Upload Government ID' desc='Ensure all details are clearly visible' />
+
+                    <OnboardingInput
+                        label="Bank Verification Number"
+                        placeholder="1234567890"
+                        className="pb-0"
+                    />
                 </div>
             </div>
 
@@ -95,7 +98,7 @@ export function DocumentUpload() {
                 </div>
 
                 {/* Collapsible Content */}
-                <div className={`space-y-4 transition-all duration-300 ease-in-out overflow-hidden ${showAddress ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0 invisible"
+                <div className={`space-y-4 px-1 transition-all duration-300 ease-in-out overflow-hidden ${showAddress ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0 invisible"
                     }`}>
                     <div className="relative">
                         <OnboardingInput

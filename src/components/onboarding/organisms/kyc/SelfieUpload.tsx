@@ -1,24 +1,25 @@
 import { Lightbulb, User, Smile, Camera, FileUp } from 'lucide-react';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 
+const instructions = [
+    {
+        id: 1,
+        icon: <Lightbulb size={20} className="text-[#1B1B1B]" />,
+        text: "Ensure adequate lighting and avoid obstructions"
+    },
+    {
+        id: 2,
+        icon: <User size={20} className="text-[#1B1B1B]" />,
+        text: "Keep your face fully visible"
+    },
+    {
+        id: 3,
+        icon: <Smile size={20} className="text-[#1B1B1B]" />,
+        text: "Maintain a neutral expression"
+    }
+];
+
 export function SelfieUpload() {
-    const instructions = [
-        {
-            id: 1,
-            icon: <Lightbulb size={20} className="text-[#1B1B1B]" />,
-            text: "Ensure adequate lighting and avoid obstructions"
-        },
-        {
-            id: 2,
-            icon: <User size={20} className="text-[#1B1B1B]" />,
-            text: "Keep your face fully visible"
-        },
-        {
-            id: 3,
-            icon: <Smile size={20} className="text-[#1B1B1B]" />,
-            text: "Maintain a neutral expression"
-        }
-    ];
 
     return (
         <div className="space-y-8 w-full">
@@ -39,12 +40,12 @@ export function SelfieUpload() {
             {/* Buttons Layout */}
             <div className="grid grid-cols-2 gap-4 w-full mt-8">
                 <OnboardingButton
-                    Label="Take Live Selfie"
+                    label="Take Live Selfie"
                     variant="solid"
                     icon={<Camera size={20} />}
                 />
                 <OnboardingButton
-                    Label="Upload Photo"
+                    label="Upload Photo"
                     variant="plain"
                     icon={<FileUp size={20} />}
                 />

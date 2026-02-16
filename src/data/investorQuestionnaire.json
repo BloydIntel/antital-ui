@@ -3,8 +3,8 @@
         "questionnaire": [
             {
                 "label": "In the past 12 months, approximately what percentage of your net investment assets have you allocated to high-risk or speculative investments?",
-                "inputType": "text",
-                "placeholder": "Enter percentage"
+                "inputType": "number",
+                "placeholder": "Please enter an estimate"
             },
             {
                 "label": "Over the next 12 months, what percentage of your net investment assets do you intend to allocate to high-risk or speculative investments?",
@@ -67,7 +67,7 @@
         "questionnaire": [
             {
                 "label": "How many years have you been actively investing in financial markets?",
-                "inputType": "text",
+                "inputType": "number",
                 "placeholder": "Please enter an estimate"
             },
             {
@@ -148,9 +148,9 @@
                 "label": "Please indicate which asset range best reflects your net investment assets:",
                 "inputType": "checkbox",
                 "options": [
-                    "₦100M - ₦250M",
-                    "₦250M - ₦500M",
-                    "Above ₦500M"
+                    "₦100 Million - ₦250 Million",
+                    "₦250 Million - ₦500 Million",
+                    "Above ₦500 Million"
                 ]
             },
             {

@@ -41,6 +41,7 @@ export function SelectUserType() {
                     title={type.title}
                     description={type.description}
                     cardType={type.iconType}
+                    userPath={`${type.id}`}
                 />
             ))}
         </div>

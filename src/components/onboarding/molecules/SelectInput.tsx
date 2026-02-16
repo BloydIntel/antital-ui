@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
@@ -11,18 +13,22 @@ interface SelectInputProps {
     placeholder?: string;
     onChange?: (value: string) => void;
     className?: string;
+    label?: string;
+    error?: string;
 }
 
 export function SelectInput({
     options,
     placeholder = "Select an option",
     onChange,
-    className = ""
+    className = "",
+    label,
+    error,
 }: SelectInputProps) {
     const [isOpen, setIsOpen] = useState(false);
 
-    return (
-        <div className={`relative w-full ${className}`}>
+    const selectElement = (
+        <div className="relative w-full">
             <select
                 className="w-full h-[48px] px-4 bg-[#F4F5F7] border-none rounded-lg text-sm appearance-none outline-none cursor-pointer text-[#323232]"
                 onFocus={() => setIsOpen(true)}
@@ -53,6 +59,25 @@ export function SelectInput({
             >
                 <ChevronDown size={20} />
             </div>
+        </div>
+    );
+
+    return (
+        <div className={`w-full flex flex-col gap-2 pb-[16px] ${className}`}>
+            {label && (
+                <label
+                    className="text-[16px] text-[#1A1A1A] leading-tight"
+                    style={{
+                        fontFamily: "var(--font-dm-sans)",
+                        fontWeight: 400,
+                        letterSpacing: "-1%",
+                    }}
+                >
+                    {label}
+                </label>
+            )}
+            {selectElement}
+            {error && <span className="text-xs text-red-500 mt-1">{error}</span>}
         </div>
     );
 }

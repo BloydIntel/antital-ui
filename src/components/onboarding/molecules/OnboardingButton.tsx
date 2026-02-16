@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 interface OnboardingButtonProps {
-    Label: string
+    label: string
     onClick?: () => void
     disabled?: boolean
     variant?: 'solid' | 'plain'
@@ -12,7 +12,7 @@ interface OnboardingButtonProps {
 }
 
 export function OnboardingButton({
-    Label,
+    label,
     onClick,
     disabled,
     variant = 'solid',
@@ -37,7 +37,7 @@ export function OnboardingButton({
             disabled={disabled}
         >
             {icon && <span>{icon}</span>}
-            {Label}
+            {label}
         </Button>
     )
 }
