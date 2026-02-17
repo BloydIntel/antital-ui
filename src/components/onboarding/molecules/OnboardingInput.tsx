@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Eye, EyeOff, LucideIcon } from "lucide-react"
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -15,6 +15,10 @@ export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
         const [showPassword, setShowPassword] = useState(false)
 
         const [inputType, setInputType] = useState(type === "date" ? "text" : type)
+
+        useEffect(() => {
+            setInputType(type === "date" ? "text" : type)
+        }, [type])
 
         const isPassword = type === "password"
         const isDate = type === "date"

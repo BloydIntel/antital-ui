@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { DocumentUpload } from '@/components/onboarding/organisms/kyc/DocumentUpload'
 import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload'
@@ -13,17 +13,38 @@ interface IdentityVerificationProps {
     onNext: () => void
 }
 
-
-
 export function IdentityVerification({ onNext }: IdentityVerificationProps) {
-
     const subStep = useOnboardingStore((s) => s.kycSubStep);
     const setSubStep = useOnboardingStore((s) => s.setKycSubStep);
+    const kycData = useOnboardingStore((s) => s.formData.kycData);
 
-    const nextSubStep = () => setSubStep(Math.min(subStep + 1, KYC_SUB_STEPS.length - 1))
-    const prevSubStep = () => setSubStep(Math.max(subStep - 1, 0))
+    const [showErrors, setShowErrors] = useState(false);
+
+    // Global Validation Logic for KYC
+    const isStep0Valid = kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile;
+    const isStep1Valid = !!kycData.selfie;
+    const isStep2Valid = kycData.incomeDocuments.length > 0 && kycData.incomeFile;
+
+    const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
     const currentHeader = KYC_SUB_STEPS[subStep]
+
+    const handleNext = () => {
+        if (subStep < 2) {
+            // Allow free flow between sub-steps
+            setSubStep(subStep + 1);
+        } else {
+            // Final check before moving to the next main stage
+            if (isAllKycValid) {
+                onNext();
+            } else {
+                setShowErrors(true);
+                // Optional: set sub-step to where the error is
+                if (!isStep0Valid) setSubStep(0);
+                else if (!isStep1Valid) setSubStep(1);
+            }
+        }
+    };
 
     return (
         <div className="w-full lg:w-[558px] flex flex-col gap-10">
@@ -51,19 +72,19 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
             </div>
 
             <div>
-                {subStep === 0 && <DocumentUpload />}
-                {subStep === 1 && <SelfieUpload />}
-                {subStep === 2 && <IncomeVerification />}
+                {subStep === 0 && <DocumentUpload showErrors={showErrors} />}
+                {subStep === 1 && <SelfieUpload showErrors={showErrors} />}
+                {subStep === 2 && <IncomeVerification showErrors={showErrors} />}
             </div>
 
             <div className="flex max-w-[558px] items-center justify-between pt-8 pb-10 border-t border-gray-50">
                 <OnboardingButton
                     label='Back'
                     variant="plain"
-                    onClick={prevSubStep}
+                    onClick={() => setSubStep(subStep - 1)}
                     disabled={subStep === 0}
                     icon={<ArrowLeft size={20} />}
-                    className="w-fit"
+                    className='w-fit'
                 />
 
                 <div className="flex gap-2">
@@ -77,12 +98,16 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
 
                 <OnboardingButton
                     label="Next"
-                    variant="solid"
-                    onClick={subStep === 2 ? onNext : nextSubStep}
+                    onClick={handleNext}
                     icon={<ArrowRight size={20} />}
                     className="flex-row-reverse w-fit"
                 />
+
             </div>
+
+            {!isAllKycValid && showErrors && (
+                <p className="text-red-500 text-sm text-center">Please complete all required fields in all sections.</p>
+            )}
         </div>
     )
 }

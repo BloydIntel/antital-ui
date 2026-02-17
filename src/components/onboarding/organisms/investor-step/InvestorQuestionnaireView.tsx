@@ -4,9 +4,11 @@ import { QuestionnaireFormSwitcher } from '@/components/onboarding/organisms/inv
 interface Props {
     title: string;
     selectedId: string;
+    onValidationChange: (isValid: boolean) => void; // New
+    showAllErrors: boolean; // New
 }
 
-export function InvestorQuestionnaireView({ title, selectedId }: Props) {
+export function InvestorQuestionnaireView({ title, selectedId, onValidationChange, showAllErrors }: Props) {
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="mb-6">
@@ -27,7 +29,11 @@ export function InvestorQuestionnaireView({ title, selectedId }: Props) {
             </div>
 
             {/* The Switcher handles the JSON mapping */}
-            <QuestionnaireFormSwitcher type={selectedId} />
+            <QuestionnaireFormSwitcher
+                type={selectedId}
+                onValidationChange={onValidationChange}
+                showAllErrors={showAllErrors}
+            />
         </div>
     );
 }

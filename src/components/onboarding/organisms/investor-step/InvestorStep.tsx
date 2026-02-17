@@ -10,11 +10,22 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
     const [view, setView] = useState<"selection" | "questionnaire">("selection");
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
+    // NEW: Track validation and submission attempt
+    const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(false);
+    const [showErrors, setShowErrors] = useState(false);
+
     const activeCategory = INVESTOR_CATEGORIES.find(c => c.id === selectedId);
 
     const handleProceed = () => {
-        if (view === "selection" && selectedId) setView("questionnaire");
-        else if (view === "questionnaire") onNext();
+        if (view === "selection" && selectedId) {
+            setView("questionnaire");
+        } else if (view === "questionnaire") {
+            if (isQuestionnaireValid) {
+                onNext();
+            } else {
+                setShowErrors(true);
+            }
+        }
     };
 
     return (
@@ -27,8 +38,11 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                 />
             ) : (
                 <InvestorQuestionnaireView
-                    title={activeCategory?.title || ""}
+                    title={activeCategory?.jsonKey || ""}
                     selectedId={selectedId || ""}
+                    // NEW PROPS
+                    onValidationChange={setIsQuestionnaireValid}
+                    showAllErrors={showErrors}
                 />
             )}
 
@@ -36,7 +50,13 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                 <OnboardingButton
                     label={view === "selection" ? "Skip for now" : "Go Back"}
                     variant="plain"
-                    onClick={() => view === "selection" ? onNext() : setView("selection")}
+                    onClick={() => {
+                        if (view === "selection") onNext();
+                        else {
+                            setView("selection");
+                            setShowErrors(false); // Reset errors when going back
+                        }
+                    }}
                 />
                 <OnboardingButton
                     label="Proceed"

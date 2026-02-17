@@ -1,4 +1,11 @@
-export const RadioGroup = ({ options, name }: { options: string[], name: string }) => (
+interface RadioGroupProps {
+    options: string[];
+    name: string;
+    value?: string;
+    onChange?: (value: string) => void;
+}
+
+export const RadioGroup = ({ options, name, value, onChange }: RadioGroupProps) => (
     <div className="flex flex-wrap gap-6 mt-2 pb-[16px]">
         {options.map((option) => (
             <label key={option} className="flex items-center gap-3 cursor-pointer group">
@@ -8,7 +15,9 @@ export const RadioGroup = ({ options, name }: { options: string[], name: string 
                         type="radio"
                         name={name}
                         value={option}
-                        className="peer sr-only" // sr-only hides it visually but keeps it accessible
+                        checked={value === option}
+                        onChange={(e) => onChange?.(e.target.value)}
+                        className="peer sr-only"
                     />
 
                     {/* Custom Square Box */}

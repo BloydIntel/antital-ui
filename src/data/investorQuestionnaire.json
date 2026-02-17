@@ -8,17 +8,17 @@
             },
             {
                 "label": "Over the next 12 months, what percentage of your net investment assets do you intend to allocate to high-risk or speculative investments?",
-                "inputType": "text",
+                "inputType": "number",
                 "placeholder": "Please enter an estimate based on your current risk tolerance"
             },
             {
                 "label": "What is your annual income range?",
-                "inputType": "text",
+                "inputType": "number",
                 "placeholder": "Enter an estimate to the nearest thousand"
             },
             {
                 "label": "What is the estimated total value of your net investment assets (excluding primary residence, car, and personal items)?",
-                "inputType": "text",
+                "inputType": "number",
                 "placeholder": "Enter an estimate to the nearest thousand"
             },
             {
@@ -109,7 +109,7 @@
                 "label": "Select below, your source of wealth",
                 "inputType": [
                     "checkbox",
-                    "text"
+                    "number"
                 ],
                 "placeholder": "Please enter an estimate",
                 "options": [
@@ -173,7 +173,7 @@
                 "label": "Select below, your source of wealth",
                 "inputType": [
                     "checkbox",
-                    "text"
+                    "number"
                 ],
                 "placeholder": "Please enter an estimate",
                 "options": [

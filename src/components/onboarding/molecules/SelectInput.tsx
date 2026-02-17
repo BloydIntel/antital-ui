@@ -10,6 +10,7 @@ interface SelectOption {
 
 interface SelectInputProps {
     options: SelectOption[];
+    value?: string;
     placeholder?: string;
     onChange?: (value: string) => void;
     className?: string;
@@ -19,6 +20,7 @@ interface SelectInputProps {
 
 export function SelectInput({
     options,
+    value,
     placeholder = "Select an option",
     onChange,
     className = "",
@@ -30,17 +32,18 @@ export function SelectInput({
     const selectElement = (
         <div className="relative w-full">
             <select
-                className="w-full h-[48px] px-4 bg-[#F4F5F7] border-none rounded-lg text-sm appearance-none outline-none cursor-pointer text-[#323232]"
+                className={`w-full h-[48px] px-4 bg-[#F4F5F7] border rounded-lg text-sm appearance-none outline-none cursor-pointer text-[#323232] transition-all 
+                ${error ? 'border-red-500' : 'border-transparent focus:border-[#042E27]'}`}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setIsOpen(false)}
                 onChange={(e) => {
                     setIsOpen(false);
                     if (onChange) onChange(e.target.value);
                 }}
-                defaultValue=""
+                value={value || ""} // Set value to make it controlled
             >
                 {/* Placeholder */}
-                <option value="" disabled hidden>
+                <option value="" disabled>
                     {placeholder}
                 </option>
 
@@ -77,7 +80,7 @@ export function SelectInput({
                 </label>
             )}
             {selectElement}
-            {error && <span className="text-xs text-red-500 mt-1">{error}</span>}
+            {error && <span className="text-xs text-red-500 font-[family-name:var(--font-dm-sans)]">{error}</span>}
         </div>
     );
 }
