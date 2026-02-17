@@ -1,0 +1,201 @@
+{
+    "Retail Investor": {
+        "questionnaire": [
+            {
+                "label": "In the past 12 months, approximately what percentage of your net investment assets have you allocated to high-risk or speculative investments?",
+                "inputType": "number",
+                "placeholder": "Please enter an estimate"
+            },
+            {
+                "label": "Over the next 12 months, what percentage of your net investment assets do you intend to allocate to high-risk or speculative investments?",
+                "inputType": "number",
+                "placeholder": "Please enter an estimate based on your current risk tolerance"
+            },
+            {
+                "label": "What is your annual income range?",
+                "inputType": "number",
+                "placeholder": "Enter an estimate to the nearest thousand"
+            },
+            {
+                "label": "What is the estimated total value of your net investment assets (excluding primary residence, car, and personal items)?",
+                "inputType": "number",
+                "placeholder": "Enter an estimate to the nearest thousand"
+            },
+            {
+                "label": "Can you afford to lose the amount you intend to invest without affecting your essential expenses or financial stability?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Do you understand that crowdfunding investments are high-risk and may result in the loss of all invested funds?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Have you read and understood the platform's risk disclosure and the Nigerian SEC crowdfunding rules that apply to retail investors?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Do you understand that past performance does not guarantee future returns or profits?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Are you aware that early-stage and private offerings may have limited liquidity and long exit horizons?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ]
+    },
+    "Sophisticated Investor": {
+        "questionnaire": [
+            {
+                "label": "How many years have you been actively investing in financial markets?",
+                "inputType": "number",
+                "placeholder": "Please enter an estimate"
+            },
+            {
+                "label": "Which types of investments have you previously engaged in?",
+                "inputType": "checkbox",
+                "options": [
+                    "Equities",
+                    "Fixed Income",
+                    "Private Equity/Venture Capital",
+                    "High-risk or speculative investments",
+                    "Alternative Investments"
+                ]
+            },
+            {
+                "label": "Have you previously invested in private markets or early-stage ventures?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Are you aware that early-stage and private offerings may have limited liquidity and long exit horizons?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Do you confirm that you have the knowledge, experience, and capacity to assess the merits and risks of crowdfunding investments without relying solely on basic disclosures?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Select below, your source of wealth",
+                "inputType": [
+                    "checkbox",
+                    "number"
+                ],
+                "placeholder": "Please enter an estimate",
+                "options": [
+                    "Employment",
+                    "Business Ownership/Profits",
+                    "Investments & Capital Gains",
+                    "Inheritance",
+                    "Sale of Major Assets",
+                    "Legal Settlement",
+                    "Gifts/Donations",
+                    "Other"
+                ],
+                "info": "We are required by law to verify the source of funds used on our platform as part of anti-money laundering (AML) regulations. This information helps us ensure a safe, compliant, and trustworthy environment for all users and potential investors. All data is securely stored and handled in accordance with our privacy policy."
+            },
+            {
+                "label": "Do you confirm that you meet the SEC Nigeria criteria for a Sophisticated (Acclaimed) Investor?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ]
+    },
+    "High Net-worth investor (HNI)": {
+        "questionnaire": [
+            {
+                "label": "Does your net investment assets exceed ₦100 million (excluding your primary residence, vehicles, and personal household effects)?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Please indicate which asset range best reflects your net investment assets:",
+                "inputType": "checkbox",
+                "options": [
+                    "₦100 Million - ₦250 Million",
+                    "₦250 Million - ₦500 Million",
+                    "Above ₦500 Million"
+                ]
+            },
+            {
+                "label": "Do you have adequate liquidity to absorb potential losses without affecting your financial stability or essential obligations?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Are you aware that early-stage and private offerings may have limited liquidity and long exit horizons?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Select below, your source of wealth",
+                "inputType": [
+                    "checkbox",
+                    "number"
+                ],
+                "placeholder": "Please enter an estimate",
+                "options": [
+                    "Employment",
+                    "Business Ownership/Profits",
+                    "Investments & Capital Gains",
+                    "Inheritance",
+                    "Sale of Major Assets",
+                    "Legal Settlement",
+                    "Gifts/Donations",
+                    "Other"
+                ],
+                "info": "We are required by law to verify the source of funds used on our platform as part of anti-money laundering (AML) regulations. This information helps us ensure a safe, compliant, and trustworthy environment for all users and potential investors. All data is securely stored and handled in accordance with our privacy policy."
+            },
+            {
+                "label": "Do you confirm that you meet the SEC Nigeria criteria for a classification as a High-Net-Worth Investor and consent to being treated as such for the purpose of investment eligibility and offering access on this platform?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ]
+    }
+}
