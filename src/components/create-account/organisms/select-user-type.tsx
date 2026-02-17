@@ -1,28 +1,34 @@
 "use client"
 
-import UserTypeCard from "@/components/create-account/molecules/user-type-card"
+import { UserTypeCard } from "@/components/create-account/molecules/user-type-card"
 
-const userTypes = [
+type IconType = "user" | "globe" | "naira"
+
+interface UserType {
+    id: string,
+    title: string;
+    description: string;
+    iconType: IconType;
+}
+
+const userTypes: UserType[] = [
     {
         id: "individual",
         title: "Individual Investor",
         description: "Start your personal investment journey",
-        src: "/create-account/User-icon.png",
-        alt: "User Icon",
+        iconType: "user"
     },
     {
         id: "corporate",
         title: "Corporate Investor",
         description: "Invest as an organization",
-        src: "/create-account/Globe-icon.png",
-        alt: "Globe Icon",
+        iconType: "globe"
     },
     {
         id: "fundraiser",
         title: "Fundraiser (MSME)",
         description: "Raise capital for your business",
-        src: "/create-account/Naira-icon.png",
-        alt: "Naira Icon",
+        iconType: "naira"
     },
 ]
 
@@ -32,10 +38,10 @@ export function SelectUserType() {
             {userTypes.map((type) => (
                 <UserTypeCard
                     key={type.id}
-                    src={type.src}
-                    alt={type.alt}
                     title={type.title}
                     description={type.description}
+                    cardType={type.iconType}
+                    userPath={`${type.id}`}
                 />
             ))}
         </div>
