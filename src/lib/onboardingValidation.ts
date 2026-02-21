@@ -29,8 +29,10 @@ export function validateStep(step: StepKey, data: dataType): boolean {
         case "activation":
             return true
 
+        case "company":
+            return true
+
         default:
-            const _exhaustiveCheck: never = step;
-            return _exhaustiveCheck;
+            return false
     }
 }
