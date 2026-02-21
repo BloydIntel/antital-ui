@@ -5,7 +5,7 @@ import { SquarePen, Trash, CheckCircle2, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { PERSONAL_SUB_STEPS, KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
-import { ONBOARDING_STEPS } from '@/components/onboarding/steps'
+import { InvestorUserType, ONBOARDING_CONFIG } from '@/components/onboarding/steps'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { useRouter } from 'next/navigation'
 
@@ -18,24 +18,30 @@ export function Review({ onBack, onNext }: ReviewProps) {
     const router = useRouter();
 
     // Get state and actions from store
-    const { formData, setCurrentStep, setPersonalSubStep, setKycSubStep } = useOnboardingStore();
+    const { formData, setCurrentStep, setPersonalSubStep, setKycSubStep, investorUserType } = useOnboardingStore();
+
+    const stepsConfig = ONBOARDING_CONFIG[investorUserType as InvestorUserType];
+
+    const kycStepLabel = stepsConfig.find(s => s.key === 'kyc')?.label || "Identity Verification";
+
+    const baseUrl = `/onboarding/${investorUserType}`
 
     const handleEdit = (sectionId: string) => {
         switch (sectionId) {
             case "personal":
                 setCurrentStep("personal");
                 setPersonalSubStep(0);
-                router.push('/onboarding/individual/personal');
+                router.push(`${baseUrl}/personal`);
                 break;
             case "location":
                 setCurrentStep("personal");
                 setPersonalSubStep(1);
-                router.push('/onboarding/individual/personal');
+                router.push(`${baseUrl}/personal`);
                 break;
             case "kyc":
                 setCurrentStep("kyc");
                 setKycSubStep(0); // This won't crash now!
-                router.push('/onboarding/individual/kyc');
+                router.push(`${baseUrl}/kyc`);
                 break;
             default:
                 console.warn(`No route defined for section: ${sectionId}`);
@@ -72,7 +78,7 @@ export function Review({ onBack, onNext }: ReviewProps) {
         },
         {
             id: "kyc",
-            title: ONBOARDING_STEPS[3].label,
+            title: kycStepLabel,
             showEdit: true,
             showEditText: false,
             showDelete: true,

@@ -43,7 +43,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     className="flex justify-between items-center cursor-pointer group"
                     onClick={() => setShowGovId(!showGovId)}
                 >
-                    <h3 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
+                    <h3 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.body}>
                         Government-Issued Photo ID
                     </h3>
                     <div className='border border-[#EAEAEA] rounded p-1 group-hover:bg-gray-50 transition-colors'>
@@ -103,7 +103,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     className="flex justify-between items-center cursor-pointer group"
                     onClick={() => setShowAddress(!showAddress)}
                 >
-                    <h3 className="text-[20px] text-[#1B1B1B]" style={{ fontFamily: "var(--font-dm-sans)", fontWeight: 400, letterSpacing: "-1%" }}>
+                    <h3 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.body}>
                         Proof of Address
                     </h3>
                     <div className='border border-[#EAEAEA] rounded p-1 group-hover:bg-gray-50 transition-colors'>

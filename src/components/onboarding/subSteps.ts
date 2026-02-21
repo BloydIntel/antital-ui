@@ -3,6 +3,12 @@ export const PERSONAL_SUB_STEPS = [
     { id: 'location', title: 'Location Information' }
 ] as const
 
+export const COMPANY_SUB_STEPS = [
+    { id: 'details', title: 'Company Details' },
+    { id: 'address', title: 'Company Address' },
+    { id: 'representative', title: 'Account representative details' }
+] as const;
+
 export interface KYCSubStep {
     readonly id: 'docs' | 'selfie' | 'income';
     readonly title: string;

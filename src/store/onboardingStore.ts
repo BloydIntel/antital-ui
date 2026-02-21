@@ -1,35 +1,46 @@
 import { create } from 'zustand'
-import { StepKey } from '@/components/onboarding/steps'
+import { StepKey, InvestorUserType } from '@/components/onboarding/steps'
 
-type AllowedStepBeforeVerify = "personal" | "email"
+type AllowedStepBeforeVerify = "personal" | "email" | "company";
 
 export type QuestionValue = string | number | string[] | { selections: string[]; amount: string } | undefined;
 
 export interface KYCData {
     idType: string;
     idNumber: string;
-    idFile: File | null; // Replaced any
+    idFile: File | null;
     bvn: string;
     address: string;
-    addressFile: File | null; // Replaced any
-    selfie: File | null; // Replaced any
+    addressFile: File | null;
+    selfie: File | null;
     incomeDocuments: string[];
-    incomeFile: File | null; // Replaced any
+    incomeFile: File | null;
 }
 
 interface OnboardingFormData {
-    // Personal Details
+    // Shared / Personal Details
     firstName: string;
     lastName: string;
     email: string;
     alias: string;
     phone: string;
     dob: string;
+
+    // Corporate Specific Details
+    companyName: string;
+    brandName: string;
+    registrationType: string;
+    registrationNumber: string;
+    companyEmail: string;
+    password?: string; // Optional depending on your auth flow
+    confirmPassword?: string;
+
     // Location Details
     nationality: string;
     residence: string;
     state: string;
     address: string;
+
     // Questionnaire Data
     questionnaireAnswers: Record<string, QuestionValue>;
     // Kyc Data
@@ -37,8 +48,11 @@ interface OnboardingFormData {
 }
 
 interface OnboardingState {
+    investorUserType: InvestorUserType | null;
+    setInvestorUserType: (type: InvestorUserType) => void;
     currentStep: StepKey
     personalSubStep: number
+    companySubStep: number // Added for corporate flow
     kycSubStep: number
     emailVerified: boolean
     lastAllowedStep: AllowedStepBeforeVerify
@@ -46,6 +60,7 @@ interface OnboardingState {
 
     setCurrentStep: (step: StepKey) => void
     setPersonalSubStep: (subStep: number) => void
+    setCompanySubStep: (subStep: number) => void // Added setter
     setKycSubStep: (subStep: number) => void
     setEmailVerified: (verified: boolean) => void
     setLastAllowedStep: (step: AllowedStepBeforeVerify) => void
@@ -59,6 +74,15 @@ const initialFormData: OnboardingFormData = {
     alias: "",
     phone: "",
     dob: "",
+    // Corporate Defaults
+    companyName: "",
+    brandName: "",
+    registrationType: "",
+    registrationNumber: "",
+    companyEmail: "",
+    password: "",
+    confirmPassword: "",
+    // Location Defaults
     nationality: "",
     residence: "",
     state: "",
@@ -78,8 +102,11 @@ const initialFormData: OnboardingFormData = {
 };
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
+    investorUserType: null,
+    setInvestorUserType: (type) => set({ investorUserType: type }),
     currentStep: "personal",
     personalSubStep: 0,
+    companySubStep: 0, // Initializing sub-step
     kycSubStep: 0,
     emailVerified: false,
     lastAllowedStep: "personal",
@@ -87,6 +114,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
 
     setCurrentStep: (step) => set({ currentStep: step }),
     setPersonalSubStep: (subStep) => set({ personalSubStep: subStep }),
+    setCompanySubStep: (subStep) => set({ companySubStep: subStep }), // Setter
     setKycSubStep: (subStep) => set({ kycSubStep: subStep }),
     setEmailVerified: (verified) => set({ emailVerified: verified }),
     setLastAllowedStep: (step) => set({ lastAllowedStep: step }),
@@ -96,6 +124,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
             formData: {
                 ...state.formData,
                 ...data,
+                // Ensure kycData deep merge if kycData is provided in the partial update
                 kycData: data.kycData ? { ...state.formData.kycData, ...data.kycData } : state.formData.kycData
             }
         })),

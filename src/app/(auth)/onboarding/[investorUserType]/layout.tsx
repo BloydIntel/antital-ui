@@ -1,4 +1,4 @@
-import OnboardingSidebar from "@/components/onboarding/organisms/OnboardingSidebar"
+import OnboardingSidebar from "@/components/onboarding/organisms/onboarding-sidebar/OnboardingSidebar"
 
 
 

@@ -1,18 +1,43 @@
-import { BadgeCheck, Mail, User, FileUser, TableOfContents, Lightbulb } from "lucide-react"
+import { BadgeCheck, Mail, User, FileUser, TableOfContents, Lightbulb, LucideIcon } from "lucide-react"
 
-export const ONBOARDING_STEPS = [
-    { key: "personal", label: "Personal Information", order: 1, icon: User },
-    { key: "email", label: "Email Verification", order: 2, icon: Mail },
-    { key: "investor", label: "Select Your Investor Category", order: 3, icon: BadgeCheck },
-    { key: "kyc", label: "Identity Verification (KYC)", order: 4, icon: FileUser },
-    { key: "review", label: "Application Review", order: 5, icon: TableOfContents },
-    { key: "activation", label: "Account Activation", order: 6, icon: Lightbulb },
-] as const
+export type InvestorUserType = 'individual' | 'corporate' | 'fundraiser';
 
-export const STEP_KEYS = ONBOARDING_STEPS.map((s) => s.key)
+export interface OnboardingStep {
+    readonly key: string;
+    readonly label: string;
+    readonly icon: LucideIcon;
+    readonly hasSubsteps?: boolean;
+}
 
-export type StepKey = (typeof ONBOARDING_STEPS)[number]["key"]
+export const ONBOARDING_CONFIG = {
+    individual: [
+        { key: "personal", label: "Personal Information", icon: User, hasSubsteps: true },
+        { key: "email", label: "Email Verification", icon: Mail },
+        { key: "investor", label: "Select Your Investor Category", icon: BadgeCheck },
+        { key: "kyc", label: "Identity Verification (KYC)", icon: FileUser, hasSubsteps: true },
+        { key: "review", label: "Application Review", icon: TableOfContents },
+        { key: "activation", label: "Account Activation", icon: Lightbulb },
+    ],
+    corporate: [
+        { key: "company", label: "Company Information", icon: User, hasSubsteps: true },
+        { key: "email", label: "Email Verification", icon: Mail },
+        { key: "categorization", label: "Corporate Categorization", icon: BadgeCheck },
+        { key: "profile", label: "Investment Profile", icon: User },
+        { key: "kyc", label: "Account Verification KYC", icon: FileUser, hasSubsteps: true },
+        { key: "review", label: "Application Review", icon: TableOfContents },
+        { key: "activation", label: "Account Activation", icon: Lightbulb },
+    ],
+    fundraiser: [
+        { key: "personal", label: "Personal Information", icon: User, hasSubsteps: true },
+        { key: "email", label: "Email Verification", icon: Mail },
+    ]
+} satisfies Record<InvestorUserType, OnboardingStep[]>;
 
-export const isKnownOnboardingStep = (key: string): key is StepKey => {
-    return ONBOARDING_STEPS.some(s => s.key === key)
+export type StepKey = typeof ONBOARDING_CONFIG['individual' | 'corporate'][number]['key'];
+
+export const isKnownOnboardingStep = (
+    key: string,
+    type: InvestorUserType
+): key is StepKey => {
+    return (ONBOARDING_CONFIG[type] as OnboardingStep[]).some(s => s.key === key);
 }

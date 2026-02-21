@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
-import { InvestorSelectionView } from '@/components/onboarding/organisms/investor-step/InvestorSelectionView';
-import { InvestorQuestionnaireView } from '@/components/onboarding/organisms/investor-step/InvestorQuestionnaireView';
+import { InvestorSelectionView } from '@/components/onboarding/organisms/individual/investor-step/InvestorSelectionView';
+import { InvestorQuestionnaireView } from '@/components/onboarding/organisms/individual/investor-step/InvestorQuestionnaireView';
 import { INVESTOR_CATEGORIES } from '@/constants/investorCategories';
 
 export function InvestorStep({ onNext }: { onNext: () => void }) {
@@ -40,7 +40,6 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                 <InvestorQuestionnaireView
                     title={activeCategory?.jsonKey || ""}
                     selectedId={selectedId || ""}
-                    // NEW PROPS
                     onValidationChange={setIsQuestionnaireValid}
                     showAllErrors={showErrors}
                 />
@@ -54,7 +53,7 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                         if (view === "selection") onNext();
                         else {
                             setView("selection");
-                            setShowErrors(false); // Reset errors when going back
+                            setShowErrors(false);
                         }
                     }}
                 />
