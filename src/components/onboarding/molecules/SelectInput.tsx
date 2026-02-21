@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-interface SelectOption {
+export interface SelectOption {
     label: string;
     value: string;
 }
 
 interface SelectInputProps {
-    options: SelectOption[];
+    options: readonly SelectOption[];
     value?: string;
     placeholder?: string;
     onChange?: (value: string) => void;
@@ -32,7 +32,7 @@ export function SelectInput({
     const selectElement = (
         <div className="relative w-full">
             <select
-                className={`w-full h-[48px] px-4 bg-[#F4F5F7] border rounded-lg text-sm appearance-none outline-none cursor-pointer text-[#323232] transition-all 
+                className={`w-full h-[48px] px-4 bg-[#F4F5F7] border rounded-lg text-sm appearance-none outline-none cursor-pointer text-[#858585] transition-all 
                 ${error ? 'border-red-500' : 'border-transparent focus:border-[#042E27]'}`}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setIsOpen(false)}
@@ -40,14 +40,12 @@ export function SelectInput({
                     setIsOpen(false);
                     if (onChange) onChange(e.target.value);
                 }}
-                value={value || ""} // Set value to make it controlled
+                value={value || ""}
             >
-                {/* Placeholder */}
                 <option value="" disabled>
                     {placeholder}
                 </option>
 
-                {/* Dynamic Options */}
                 {options.map((option) => (
                     <option key={option.value} value={option.value}>
                         {option.label}
@@ -55,7 +53,6 @@ export function SelectInput({
                 ))}
             </select>
 
-            {/* Animated Chevron */}
             <div
                 className={`absolute right-4 top-1/2 -translate-y-1/2 text-[#323232] pointer-events-none transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'
                     }`}

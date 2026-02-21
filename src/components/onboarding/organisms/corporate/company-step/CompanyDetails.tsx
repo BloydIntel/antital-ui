@@ -6,6 +6,63 @@ import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { SelectInput } from '@/components/onboarding/molecules/SelectInput'
 
+const COMPANY_FIELDS = [
+    {
+        name: "companyName",
+        label: "Company Legal Name",
+        placeholder: "Exactly as registered with CAC"
+    },
+    {
+        name: "brandName",
+        label: "Trading/Brand Name",
+        placeholder: "Public business name"
+    },
+    {
+        isGrid: true,
+        fields: [
+            {
+                name: "registrationType",
+                label: "Registration Type",
+                placeholder: "BN (Business Name)",
+                type: "select",
+                options: [
+                    { label: 'BN (Business Name)', value: 'BN' },
+                    { label: 'LTD (Limited Liability)', value: 'LTD' },
+                    { label: 'PLC (Public Limited)', value: 'PLC' }
+                ] as const
+            },
+            {
+                name: "registrationNumber",
+                label: "Registration Number",
+                placeholder: "BN1234567"
+            }
+        ]
+    },
+    {
+        name: "loginEmail",
+        label: "Email",
+        placeholder: "Enter email",
+        type: "email"
+    },
+    {
+        isGrid: true,
+        fields: [
+            {
+                name: "password",
+                label: "Create Password",
+                placeholder: "***********",
+                type: "password"
+            },
+            {
+                name: "confirmPassword",
+                label: "Confirm Password",
+                placeholder: "***********",
+                type: "password"
+            }
+        ]
+    }
+] as const;
+
 export function CompanyDetails({ onNext }: { onNext: () => void }) {
     const { formData, updateFormData } = useOnboardingStore()
 
@@ -30,49 +87,62 @@ export function CompanyDetails({ onNext }: { onNext: () => void }) {
                     Company Details
                 </p>
 
-                <OnboardingInput
-                    label="Company Legal Name"
-                    placeholder="Exactly as registered with CAC"
-                    value={formData.companyName || ''}
-                    onChange={(e) => updateFormData({ companyName: e.target.value })}
-                />
+                <div className="pt-2">
+                    {COMPANY_FIELDS.map((fieldGroup, idx) => {
+                        // --- HANDLE GRID ITEMS ---
+                        if ("isGrid" in fieldGroup) {
+                            return (
+                                <div key={`grid-${idx}`} className="grid grid-cols-2 gap-4">
+                                    {fieldGroup.fields.map((field) => {
+                                        const fieldName = field.name as keyof typeof formData;
+                                        const baseProps = {
+                                            label: field.label,
+                                            placeholder: field.placeholder,
+                                            className: "pb-0",
+                                            value: (formData[fieldName] as string) || '',
+                                        };
 
-                <OnboardingInput
-                    label="Trading/Brand Name"
-                    placeholder="Public business name"
-                    value={formData.brandName || ''}
-                    onChange={(e) => updateFormData({ brandName: e.target.value })}
-                />
+                                        const fieldType = 'type' in field ? field.type : 'text';
 
-                <div className="grid grid-cols-2 gap-4">
-                    <SelectInput
-                        label="Registration Type"
-                        placeholder="BN (Business Name)"
-                        options={[{ label: 'BN (Business Name)', value: 'BN' }]}
-                    />
-                    <OnboardingInput
-                        label="Registration Number"
-                        placeholder="BN1234567"
-                    />
-                </div>
+                                        if (fieldType === "select" && 'options' in field) {
+                                            return (
+                                                <SelectInput
+                                                    key={field.name}
+                                                    {...baseProps}
+                                                    options={field.options}
+                                                    onChange={(value) => updateFormData({ [field.name]: value })}
+                                                />
+                                            );
+                                        }
 
-                <OnboardingInput
-                    label="Email"
-                    type="email"
-                    placeholder="Enter email"
-                />
+                                        return (
+                                            <OnboardingInput
+                                                key={field.name}
+                                                {...baseProps}
+                                                type={fieldType}
+                                                onChange={(e) => updateFormData({ [field.name]: e.target.value })}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            );
+                        }
 
-                <div className="grid grid-cols-2 gap-4">
-                    <OnboardingInput
-                        label="Create Password"
-                        type="password"
-                        placeholder="***********"
-                    />
-                    <OnboardingInput
-                        label="Confirm Password"
-                        type="password"
-                        placeholder="***********"
-                    />
+                        // --- HANDLE FULL WIDTH ITEMS ---
+                        const fieldName = fieldGroup.name as keyof typeof formData;
+                        return (
+                            <OnboardingInput
+                                key={fieldGroup.name}
+                                label={fieldGroup.label}
+                                placeholder={fieldGroup.placeholder}
+                                className="pb-0"
+                                // FIX: Narrowed field type check
+                                type={'type' in fieldGroup ? fieldGroup.type : "text"}
+                                value={(formData[fieldName] as string) || ''}
+                                onChange={(e) => updateFormData({ [fieldGroup.name]: e.target.value })}
+                            />
+                        );
+                    })}
                 </div>
             </div>
         </form>

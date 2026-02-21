@@ -39,5 +39,5 @@ export const isKnownOnboardingStep = (
     key: string,
     type: InvestorUserType
 ): key is StepKey => {
-    return (ONBOARDING_CONFIG[type] as OnboardingStep[]).some(s => s.key === key);
+    return (ONBOARDING_CONFIG[type] as readonly OnboardingStep[]).some(s => s.key === key);
 }

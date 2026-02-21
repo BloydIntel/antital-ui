@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep } from "@/components/onboarding/steps"
+import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep } from "@/components/onboarding/steps"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { SubSteps } from "@/components/onboarding/organisms/onboarding-sidebar/subSteps"
 
@@ -14,41 +14,48 @@ export default function OnboardingSidebar() {
 
     const {
         currentStep,
-        setCurrentStep,
+        lastAllowedStep,
         investorUserType,
         emailVerified,
+        setCurrentStep,
         setLastAllowedStep,
         setInvestorUserType
     } = useOnboardingStore()
 
-    const pathParts = pathname.split("/")
+    const pathParts = useMemo(() => pathname.split("/"), [pathname])
+
     const typeFromUrl = pathParts[2] as InvestorUserType
+    const stepKeyFromUrl = pathParts[pathParts.length - 1] as StepKey
 
     const activeType = investorUserType || typeFromUrl || "individual"
-    const steps = ONBOARDING_CONFIG[activeType] || ONBOARDING_CONFIG.individual
+    const steps = (ONBOARDING_CONFIG[activeType] || ONBOARDING_CONFIG.individual) as OnboardingStep[]
 
     useEffect(() => {
-        const stepKeyFromUrl = pathParts[pathParts.length - 1] as StepKey
-
-        if (!investorUserType && typeFromUrl) {
-            setInvestorUserType(typeFromUrl)
+        if (typeFromUrl && investorUserType !== typeFromUrl) {
+            setInvestorUserType(typeFromUrl);
         }
 
         if (isKnownOnboardingStep(stepKeyFromUrl, activeType) && stepKeyFromUrl !== currentStep) {
-            setCurrentStep(stepKeyFromUrl)
+            setCurrentStep(stepKeyFromUrl);
         }
 
-        const basicSteps: StepKey[] = ["personal", "company", "email" as StepKey]
-
-        if (basicSteps.includes(stepKeyFromUrl)) {
-            const allowedStep = stepKeyFromUrl as "personal" | "company" | "email";
-            setLastAllowedStep(allowedStep)
-
-            if (typeof window !== "undefined") {
-                sessionStorage.setItem("onboarding_lastAllowedStep", stepKeyFromUrl)
-            }
+        const basicSteps = ["personal", "company", "email"];
+        if (basicSteps.includes(stepKeyFromUrl) && lastAllowedStep !== stepKeyFromUrl) {
+            setLastAllowedStep(stepKeyFromUrl as "personal" | "company" | "email");
+            sessionStorage.setItem("onboarding_lastAllowedStep", stepKeyFromUrl);
         }
-    }, [pathname, currentStep, investorUserType, activeType, typeFromUrl, pathParts, setInvestorUserType, setCurrentStep, setLastAllowedStep])
+
+    }, [
+        stepKeyFromUrl,
+        typeFromUrl,
+        investorUserType,
+        currentStep,
+        lastAllowedStep,
+        activeType,
+        setInvestorUserType,
+        setCurrentStep,
+        setLastAllowedStep
+    ]);
 
     const handleMainStepClick = (stepKey: StepKey) => {
         router.push(`/onboarding/${activeType}/${stepKey}`)

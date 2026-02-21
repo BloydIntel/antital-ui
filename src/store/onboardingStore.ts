@@ -31,9 +31,27 @@ interface OnboardingFormData {
     brandName: string;
     registrationType: string;
     registrationNumber: string;
+    loginEmail: string;
+    password: string;
+    confirmPassword: string;
+
+    // Company Address Fields
+    registrationDate: string;
+    companyWebsite: string;
+    businessAddress: string;
+    registeredAddress: string;
+    companyPhone: string;
     companyEmail: string;
-    password?: string; // Optional depending on your auth flow
-    confirmPassword?: string;
+
+    // Account Representative Details Fields
+    repFullName: string;
+    repJobTitle: string;
+    repPhoneNumber: string;
+    repDob: string;
+    repEmail: string;
+    repNationality: string;
+    repResidence: string;
+    repAddress: string;
 
     // Location Details
     nationality: string;
@@ -79,9 +97,25 @@ const initialFormData: OnboardingFormData = {
     brandName: "",
     registrationType: "",
     registrationNumber: "",
-    companyEmail: "",
+    loginEmail: "",
     password: "",
     confirmPassword: "",
+    // Company Address Fields
+    registrationDate: "",
+    companyWebsite: "",
+    businessAddress: "",
+    registeredAddress: "",
+    companyPhone: "",
+    companyEmail: "",
+    // Account Representative Details Fields
+    repFullName: "",
+    repJobTitle: "",
+    repPhoneNumber: "",
+    repDob: "",
+    repEmail: "",
+    repNationality: "",
+    repResidence: "",
+    repAddress: "",
     // Location Defaults
     nationality: "",
     residence: "",

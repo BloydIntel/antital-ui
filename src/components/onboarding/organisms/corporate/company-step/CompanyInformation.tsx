@@ -29,8 +29,8 @@ export function CompanyInformation() {
 
     const stepContent: Record<string, React.ReactNode> = {
         details: <CompanyDetails onNext={nextSubStep} />,
-        address: <CompanyAddress />,
-        representative: <AccountRepresentativeDetails />,
+        address: <CompanyAddress onNext={nextSubStep} />,
+        representative: <AccountRepresentativeDetails onNext={nextSubStep} />,
     }
 
     return (
