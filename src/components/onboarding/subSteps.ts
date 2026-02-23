@@ -10,7 +10,7 @@ export const COMPANY_SUB_STEPS = [
 ] as const;
 
 export interface KYCSubStep {
-    readonly id: 'docs' | 'selfie' | 'income';
+    readonly id: 'docs' | 'selfie' | 'income' | 'oci';
     readonly title: string;
     readonly description: string;
     readonly span?: string;
@@ -33,4 +33,10 @@ export const KYC_SUB_STEPS: readonly KYCSubStep[] = [
         span: '(Optional)',
         description: 'Increase your investment limits with income verification.'
     }
+] as const;
+
+export const CORPORATE_KYC_HEADERS: readonly KYCSubStep[] = [
+    { id: 'docs', title: "Account Representative KYC", description: "Complete your personal verification now" },
+    { id: 'selfie', title: "Selfie Verification", description: "We need to verify your face to secure your account" },
+    { id: 'oci', title: "OCI KYC", description: "Other Corporate Investor Detail" },
 ] as const;

@@ -7,42 +7,45 @@ import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload
 import { IncomeVerification } from '@/components/onboarding/organisms/kyc/IncomeVerification'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
-import { KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
+import { CORPORATE_KYC_HEADERS, KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
+import { OtherCorporateInvestor } from '@/components/onboarding/organisms/corporate/OtherCorporateInvestor'
 
 interface IdentityVerificationProps {
     onNext: () => void
 }
 
 export function IdentityVerification({ onNext }: IdentityVerificationProps) {
+
+    // Get user type and sub-steps from store
+    const userType = useOnboardingStore((s) => s.investorUserType);
     const subStep = useOnboardingStore((s) => s.kycSubStep);
     const setSubStep = useOnboardingStore((s) => s.setKycSubStep);
     const kycData = useOnboardingStore((s) => s.formData.kycData);
-
     const [showErrors, setShowErrors] = useState(false);
 
-    // Global Validation Logic for KYC
+    // 1. Determine which Header to show
+    const isCorporate = userType === 'corporate';
+    const currentHeader = isCorporate
+        ? CORPORATE_KYC_HEADERS[subStep]
+        : KYC_SUB_STEPS[subStep];
+
+    // 2. Validation (Step 2 logic might change for Corporate)
     const isStep0Valid = kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile;
     const isStep1Valid = !!kycData.selfie;
-    const isStep2Valid = kycData.incomeDocuments.length > 0 && kycData.incomeFile;
+
+    // Add logic here for the Corporate 3rd page validation if different
+    const isStep2Valid = isCorporate
+        ? true // Replace with specific Corporate OCI validation
+        : (kycData.incomeDocuments.length > 0 && kycData.incomeFile);
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
-    const currentHeader = KYC_SUB_STEPS[subStep]
-
     const handleNext = () => {
         if (subStep < 2) {
-            // Allow free flow between sub-steps
             setSubStep(subStep + 1);
         } else {
-            // Final check before moving to the next main stage
-            if (isAllKycValid) {
-                onNext();
-            } else {
-                setShowErrors(true);
-                // Optional: set sub-step to where the error is
-                if (!isStep0Valid) setSubStep(0);
-                else if (!isStep1Valid) setSubStep(1);
-            }
+            if (isAllKycValid) onNext();
+            else setShowErrors(true);
         }
     };
 
@@ -59,8 +62,11 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
                         )}
                     </h2>
 
-                    {subStep === 0 && (
-                        <button className="text-[#0F3D2E] text-sm pl-42 lg:pl-0 font-semibold hover:underline">
+                    {(subStep === 0 || subStep === 2) && (
+                        <button
+                            className="text-[#0F3D2E] text-sm pl-42 lg:pl-0 font-semibold hover:underline"
+                            onClick={() => onNext()}
+                        >
                             Skip to complete KYC later
                         </button>
                     )}
@@ -72,12 +78,23 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
             </div>
 
             <div>
+                {/* Steps 0 and 1 are shared */}
                 {subStep === 0 && <DocumentUpload showErrors={showErrors} />}
                 {subStep === 1 && <SelfieUpload showErrors={showErrors} />}
-                {subStep === 2 && <IncomeVerification showErrors={showErrors} />}
+
+                {/* Step 2 switches components based on userType */}
+                {subStep === 2 && (
+                    isCorporate
+                        ? <OtherCorporateInvestor showErrors={showErrors} />
+                        : <IncomeVerification showErrors={showErrors} />
+                )}
             </div>
 
-            <div className="flex max-w-[558px] items-center justify-between pt-8 pb-10 border-t border-gray-50">
+            {!isAllKycValid && showErrors && (
+                <p className="text-red-500 text-sm text-center">Please complete all required fields in all sections.</p>
+            )}
+
+            <div className="flex max-w-[558px] items-center justify-between pb-10 border-t border-gray-50">
                 <OnboardingButton
                     label='Back'
                     variant="plain"
@@ -104,10 +121,6 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
                 />
 
             </div>
-
-            {!isAllKycValid && showErrors && (
-                <p className="text-red-500 text-sm text-center">Please complete all required fields in all sections.</p>
-            )}
         </div>
     )
 }

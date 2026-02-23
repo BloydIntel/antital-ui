@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react';
 import { UserTypeCard } from '@/components/create-account/molecules/user-type-card';
 import { InvestorCategory } from '@/types/investor';
+import { useOnboardingStore } from '@/store/onboardingStore';
 
 interface Props {
     readonly categories: readonly InvestorCategory[];
@@ -9,6 +10,18 @@ interface Props {
 }
 
 export function InvestorSelectionView({ categories, selectedId, onSelect }: Props) {
+
+    const { updateFormData } = useOnboardingStore();
+
+    const handleCategorySelect = (categoryId: string) => {
+        updateFormData({
+            selectedCategoryId: categoryId,
+            questionnaireAnswers: {}
+        });
+
+        onSelect(categoryId)
+    };
+
     return (
         <div className="animate-in fade-in duration-500">
             <div className="pb-[32px]">
@@ -28,7 +41,7 @@ export function InvestorSelectionView({ categories, selectedId, onSelect }: Prop
                             }`}
                     >
                         <UserTypeCard
-                            onClick={() => onSelect(category.id)}
+                            onClick={() => handleCategorySelect(category.id)}
                             title={category.title}
                             subTitle={category.subTitle}
                             description={category.description}
@@ -47,3 +60,4 @@ export function InvestorSelectionView({ categories, selectedId, onSelect }: Prop
         </div>
     );
 }
+

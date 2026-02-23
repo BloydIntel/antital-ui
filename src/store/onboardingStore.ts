@@ -15,6 +15,11 @@ export interface KYCData {
     selfie: File | null;
     incomeDocuments: string[];
     incomeFile: File | null;
+
+    // Corporate Fields 
+    incorporationCertificate: File | null;
+    statusReport: File | null;
+    boardResolution: File | null;
 }
 
 interface OnboardingFormData {
@@ -60,6 +65,7 @@ interface OnboardingFormData {
     address: string;
 
     // Questionnaire Data
+    selectedCategoryId: string | null;
     questionnaireAnswers: Record<string, QuestionValue>;
     // Kyc Data
     kycData: KYCData;
@@ -82,7 +88,7 @@ interface OnboardingState {
     setKycSubStep: (subStep: number) => void
     setEmailVerified: (verified: boolean) => void
     setLastAllowedStep: (step: AllowedStepBeforeVerify) => void
-    updateFormData: (data: Partial<OnboardingFormData>) => void
+    updateFormData: (data: Partial<Omit<OnboardingFormData, 'kycData'>> & { kycData?: Partial<KYCData> }) => void
 }
 
 const initialFormData: OnboardingFormData = {
@@ -121,7 +127,10 @@ const initialFormData: OnboardingFormData = {
     residence: "",
     state: "",
     address: "",
+
+    selectedCategoryId: null,
     questionnaireAnswers: {},
+
     kycData: {
         idType: "",
         idNumber: "",
@@ -132,6 +141,10 @@ const initialFormData: OnboardingFormData = {
         selfie: null,
         incomeDocuments: [],
         incomeFile: null,
+
+        incorporationCertificate: null,
+        statusReport: null,
+        boardResolution: null,
     }
 };
 
@@ -148,18 +161,24 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
 
     setCurrentStep: (step) => set({ currentStep: step }),
     setPersonalSubStep: (subStep) => set({ personalSubStep: subStep }),
-    setCompanySubStep: (subStep) => set({ companySubStep: subStep }), // Setter
+    setCompanySubStep: (subStep) => set({ companySubStep: subStep }),
     setKycSubStep: (subStep) => set({ kycSubStep: subStep }),
     setEmailVerified: (verified) => set({ emailVerified: verified }),
     setLastAllowedStep: (step) => set({ lastAllowedStep: step }),
 
     updateFormData: (data) =>
-        set((state) => ({
-            formData: {
-                ...state.formData,
-                ...data,
-                // Ensure kycData deep merge if kycData is provided in the partial update
-                kycData: data.kycData ? { ...state.formData.kycData, ...data.kycData } : state.formData.kycData
-            }
-        })),
+        set((state) => {
+            // Prepare the new KYC data by merging existing with the incoming partial data
+            const updatedKycData = data.kycData
+                ? { ...state.formData.kycData, ...data.kycData }
+                : state.formData.kycData;
+
+            return {
+                formData: {
+                    ...state.formData,
+                    ...data,
+                    kycData: updatedKycData
+                }
+            };
+        }),
 }))

@@ -146,7 +146,7 @@
             },
             {
                 "label": "Please indicate which asset range best reflects your net investment assets:",
-                "inputType": "checkbox",
+                "inputType": "radio",
                 "options": [
                     "₦100 Million - ₦250 Million",
                     "₦250 Million - ₦500 Million",
@@ -190,6 +190,94 @@
             },
             {
                 "label": "Do you confirm that you meet the SEC Nigeria criteria for a classification as a High-Net-Worth Investor and consent to being treated as such for the purpose of investment eligibility and offering access on this platform?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ]
+    },
+    "Qualified Institutional Investor (QII)": {
+        "questionnaire": [
+            {
+                "label": "What type of institutional entity do you represent?",
+                "inputType": "radio",
+                "options": [
+                    "Bank",
+                    "Asset management company",
+                    "Pension fund administrator",
+                    "Insurance company",
+                    "Venture capital/private equity fund",
+                    "Corporate finance institution",
+                    "Other regulated institution (specify)"
+                ]
+            },
+            {
+                "label": "Does your institution have a valid registration or license as Qualified Institutional Investor?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Does your institution have an approved investment mandate that allows participation in alternative or high-risk investments?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Do you confirm that your institution meets the SEC Nigeria criteria...?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ]
+    },
+    "Other Corporate Investor (OCI)": {
+        "questionnaire": [
+            {
+                "label": "Does the company have a Board resolution or internal approval mandate...?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "What is the company’s approximate net asset value?",
+                "inputType": "radio",
+                "options": [
+                    "Below ₦10 million",
+                    "₦10 million – ₦50 million",
+                    "₦50 million – ₦100 million",
+                    "₦100 million – ₦500 million",
+                    "Above ₦500 million"
+                ]
+            },
+            {
+                "label": "Does the company have the financial capacity to withstand loss of invested funds without impairing operations or liquidity?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Does the company understand that crowdfunding investments are high-risk and may result in partial or total loss of capital?",
+                "inputType": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "label": "Does your institution employ or have access to qualified investment professionals who can evaluate high-risk or complex offerings?",
                 "inputType": "radio",
                 "options": [
                     "Yes",

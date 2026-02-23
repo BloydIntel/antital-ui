@@ -15,7 +15,8 @@ import { AccountActivation } from "@/components/onboarding/organisms/AccountActi
 
 // Corporate Components
 import { CompanyInformation } from "@/components/onboarding/organisms/corporate/company-step/CompanyInformation"
-import { CorporateCategorization } from "@/components/onboarding/organisms/corporate/CorporateCategorization"
+import { CorporateCategorization } from "@/components/onboarding/organisms/corporate/corporate-categorization/CorporateCategorization"
+import { InvestmentProfile } from "@/components/onboarding/organisms/corporate/InvestmentProfile"
 
 
 interface StepRendererProps {
@@ -58,7 +59,10 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
         case "investor":
             return <InvestorStep onNext={navigateToNext} />;
         case "categorization":
-            return <CorporateCategorization />;
+            return <CorporateCategorization onNext={navigateToNext} />;
+
+        case "profile":
+            return <InvestmentProfile onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "kyc":
             return <IdentityVerification onNext={navigateToNext} />;
