@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
@@ -63,16 +63,32 @@ const COMPANY_FIELDS = [
     }
 ] as const;
 
-export function CompanyDetails({ onNext }: { onNext: () => void }) {
+export function CompanyDetails({ onValidationChange }: { onValidationChange: (isValid: boolean) => void }) {
     const { formData, updateFormData } = useOnboardingStore()
+    const [touched, setTouched] = useState<Record<string, boolean>>({})
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        onNext()
-    }
+    const errors = useMemo(() => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return {
+            companyName: !formData.companyName ? "Company legal name is required" : "",
+            brandName: !formData.brandName ? "Trading name is required" : "",
+            registrationType: !formData.registrationType ? "Required" : "",
+            registrationNumber: !formData.registrationNumber ? "Required" : "",
+            loginEmail: !emailRegex.test(formData.loginEmail as string || '') ? "Invalid email" : "",
+            password: (formData.password as string || '').length < 8 ? "Min 8 characters" : "",
+            confirmPassword: formData.confirmPassword !== formData.password ? "Passwords do not match" : ""
+        };
+    }, [formData]);
+
+    useEffect(() => {
+        const isValid = !Object.values(errors).some(err => err !== "");
+        onValidationChange(isValid);
+    }, [errors, onValidationChange]);
+
+    const handleBlur = (name: string) => setTouched(prev => ({ ...prev, [name]: true }));
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-[558px] w-full mx-auto">
+        <div className="max-w-[558px] w-full mx-auto">
             <div className="mb-8">
                 <h2 className="text-[36px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
                     Corporate Investment Account
@@ -83,34 +99,30 @@ export function CompanyDetails({ onNext }: { onNext: () => void }) {
             </div>
 
             <div className="space-y-6">
-                <p className="text-[24px] font-semibold text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
-                    Company Details
-                </p>
-
                 <div className="pt-2">
                     {COMPANY_FIELDS.map((fieldGroup, idx) => {
-                        // --- HANDLE GRID ITEMS ---
                         if ("isGrid" in fieldGroup) {
                             return (
                                 <div key={`grid-${idx}`} className="grid grid-cols-2 gap-4">
                                     {fieldGroup.fields.map((field) => {
                                         const fieldName = field.name as keyof typeof formData;
-                                        const baseProps = {
-                                            label: field.label,
-                                            placeholder: field.placeholder,
-                                            className: "pb-0",
-                                            value: (formData[fieldName] as string) || '',
-                                        };
+                                        const fieldType = "type" in field ? field.type : "text";
 
-                                        const fieldType = 'type' in field ? field.type : 'text';
+                                        const errorKey = field.name as keyof typeof errors;
+                                        const errorMsg = touched[field.name] ? errors[errorKey] : "";
 
-                                        if (fieldType === "select" && 'options' in field) {
+                                        if (fieldType === "select" && "options" in field) {
                                             return (
                                                 <SelectInput
                                                     key={field.name}
-                                                    {...baseProps}
+                                                    label={field.label}
                                                     options={field.options}
-                                                    onChange={(value) => updateFormData({ [field.name]: value })}
+                                                    value={(formData[fieldName] as string) || ''}
+                                                    error={errorMsg}
+                                                    onChange={(val) => {
+                                                        updateFormData({ [field.name]: val });
+                                                        handleBlur(field.name);
+                                                    }}
                                                 />
                                             );
                                         }
@@ -118,9 +130,13 @@ export function CompanyDetails({ onNext }: { onNext: () => void }) {
                                         return (
                                             <OnboardingInput
                                                 key={field.name}
-                                                {...baseProps}
+                                                label={field.label}
                                                 type={fieldType}
+                                                placeholder={field.placeholder}
+                                                value={(formData[fieldName] as string) || ''}
+                                                error={errorMsg}
                                                 onChange={(e) => updateFormData({ [field.name]: e.target.value })}
+                                                onBlur={() => handleBlur(field.name)}
                                             />
                                         );
                                     })}
@@ -128,23 +144,27 @@ export function CompanyDetails({ onNext }: { onNext: () => void }) {
                             );
                         }
 
-                        // --- HANDLE FULL WIDTH ITEMS ---
                         const fieldName = fieldGroup.name as keyof typeof formData;
+                        const fieldType = "type" in fieldGroup ? fieldGroup.type : "text";
+                        const errorKey = fieldGroup.name as keyof typeof errors;
+                        const errorMsg = touched[fieldGroup.name] ? errors[errorKey] : "";
+
                         return (
                             <OnboardingInput
                                 key={fieldGroup.name}
                                 label={fieldGroup.label}
                                 placeholder={fieldGroup.placeholder}
-                                className="pb-0"
-                                // FIX: Narrowed field type check
-                                type={'type' in fieldGroup ? fieldGroup.type : "text"}
+                                type={fieldType}
                                 value={(formData[fieldName] as string) || ''}
+                                error={errorMsg}
                                 onChange={(e) => updateFormData({ [fieldGroup.name]: e.target.value })}
+                                onBlur={() => handleBlur(fieldGroup.name)}
                             />
                         );
                     })}
                 </div>
             </div>
-        </form>
+        </div>
+
     )
 }
