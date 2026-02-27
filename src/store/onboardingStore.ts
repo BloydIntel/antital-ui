@@ -72,12 +72,12 @@ interface OnboardingFormData {
     kycData: KYCData;
 }
 
-interface OnboardingState {
+export interface OnboardingState {
     investorUserType: InvestorUserType | null;
     setInvestorUserType: (type: InvestorUserType) => void;
     currentStep: StepKey
     personalSubStep: number
-    companySubStep: number // Added for corporate flow
+    companySubStep: number
     kycSubStep: number
     emailVerified: boolean
     lastAllowedStep: AllowedStepBeforeVerify
@@ -85,7 +85,7 @@ interface OnboardingState {
 
     setCurrentStep: (step: StepKey) => void
     setPersonalSubStep: (subStep: number) => void
-    setCompanySubStep: (subStep: number) => void // Added setter
+    setCompanySubStep: (subStep: number) => void
     setKycSubStep: (subStep: number) => void
     setEmailVerified: (verified: boolean) => void
     setLastAllowedStep: (step: AllowedStepBeforeVerify) => void

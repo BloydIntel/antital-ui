@@ -1,38 +1,63 @@
-import { StepKey } from "@/components/onboarding/steps"
+import { StepKey } from "@/components/onboarding/steps";
+import { OnboardingState } from "@/store/onboardingStore";
 
-type dataType = {
-    nationality?: string
-    state?: string
-    verified?: boolean
-    category?: string
-    documentsUploaded?: boolean
-    acceptedTerms?: boolean
-}
+export function validateStep(step: StepKey, state: OnboardingState): boolean {
+    const { formData, investorUserType, emailVerified } = state;
+    const { kycData } = formData;
 
-export function validateStep(step: StepKey, data: dataType): boolean {
     switch (step) {
         case "personal":
-            return !!data?.nationality && !!data?.state
-
-        case "email":
-            return data?.verified === true
-
-        case "investor":
-            return !!data?.category
-
-        case "kyc":
-            return data?.documentsUploaded === true
-
-        case "review":
-            return data?.acceptedTerms === true
-
-        case "activation":
-            return true
+            return !!(
+                formData.firstName &&
+                formData.lastName &&
+                formData.phone &&
+                formData.nationality &&
+                formData.residence
+            );
 
         case "company":
-            return true
+            return !!(
+                formData.companyName &&
+                formData.registrationNumber &&
+                formData.companyEmail &&
+                formData.repFullName &&
+                formData.repEmail
+            );
 
-        default:
-            return false
+        case "email":
+            return emailVerified;
+
+        case "investor":
+        case "categorization":
+
+            return !!formData.selectedCategoryId;
+
+        case "profile":
+            return Object.keys(formData.questionnaireAnswers).length > 4;
+
+        case "kyc":
+            const baseKyc = !!(kycData.idNumber && kycData.idFile && kycData.selfie && kycData.bvn);
+
+            if (investorUserType === 'corporate') {
+                const isQII = formData.selectedCategoryId === "qii";
+                if (isQII) {
+                    return baseKyc && !!(kycData.qiiLicense && kycData.statusReport);
+                }
+                return baseKyc && !!(kycData.incorporationCertificate && kycData.boardResolution);
+            }
+
+            // Individual KYC
+            return baseKyc && kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+
+        case "review":
+            return true;
+
+        case "activation":
+            return true;
+
+        default: {
+            const _exhaustiveCheck: never = step;
+            return _exhaustiveCheck;
+        }
     }
 }
