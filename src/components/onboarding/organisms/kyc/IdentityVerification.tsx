@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { DocumentUpload } from '@/components/onboarding/organisms/kyc/DocumentUpload'
 import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload'
@@ -33,10 +33,25 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
     const isStep0Valid = kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile;
     const isStep1Valid = !!kycData.selfie;
 
-    // Add logic here for the Corporate 3rd page validation if different
-    const isStep2Valid = isCorporate
-        ? true // Replace with specific Corporate OCI validation
-        : (kycData.incomeDocuments.length > 0 && kycData.incomeFile);
+    const isStep2Valid = useMemo(() => {
+        if (isCorporate) {
+
+            const isQII = useOnboardingStore.getState().formData.selectedCategoryId === "qii";
+
+            if (isQII) {
+
+                return !!(kycData.statusReport && kycData.addressFile);
+            }
+
+
+            return !!(
+                kycData.incorporationCertificate &&
+                kycData.statusReport
+            );
+        }
+
+        return kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+    }, [isCorporate, kycData]);
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
@@ -78,11 +93,9 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
             </div>
 
             <div>
-                {/* Steps 0 and 1 are shared */}
                 {subStep === 0 && <DocumentUpload showErrors={showErrors} />}
                 {subStep === 1 && <SelfieUpload showErrors={showErrors} />}
 
-                {/* Step 2 switches components based on userType */}
                 {subStep === 2 && (
                     isCorporate
                         ? <OtherCorporateInvestor showErrors={showErrors} />

@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 import { InvestorSelectionView } from '@/components/onboarding/organisms/individual/investor-step/InvestorSelectionView';
 import { CORPORATE_CATEGORIES } from '@/constants/investorCategories';
@@ -9,12 +9,12 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 export function CorporateCategorization({ onNext }: { onNext: () => void }) {
 
     const { formData, updateFormData } = useOnboardingStore();
-    const [selectedId, setSelectedId] = React.useState<string | null>(null);
+    const [selectedId, setSelectedId] = useState<string | null>(formData.selectedCategoryId || null);
 
     const handleProceed = () => {
         if (selectedId) {
             updateFormData({
-                questionnaireAnswers: { ...formData.questionnaireAnswers, selectedCategoryId: selectedId }
+                selectedCategoryId: selectedId
             });
             onNext();
         }

@@ -1,12 +1,15 @@
 "use client"
 
 import React from "react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { ReviewCard } from "@/components/onboarding/molecules/ReviewCard"
+import { InvestorUserType } from "@/components/onboarding/steps"
 
 export function CorporateInvestorReview() {
     const router = useRouter();
+    const params = useParams();
+
     const {
         formData,
         investorUserType,
@@ -15,13 +18,12 @@ export function CorporateInvestorReview() {
         setKycSubStep
     } = useOnboardingStore();
 
-    const isQII = formData.selectedCategoryId === "Qualified Institutional Investor (QII)";
+    const activeType = (params?.investorUserType as InvestorUserType) || investorUserType || "corporate";
+
+    const isQII = formData.selectedCategoryId === "qii";
     const answers = formData.questionnaireAnswers;
 
     const getAnswer = (partialLabel: string) => {
-        // Debugging: Remove this once you see the keys in your console
-        console.log("Available Keys:", Object.keys(answers));
-
         const fullKey = Object.keys(answers).find(key =>
             key.toLowerCase().includes(partialLabel.toLowerCase())
         );
@@ -29,7 +31,7 @@ export function CorporateInvestorReview() {
     };
 
     const handleEdit = (section: "company" | "categorization" | "kyc") => {
-        const baseUrl = `/onboarding/${investorUserType}`;
+        const baseUrl = `/onboarding/${activeType}`;
 
         switch (section) {
             case "kyc":
@@ -39,15 +41,13 @@ export function CorporateInvestorReview() {
                 break;
 
             case "categorization":
-                // Ensure the main step is set to categorization
                 setCurrentStep("categorization");
-                // If categorization is its own route:
                 router.push(`${baseUrl}/categorization`);
                 break;
 
             case "company":
                 setCurrentStep("company");
-                setCompanySubStep(0); // Basic Info
+                setCompanySubStep(0);
                 router.push(`${baseUrl}/company`);
                 break;
 
@@ -99,18 +99,12 @@ export function CorporateInvestorReview() {
                 sectionId="kyc"
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
-                items={isQII ? [
+                items={[
                     { label: "ID Type", value: formData.kycData.idType },
                     { label: "ID Number", value: formData.kycData.idNumber },
                     { label: "Address", value: formData.kycData.address },
-                    { label: "Proof of Address", value: formData.kycData.addressFile },
-                    { label: "Selfie", value: formData.kycData.selfie },
-                ] : [
-                    { label: "ID Type", value: formData.kycData.idType },
-                    { label: "ID Number", value: formData.kycData.idNumber },
-                    { label: "Address", value: formData.kycData.address },
-                    { label: "Incorporation Certificate", value: formData.kycData.incorporationCertificate },
-                    { label: "Selfie", value: formData.kycData.selfie },
+                    ...(isQII ? [{ label: "Proof of Address", value: formData.kycData.addressFile }] : []),
+                    { label: "Selfie", value: formData.kycData.selfie ? "Uploaded" : "Pending" },
                 ]}
             />
 
@@ -123,8 +117,10 @@ export function CorporateInvestorReview() {
                     { label: "Government ID", value: formData.kycData.idFile },
                     { label: "Proof of Address", value: formData.kycData.addressFile },
                     { label: "Recent status report document", value: formData.kycData.statusReport },
-                    { label: "Proof of QII License", value: formData.kycData.addressFile },
-                    { label: "Board Resolution", value: formData.kycData.incorporationCertificate },
+                    ...(isQII
+                        ? [{ label: "Proof of QII License", value: formData.kycData.qiiLicense }]
+                        : [{ label: "Incorporation Certificate", value: formData.kycData.incorporationCertificate }]),
+                    { label: "Board Resolution", value: formData.kycData.boardResolution },
                 ]}
             />
 

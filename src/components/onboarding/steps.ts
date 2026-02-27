@@ -2,8 +2,8 @@ import { BadgeCheck, Mail, User, FileUser, TableOfContents, Lightbulb, LucideIco
 
 export type InvestorUserType = 'individual' | 'corporate' | 'fundraiser';
 
-export interface OnboardingStep {
-    readonly key: string;
+export interface OnboardingStep<K extends string = string> {
+    readonly key: K;
     readonly label: string;
     readonly icon: LucideIcon;
     readonly hasSubsteps?: boolean;
@@ -31,13 +31,15 @@ export const ONBOARDING_CONFIG = {
         { key: "personal", label: "Personal Information", icon: User, hasSubsteps: true },
         { key: "email", label: "Email Verification", icon: Mail },
     ]
-} satisfies Record<InvestorUserType, OnboardingStep[]>;
+} as const;
 
-export type StepKey = typeof ONBOARDING_CONFIG['individual' | 'corporate'][number]['key'];
+export type StepKey = (typeof ONBOARDING_CONFIG)[InvestorUserType][number]['key'];
+
 
 export const isKnownOnboardingStep = (
     key: string,
     type: InvestorUserType
 ): key is StepKey => {
-    return (ONBOARDING_CONFIG[type] as readonly OnboardingStep[]).some(s => s.key === key);
+    const steps = ONBOARDING_CONFIG[type] as readonly OnboardingStep[];
+    return steps.some(s => s.key === key);
 }

@@ -12,8 +12,8 @@ import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingBu
 export function CompanyInformation() {
     const router = useRouter()
 
-    const subStep = useOnboardingStore((s) => s.personalSubStep);
-    const setSubStep = useOnboardingStore((s) => s.setPersonalSubStep);
+    const subStep = useOnboardingStore((s) => s.companySubStep);
+    const setSubStep = useOnboardingStore((s) => s.setCompanySubStep);
     const investorUserType = useOnboardingStore((s) => s.investorUserType)
 
     const [isStepValid, setIsStepValid] = useState(false);
@@ -25,7 +25,8 @@ export function CompanyInformation() {
         if (!isStepValid) return;
 
         if (isLastSubStep) {
-            router.push(`/onboarding/${investorUserType}/email`)
+            const safeType = investorUserType || 'corporate';
+            router.push(`/onboarding/${safeType}/email`)
         } else {
             setSubStep(subStep + 1)
             setIsStepValid(false)

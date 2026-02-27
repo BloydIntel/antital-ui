@@ -12,7 +12,7 @@ export function InvestmentProfile({ onNext, onBack }: { onNext: () => void; onBa
     const [showErrors, setShowErrors] = useState(false);
 
     // Retrieve the ID saved in the previous step
-    const selectedId = formData.questionnaireAnswers.selectedCategoryId as string;
+    const selectedId = formData.selectedCategoryId;
     const activeCategory = CORPORATE_CATEGORIES.find(c => c.id === selectedId);
 
     const handleProceed = () => {
@@ -24,7 +24,12 @@ export function InvestmentProfile({ onNext, onBack }: { onNext: () => void; onBa
     };
 
     if (!selectedId) {
-        return <div>Please go back and select a category.</div>;
+        return (
+            <div className="text-center py-10">
+                <p className="mb-4">Please go back and select a category.</p>
+                <OnboardingButton label="Go Back" onClick={onBack} variant="plain" />
+            </div>
+        );
     }
 
     return (

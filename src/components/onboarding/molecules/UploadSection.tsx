@@ -52,9 +52,11 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
                 </p>
             )}
 
-            <p className="text-[14px] text-gray-400" style={TYPOGRAPHY.body}>
-                {desc}
-            </p>
+            {desc && (
+                <p className="text-[14px] text-gray-400" style={TYPOGRAPHY.body}>
+                    {desc}
+                </p>
+            )}
 
             <div
                 onClick={handleContainerClick}

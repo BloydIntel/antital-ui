@@ -18,6 +18,7 @@ export interface KYCData {
 
     // Corporate Fields 
     incorporationCertificate: File | null;
+    qiiLicense: File | null;
     statusReport: File | null;
     boardResolution: File | null;
 }
@@ -145,6 +146,7 @@ const initialFormData: OnboardingFormData = {
         incorporationCertificate: null,
         statusReport: null,
         boardResolution: null,
+        qiiLicense: null,
     }
 };
 

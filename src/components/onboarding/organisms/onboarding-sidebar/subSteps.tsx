@@ -29,8 +29,7 @@ export const SubSteps = ({ stepKey, isActive }: { stepKey: string, isActive: boo
 
     if (stepKey === "profile") {
 
-        const selectedId = formData.questionnaireAnswers.selectedCategoryId as string;
-        // const activeCategory = CORPORATE_CATEGORIES.find(c => c.id === selectedId);
+        const selectedId = formData.selectedCategoryId as string;
 
         const selectedCategory = CORPORATE_CATEGORIES.find(
             (c) => c.id === selectedId

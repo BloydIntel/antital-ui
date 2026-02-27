@@ -77,7 +77,7 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return (
                 <div className="flex flex-col items-center justify-center min-h-[400px]">
                     <p className="text-gray-500">
-                        Step &ldquo{step}&ldquo is under construction for {investorUserTypeFromUrl} flow.
+                        Step &ldquo;{step}&ldquo;is under construction for {investorUserTypeFromUrl} flow.
                     </p>
                 </div>
             );

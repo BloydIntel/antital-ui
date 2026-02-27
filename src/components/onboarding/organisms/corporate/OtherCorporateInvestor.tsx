@@ -68,19 +68,16 @@ export function OtherCorporateInvestor({ showErrors }: { showErrors: boolean }) 
             id: 'certificate' as const,
             field: 'incorporationCertificate' as keyof KYCData,
             title: 'Incorporation Certificate',
-            desc: 'Ensure the document is clear and all information is visible'
         },
         {
             id: 'statusReport' as const,
             field: 'statusReport' as keyof KYCData,
             title: 'Upload recent status report document',
-            desc: 'Ensure the document is clear and all information is visible'
         },
         {
             id: 'resolution' as const,
             field: 'boardResolution' as keyof KYCData,
             title: 'Board resolution authorising registration, investment and account representative',
-            desc: 'Authorising registration, investment and account representative'
         }
     ];
 

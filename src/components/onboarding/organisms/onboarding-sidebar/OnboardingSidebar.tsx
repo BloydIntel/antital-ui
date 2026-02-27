@@ -28,7 +28,7 @@ export default function OnboardingSidebar() {
     const stepKeyFromUrl = pathParts[pathParts.length - 1] as StepKey
 
     const activeType = investorUserType || typeFromUrl || "individual"
-    const steps = (ONBOARDING_CONFIG[activeType] || ONBOARDING_CONFIG.individual) as OnboardingStep[]
+    const steps = (ONBOARDING_CONFIG[activeType] || ONBOARDING_CONFIG.individual) as readonly OnboardingStep[];
 
     useEffect(() => {
         if (typeFromUrl && investorUserType !== typeFromUrl) {

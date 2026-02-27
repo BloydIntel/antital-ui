@@ -230,7 +230,7 @@
                 ]
             },
             {
-                "label": "Do you confirm that your institution meets the SEC Nigeria criteria...?",
+                "label": "Do you confirm that your institution meets the SEC Nigeria criteria for a Qualified Institutional Investor and consent to be categorized as such on Antital?",
                 "inputType": "radio",
                 "options": [
                     "Yes",
@@ -242,7 +242,7 @@
     "Other Corporate Investor (OCI)": {
         "questionnaire": [
             {
-                "label": "Does the company have a Board resolution or internal approval mandate...?",
+                "label": "Does the company have a Board resolution or internal approval mandate permitting investment in private, alternative, or high-risk opportunities?",
                 "inputType": "radio",
                 "options": [
                     "Yes",
