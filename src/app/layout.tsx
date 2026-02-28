@@ -10,19 +10,7 @@ import { QueryProvider } from "@/components/query-provider";
 export const metadata: Metadata = {
   title: "Antital - Turn your earnings into opportunities",
   description: "Antital connects everyday Nigerians with startups and small businesses. Making wealth creation simple, transparent, and inclusive.",
-  keywords: ["investment", "startups", "nigeria", "wealth creation", "fintech", "micro-investment"],
-  icons: {
-    icon: [
-      {
-        url: "/icons/antital-white.svg",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "icons/antital.svg",
-        media: "(prefers-color-scheme: dark)",
-      },
-    ],
-  },
+  keywords: ["investment", "startups", "nigeria", "wealth creation", "fintech", "micro-investment"]
 };
 
 export const viewport: Viewport = {
