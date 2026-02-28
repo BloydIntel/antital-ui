@@ -211,7 +211,11 @@ export function Navbar() {
                 {/* Mobile Navigation */}
                 <nav className="flex flex-col gap-1">
                   {navigationItems.map((item) => {
-                    const isActive = isNavItemActive(item.href, pathname)
+                    const baseActive = isNavItemActive(item.href, pathname)
+
+                    const isActive =
+                      item.name === 'Explore' ? isExploreActive(pathname) : baseActive
+
                     return (
                       <Link
                         key={item.name}
