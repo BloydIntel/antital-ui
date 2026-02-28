@@ -141,7 +141,7 @@ export function Footer() {
             {/* Logo */}
             <Link href="/" className="cursor-pointer">
               <Image
-                src="/icons/antital_logo_white.svg"
+                src="/icons/antital_white.svg"
                 alt="Antital"
                 width={140}
                 height={42}

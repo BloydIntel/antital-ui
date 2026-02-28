@@ -36,14 +36,14 @@ const founderFeatures = [
     id: 'apply',
     title: 'Apply',
     description: 'Submit your startup for review and join our curated marketplace.',
-    image: '/how_it_works/apply.jpg',
+    image: '/how_it_works/raise.jpg',
     bgColor: '#E7FFC5', // Light green from Figma
   },
   {
     id: 'raise',
     title: 'Raise',
     description: 'Launch your fundraising campaign and connect with thousands of investors.',
-    image: '/how_it_works/raise.jpg',
+    image: '/how_it_works/apply.jpg',
     bgColor: '#D1E6FF', // Light blue from Figma
   },
   {
