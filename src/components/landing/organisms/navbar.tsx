@@ -72,7 +72,7 @@ export function Navbar() {
   }, [theme])
 
   // Choose logo based on theme
-  const logoSrc = resolvedTheme === 'dark' ? '/icons/antital_logo_white.svg' : '/antital_logo.svg'
+  const logoSrc = resolvedTheme === 'dark' ? '/icons/antital-white.svg' : '/icons/antital.svg'
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-background">
