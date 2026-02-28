@@ -63,7 +63,7 @@ export default function OnboardingSidebar() {
 
     return (
         <nav className="flex flex-col justify-items-start pl-[66px] pt-[20px] pr-[34px] bg-[#F7FBF4] min-h-screen border-r border-gray-100">
-            <Image src="/antital_logo.png" alt="Antital Logo" width={80} height={80} className="pb-[20px]" />
+            <Image src="/antital.png" alt="Antital Logo" width={80} height={80} className="pb-[20px]" />
 
             <ul className="space-y-0">
                 {stepsToShow.map((step, index) => {

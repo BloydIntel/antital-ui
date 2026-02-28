@@ -42,7 +42,7 @@ export function ValueCard({ title, description }: ValueCardProps) {
       {/* Logo */}
       <div className="ml-auto">
         <Image
-          src="/antital_logo.svg"
+          src="/icons/antital.svg"
           alt="Antital"
           width={108}
           height={32}

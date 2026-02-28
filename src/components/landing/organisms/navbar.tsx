@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useTheme } from '@/hooks/use-theme'
+import { ExploreMenu } from '@/components/landing/organisms/explore-menu'
 
 // Navigation items based on your Figma design
 const navigationItems = [
@@ -32,8 +33,15 @@ const smoothScrollTo = (targetId: string) => {
 }
 
 // Helper to check if a nav item is active
-const isNavItemActive = (itemHref: string, pathname: string | null) => {
-  return itemHref === '/' ? pathname === '/' : pathname?.includes(itemHref.replace('#', ''))
+const isNavItemActive = (itemHref: string, pathname: string | null): boolean => {
+  if (!pathname) return false
+  return itemHref === '/' ? pathname === '/' : pathname.includes(itemHref.replace('#', ''))
+}
+
+// Explore is considered active on explore and secondary-market pages
+const isExploreActive = (pathname: string | null): boolean => {
+  if (!pathname) return false
+  return pathname.startsWith('/explore') || pathname.startsWith('/secondary-market')
 }
 
 // Helper to handle nav item clicks
@@ -72,7 +80,7 @@ export function Navbar() {
   }, [theme])
 
   // Choose logo based on theme
-  const logoSrc = resolvedTheme === 'dark' ? '/icons/antital_logo_white.svg' : '/antital_logo.svg'
+  const logoSrc = resolvedTheme === 'dark' ? '/icons/antital-white.svg' : '/icons/antital.svg'
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-background">
@@ -96,7 +104,15 @@ export function Navbar() {
           {/* Navigation Container - compact spacing, takes only needed space */}
           <nav className="hidden lg:flex items-center gap-1 shrink-0">
             {navigationItems.map((item) => {
-              const isActive = isNavItemActive(item.href, pathname)
+              const baseActive = isNavItemActive(item.href, pathname)
+
+              if (item.name === 'Explore') {
+                const exploreActive = isExploreActive(pathname)
+                return <ExploreMenu key={item.name} isActive={exploreActive} />
+              }
+
+              const isActive = baseActive
+
               return (
                 <Link
                   key={item.name}
@@ -195,7 +211,11 @@ export function Navbar() {
                 {/* Mobile Navigation */}
                 <nav className="flex flex-col gap-1">
                   {navigationItems.map((item) => {
-                    const isActive = isNavItemActive(item.href, pathname)
+                    const baseActive = isNavItemActive(item.href, pathname)
+
+                    const isActive =
+                      item.name === 'Explore' ? isExploreActive(pathname) : baseActive
+
                     return (
                       <Link
                         key={item.name}
