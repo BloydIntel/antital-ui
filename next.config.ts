@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
   },
   
   // Webpack configuration
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config) => {
     // Add custom webpack rules if needed
     return config;
   },
@@ -28,6 +28,16 @@ const nextConfig: NextConfig = {
   // Headers for better security and performance
   async headers() {
     return [
+      // Favicon: short cache so updates show quickly after deploy
+      {
+        source: '/favicon.ico',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
       {
         source: '/(.*)',
         headers: [
