@@ -61,3 +61,9 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
         }
     }
 }
+
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export const validateEmail = (email: string | undefined | null): boolean => {
+    return EMAIL_REGEX.test(email || '');
+};

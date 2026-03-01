@@ -3,7 +3,6 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: 'Onboarding | Antital',
-    description: '',
 }
 
 export default async function OnboardingPage({

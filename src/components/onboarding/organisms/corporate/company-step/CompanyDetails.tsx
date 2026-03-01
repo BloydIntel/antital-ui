@@ -5,6 +5,7 @@ import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInp
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { SelectInput } from '@/components/onboarding/molecules/SelectInput'
+import { validateEmail } from '@/lib/onboardingValidation'
 
 const COMPANY_FIELDS = [
     {
@@ -68,13 +69,12 @@ export function CompanyDetails({ onValidationChange }: { onValidationChange: (is
     const [touched, setTouched] = useState<Record<string, boolean>>({})
 
     const errors = useMemo(() => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return {
             companyName: !formData.companyName ? "Company legal name is required" : "",
             brandName: !formData.brandName ? "Trading name is required" : "",
             registrationType: !formData.registrationType ? "Required" : "",
             registrationNumber: !formData.registrationNumber ? "Required" : "",
-            loginEmail: !emailRegex.test(formData.loginEmail as string || '') ? "Invalid email" : "",
+            loginEmail: !validateEmail(formData.loginEmail as string || '') ? "Invalid email" : "",
             password: (formData.password as string || '').length < 8 ? "Min 8 characters" : "",
             confirmPassword: formData.confirmPassword !== formData.password ? "Passwords do not match" : ""
         };

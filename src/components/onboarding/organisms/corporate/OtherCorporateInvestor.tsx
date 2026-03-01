@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { ChevronUp } from 'lucide-react'
-import { UploadSection } from '../../molecules/UploadSection'
+import { UploadSection } from '@/components/onboarding/molecules/UploadSection'
 import { useOnboardingStore, KYCData } from '@/store/onboardingStore'
 import { TYPOGRAPHY } from '@/constants/styles'
 
@@ -31,7 +31,7 @@ const CollapsibleUpload = ({ title, onUpload, isError, isOpen, onToggle, value }
             </div>
         </div>
 
-        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0 invisible"
+        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-[500px] opacity-100 mt-4 mb-4" : "max-h-0 opacity-0 invisible"
             }`}>
             <UploadSection
                 value={value}
@@ -45,49 +45,75 @@ const CollapsibleUpload = ({ title, onUpload, isError, isOpen, onToggle, value }
 export function OtherCorporateInvestor({ showErrors }: { showErrors: boolean }) {
     const { formData, updateFormData } = useOnboardingStore();
     const data = formData.kycData;
+    const categoryId = formData.selectedCategoryId;
 
-    // Local state to track which sections are open (defaulting all to true as per your images)
-    const [openSections, setOpenSections] = useState({
+    // Define the sections inside useMemo to switch based on categoryId
+    const activeSections = useMemo(() => {
+        if (categoryId === 'qii') {
+            return [
+                {
+                    id: 'statusReport',
+                    field: 'statusReport' as keyof KYCData,
+                    title: 'Upload recent status report document',
+                },
+                {
+                    id: 'qiiLicense',
+                    field: 'qiiLicense' as keyof KYCData,
+                    title: 'Evidence of QII registration/license',
+                },
+                {
+                    id: 'resolution',
+                    field: 'boardResolution' as keyof KYCData,
+                    title: 'Board resolution authorising registration, investment and account representative',
+                }
+            ];
+        }
+
+        // Default to OCI sections
+        return [
+            {
+                id: 'certificate',
+                field: 'incorporationCertificate' as keyof KYCData,
+                title: 'Incorporation Certificate',
+            },
+            {
+                id: 'statusReport',
+                field: 'statusReport' as keyof KYCData,
+                title: 'Upload recent status report document',
+            },
+            {
+                id: 'resolution',
+                field: 'boardResolution' as keyof KYCData,
+                title: 'Board resolution authorising registration, investment and account representative',
+            }
+        ];
+    }, [categoryId]);
+
+    // Track open states for each section ID
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         certificate: true,
         statusReport: true,
-        resolution: true
+        resolution: true,
+        qiiLicense: true
     });
 
-    const toggleSection = (section: keyof typeof openSections) => {
-        setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+    const toggleSection = (id: string) => {
+        setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
     const handleFileChange = (field: keyof KYCData, value: File | null) => {
         updateFormData({
-            kycData: { [field]: value }
+            kycData: { ...data, [field]: value }
         });
     };
 
-    const sections = [
-        {
-            id: 'certificate' as const,
-            field: 'incorporationCertificate' as keyof KYCData,
-            title: 'Incorporation Certificate',
-        },
-        {
-            id: 'statusReport' as const,
-            field: 'statusReport' as keyof KYCData,
-            title: 'Upload recent status report document',
-        },
-        {
-            id: 'resolution' as const,
-            field: 'boardResolution' as keyof KYCData,
-            title: 'Board resolution authorising registration, investment and account representative',
-        }
-    ];
-
     return (
-        <div >
-            {sections.map((section) => (
+        <div className="flex flex-col">
+            {activeSections.map((section) => (
                 <CollapsibleUpload
                     key={section.id}
                     title={section.title}
-                    isOpen={openSections[section.id]}
+                    isOpen={!!openSections[section.id]}
                     onToggle={() => toggleSection(section.id)}
                     onUpload={(file) => handleFileChange(section.field, file)}
                     value={data[section.field] as File | null}

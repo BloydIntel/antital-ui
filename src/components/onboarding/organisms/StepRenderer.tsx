@@ -27,25 +27,22 @@ interface StepRendererProps {
 export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRendererProps) {
     const router = useRouter()
 
-    const navigateToNext = () => {
-        const steps = ONBOARDING_CONFIG[investorUserTypeFromUrl];
-        const currentIndex = steps.findIndex(s => s.key === step);
+    const steps = ONBOARDING_CONFIG[investorUserTypeFromUrl];
+    const currentIndex = steps.findIndex(s => s.key === step);
 
+    const navigateToNext = () => {
         if (currentIndex !== -1 && currentIndex < steps.length - 1) {
             const nextStepKey = steps[currentIndex + 1].key;
             router.push(`/onboarding/${investorUserTypeFromUrl}/${nextStepKey}`);
         }
-    }
+    };
 
     const navigateToBack = () => {
-        const steps = ONBOARDING_CONFIG[investorUserTypeFromUrl];
-        const currentIndex = steps.findIndex(s => s.key === step);
-
         if (currentIndex > 0) {
             const prevStepKey = steps[currentIndex - 1].key;
             router.push(`/onboarding/${investorUserTypeFromUrl}/${prevStepKey}`);
         }
-    }
+    };
 
     switch (step) {
         case "personal":
@@ -65,7 +62,7 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return <InvestmentProfile onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "kyc":
-            return <IdentityVerification onNext={navigateToNext} />;
+            return <IdentityVerification onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "review":
             return <Review onBack={navigateToBack} onNext={navigateToNext} />;
@@ -77,7 +74,7 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return (
                 <div className="flex flex-col items-center justify-center min-h-[400px]">
                     <p className="text-gray-500">
-                        Step &ldquo;{step}&ldquo;is under construction for {investorUserTypeFromUrl} flow.
+                        Step &ldquo;{step}&ldquo; is under construction for {investorUserTypeFromUrl} flow.
                     </p>
                 </div>
             );

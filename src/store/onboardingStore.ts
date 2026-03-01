@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { StepKey, InvestorUserType } from '@/components/onboarding/steps'
 
-type AllowedStepBeforeVerify = "personal" | "email" | "company";
+export type AllowedStepBeforeVerify = "personal" | "email" | "company";
 
 export type QuestionValue = string | number | string[] | { selections: string[]; amount: string } | undefined;
 
@@ -31,6 +31,15 @@ interface OnboardingFormData {
     alias: string;
     phone: string;
     dob: string;
+    password: string;
+    confirmPassword: string;
+
+    // Location Details
+    nationality: string;
+    residence: string;
+    state: string;
+    address: string;
+    agreed: boolean;
 
     // Corporate Specific Details
     companyName: string;
@@ -38,8 +47,6 @@ interface OnboardingFormData {
     registrationType: string;
     registrationNumber: string;
     loginEmail: string;
-    password: string;
-    confirmPassword: string;
 
     // Company Address Fields
     registrationDate: string;
@@ -58,12 +65,6 @@ interface OnboardingFormData {
     repNationality: string;
     repResidence: string;
     repAddress: string;
-
-    // Location Details
-    nationality: string;
-    residence: string;
-    state: string;
-    address: string;
 
     // Questionnaire Data
     selectedCategoryId: string | null;
@@ -99,6 +100,7 @@ const initialFormData: OnboardingFormData = {
     alias: "",
     phone: "",
     dob: "",
+    agreed: false,
     // Corporate Defaults
     companyName: "",
     brandName: "",

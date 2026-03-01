@@ -5,6 +5,7 @@ import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInp
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { SelectInput } from '@/components/onboarding/molecules/SelectInput'
+import { validateEmail } from '@/lib/onboardingValidation'
 
 const REPRESENTATIVE_FIELDS = [
     {
@@ -79,13 +80,12 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
     const [touched, setTouched] = useState<Record<string, boolean>>({})
 
     const errors = useMemo(() => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return {
             repFullName: !formData.repFullName ? "Full name is required" : "",
             repJobTitle: !formData.repJobTitle ? "Required" : "",
             repPhoneNumber: !formData.repPhoneNumber ? "Required" : "",
             repDob: !formData.repDob ? "Date of birth is required" : "",
-            repEmail: !emailRegex.test(formData.repEmail as string || '') ? "Invalid email" : "",
+            repEmail: !validateEmail(formData.repEmail as string || '') ? "Invalid email" : "",
             repNationality: !formData.repNationality ? "Required" : "",
             repResidence: !formData.repResidence ? "Required" : "",
             repAddress: !formData.repAddress ? "Address is required" : "",

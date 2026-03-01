@@ -202,7 +202,11 @@
         "questionnaire": [
             {
                 "label": "What type of institutional entity do you represent?",
-                "inputType": "radio",
+                "inputType": [
+                    "radio",
+                    "text"
+                ],
+                "placeholder": "specify..",
                 "options": [
                     "Bank",
                     "Asset management company",
@@ -222,7 +226,7 @@
                 ]
             },
             {
-                "label": "Does your institution have an approved investment mandate that allows participation in alternative or high-risk investments?",
+                "label": "Does your institution have an approved investment mandate that allows participation in alternative or high-risk investments such as crowdfunding?",
                 "inputType": "radio",
                 "options": [
                     "Yes",

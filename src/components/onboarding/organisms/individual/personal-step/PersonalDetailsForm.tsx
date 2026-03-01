@@ -5,27 +5,20 @@ import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInp
 import { Calendar } from 'lucide-react'
 import { TYPOGRAPHY } from "@/constants/styles"
 import { useOnboardingStore } from "@/store/onboardingStore"
+import { validateEmail } from "@/lib/onboardingValidation"
 
 interface PersonalDetailsFormProps {
     onValidationChange: (isValid: boolean) => void
 }
 
 export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormProps) {
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        alias: "",
-        phone: "",
-        dob: ""
-    });
-
+    const formData = useOnboardingStore((s) => s.formData);
     const updateFormData = useOnboardingStore((s) => s.updateFormData);
 
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
     const handleChange = (field: keyof typeof formData, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        updateFormData({ [field]: value });
     };
 
     const handleBlur = (field: string) => {
@@ -34,24 +27,19 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
 
     // Validation Rules
     const errors = useMemo(() => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return {
             firstName: formData.firstName.trim().length < 2 ? "First name is too short" : "",
             lastName: formData.lastName.trim().length < 2 ? "Last name is too short" : "",
-            email: !emailRegex.test(formData.email) ? "Please enter a valid email address" : "",
+            email: !validateEmail(formData.email) ? "Please enter a valid email address" : "",
             phone: formData.phone.trim().length < 10 ? "Enter a valid phone number" : "",
             dob: !formData.dob ? "Date of birth is required" : ""
         };
     }, [formData]);
 
     useEffect(() => {
-
         const isValid = !Object.values(errors).some(error => error !== "");
-
-        updateFormData(formData);
-
         onValidationChange(isValid);
-    }, [errors, onValidationChange, formData, updateFormData]);
+    }, [formData, errors, updateFormData, onValidationChange]);
 
     return (
         <section>
@@ -73,6 +61,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                     <OnboardingInput
                         label="First Name"
                         placeholder="John"
+                        value={formData.firstName}
                         error={touched.firstName ? errors.firstName : ""}
                         onChange={(e) => handleChange("firstName", e.target.value)}
                         onBlur={() => handleBlur("firstName")}
@@ -80,6 +69,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                     <OnboardingInput
                         label="Last Name"
                         placeholder="Doe"
+                        value={formData.lastName}
                         error={touched.lastName ? errors.lastName : ""}
                         onChange={(e) => handleChange("lastName", e.target.value)}
                         onBlur={() => handleBlur("lastName")}
@@ -90,6 +80,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                     label="Email"
                     type="email"
                     placeholder="johndoe@email.com"
+                    value={formData.email}
                     error={touched.email ? errors.email : ""}
                     onChange={(e) => handleChange("email", e.target.value)}
                     onBlur={() => handleBlur("email")}
@@ -98,6 +89,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                 <OnboardingInput
                     label="Preferred Name/Alias"
                     placeholder="John Doe"
+                    value={formData.alias}
                     onChange={(e) => handleChange("alias", e.target.value)}
                 />
 
@@ -106,6 +98,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                         label="Phone Number"
                         type="tel"
                         placeholder="+234 90 1234 5678"
+                        value={formData.phone}
                         error={touched.phone ? errors.phone : ""}
                         onChange={(e) => handleChange("phone", e.target.value)}
                         onBlur={() => handleBlur("phone")}
@@ -113,6 +106,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                     <OnboardingInput
                         label="Date of Birth"
                         type="date"
+                        value={formData.dob || ""}
                         placeholder="DD/MM/YYYY"
                         icon={Calendar}
                         error={touched.dob ? errors.dob : ""}

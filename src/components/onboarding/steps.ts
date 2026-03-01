@@ -9,6 +9,10 @@ export interface OnboardingStep<K extends string = string> {
     readonly hasSubsteps?: boolean;
 }
 
+export function isInvestorUserType(s: string): s is InvestorUserType {
+    return ['individual', 'corporate', 'fundraiser'].includes(s);
+}
+
 export const ONBOARDING_CONFIG = {
     individual: [
         { key: "personal", label: "Personal Information", icon: User, hasSubsteps: true },
@@ -43,3 +47,5 @@ export const isKnownOnboardingStep = (
     const steps = ONBOARDING_CONFIG[type] as readonly OnboardingStep[];
     return steps.some(s => s.key === key);
 }
+
+export const ALLOWED_STEP_BEFORE_VERIFICATION = ["personal", "company", "email"];

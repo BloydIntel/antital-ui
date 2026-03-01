@@ -29,22 +29,13 @@ const NIGERIAN_STATES = [
 ];
 
 export function LocationForm({ onValidationChange }: { onValidationChange: (isValid: boolean) => void }) {
-    const [formData, setFormData] = useState({
-        nationality: "",
-        residence: "",
-        state: "",
-        address: "",
-        password: "",
-        confirmPassword: "",
-        agreed: false
-    });
-
+    const formData = useOnboardingStore((s) => s.formData);
     const updateFormData = useOnboardingStore((s) => s.updateFormData);
 
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
     const handleChange = (field: keyof typeof formData, value: string | boolean) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        updateFormData({ [field]: value });
     };
 
     const handleBlur = (field: string) => {
@@ -63,9 +54,6 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
 
     useEffect(() => {
         const isValid = !Object.values(errors).some(err => err !== "");
-
-        updateFormData(formData);
-
         onValidationChange(isValid);
     }, [errors, onValidationChange, formData, updateFormData]);
 
@@ -89,6 +77,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                     <SelectInput
                         label="Nationality"
                         options={COUNTRIES}
+                        value={formData.nationality}
                         placeholder="Select nationality"
                         error={touched.nationality ? errors.nationality : ""}
                         onChange={(val) => {
@@ -101,6 +90,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                         <SelectInput
                             label="Country of Residence"
                             options={COUNTRIES}
+                            value={formData.residence}
                             placeholder="Select country"
                             error={touched.residence ? errors.residence : ""}
                             onChange={(val) => {
@@ -111,6 +101,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                         <SelectInput
                             label="State of Residence"
                             options={NIGERIAN_STATES}
+                            value={formData.state}
                             placeholder="Select state"
                             error={touched.state ? errors.state : ""}
                             onChange={(val) => {
@@ -122,6 +113,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
 
                     <OnboardingInput
                         label="Residential Address"
+                        value={formData.address}
                         placeholder="23A Unity Crescent Lekki Phase 1..."
                         icon={House}
                         error={touched.address ? errors.address : ""}
@@ -133,6 +125,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                         <OnboardingInput
                             label="Create Password"
                             type="password"
+                            value={formData.password}
                             placeholder="********"
                             error={touched.password ? errors.password : ""}
                             onChange={(e) => handleChange("password", e.target.value)}
@@ -141,6 +134,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                         <OnboardingInput
                             label="Confirm Password"
                             type="password"
+                            value={formData.confirmPassword}
                             placeholder="********"
                             error={touched.confirmPassword ? errors.confirmPassword : ""}
                             onChange={(e) => handleChange("confirmPassword", e.target.value)}
@@ -153,6 +147,7 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                             <Checkbox
                                 id="terms"
                                 className="border-[#042E27] data-[state=checked]:bg-[#042E27]"
+                                checked={formData.agreed}
                                 onCheckedChange={(checked) => handleChange("agreed", !!checked)}
                             />
                             <label htmlFor="terms" className="text-[14px] text-[#505050] cursor-pointer" style={TYPOGRAPHY.body}>

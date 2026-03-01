@@ -185,7 +185,7 @@ export function QuestionnaireFormSwitcher({
                                                 const existing = (typeof currentVal === 'object' && !Array.isArray(currentVal)) ? currentVal : { selections: [] };
                                                 handleValueChange(q.label, { ...existing, amount: e.target.value });
                                             }}
-                                            placeholder="Please enter an estimate"
+                                            placeholder={q.placeholder}
                                             className="-mt-4 pb-0"
                                             error={errorMessage}
                                         />

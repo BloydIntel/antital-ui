@@ -10,7 +10,6 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
     const [view, setView] = useState<"selection" | "questionnaire">("selection");
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    // NEW: Track validation and submission attempt
     const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(false);
     const [showErrors, setShowErrors] = useState(false);
 
@@ -32,6 +31,8 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
         <section className="max-w-[558px]">
             {view === "selection" ? (
                 <InvestorSelectionView
+                    title="Select Your Investor Category"
+                    description="Choose the category that best describe your investment experience and financial position"
                     categories={INVESTOR_CATEGORIES}
                     selectedId={selectedId}
                     onSelect={setSelectedId}

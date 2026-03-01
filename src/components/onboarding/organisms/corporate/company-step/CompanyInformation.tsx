@@ -2,12 +2,13 @@
 
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { CompanyDetails } from '@/components/onboarding/organisms/corporate/company-step/CompanyDetails';
 import { CompanyAddress } from '@/components/onboarding/organisms/corporate/company-step/CompanyAddress';
 import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/corporate/company-step/AccountRepresentativeDetails';
 import { COMPANY_SUB_STEPS } from '@/components/onboarding/subSteps';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
+import { validateStep } from '@/lib/onboardingValidation';
 
 export function CompanyInformation() {
     const router = useRouter()
@@ -21,8 +22,16 @@ export function CompanyInformation() {
     const isLastSubStep = subStep === COMPANY_SUB_STEPS.length - 1
     const currentStep = COMPANY_SUB_STEPS[subStep]
 
+    const isGlobalStepValid = useMemo(() => {
+        if (isLastSubStep) {
+            const state = useOnboardingStore.getState();
+            return validateStep("company", state);
+        }
+        return isStepValid;
+    }, [isStepValid, isLastSubStep]);
+
     const nextSubStep = () => {
-        if (!isStepValid) return;
+        if (!isGlobalStepValid) return;
 
         if (isLastSubStep) {
             const safeType = investorUserType || 'corporate';
@@ -30,6 +39,13 @@ export function CompanyInformation() {
         } else {
             setSubStep(subStep + 1)
             setIsStepValid(false)
+        }
+    }
+
+    const backSubstep = () => {
+        if (subStep > 0) {
+            setSubStep(subStep - 1);
+            setIsStepValid(true);
         }
     }
 
@@ -53,12 +69,25 @@ export function CompanyInformation() {
                 {renderStepContent()}
             </div>
 
-            <OnboardingButton
-                label="Proceed"
-                variant="solid"
-                disabled={!isStepValid}
-                onClick={nextSubStep}
-            />
+            <div className="flex items-center justify-between pt-8 pb-10 border-t border-[#EAEAEA]">
+                <OnboardingButton
+                    label='Back'
+                    variant="plain"
+                    disabled={subStep === 0}
+                    onClick={backSubstep}
+                    className="w-[115px]"
+                />
+
+                <OnboardingButton
+                    label={isLastSubStep ? "Create Account" : "Proceed"}
+                    variant="solid"
+                    disabled={isLastSubStep ? !isGlobalStepValid : !isStepValid}
+                    onClick={nextSubStep}
+                    className="w-[230px]"
+                />
+            </div>
+
+
 
         </div>
     )

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { ONBOARDING_CONFIG, InvestorUserType } from "@/components/onboarding/steps";
+import { ONBOARDING_CONFIG, isInvestorUserType } from "@/components/onboarding/steps";
 
 export default async function OnboardingRedirectPage({
     params,
@@ -8,11 +8,16 @@ export default async function OnboardingRedirectPage({
 }) {
     const { investorUserType } = await params;
 
-    const type = (ONBOARDING_CONFIG[investorUserType as InvestorUserType]
+    const type = isInvestorUserType(investorUserType)
         ? investorUserType
-        : "individual") as InvestorUserType;
+        : "individual";
 
     const steps = ONBOARDING_CONFIG[type];
+
+    if (!steps || !steps[0]) {
+        redirect("/onboarding/individual/personal");
+    }
+
     const firstStepKey = steps[0].key;
 
     redirect(`/onboarding/${type}/${firstStepKey}`);

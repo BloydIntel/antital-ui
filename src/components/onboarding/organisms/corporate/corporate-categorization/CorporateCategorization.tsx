@@ -23,6 +23,8 @@ export function CorporateCategorization({ onNext }: { onNext: () => void }) {
     return (
         <section className="max-w-[558px] w-full mx-auto">
             <InvestorSelectionView
+                title="Corporate Categorization"
+                description="Choose the category that best describe your corporate investment experience and financial position"
                 categories={CORPORATE_CATEGORIES}
                 selectedId={selectedId}
                 onSelect={setSelectedId}

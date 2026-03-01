@@ -3,8 +3,8 @@
 import React, { useEffect, useMemo } from "react"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep } from "@/components/onboarding/steps"
-import { useOnboardingStore } from "@/store/onboardingStore"
+import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/components/onboarding/steps"
+import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
 import { SubSteps } from "@/components/onboarding/organisms/onboarding-sidebar/subSteps"
 
 export default function OnboardingSidebar() {
@@ -39,9 +39,8 @@ export default function OnboardingSidebar() {
             setCurrentStep(stepKeyFromUrl);
         }
 
-        const basicSteps = ["personal", "company", "email"];
-        if (basicSteps.includes(stepKeyFromUrl) && lastAllowedStep !== stepKeyFromUrl) {
-            setLastAllowedStep(stepKeyFromUrl as "personal" | "company" | "email");
+        if (ALLOWED_STEP_BEFORE_VERIFICATION.includes(stepKeyFromUrl) && lastAllowedStep !== stepKeyFromUrl) {
+            setLastAllowedStep(stepKeyFromUrl as AllowedStepBeforeVerify);
             sessionStorage.setItem("onboarding_lastAllowedStep", stepKeyFromUrl);
         }
 

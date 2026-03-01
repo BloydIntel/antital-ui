@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
+import { validateEmail } from '@/lib/onboardingValidation'
 
 const ADDRESS_FIELDS = [
     {
@@ -56,13 +57,12 @@ export function CompanyAddress({ onValidationChange }: CompanyAddressProps) {
     const [touched, setTouched] = useState<Record<string, boolean>>({})
 
     const errors = useMemo(() => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return {
             registrationDate: !formData.registrationDate ? "Date is required" : "",
             companyWebsite: "", // Optional, but key exists for type safety
             businessAddress: !formData.businessAddress ? "Address is required" : "",
             registeredAddress: !formData.registeredAddress ? "Registered address is required" : "",
-            companyEmail: !emailRegex.test(formData.companyEmail as string || '') ? "Invalid email" : "",
+            companyEmail: !validateEmail(formData.companyEmail as string || '') ? "Invalid email" : "",
             companyPhone: !formData.companyPhone ? "Phone number is required" : "",
         };
     }, [formData]);
