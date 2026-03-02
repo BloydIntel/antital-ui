@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useMemo } from "react"
+import Link from "next/link"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/components/onboarding/steps"
@@ -72,13 +73,14 @@ export default function OnboardingSidebar() {
 
     return (
         <nav className="flex flex-col justify-items-start pl-[66px] pt-[20px] pr-[34px] bg-[#F7FBF4] min-h-screen border-r border-gray-100">
-            <Image
-                src="/antital_logo.png"
-                alt="Antital Logo"
-                width={80}
-                height={80}
-                className="pb-[20px]"
-            />
+            <Link href="/" aria-label="Go to landing page" className="inline-flex pb-[20px]">
+                <Image
+                    src="/icons/antital.svg"
+                    alt="Antital Logo"
+                    width={80}
+                    height={80}
+                />
+            </Link>
 
             <ul className="space-y-0">
                 {stepsToShow.map((step, index) => {
