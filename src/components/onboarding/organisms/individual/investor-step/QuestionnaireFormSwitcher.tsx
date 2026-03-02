@@ -87,7 +87,7 @@ export function QuestionnaireFormSwitcher({
         const newErrors: Record<string, string> = {};
         if (!data) return newErrors;
 
-        data.questionnaire.forEach((q, idx) => {
+        data.questionnaire.forEach((q) => {
             const val = answers[q.label];
 
             const isEmpty = val === undefined ||
@@ -97,13 +97,13 @@ export function QuestionnaireFormSwitcher({
                 (typeof val === 'object' && !Array.isArray(val) && (!val.selections || val.selections.length === 0));
 
             if (isEmpty) {
-                newErrors[idx] = "This field is required";
+                newErrors[q.label] = "This field is required";
             }
 
             if (q.inputType === "number" && q.label.toLowerCase().includes("percentage")) {
                 const num = typeof val === 'string' ? parseFloat(val) : Number(val);
                 if (!isEmpty && (isNaN(num) || num < 0 || num > 100)) {
-                    newErrors[idx] = "Please enter a value between 0 and 100";
+                    newErrors[q.label] = "Please enter a value between 0 and 100";
                 }
             }
         });
