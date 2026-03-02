@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useState } from 'react'
-import { PersonalDetailsForm } from "@/components/onboarding/organisms/personal-step/PersonalDetailsForm";
-import { LocationForm } from "@/components/onboarding/organisms/personal-step/LocationForm";
+import { PersonalDetailsForm } from "@/components/onboarding/organisms/individual/personal-step/PersonalDetailsForm";
+import { LocationForm } from "@/components/onboarding/organisms/individual/personal-step/LocationForm";
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useRouter } from "next/navigation";
 import { useOnboardingStore } from '@/store/onboardingStore';
@@ -12,7 +12,6 @@ export function PersonalStep() {
     const subStep = useOnboardingStore((s) => s.personalSubStep);
     const setSubStep = useOnboardingStore((s) => s.setPersonalSubStep);
 
-    // Local state to track if the current visible form is valid
     const [isFormValid, setIsFormValid] = useState(false);
 
     const router = useRouter()
@@ -26,14 +25,12 @@ export function PersonalStep() {
     const isLastSubStep = subStep === PERSONAL_SUB_STEPS.length - 1
 
     const nextSubStep = () => {
-        // Double-check validation before proceeding
         if (!isFormValid) return;
 
         if (isLastSubStep) {
             router.push('/onboarding/individual/email')
         } else {
             setSubStep(subStep + 1)
-            // Reset validation state for the next sub-step
             setIsFormValid(false)
         }
     }
@@ -50,7 +47,7 @@ export function PersonalStep() {
                 label={subStep === 0 ? "Proceed" : "Create Account"}
                 variant="solid"
                 onClick={nextSubStep}
-                disabled={!isFormValid} // Button visual feedback
+                disabled={!isFormValid}
                 className={!isFormValid ? "opacity-50 cursor-not-allowed" : ""}
             />
         </div>

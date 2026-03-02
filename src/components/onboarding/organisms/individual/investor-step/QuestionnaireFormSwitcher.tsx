@@ -6,7 +6,7 @@ import { RadioGroup } from '@/components/onboarding/molecules/RadioGroup'
 import { CheckboxGroup } from '@/components/onboarding/molecules/CheckboxGroup'
 import { Info } from 'lucide-react'
 import investorQuestionnaire from '@/data/investorQuestionnaire.json'
-import { INVESTOR_CATEGORIES } from '@/constants/investorCategories'
+import { CORPORATE_CATEGORIES, INVESTOR_CATEGORIES } from '@/constants/investorCategories'
 import { QuestionValue, useOnboardingStore } from '@/store/onboardingStore'
 
 interface Question {
@@ -77,7 +77,8 @@ export function QuestionnaireFormSwitcher({
     const [answers, setAnswers] = useState<Record<string, QuestionValue>>(storedAnswers || {});
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-    const categoryConfig = INVESTOR_CATEGORIES.find(c => c.id === type);
+    const allCategories = [...INVESTOR_CATEGORIES, ...CORPORATE_CATEGORIES];
+    const categoryConfig = allCategories.find(c => c.id === type);
     const categoryKey = categoryConfig?.jsonKey;
     const data = typedData[categoryKey as keyof QuestionnaireData];
 
@@ -86,8 +87,8 @@ export function QuestionnaireFormSwitcher({
         const newErrors: Record<string, string> = {};
         if (!data) return newErrors;
 
-        data.questionnaire.forEach((q, idx) => {
-            const val = answers[idx];
+        data.questionnaire.forEach((q) => {
+            const val = answers[q.label];
 
             const isEmpty = val === undefined ||
                 val === null ||
@@ -96,13 +97,13 @@ export function QuestionnaireFormSwitcher({
                 (typeof val === 'object' && !Array.isArray(val) && (!val.selections || val.selections.length === 0));
 
             if (isEmpty) {
-                newErrors[idx] = "This field is required";
+                newErrors[q.label] = "This field is required";
             }
 
             if (q.inputType === "number" && q.label.toLowerCase().includes("percentage")) {
                 const num = typeof val === 'string' ? parseFloat(val) : Number(val);
                 if (!isEmpty && (isNaN(num) || num < 0 || num > 100)) {
-                    newErrors[idx] = "Please enter a value between 0 and 100";
+                    newErrors[q.label] = "Please enter a value between 0 and 100";
                 }
             }
         });
@@ -115,9 +116,9 @@ export function QuestionnaireFormSwitcher({
         updateFormData({ questionnaireAnswers: answers });
     }, [answers, errors, updateFormData, onValidationChange, data]);
 
-    const handleValueChange = (idx: number, value: QuestionValue) => {
-        setAnswers(prev => ({ ...prev, [idx]: value }));
-        setTouched(prev => ({ ...prev, [idx]: true }));
+    const handleValueChange = (key: string, value: QuestionValue) => {
+        setAnswers(prev => ({ ...prev, [key]: value }));
+        setTouched(prev => ({ ...prev, [key]: true }));
     };
 
     if (!data) return <div className="text-gray-400 py-10">Loading...</div>;
@@ -126,9 +127,10 @@ export function QuestionnaireFormSwitcher({
         <div className="py-1">
             {data.questionnaire.map((q, idx) => {
                 const isCombo = Array.isArray(q.inputType);
-                const showError = touched[idx] || showAllErrors;
-                const errorMessage = showError ? errors[idx] : "";
-                const currentVal = answers[idx];
+                const secondaryInputType = isCombo ? q.inputType[1] : "text";
+                const showError = touched[q.label] || showAllErrors;
+                const errorMessage = showError ? errors[q.label] : "";
+                const currentVal = answers[q.label];
 
                 return (
                     <QuestionWrapper key={idx} index={idx} label={q.label} info={q.info}>
@@ -139,7 +141,7 @@ export function QuestionnaireFormSwitcher({
                                 placeholder={q.placeholder}
                                 value={typeof currentVal === 'string' || typeof currentVal === 'number' ? String(currentVal) : ""}
                                 error={errorMessage}
-                                onChange={(e) => handleValueChange(idx, e.target.value)}
+                                onChange={(e) => handleValueChange(q.label, e.target.value)}
                             />
                         )}
 
@@ -149,7 +151,7 @@ export function QuestionnaireFormSwitcher({
                                     name={`question-${idx}`}
                                     options={q.options}
                                     value={typeof currentVal === 'string' ? currentVal : undefined}
-                                    onChange={(val) => handleValueChange(idx, val)}
+                                    onChange={(val) => handleValueChange(q.label, val)}
                                 />
                                 {errorMessage && (
                                     <span className="text-xs text-red-500 mt-[-10px] mb-2">{errorMessage}</span>
@@ -168,9 +170,9 @@ export function QuestionnaireFormSwitcher({
                                     onChange={(vals) => {
                                         if (isCombo) {
                                             const existing = (typeof currentVal === 'object' && !Array.isArray(currentVal)) ? currentVal : { amount: "" };
-                                            handleValueChange(idx, { ...existing, selections: vals });
+                                            handleValueChange(q.label, { ...existing, selections: vals });
                                         } else {
-                                            handleValueChange(idx, vals);
+                                            handleValueChange(q.label, vals);
                                         }
                                     }}
                                 />
@@ -178,13 +180,13 @@ export function QuestionnaireFormSwitcher({
                                     <div className="mt-2">
                                         <OnboardingInput
                                             label=""
-                                            type="number"
+                                            type={secondaryInputType}
                                             value={(typeof currentVal === 'object' && !Array.isArray(currentVal)) ? currentVal?.amount : ""}
                                             onChange={(e) => {
                                                 const existing = (typeof currentVal === 'object' && !Array.isArray(currentVal)) ? currentVal : { selections: [] };
-                                                handleValueChange(idx, { ...existing, amount: e.target.value });
+                                                handleValueChange(q.label, { ...existing, amount: e.target.value });
                                             }}
-                                            placeholder="Please enter an estimate"
+                                            placeholder={q.placeholder}
                                             className="-mt-4 pb-0"
                                             error={errorMessage}
                                         />

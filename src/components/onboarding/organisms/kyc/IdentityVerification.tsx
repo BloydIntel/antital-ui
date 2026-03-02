@@ -1,50 +1,72 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { DocumentUpload } from '@/components/onboarding/organisms/kyc/DocumentUpload'
 import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload'
 import { IncomeVerification } from '@/components/onboarding/organisms/kyc/IncomeVerification'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
-import { KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
+import { CORPORATE_CATEGORY_STEPS, CORPORATE_BASE_KYC, INDIVIDUAL_KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
+import { OtherCorporateInvestor } from '@/components/onboarding/organisms/corporate/OtherCorporateInvestor'
 
 interface IdentityVerificationProps {
     onNext: () => void
+    onBack: () => void
 }
 
-export function IdentityVerification({ onNext }: IdentityVerificationProps) {
+export function IdentityVerification({ onNext, onBack }: IdentityVerificationProps) {
+
+    const userType = useOnboardingStore((s) => s.investorUserType);
     const subStep = useOnboardingStore((s) => s.kycSubStep);
     const setSubStep = useOnboardingStore((s) => s.setKycSubStep);
     const kycData = useOnboardingStore((s) => s.formData.kycData);
-
+    const categoryId = useOnboardingStore((s) => s.formData.selectedCategoryId);
     const [showErrors, setShowErrors] = useState(false);
 
-    // Global Validation Logic for KYC
+    const isCorporate = userType === 'corporate';
+
+    const currentSteps = useMemo(() => {
+        if (!isCorporate) return INDIVIDUAL_KYC_SUB_STEPS;
+        const steps = [...CORPORATE_BASE_KYC];
+        if (categoryId && CORPORATE_CATEGORY_STEPS[categoryId]) {
+            steps.push(CORPORATE_CATEGORY_STEPS[categoryId]);
+        }
+        return steps;
+    }, [isCorporate, categoryId]);
+
+    const currentHeader = currentSteps[subStep];
+
     const isStep0Valid = kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile;
     const isStep1Valid = !!kycData.selfie;
-    const isStep2Valid = kycData.incomeDocuments.length > 0 && kycData.incomeFile;
+    const isStep2Valid = useMemo(() => {
+        if (isCorporate) {
+            if (categoryId === "qii") {
+                return !!(kycData.statusReport && kycData.qiiLicense && kycData.boardResolution);
+            }
+            return !!(kycData.incorporationCertificate && kycData.statusReport && kycData.boardResolution);
+        }
+        return kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+    }, [isCorporate, categoryId, kycData]);
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
-    const currentHeader = KYC_SUB_STEPS[subStep]
-
     const handleNext = () => {
         if (subStep < 2) {
-            // Allow free flow between sub-steps
             setSubStep(subStep + 1);
         } else {
-            // Final check before moving to the next main stage
-            if (isAllKycValid) {
-                onNext();
-            } else {
-                setShowErrors(true);
-                // Optional: set sub-step to where the error is
-                if (!isStep0Valid) setSubStep(0);
-                else if (!isStep1Valid) setSubStep(1);
-            }
+            if (isAllKycValid) onNext();
+            else setShowErrors(true);
         }
     };
+
+    const handleBack = () => {
+        if (subStep > 0) {
+            setSubStep(subStep - 1)
+        } else {
+            onBack()
+        }
+    }
 
     return (
         <div className="w-full lg:w-[558px] flex flex-col gap-10">
@@ -59,8 +81,11 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
                         )}
                     </h2>
 
-                    {subStep === 0 && (
-                        <button className="text-[#0F3D2E] text-sm pl-42 lg:pl-0 font-semibold hover:underline">
+                    {(subStep === 0 || subStep === 2) && (
+                        <button
+                            className="text-[#0F3D2E] text-sm pl-42 lg:pl-0 font-semibold hover:underline"
+                            onClick={() => onNext()}
+                        >
                             Skip to complete KYC later
                         </button>
                     )}
@@ -72,23 +97,30 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
             </div>
 
             <div>
-                {subStep === 0 && <DocumentUpload showErrors={showErrors} />}
-                {subStep === 1 && <SelfieUpload showErrors={showErrors} />}
-                {subStep === 2 && <IncomeVerification showErrors={showErrors} />}
+                {currentHeader?.id === 'docs' && <DocumentUpload showErrors={showErrors} />}
+                {currentHeader?.id === 'selfie' && <SelfieUpload showErrors={showErrors} />}
+
+                {currentHeader?.id === 'income' && <IncomeVerification showErrors={showErrors} />}
+                {(currentHeader?.id === 'qii' || currentHeader?.id === 'oci') && (
+                    <OtherCorporateInvestor showErrors={showErrors} />
+                )}
             </div>
 
-            <div className="flex max-w-[558px] items-center justify-between pt-8 pb-10 border-t border-gray-50">
+            {!isAllKycValid && showErrors && (
+                <p className="text-red-500 text-sm text-center">Please complete all required fields in all sections.</p>
+            )}
+
+            <div className="flex max-w-[558px] items-center justify-between pb-10 border-t border-gray-50">
                 <OnboardingButton
                     label='Back'
                     variant="plain"
-                    onClick={() => setSubStep(subStep - 1)}
-                    disabled={subStep === 0}
+                    onClick={handleBack}
                     icon={<ArrowLeft size={20} />}
                     className='w-fit'
                 />
 
                 <div className="flex gap-2">
-                    {KYC_SUB_STEPS.map((_, i) => (
+                    {INDIVIDUAL_KYC_SUB_STEPS.map((_, i) => (
                         <div
                             key={i}
                             className={`h-1.5 rounded-full transition-all duration-300 ${i === subStep ? 'w-8 bg-[#042E27]' : 'w-2 bg-[#E6EEDC]'}`}
@@ -104,10 +136,6 @@ export function IdentityVerification({ onNext }: IdentityVerificationProps) {
                 />
 
             </div>
-
-            {!isAllKycValid && showErrors && (
-                <p className="text-red-500 text-sm text-center">Please complete all required fields in all sections.</p>
-            )}
         </div>
     )
 }

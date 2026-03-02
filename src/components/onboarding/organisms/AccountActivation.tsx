@@ -1,60 +1,92 @@
+"use client"
+
 import Image from "next/image"
-import { Clock, Mail, MessageSquare } from "lucide-react"
+import { Clock, Mail, MessageSquare, FileText, UsersRound } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
 import { TYPOGRAPHY } from "@/constants/styles"
+import { useOnboardingStore } from "@/store/onboardingStore"
 
-const list = [
+const individualActivationSteps = [
     {
         title: "Verification in Progress",
         desc: "Our compliance team is reviewing your application and will verify your identity.",
-        icon: <Clock className="text-[#3B82F6]" size={20} />, // Blue-500
-        bgColor: "bg-[#EFF6FF]", // Blue-50
+        icon: <Clock className="text-[#3B82F6]" size={20} />,
+        bgColor: "bg-[#EFF6FF]",
     },
     {
         title: "Email Confirmation",
         desc: "Check your inbox or spam for the confirmation email.",
-        icon: <Mail className="text-[#22C55E]" size={20} />, // Green-500
-        bgColor: "bg-[#F0FDF4]", // Green-50
+        icon: <Mail className="text-[#22C55E]" size={20} />,
+        bgColor: "bg-[#F0FDF4]",
     },
     {
         title: "Email Updates",
         desc: "We'll text you at each stage of the verification process to keep you informed.",
-        icon: <MessageSquare className="text-[#A855F7]" size={20} />, // Purple-500
-        bgColor: "bg-[#FAF5FF]", // Purple-50
+        icon: <MessageSquare className="text-[#A855F7]" size={20} />,
+        bgColor: "bg-[#FAF5FF]",
+    },
+];
+
+const corporateActivationSteps = [
+    {
+        title: "Application Under Review",
+        desc: "Our business development team is evaluating your submission",
+        icon: <FileText className="text-[#3B82F6]" size={20} />,
+        bgColor: "bg-[#EFF6FF]",
+    },
+    {
+        title: "Confirmation Email Sent",
+        desc: "Check your inbox for detailed next steps",
+        icon: <Mail className="text-[#22C55E]" size={20} />,
+        bgColor: "bg-[#F0FDF4]",
+    },
+    {
+        title: "Director Verification Required",
+        desc: "You will receive KYC completion email within 24 hours",
+        icon: <UsersRound className="text-[#A855F7]" size={20} />,
+        bgColor: "bg-[#FAF5FF]",
     },
 ];
 
 export function AccountActivation() {
+    const { investorUserType } = useOnboardingStore();
+    const isCorporate = investorUserType === "corporate";
+
+    const steps = isCorporate ? corporateActivationSteps : individualActivationSteps;
+    const mainTitle = isCorporate
+        ? "Business Account Application Submitted!"
+        : "Individual Account Application Submitted Successfully!";
+
     return (
-        <div className="max-w-[558px] flex flex-col items-center">
+        <div className="max-w-[558px] flex flex-col items-center mx-auto">
             <Image
                 src="/onboarding/congratulation.png"
-                alt="Application submitted successfully"
+                alt="Success"
                 width={80}
                 height={80}
+                className="mb-4"
             />
 
-            <h4 className="text-[24px] text-center text-[#1F1F1F] leading-none pt-[16px]" style={TYPOGRAPHY.heading}>
-                Individual Account Application Submitted Successfully!
+            <h4 className="text-[24px] text-center text-[#1F1F1F] leading-tight px-4" style={TYPOGRAPHY.heading}>
+                {mainTitle}
             </h4>
 
-            <p className="text-[16px] text-center text-[#858585] leading-none py-[8px]" style={TYPOGRAPHY.body}>
+            <p className="text-[16px] text-center text-[#858585] mt-2 px-6" style={TYPOGRAPHY.body}>
                 Your documents have been received and are now under review by our compliance team.
             </p>
 
-            <div className="w-full max-w-[600px] flex flex-col gap-4 mt-[32px]">
-                <h2 className="text-[18px] font-medium text-[#1B1B1B] mb-2" style={TYPOGRAPHY.body}>
+            <div className="w-full mt-10">
+                <h2 className="text-[18px] font-medium text-[#1B1B1B] mb-4" style={TYPOGRAPHY.body}>
                     What Happens Next
                 </h2>
 
                 <div className="flex flex-col gap-3">
-                    {list.map((step, index) => (
+                    {steps.map((step, index) => (
                         <div
                             key={index}
-                            className="flex items-center gap-4 p-4 border border-[#EAEAEA] rounded-xl bg-white shadow-sm transition-all hover:border-[#D1D1D1]"
+                            className="flex items-center gap-4 p-4 border border-[#EAEAEA] rounded-xl bg-white shadow-sm transition-all"
                         >
-                            {/* Icon Container */}
                             <div className={cn(
                                 "flex items-center justify-center min-w-[48px] h-[48px] rounded-lg",
                                 step.bgColor
@@ -62,12 +94,11 @@ export function AccountActivation() {
                                 {step.icon}
                             </div>
 
-                            {/* Text Content */}
                             <div className="flex flex-col">
                                 <h4 className="text-[16px] font-medium text-[#1B1B1B] leading-snug">
                                     {step.title}
                                 </h4>
-                                <p className="text-[12px] text-[#858585] leading-relaxed mt-0.5">
+                                <p className="text-[13px] text-[#858585] leading-relaxed mt-0.5">
                                     {step.desc}
                                 </p>
                             </div>
