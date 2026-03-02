@@ -74,7 +74,7 @@ export function Login({
       <div className="flex flex-col items-start gap-2 pb-[40px]">
         <Link href="/" className="block pb-[48px]">
           <ArrowLeft aria-label='Go Back' className="inline h-5 w-5 text-[#1B1B1B]" />
-          <Image src="/antital_logo.png" alt="Antital Logo" width={80} height={80} className='inline-block ml-2' />
+          <Image src="/icons/antital.svg" alt="Antital Logo" width={80} height={80} className='inline-block ml-2' />
         </Link>
         <h1
           className="text-[#1B1B1B] leading-tight text-3xl lg:text-[36px] lg:leading-[40px]"

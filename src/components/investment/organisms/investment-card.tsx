@@ -65,7 +65,7 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
           {/* Antital Logo Badge - bottom left */}
           <div className="absolute left-2 bottom-2 bg-white rounded-sm px-2 py-1">
             <Image
-              src="/antital_logo.svg"
+              src="/icons/antital.svg"
               alt="Antital"
               width={48}
               height={14}

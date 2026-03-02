@@ -1,13 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import React from 'react'
 
 export function SecondaryMarketHero() {
 
     const buttonDetails = [
-        { href: "/invest1", label: "Invest Now", variant: "primary" },
-        { href: "/invest2", label: "Invest Now", variant: "secondary" },
+        { label: "Invest Now", variant: "primary" },
+        { label: "Create an account", variant: "secondary" },
     ];
 
     return (
@@ -60,12 +59,10 @@ export function SecondaryMarketHero() {
                                 lineHeight: '21px',
                                 width: '287px',
                             }}
-                            asChild
+                            type="button"
                         >
-                            <Link href={action.href} className="flex items-center justify-between w-full">
-                                <span>{action.label}</span>
-                                <ArrowRight className="h-7 w-7" strokeWidth={2.5} />
-                            </Link>
+                            <span>{action.label}</span>
+                            <ArrowRight className="h-7 w-7" strokeWidth={2.5} />
                         </Button>))}
                 </div>
             </div>
