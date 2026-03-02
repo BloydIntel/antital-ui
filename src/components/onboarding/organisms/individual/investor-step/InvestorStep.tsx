@@ -2,15 +2,14 @@
 
 import React, { useState } from 'react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
-import { InvestorSelectionView } from '@/components/onboarding/organisms/investor-step/InvestorSelectionView';
-import { InvestorQuestionnaireView } from '@/components/onboarding/organisms/investor-step/InvestorQuestionnaireView';
+import { InvestorSelectionView } from '@/components/onboarding/organisms/individual/investor-step/InvestorSelectionView';
+import { InvestorQuestionnaireView } from '@/components/onboarding/organisms/individual/investor-step/InvestorQuestionnaireView';
 import { INVESTOR_CATEGORIES } from '@/constants/investorCategories';
 
 export function InvestorStep({ onNext }: { onNext: () => void }) {
     const [view, setView] = useState<"selection" | "questionnaire">("selection");
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    // NEW: Track validation and submission attempt
     const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(false);
     const [showErrors, setShowErrors] = useState(false);
 
@@ -32,6 +31,8 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
         <section className="max-w-[558px]">
             {view === "selection" ? (
                 <InvestorSelectionView
+                    title="Select Your Investor Category"
+                    description="Choose the category that best describe your investment experience and financial position"
                     categories={INVESTOR_CATEGORIES}
                     selectedId={selectedId}
                     onSelect={setSelectedId}
@@ -40,7 +41,6 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                 <InvestorQuestionnaireView
                     title={activeCategory?.jsonKey || ""}
                     selectedId={selectedId || ""}
-                    // NEW PROPS
                     onValidationChange={setIsQuestionnaireValid}
                     showAllErrors={showErrors}
                 />
@@ -54,7 +54,7 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                         if (view === "selection") onNext();
                         else {
                             setView("selection");
-                            setShowErrors(false); // Reset errors when going back
+                            setShowErrors(false);
                         }
                     }}
                 />

@@ -13,10 +13,9 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
     const data = formData.kycData;
 
 
-    const handleChange = (field: keyof KYCData, value: string | File | null) => {
+    const handleDataChange = <K extends keyof KYCData>(field: K, value: KYCData[K]) => {
         updateFormData({
             kycData: {
-                ...data,
                 [field]: value
             }
         });
@@ -43,7 +42,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     className="flex justify-between items-center cursor-pointer group"
                     onClick={() => setShowGovId(!showGovId)}
                 >
-                    <h3 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
+                    <h3 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.body}>
                         Government-Issued Photo ID
                     </h3>
                     <div className='border border-[#EAEAEA] rounded p-1 group-hover:bg-gray-50 transition-colors'>
@@ -65,7 +64,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                             options={idOptions}
                             placeholder="Select ID Type"
                             value={data.idType}
-                            onChange={(val) => handleChange('idType', val)}
+                            onChange={(val) => handleDataChange('idType', val)}
                             error={showErrors && !data.idType ? "Please select an ID type" : ""}
                         />
                     </div>
@@ -75,14 +74,15 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         placeholder="Enter ID Number"
                         className="pb-0"
                         value={data.idNumber}
-                        onChange={(e) => handleChange('idNumber', e.target.value)}
+                        onChange={(e) => handleDataChange('idNumber', e.target.value)}
                         error={showErrors && !data.idNumber ? "ID number is required" : ""}
                     />
 
                     <UploadSection
                         label='Upload Government ID'
                         desc='Ensure all details are clearly visible'
-                        onUpload={(file) => handleChange('idFile', file)}
+                        value={data.idFile}
+                        onUpload={(file) => handleDataChange('idFile', file)}
                         isError={showErrors && !data.idFile}
                     />
 
@@ -91,7 +91,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         placeholder="1234567890"
                         className="pb-0"
                         value={data.bvn}
-                        onChange={(e) => handleChange('bvn', e.target.value)}
+                        onChange={(e) => handleDataChange('bvn', e.target.value)}
                         error={showErrors && !data.bvn ? "BVN is required" : ""}
                     />
                 </div>
@@ -103,7 +103,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     className="flex justify-between items-center cursor-pointer group"
                     onClick={() => setShowAddress(!showAddress)}
                 >
-                    <h3 className="text-[20px] text-[#1B1B1B]" style={{ fontFamily: "var(--font-dm-sans)", fontWeight: 400, letterSpacing: "-1%" }}>
+                    <h3 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.body}>
                         Proof of Address
                     </h3>
                     <div className='border border-[#EAEAEA] rounded p-1 group-hover:bg-gray-50 transition-colors'>
@@ -121,7 +121,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                             icon={Home}
                             className="pb-0"
                             value={data.address}
-                            onChange={(e) => handleChange('address', e.target.value)}
+                            onChange={(e) => handleDataChange('address', e.target.value)}
                             error={showErrors && !data.address ? "Residential address is required" : ""}
                         />
                     </div>
@@ -129,7 +129,8 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     <UploadSection
                         label='Upload Proof of Address'
                         desc='Document must show your current residential address'
-                        onUpload={(file) => handleChange('addressFile', file)}
+                        value={data.addressFile}
+                        onUpload={(file) => handleDataChange('addressFile', file)}
                         isError={showErrors && !data.addressFile}
                     />
                 </div>

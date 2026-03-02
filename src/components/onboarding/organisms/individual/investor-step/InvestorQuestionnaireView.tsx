@@ -1,5 +1,5 @@
 import { Info } from 'lucide-react';
-import { QuestionnaireFormSwitcher } from '@/components/onboarding/organisms/investor-step/QuestionnaireFormSwitcher';
+import { QuestionnaireFormSwitcher } from '@/components/onboarding/organisms/individual/investor-step/QuestionnaireFormSwitcher';
 
 interface Props {
     title: string;

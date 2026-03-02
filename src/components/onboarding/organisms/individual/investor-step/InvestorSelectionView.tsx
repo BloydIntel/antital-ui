@@ -1,22 +1,37 @@
 import { Info } from 'lucide-react';
 import { UserTypeCard } from '@/components/create-account/molecules/user-type-card';
 import { InvestorCategory } from '@/types/investor';
+import { useOnboardingStore } from '@/store/onboardingStore';
 
 interface Props {
     readonly categories: readonly InvestorCategory[];
     readonly selectedId: string | null;
     readonly onSelect: (id: string) => void;
+    readonly title: string;
+    readonly description: string;
 }
 
-export function InvestorSelectionView({ categories, selectedId, onSelect }: Props) {
+export function InvestorSelectionView({ categories, selectedId, onSelect, title, description }: Props) {
+
+    const { updateFormData } = useOnboardingStore();
+
+    const handleCategorySelect = (categoryId: string) => {
+        updateFormData({
+            selectedCategoryId: categoryId,
+            questionnaireAnswers: {}
+        });
+
+        onSelect(categoryId)
+    };
+
     return (
         <div className="animate-in fade-in duration-500">
             <div className="pb-[32px]">
                 <h2 className="text-[36px] pb-2 text-[#1B1B1B] leading-tight font-[family-name:var(--font-rethink-sans)] font-medium">
-                    Select Your Investor Category
+                    {title}
                 </h2>
                 <p className="text-[16px] text-[#2C2C2C] font-[family-name:var(--font-dm-sans)]">
-                    Choose the category that best describe your investment experience and financial position
+                    {description}
                 </p>
             </div>
 
@@ -28,7 +43,7 @@ export function InvestorSelectionView({ categories, selectedId, onSelect }: Prop
                             }`}
                     >
                         <UserTypeCard
-                            onClick={() => onSelect(category.id)}
+                            onClick={() => handleCategorySelect(category.id)}
                             title={category.title}
                             subTitle={category.subTitle}
                             description={category.description}
@@ -47,3 +62,4 @@ export function InvestorSelectionView({ categories, selectedId, onSelect }: Prop
         </div>
     );
 }
+

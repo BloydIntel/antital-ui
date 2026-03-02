@@ -29,10 +29,12 @@ export function SelfieUpload({ showErrors }: { showErrors: boolean }) {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            updateFormData({ kycData: { ...formData.kycData, selfie: file } });
+            updateFormData({
+                kycData: { selfie: file }
+            });
+            e.target.value = '';
         }
     };
-
     const handleSelfie = () => { }
 
     return (

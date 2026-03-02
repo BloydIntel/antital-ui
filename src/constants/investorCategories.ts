@@ -28,3 +28,22 @@ export const INVESTOR_CATEGORIES: readonly InvestorCategory[] = [
 ]
 
 export type InvestorCategoryId = (typeof INVESTOR_CATEGORIES)[number]['id'];
+
+export const CORPORATE_CATEGORIES = [
+    {
+        id: "qii",
+        jsonKey: "Qualified Institutional Investor (QII)",
+        title: "Qualified Institutional Investor",
+        subTitle: "(QII)",
+        description: "I represent a regulated financial institution or entity with the professional capacity, expertise, and financial strength to participate in large or complex investment activities. I have established risk-management structures, access to specialized analysis, and the ability to evaluate and absorb significant investment risks.",
+        iconType: "user"
+    },
+    {
+        id: "oci",
+        jsonKey: "Other Corporate Investor (OCI)",
+        title: "Other Corporate Investor",
+        subTitle: "(OCI)",
+        description: "I represent a registered company or business entity investing its own funds. My organization has the legal capacity to make investment decisions and manage financial commitments on behalf of the company. I participate in investment opportunities appropriate for businesses with standard governance, approval processes, and risk-management practices, even if we do not meet the criteria for institutional or high-net-worth status.",
+        iconType: "globe"
+    }
+] as const;

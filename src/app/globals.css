@@ -280,3 +280,27 @@ html {
 .animate-logo-scroll:hover {
   animation-play-state: paused;
 }
+
+/* --- Datepicker Popup Overrides --- */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+/* Customizing the Year Dropdown specifically */
+.react-datepicker__year-dropdown {
+  background-color: white !important;
+  border: 1px solid #EAEAEA !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.react-datepicker__year-option:hover {
+  background-color: #F4F5F7 !important;
+}
+
+/* Styling the selected day to match your brand */
+.react-datepicker__day--selected {
+  background-color: #0F3D2E !important;
+  color: white !important;
+  border-radius: 8px !important;
+}

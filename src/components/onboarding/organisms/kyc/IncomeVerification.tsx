@@ -24,7 +24,6 @@ export function IncomeVerification({ showErrors }: { showErrors: boolean }) {
     const handleDataChange = <K extends keyof KYCData>(field: K, value: KYCData[K]) => {
         updateFormData({
             kycData: {
-                ...data,
                 [field]: value
             }
         });

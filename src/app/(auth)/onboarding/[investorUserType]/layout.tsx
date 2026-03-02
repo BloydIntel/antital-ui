@@ -1,15 +1,9 @@
-import OnboardingSidebar from "@/components/onboarding/organisms/OnboardingSidebar"
-
-
+import OnboardingSidebar from "@/components/onboarding/organisms/onboarding-sidebar/OnboardingSidebar"
 
 export default function OnboardingLayout({
-
     children,
-
 }: {
-
     children: React.ReactNode
-
 }) {
 
     return (

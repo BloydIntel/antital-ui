@@ -1,36 +1,69 @@
-import { StepKey } from "@/components/onboarding/steps"
+import { StepKey } from "@/components/onboarding/steps";
+import { OnboardingState } from "@/store/onboardingStore";
 
-type dataType = {
-    nationality?: string
-    state?: string
-    verified?: boolean
-    category?: string
-    documentsUploaded?: boolean
-    acceptedTerms?: boolean
-}
+export function validateStep(step: StepKey, state: OnboardingState): boolean {
+    const { formData, investorUserType, emailVerified } = state;
+    const { kycData } = formData;
 
-export function validateStep(step: StepKey, data: dataType): boolean {
     switch (step) {
         case "personal":
-            return !!data?.nationality && !!data?.state
+            return !!(
+                formData.firstName &&
+                formData.lastName &&
+                formData.phone &&
+                formData.nationality &&
+                formData.residence
+            );
+
+        case "company":
+            return !!(
+                formData.companyName &&
+                formData.registrationNumber &&
+                formData.companyEmail &&
+                formData.repFullName &&
+                formData.repEmail
+            );
 
         case "email":
-            return data?.verified === true
+            return emailVerified;
 
         case "investor":
-            return !!data?.category
+        case "categorization":
+
+            return !!formData.selectedCategoryId;
+
+        case "profile":
+            return Object.keys(formData.questionnaireAnswers).length > 4;
 
         case "kyc":
-            return data?.documentsUploaded === true
+            const baseKyc = !!(kycData.idNumber && kycData.idFile && kycData.selfie && kycData.bvn);
+
+            if (investorUserType === 'corporate') {
+                const isQII = formData.selectedCategoryId === "qii";
+                if (isQII) {
+                    return baseKyc && !!(kycData.qiiLicense && kycData.statusReport);
+                }
+                return baseKyc && !!(kycData.incorporationCertificate && kycData.boardResolution);
+            }
+
+            // Individual KYC
+            return baseKyc && kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
 
         case "review":
-            return data?.acceptedTerms === true
+            return true;
 
         case "activation":
-            return true
+            return true;
 
-        default:
+        default: {
             const _exhaustiveCheck: never = step;
             return _exhaustiveCheck;
+        }
     }
 }
+
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export const validateEmail = (email: string | undefined | null): boolean => {
+    return EMAIL_REGEX.test(email || '');
+};
