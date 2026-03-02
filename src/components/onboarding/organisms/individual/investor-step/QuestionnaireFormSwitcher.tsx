@@ -127,6 +127,7 @@ export function QuestionnaireFormSwitcher({
         <div className="py-1">
             {data.questionnaire.map((q, idx) => {
                 const isCombo = Array.isArray(q.inputType);
+                const secondaryInputType = isCombo ? q.inputType[1] : "text";
                 const showError = touched[q.label] || showAllErrors;
                 const errorMessage = showError ? errors[q.label] : "";
                 const currentVal = answers[q.label];
@@ -179,7 +180,7 @@ export function QuestionnaireFormSwitcher({
                                     <div className="mt-2">
                                         <OnboardingInput
                                             label=""
-                                            type="number"
+                                            type={secondaryInputType}
                                             value={(typeof currentVal === 'object' && !Array.isArray(currentVal)) ? currentVal?.amount : ""}
                                             onChange={(e) => {
                                                 const existing = (typeof currentVal === 'object' && !Array.isArray(currentVal)) ? currentVal : { selections: [] };
