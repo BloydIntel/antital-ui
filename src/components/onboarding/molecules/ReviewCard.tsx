@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { QuestionValue, useOnboardingStore } from "@/store/onboardingStore";
 
 interface ReviewItem {
-    label: string;
+    label: string | undefined;
     value: QuestionValue | string | File | boolean | null;
 }
 
@@ -22,14 +22,14 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
 
     const formatValue = (item: ReviewItem): string => {
         const val = item.value;
-        const label = item.label.toLowerCase();
+        const label = item.label?.toLowerCase();
         const isCorporate = investorUserType === "corporate";
 
         if (val === null || val === undefined) return "Not set";
 
         if (val instanceof File || val === "File Uploaded") {
             if (isCorporate) {
-                return label.includes("selfie") ? "Verified" : "Uploaded";
+                return label?.includes("selfie") ? "Verified" : "Uploaded";
             }
             return "Completed";
         }
@@ -38,7 +38,7 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
         if (typeof val === "object" && "amount" in val) return val.amount;
 
         if (val === "Completed" && isCorporate) {
-            return label.includes("selfie") ? "Verified" : "Uploaded";
+            return label?.includes("selfie") ? "Verified" : "Uploaded";
         }
 
         return String(val);

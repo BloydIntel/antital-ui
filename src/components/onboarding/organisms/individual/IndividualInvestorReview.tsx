@@ -68,9 +68,9 @@ export function IndividualInvestorReview() {
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
                 items={[
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[0].title, value: "Completed" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[1].title, value: "Completed" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[2].title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: "Completed" },
                 ]}
             />
         </div>
