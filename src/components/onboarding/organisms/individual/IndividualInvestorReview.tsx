@@ -4,7 +4,7 @@ import React from "react"
 import { useRouter } from "next/navigation"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { ReviewCard } from "@/components/onboarding/molecules/ReviewCard"
-import { PERSONAL_SUB_STEPS, INDIVIDUAL_KYC_SUB_STEPS } from "@/components/onboarding/subSteps"
+import { PERSONAL_SUB_STEPS, INDIVIDUAL_KYC_SUB_STEPS } from "@/constants/subSteps"
 
 export function IndividualInvestorReview() {
     const router = useRouter();

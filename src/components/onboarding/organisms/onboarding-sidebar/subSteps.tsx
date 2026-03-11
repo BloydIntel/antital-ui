@@ -1,7 +1,7 @@
 import { useOnboardingStore } from "@/store/onboardingStore";
-import { CORPORATE_BASE_KYC, CORPORATE_CATEGORY_STEPS, INDIVIDUAL_KYC_SUB_STEPS } from "@/components/onboarding/subSteps";
+import { CORPORATE_BASE_KYC, CORPORATE_CATEGORY_STEPS, INDIVIDUAL_KYC_SUB_STEPS, FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS } from "@/constants/subSteps";
 import { CORPORATE_CATEGORIES } from "@/constants/investorCategories"
-import { COMPANY_SUB_STEPS, PERSONAL_SUB_STEPS } from "@/components/onboarding/subSteps"
+import { COMPANY_SUB_STEPS, PERSONAL_SUB_STEPS, FUNDRAISER_COMPANY_SUB_STEPS } from "@/constants/subSteps"
 import { useMemo } from "react";
 
 
@@ -9,12 +9,19 @@ export const SubSteps = ({ stepKey, isActive }: { stepKey: string, isActive: boo
     const {
         personalSubStep, setPersonalSubStep,
         companySubStep, setCompanySubStep,
+        fundraiserCompanySubStep, setFundraiserCompanySubStep,
         kycSubStep, setKycSubStep,
         formData, investorUserType
     } = useOnboardingStore();
 
     const activeKycSteps = useMemo(() => {
-        if (investorUserType !== "corporate") return INDIVIDUAL_KYC_SUB_STEPS;
+        if (investorUserType === "fundraiser") {
+            return FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS;
+        }
+
+        if (investorUserType !== "corporate") {
+            return INDIVIDUAL_KYC_SUB_STEPS;
+        }
 
         const steps = [...CORPORATE_BASE_KYC];
         const selectedId = formData.selectedCategoryId;
@@ -28,12 +35,24 @@ export const SubSteps = ({ stepKey, isActive }: { stepKey: string, isActive: boo
 
     if (stepKey === "personal" || stepKey === "company") {
         const isCompany = stepKey === "company";
-        const labels = isCompany
-            ? COMPANY_SUB_STEPS.map(step => step.title)
-            : PERSONAL_SUB_STEPS.map(step => step.title);
+        const isFundraiser = investorUserType === "fundraiser";
 
-        const currentActiveIdx = isCompany ? companySubStep : personalSubStep;
-        const setter = isCompany ? setCompanySubStep : setPersonalSubStep;
+        let labels: string[] = [];
+        if (isCompany) {
+            labels = isFundraiser
+                ? FUNDRAISER_COMPANY_SUB_STEPS.map(s => s.title)
+                : COMPANY_SUB_STEPS.map(s => s.title);
+        } else {
+            labels = PERSONAL_SUB_STEPS.map(step => step.title);
+        }
+
+        const currentActiveIdx = isCompany
+            ? (isFundraiser ? fundraiserCompanySubStep : companySubStep)
+            : personalSubStep;
+
+        const setter = isCompany
+            ? (isFundraiser ? setFundraiserCompanySubStep : setCompanySubStep)
+            : setPersonalSubStep;
 
         return (
             <div className="ml-[64px] mt-1 flex flex-col space-y-1 items-start">
@@ -50,15 +69,11 @@ export const SubSteps = ({ stepKey, isActive }: { stepKey: string, isActive: boo
             </div>
         );
     }
+
     if (stepKey === "profile") {
-
         const selectedId = formData.selectedCategoryId as string;
-
-        const selectedCategory = CORPORATE_CATEGORIES.find(
-            (c) => c.id === selectedId
-        );
-
-        const label = selectedCategory ? selectedCategory.jsonKey : null;
+        const selectedCategory = CORPORATE_CATEGORIES.find((c) => c.id === selectedId);
+        const label = selectedCategory ? selectedCategory.jsonKey : "Category";
 
         return (
             <div className="ml-[64px] mt-1 flex flex-col space-y-1 items-start">
@@ -69,8 +84,7 @@ export const SubSteps = ({ stepKey, isActive }: { stepKey: string, isActive: boo
         );
     }
 
-    if (stepKey === "kyc") {
-
+    if (stepKey === "kyc" || stepKey === "representative-kyc") {
         return (
             <div className="ml-[64px] mt-1 flex flex-col space-y-1 items-start">
                 {activeKycSteps.map((step, idx) => (

@@ -1,4 +1,4 @@
-import { BadgeCheck, Mail, User, FileUser, TableOfContents, Lightbulb, LucideIcon } from "lucide-react"
+import { BadgeCheck, Mail, User, FileUser, TableOfContents, Lightbulb, LucideIcon, BadgeDollarSign } from "lucide-react"
 
 export type InvestorUserType = 'individual' | 'corporate' | 'fundraiser';
 
@@ -32,8 +32,13 @@ export const ONBOARDING_CONFIG = {
         { key: "activation", label: "Account Activation", icon: Lightbulb },
     ],
     fundraiser: [
-        { key: "personal", label: "Personal Information", icon: User, hasSubsteps: true },
+        { key: "company", label: "Company Information", icon: User, hasSubsteps: true },
         { key: "email", label: "Email Verification", icon: Mail },
+        { key: "company-documentation", label: "Upload Business Documents", icon: FileUser },
+        { key: "representative-kyc", label: "Account Representative KYC", icon: FileUser, hasSubsteps: true },
+        { key: "application-fee", label: "Payment of Application Fee", icon: BadgeDollarSign },
+        { key: "review", label: "Application Review", icon: TableOfContents },
+        { key: "application-submitted", label: "Application Submitted", icon: FileUser },
     ]
 } as const;
 

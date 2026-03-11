@@ -4,7 +4,7 @@ import React, { useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/components/onboarding/steps"
+import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/constants/steps"
 import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
 import { SubSteps } from "@/components/onboarding/organisms/onboarding-sidebar/subSteps"
 
@@ -66,10 +66,17 @@ export default function OnboardingSidebar() {
     const stepsToShow = emailVerified ? steps : steps.slice(0, 2)
 
     const getStepAssets = () => {
-        if (currentStep === "kyc") return "/onboarding/kyc-illustration.png"
-        if (currentStep === "activation") return "/onboarding/account-activation-illustration.png"
-        return "/onboarding/Onboarding-page-illustration.png"
-    }
+        const paymentSteps = ["application-fee", "application-submitted", "review"];
+
+        if (paymentSteps.includes(currentStep)) {
+            return "/onboarding/onboading-payment-stage.png";
+        }
+
+        if (currentStep === "kyc") return "/onboarding/kyc-illustration.png";
+        if (currentStep === "activation") return "/onboarding/account-activation-illustration.png";
+
+        return "/onboarding/Onboarding-page-illustration.png";
+    };
 
     return (
         <nav className="flex flex-col justify-items-start pl-[66px] pt-[20px] pr-[34px] bg-[#F7FBF4] min-h-screen border-r border-gray-100">
@@ -129,7 +136,7 @@ export default function OnboardingSidebar() {
                 })}
             </ul>
 
-            <div className="mt-auto pb-10">
+            <div className="mt-auto pb-10 pl-6">
                 <div className="w-[198px] h-[168px] relative">
                     <Image
                         src={getStepAssets()}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput'
 import { Calendar } from 'lucide-react'
 import { TYPOGRAPHY } from "@/constants/styles"
@@ -8,12 +8,14 @@ import { useOnboardingStore } from "@/store/onboardingStore"
 import { validateEmail } from "@/lib/onboardingValidation"
 
 interface PersonalDetailsFormProps {
-    onValidationChange: (isValid: boolean) => void
+    showErrors?: boolean
+    levelLabel?: string
 }
 
-export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormProps) {
-    const formData = useOnboardingStore((s) => s.formData);
-    const updateFormData = useOnboardingStore((s) => s.updateFormData);
+type DetailsFields = 'firstName' | 'lastName' | 'email' | 'phone' | 'dob';
+
+export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsFormProps) {
+    const { formData, updateFormData } = useOnboardingStore();
 
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -36,33 +38,25 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
         };
     }, [formData]);
 
-    useEffect(() => {
-        const isValid = !Object.values(errors).some(error => error !== "");
-        onValidationChange(isValid);
-    }, [formData, errors, updateFormData, onValidationChange]);
+    const getError = (field: DetailsFields): string =>
+        (touched[field] || showErrors) ? errors[field] : "";
 
     return (
         <section>
-            <div>
-                <h2 className="text-[36px] text-[#1B1B1B] leading-tight" style={TYPOGRAPHY.heading}>
-                    Start Your Investment Journey
-                </h2>
-                <p className="text-[16px] text-[#2C2C2C] leading-tight" style={TYPOGRAPHY.body}>
-                    Join Nigerians building wealth through startup investing
-                </p>
-            </div>
 
             <div className="pt-[32px]">
-                <p className="text-[24px] text-[#1B1B1B] leading-tight pb-[25px]" style={TYPOGRAPHY.heading}>
-                    Personal Details
-                </p>
+                {levelLabel &&
+                    (<p className="text-[24px] text-[#1B1B1B] leading-tight pb-[25px]" style={TYPOGRAPHY.heading}>
+                        {levelLabel}
+                    </p>)
+                }
 
                 <div className="grid lg:grid-cols-2 lg:gap-4">
                     <OnboardingInput
                         label="First Name"
                         placeholder="John"
                         value={formData.firstName}
-                        error={touched.firstName ? errors.firstName : ""}
+                        error={getError('firstName')}
                         onChange={(e) => handleChange("firstName", e.target.value)}
                         onBlur={() => handleBlur("firstName")}
                     />
@@ -70,7 +64,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                         label="Last Name"
                         placeholder="Doe"
                         value={formData.lastName}
-                        error={touched.lastName ? errors.lastName : ""}
+                        error={getError('lastName')}
                         onChange={(e) => handleChange("lastName", e.target.value)}
                         onBlur={() => handleBlur("lastName")}
                     />
@@ -81,7 +75,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                     type="email"
                     placeholder="johndoe@email.com"
                     value={formData.email}
-                    error={touched.email ? errors.email : ""}
+                    error={getError('email')}
                     onChange={(e) => handleChange("email", e.target.value)}
                     onBlur={() => handleBlur("email")}
                 />
@@ -99,7 +93,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                         type="tel"
                         placeholder="+234 90 1234 5678"
                         value={formData.phone}
-                        error={touched.phone ? errors.phone : ""}
+                        error={getError('phone')}
                         onChange={(e) => handleChange("phone", e.target.value)}
                         onBlur={() => handleBlur("phone")}
                     />
@@ -109,7 +103,7 @@ export function PersonalDetailsForm({ onValidationChange }: PersonalDetailsFormP
                         value={formData.dob || ""}
                         placeholder="DD/MM/YYYY"
                         icon={Calendar}
-                        error={touched.dob ? errors.dob : ""}
+                        error={getError('dob')}
                         onChange={(e) => handleChange("dob", e.target.value)}
                         onBlur={() => handleBlur("dob")}
                     />

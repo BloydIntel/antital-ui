@@ -1,5 +1,5 @@
-import { StepKey } from "@/components/onboarding/steps";
-import { OnboardingState } from "@/store/onboardingStore";
+import { StepKey } from "@/constants/steps";
+import { OnboardingFormData, OnboardingState } from "@/store/onboardingStore";
 
 export function validateStep(step: StepKey, state: OnboardingState): boolean {
     const { formData, investorUserType, emailVerified } = state;
@@ -16,43 +16,95 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             );
 
         case "company":
-            return !!(
+            const baseCompany = !!(
                 formData.companyName &&
                 formData.registrationNumber &&
                 formData.companyEmail &&
+                formData.registrationDate &&
+                formData.businessAddress &&
+                formData.registeredAddress &&
+                formData.companyEmail &&
+                formData.companyPhone
+            );
+
+            // Fundraisers don't have the "Representative" sub-step
+            if (investorUserType === 'fundraiser') {
+                return baseCompany;
+            }
+            // Corporate needs Representative details
+            return baseCompany && !!(
                 formData.repFullName &&
-                formData.repEmail
+                formData.repEmail &&
+                formData.repJobTitle &&
+                formData.repPhoneNumber &&
+                formData.repDob &&
+                formData.repNationality &&
+                formData.repResidence &&
+                formData.repAddress
             );
 
         case "email":
             return emailVerified;
 
+        case "company-documentation":
+            // Check if essential fundraiser documents are uploaded
+            return !!(
+                formData.fundraisingDeck &&
+                formData.founderAndTeamItroduction &&
+                formData.investmentMemo &&
+                formData.termsOfOffering &&
+                formData.businessDescription &&
+                formData.businessSector &&
+                formData.instrumentType &&
+                formData.businessSize &&
+                formData.fundingTarget &&
+                formData.investmentRound
+            );
+
         case "investor":
         case "categorization":
-
             return !!formData.selectedCategoryId;
 
         case "profile":
             return Object.keys(formData.questionnaireAnswers).length > 4;
 
         case "kyc":
-            const baseKyc = !!(kycData.idNumber && kycData.idFile && kycData.selfie && kycData.bvn);
+        case "representative-kyc":
+            const baseKyc = !!(kycData.idNumber && kycData.idType && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
 
             if (investorUserType === 'corporate') {
                 const isQII = formData.selectedCategoryId === "qii";
-                if (isQII) {
-                    return baseKyc && !!(kycData.qiiLicense && kycData.statusReport);
-                }
-                return baseKyc && !!(kycData.incorporationCertificate && kycData.boardResolution);
+                return isQII
+                    ? baseKyc && !!(kycData.qiiLicense && kycData.statusReport && kycData.boardResolution && kycData.selfie)
+                    : baseKyc && !!(kycData.incorporationCertificate && kycData.statusReport && kycData.boardResolution && kycData.selfie);
             }
 
+            // Fundraiser KYC (usually similar to Corporate or base)
+            if (investorUserType === 'fundraiser') return baseKyc && !!(
+                formData.repFullName &&
+                formData.repEmail &&
+                formData.repJobTitle &&
+                formData.repPhoneNumber &&
+                formData.repDob &&
+                formData.repNationality &&
+                formData.repResidence &&
+                formData.repAddress
+            );;
+
             // Individual KYC
-            return baseKyc && kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+            return baseKyc && !!kycData.selfie && kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+
+        case "application-fee":
+            // Valid if payment method is selected and card/payment data is filled
+            return !!(
+                formData.paymentMethod &&
+                formData.paymentCardDetails.cardNumber &&
+                formData.paymentCardDetails.cvv
+            );
 
         case "review":
-            return true;
-
         case "activation":
+        case "application-submitted":
             return true;
 
         default: {
@@ -60,6 +112,93 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             return _exhaustiveCheck;
         }
     }
+}
+
+export type CompanySubStepId = 'details' | 'address' | 'representative';
+
+export function validateSubStep(
+    stepId: 'details' | 'address' | 'representative',
+    state: OnboardingState
+): boolean {
+    const { formData } = state;
+
+    switch (stepId) {
+        case 'details':
+            return !!(
+                formData.companyName &&
+                formData.registrationNumber &&
+                formData.registrationType &&
+                validateEmail(formData.loginEmail) &&
+                (formData.password?.length >= 8) &&
+                formData.password === formData.confirmPassword
+            );
+
+        case 'address':
+            return !!(
+                formData.registrationDate &&
+                formData.businessAddress &&
+                formData.registeredAddress &&
+                validateEmail(formData.companyEmail) &&
+                formData.companyPhone
+            );
+
+        case 'representative':
+            return !!(
+                formData.repFullName &&
+                formData.repEmail &&
+                formData.repJobTitle &&
+                formData.repPhoneNumber &&
+                formData.repDob &&
+                formData.repNationality &&
+                formData.repResidence &&
+                formData.repAddress
+            );
+
+        default:
+            return false;
+    }
+}
+
+export type PersonalSubStepId = 'details' | 'location';
+
+export function validatePersonalStep(stepId: PersonalSubStepId, formData: OnboardingFormData): boolean {
+    switch (stepId) {
+        case 'details':
+            return !!(
+                formData.firstName?.length >= 2 &&
+                formData.lastName?.length >= 2 &&
+                validateEmail(formData.email) &&
+                formData.phone?.length >= 10 &&
+                formData.dob
+            );
+        case 'location':
+            return !!(
+                formData.nationality &&
+                formData.residence &&
+                formData.state &&
+                formData.address?.length > 5 &&
+                formData.password?.length >= 8 &&
+                formData.password === formData.confirmPassword &&
+                formData.agreed
+            );
+        default:
+            return false;
+    }
+}
+
+export function validateFullStep(type: 'corporate' | 'fundraiser', store: OnboardingState): boolean {
+    if (type === 'fundraiser') {
+        return (
+            validateSubStep('details', store) &&
+            validateSubStep('address', store)
+        );
+    }
+
+    return (
+        validateSubStep('details', store) &&
+        validateSubStep('address', store) &&
+        validateSubStep('representative', store)
+    );
 }
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

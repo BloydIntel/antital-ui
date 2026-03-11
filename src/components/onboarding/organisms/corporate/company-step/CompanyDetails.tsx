@@ -1,11 +1,17 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { SelectInput } from '@/components/onboarding/molecules/SelectInput'
 import { validateEmail } from '@/lib/onboardingValidation'
+
+interface CompanyInformationProps {
+    showErrors: boolean
+    title: string
+    desc: string
+}
 
 const COMPANY_FIELDS = [
     {
@@ -27,9 +33,9 @@ const COMPANY_FIELDS = [
                 placeholder: "BN (Business Name)",
                 type: "select",
                 options: [
-                    { label: 'BN (Business Name)', value: 'BN' },
-                    { label: 'LTD (Limited Liability)', value: 'LTD' },
-                    { label: 'PLC (Public Limited)', value: 'PLC' }
+                    { label: 'BN (Business Name)', value: 'BN (Business Name)' },
+                    { label: 'LTD (Limited Liability)', value: 'LTD (Limited Liability)' },
+                    { label: 'PLC (Public Limited)', value: 'PLC (Public Limited)' }
                 ] as const
             },
             {
@@ -64,7 +70,7 @@ const COMPANY_FIELDS = [
     }
 ] as const;
 
-export function CompanyDetails({ onValidationChange }: { onValidationChange: (isValid: boolean) => void }) {
+export function CompanyDetails({ showErrors, title, desc }: CompanyInformationProps) {
     const { formData, updateFormData } = useOnboardingStore()
     const [touched, setTouched] = useState<Record<string, boolean>>({})
 
@@ -80,25 +86,24 @@ export function CompanyDetails({ onValidationChange }: { onValidationChange: (is
         };
     }, [formData]);
 
-    useEffect(() => {
-        const isValid = !Object.values(errors).some(err => err !== "");
-        onValidationChange(isValid);
-    }, [errors, onValidationChange]);
 
     const handleBlur = (name: string) => setTouched(prev => ({ ...prev, [name]: true }));
 
     return (
         <div className="max-w-[558px] w-full mx-auto">
-            <div className="mb-8">
+            <div className="mb-6">
                 <h2 className="text-[36px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
-                    Corporate Investment Account
+                    {title}
                 </h2>
                 <p className="text-[16px] text-[#2C2C2C] mt-2" style={TYPOGRAPHY.body}>
-                    Register your organization to invest in vetted Nigerian startups
+                    {desc}
                 </p>
             </div>
 
             <div className="space-y-6">
+                <h2 className="text-[24px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
+                    Company Details
+                </h2>
                 <div className="pt-2">
                     {COMPANY_FIELDS.map((fieldGroup, idx) => {
                         if ("isGrid" in fieldGroup) {
@@ -109,7 +114,7 @@ export function CompanyDetails({ onValidationChange }: { onValidationChange: (is
                                         const fieldType = "type" in field ? field.type : "text";
 
                                         const errorKey = field.name as keyof typeof errors;
-                                        const errorMsg = touched[field.name] ? errors[errorKey] : "";
+                                        const errorMsg = (touched[field.name] || showErrors) ? errors[errorKey] : "";
 
                                         if (fieldType === "select" && "options" in field) {
                                             return (
@@ -147,7 +152,7 @@ export function CompanyDetails({ onValidationChange }: { onValidationChange: (is
                         const fieldName = fieldGroup.name as keyof typeof formData;
                         const fieldType = "type" in fieldGroup ? fieldGroup.type : "text";
                         const errorKey = fieldGroup.name as keyof typeof errors;
-                        const errorMsg = touched[fieldGroup.name] ? errors[errorKey] : "";
+                        const errorMsg = (touched[fieldGroup.name] || showErrors) ? errors[errorKey] : "";
 
                         return (
                             <OnboardingInput

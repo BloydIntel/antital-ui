@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { StepKey, InvestorUserType } from '@/components/onboarding/steps'
+import { StepKey, InvestorUserType } from '@/constants/steps'
+import { CardFormData, PaymentMethod } from '@/types/payment';
 
 export type AllowedStepBeforeVerify = "personal" | "email" | "company";
 
@@ -23,7 +24,7 @@ export interface KYCData {
     boardResolution: File | null;
 }
 
-interface OnboardingFormData {
+export interface OnboardingFormData {
     // Shared / Personal Details
     firstName: string;
     lastName: string;
@@ -69,8 +70,26 @@ interface OnboardingFormData {
     // Questionnaire Data
     selectedCategoryId: string | null;
     questionnaireAnswers: Record<string, QuestionValue>;
+
     // Kyc Data
     kycData: KYCData;
+
+    // Fundraiser Business Documents
+    founderAndTeamItroduction: File | null;
+    fundraisingDeck: File | null;
+    investmentMemo: File | null;
+    termsOfOffering: File | null;
+    productDemo: File | null;
+    businessDescription: string;
+    businessSector: string;
+    instrumentType: string;
+    businessSize: string;
+    fundingTarget: string;
+    investmentRound: string;
+
+    paymentMethod: PaymentMethod | null;
+    paymentCardDetails: CardFormData;
+    applicationFeePaid: boolean;
 }
 
 export interface OnboardingState {
@@ -79,6 +98,7 @@ export interface OnboardingState {
     currentStep: StepKey
     personalSubStep: number
     companySubStep: number
+    fundraiserCompanySubStep: number
     kycSubStep: number
     emailVerified: boolean
     lastAllowedStep: AllowedStepBeforeVerify
@@ -87,6 +107,7 @@ export interface OnboardingState {
     setCurrentStep: (step: StepKey) => void
     setPersonalSubStep: (subStep: number) => void
     setCompanySubStep: (subStep: number) => void
+    setFundraiserCompanySubStep: (subStep: number) => void
     setKycSubStep: (subStep: number) => void
     setEmailVerified: (verified: boolean) => void
     setLastAllowedStep: (step: AllowedStepBeforeVerify) => void
@@ -149,7 +170,29 @@ const initialFormData: OnboardingFormData = {
         statusReport: null,
         boardResolution: null,
         qiiLicense: null,
-    }
+    },
+
+    // Fundraiser Business Documents
+    founderAndTeamItroduction: null,
+    fundraisingDeck: null,
+    investmentMemo: null,
+    termsOfOffering: null,
+    productDemo: null,
+    businessDescription: "",
+    businessSector: "",
+    instrumentType: "",
+    businessSize: "",
+    fundingTarget: "",
+    investmentRound: "",
+
+    paymentMethod: null,
+    paymentCardDetails: {
+        nameOnCard: "",
+        cardNumber: "",
+        expiry: "",
+        cvv: ""
+    },
+    applicationFeePaid: false,
 };
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
@@ -157,7 +200,8 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
     setInvestorUserType: (type) => set({ investorUserType: type }),
     currentStep: "personal",
     personalSubStep: 0,
-    companySubStep: 0, // Initializing sub-step
+    companySubStep: 0,
+    fundraiserCompanySubStep: 0,
     kycSubStep: 0,
     emailVerified: false,
     lastAllowedStep: "personal",
@@ -166,6 +210,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
     setCurrentStep: (step) => set({ currentStep: step }),
     setPersonalSubStep: (subStep) => set({ personalSubStep: subStep }),
     setCompanySubStep: (subStep) => set({ companySubStep: subStep }),
+    setFundraiserCompanySubStep: (subStep) => set({ fundraiserCompanySubStep: subStep }),
     setKycSubStep: (subStep) => set({ kycSubStep: subStep }),
     setEmailVerified: (verified) => set({ emailVerified: verified }),
     setLastAllowedStep: (step) => set({ lastAllowedStep: step }),

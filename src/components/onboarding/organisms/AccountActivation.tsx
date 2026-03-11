@@ -49,14 +49,25 @@ const corporateActivationSteps = [
     },
 ];
 
+const fundraiserSubmissionMessage = [
+    "Thank you for submitting your fundraising application on Antital! Our team has received it and will begin the review and due diligence process in line with the relevant regulations. You can expect feedback within two weeks, although it may take a little longer in some cases.",
+    "Please note that submitting an application does not guarantee approval or listing.",
+    "Approval depends on successful due diligence, regulatory compliance checks, and alignment with our platform standards. We appreciate your cooperation and timely response to any follow-up requests.",
+]
+
 export function AccountActivation() {
     const { investorUserType } = useOnboardingStore();
     const isCorporate = investorUserType === "corporate";
+    const isFundraiser = investorUserType === "fundraiser"
 
     const steps = isCorporate ? corporateActivationSteps : individualActivationSteps;
-    const mainTitle = isCorporate
-        ? "Business Account Application Submitted!"
-        : "Individual Account Application Submitted Successfully!";
+    const titles = {
+        corporate: "Business Account Application Submitted!",
+        individual: "Individual Account Application Submitted Successfully!",
+        fundraiser: "Fundraiser Account Application Submitted!"
+    };
+
+    const mainTitle = investorUserType ? titles[investorUserType] : titles.individual;
 
     return (
         <div className="max-w-[558px] flex flex-col items-center mx-auto">
@@ -77,34 +88,48 @@ export function AccountActivation() {
             </p>
 
             <div className="w-full mt-10">
-                <h2 className="text-[18px] font-medium text-[#1B1B1B] mb-4" style={TYPOGRAPHY.body}>
+                {!isFundraiser && <h2 className="text-[18px] font-medium text-[#1B1B1B] mb-4" style={TYPOGRAPHY.body}>
                     What Happens Next
-                </h2>
+                </h2>}
 
-                <div className="flex flex-col gap-3">
-                    {steps.map((step, index) => (
-                        <div
-                            key={index}
-                            className="flex items-center gap-4 p-4 border border-[#EAEAEA] rounded-xl bg-white shadow-sm transition-all"
-                        >
-                            <div className={cn(
-                                "flex items-center justify-center min-w-[48px] h-[48px] rounded-lg",
-                                step.bgColor
-                            )}>
-                                {step.icon}
-                            </div>
-
-                            <div className="flex flex-col">
-                                <h4 className="text-[16px] font-medium text-[#1B1B1B] leading-snug">
-                                    {step.title}
-                                </h4>
-                                <p className="text-[13px] text-[#858585] leading-relaxed mt-0.5">
-                                    {step.desc}
+                {isFundraiser ?
+                    (
+                        <div className="w-full lg:w-[558px] p-[24px] text-center border border-[#E6E6E6] rounded-lg gap-6 flex flex-col">
+                            {fundraiserSubmissionMessage.map((msg, i) => (
+                                <p key={i} className="text-[18px] text-[#505050] leading-tight"
+                                    style={TYPOGRAPHY.body}
+                                >
+                                    {msg}
                                 </p>
-                            </div>
+                            ))
+                            }
                         </div>
-                    ))}
-                </div>
+                    ) : (
+                        <div className="flex flex-col gap-3">
+                            {steps.map((step, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-4 p-4 border border-[#EAEAEA] rounded-xl bg-white transition-all"
+                                >
+                                    <div className={cn(
+                                        "flex items-center justify-center min-w-[48px] h-[48px] rounded-lg",
+                                        step.bgColor
+                                    )}>
+                                        {step.icon}
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <h4 className="text-[16px] font-medium text-[#1B1B1B] leading-snug">
+                                            {step.title}
+                                        </h4>
+                                        <p className="text-[13px] text-[#858585] leading-relaxed mt-0.5">
+                                            {step.desc}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>)
+                }
             </div>
 
             <OnboardingButton label="Return to Dashboard" className="mt-[32px]" />

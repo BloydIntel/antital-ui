@@ -6,7 +6,7 @@ import { QuestionValue, useOnboardingStore } from "@/store/onboardingStore";
 
 interface ReviewItem {
     label: string;
-    value: QuestionValue | string | File | null;
+    value: QuestionValue | string | File | boolean | null;
 }
 
 interface ReviewCardProps {

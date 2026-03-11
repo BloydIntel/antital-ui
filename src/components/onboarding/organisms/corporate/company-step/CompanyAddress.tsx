@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useOnboardingStore } from '@/store/onboardingStore'
@@ -49,17 +49,19 @@ const ADDRESS_FIELDS = [
 ] as const;
 
 interface CompanyAddressProps {
-    onValidationChange: (isValid: boolean) => void;
+    showErrors: boolean
+    title: string
+    desc?: string
 }
 
-export function CompanyAddress({ onValidationChange }: CompanyAddressProps) {
+export function CompanyAddress({ showErrors, title, desc }: CompanyAddressProps) {
     const { formData, updateFormData } = useOnboardingStore()
     const [touched, setTouched] = useState<Record<string, boolean>>({})
 
     const errors = useMemo(() => {
         return {
             registrationDate: !formData.registrationDate ? "Date is required" : "",
-            companyWebsite: "", // Optional, but key exists for type safety
+            companyWebsite: "",
             businessAddress: !formData.businessAddress ? "Address is required" : "",
             registeredAddress: !formData.registeredAddress ? "Registered address is required" : "",
             companyEmail: !validateEmail(formData.companyEmail as string || '') ? "Invalid email" : "",
@@ -67,22 +69,20 @@ export function CompanyAddress({ onValidationChange }: CompanyAddressProps) {
         };
     }, [formData]);
 
-    useEffect(() => {
-        const isValid = !Object.values(errors).some(err => err !== "");
-        onValidationChange(isValid);
-    }, [errors, onValidationChange]);
-
     const handleBlur = (name: string) => setTouched(prev => ({ ...prev, [name]: true }));
 
     return (
         <div className="max-w-[558px] w-full mx-auto">
             <div className="mb-8">
                 <h2 className="text-[24px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
-                    Company Address
+                    {title}
                 </h2>
+                {desc && <p className="text-[16px] text-[#2C2C2C] mt-2" style={TYPOGRAPHY.body}>
+                    {desc}
+                </p>}
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-1">
                 {ADDRESS_FIELDS.map((fieldGroup, idx) => {
                     if ("isGrid" in fieldGroup) {
                         return (
@@ -90,7 +90,7 @@ export function CompanyAddress({ onValidationChange }: CompanyAddressProps) {
                                 {fieldGroup.fields.map((field) => {
                                     const fieldName = field.name as keyof typeof formData;
                                     const errorKey = field.name as keyof typeof errors;
-                                    const errorMsg = touched[field.name] ? errors[errorKey] : "";
+                                    const errorMsg = (touched[field.name] || showErrors) ? errors[errorKey] : "";
 
                                     return (
                                         <OnboardingInput
@@ -112,7 +112,7 @@ export function CompanyAddress({ onValidationChange }: CompanyAddressProps) {
                     const fieldName = fieldGroup.name as keyof typeof formData;
                     const fieldType = 'type' in fieldGroup ? fieldGroup.type : "text";
                     const errorKey = fieldGroup.name as keyof typeof errors;
-                    const errorMsg = touched[fieldGroup.name] ? errors[errorKey] : "";
+                    const errorMsg = (touched[fieldGroup.name] || showErrors) ? errors[errorKey] : "";
 
                     return (
                         <OnboardingInput
