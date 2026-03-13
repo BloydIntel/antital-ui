@@ -22,7 +22,7 @@ const otherMessage = {
 
 const fundraiserMessage = {
     paragraph1: 'By proceeding, you acknowledge that raising funds through this platform is subject to regulatory requirements under the Nigerian SEC Crowdfunding Rules. All issuers must provide complete, accurate, and truthful information during onboarding, due diligence, and throughout the fundraising campaign. Submitting false, misleading, or incomplete disclosures may result in regulatory sanctions, campaign rejection, suspension, or legal consequences.',
-    paragraph2: 'Approval to list your offering does not guarantee successful fundraising, investor participation, or future business performance. You are responsible for ongoing compliance,  timely updates, and transparent communication with investors before, during, and after thecampaign.'
+    paragraph2: 'Approval to list your offering does not guarantee successful fundraising, investor participation, or future business performance. You are responsible for ongoing compliance,  timely updates, and transparent communication with investors before, during, and after the campaign.'
 }
 
 export function EmailStep({ onNext }: EmailStepProps) {

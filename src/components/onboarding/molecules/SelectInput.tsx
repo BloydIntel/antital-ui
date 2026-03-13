@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
+import { cn } from '@/lib/utils';
 
 export interface SelectOption {
     label: string;
@@ -31,16 +32,20 @@ export function SelectInput({
     selectAreaStyle = ''
 }: SelectInputProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const displayPlaceholder = placeholder || options[0]?.label
+    const displayPlaceholder = placeholder || "-- Select an option --";
+
+    const selectStyles = cn(
+        "w-full h-[48px] px-4 rounded-lg text-sm appearance-none outline-none cursor-pointer transition-all border",
+        selectAreaStyle || "bg-[#F4F5F7] border-transparent",
+        error ? "border-red-500" : "focus:border-[#042E27]",
+        !value ? "text-[#858585]" : "text-[#1A1A1A]"
+    );
 
 
     const selectElement = (
         <div className="relative w-full">
             <select
-                className={`w-full h-[48px] px-4 rounded-lg text-sm appearance-none outline-none cursor-pointer transition-all 
-                            ${selectAreaStyle || 'bg-[#F4F5F7] border-transparent'} 
-                            ${error ? 'border-red-500' : 'focus:border-[#042E27]'} 
-                            ${!value ? 'text-[#858585]' : 'text-[#1A1A1A]'}`}
+                className={selectStyles}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setIsOpen(false)}
                 onChange={(e) => {

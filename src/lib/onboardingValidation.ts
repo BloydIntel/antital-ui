@@ -23,7 +23,6 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
                 formData.registrationDate &&
                 formData.businessAddress &&
                 formData.registeredAddress &&
-                formData.companyEmail &&
                 formData.companyPhone
             );
 
@@ -50,7 +49,7 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             // Check if essential fundraiser documents are uploaded
             return !!(
                 formData.fundraisingDeck &&
-                formData.founderAndTeamItroduction &&
+                formData.founderAndTeamIntroduction &&
                 formData.investmentMemo &&
                 formData.termsOfOffering &&
                 formData.businessDescription &&
@@ -95,12 +94,11 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             return baseKyc && !!kycData.selfie && kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
 
         case "application-fee":
-            // Valid if payment method is selected and card/payment data is filled
-            return !!(
-                formData.paymentMethod &&
-                formData.paymentCardDetails.cardNumber &&
-                formData.paymentCardDetails.cvv
-            );
+            const { paymentMethod, applicationFeePaid } = formData;
+
+            if (applicationFeePaid) return true;
+
+            return !!paymentMethod;
 
         case "review":
         case "activation":

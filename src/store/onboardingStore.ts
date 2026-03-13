@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { StepKey, InvestorUserType } from '@/constants/steps'
-import { CardFormData, PaymentMethod } from '@/types/payment';
+import { PaymentMethod } from '@/types/payment';
 
 export type AllowedStepBeforeVerify = "personal" | "email" | "company";
 
@@ -75,7 +75,7 @@ export interface OnboardingFormData {
     kycData: KYCData;
 
     // Fundraiser Business Documents
-    founderAndTeamItroduction: File | null;
+    founderAndTeamIntroduction: File | null;
     fundraisingDeck: File | null;
     investmentMemo: File | null;
     termsOfOffering: File | null;
@@ -88,7 +88,8 @@ export interface OnboardingFormData {
     investmentRound: string;
 
     paymentMethod: PaymentMethod | null;
-    paymentCardDetails: CardFormData;
+    paymentReference: string | null;
+    paymentStatus: 'pending' | 'success' | 'failed';
     applicationFeePaid: boolean;
 }
 
@@ -173,7 +174,7 @@ const initialFormData: OnboardingFormData = {
     },
 
     // Fundraiser Business Documents
-    founderAndTeamItroduction: null,
+    founderAndTeamIntroduction: null,
     fundraisingDeck: null,
     investmentMemo: null,
     termsOfOffering: null,
@@ -186,12 +187,8 @@ const initialFormData: OnboardingFormData = {
     investmentRound: "",
 
     paymentMethod: null,
-    paymentCardDetails: {
-        nameOnCard: "",
-        cardNumber: "",
-        expiry: "",
-        cvv: ""
-    },
+    paymentReference: null,
+    paymentStatus: 'pending',
     applicationFeePaid: false,
 };
 

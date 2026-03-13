@@ -66,14 +66,19 @@ export default function OnboardingSidebar() {
     const stepsToShow = emailVerified ? steps : steps.slice(0, 2)
 
     const getStepAssets = () => {
-        const paymentSteps = ["application-fee", "application-submitted", "review"];
 
-        if (paymentSteps.includes(currentStep)) {
-            return "/onboarding/onboading-payment-stage.png";
+        const fundraiserPaymentSteps = ["application-fee", "application-submitted"];
+
+
+        if (activeType === "fundraiser") {
+            if (fundraiserPaymentSteps.includes(currentStep) || currentStep === "review") {
+                return "/onboarding/onboading-payment-stage.png";
+            }
         }
 
         if (currentStep === "kyc") return "/onboarding/kyc-illustration.png";
         if (currentStep === "activation") return "/onboarding/account-activation-illustration.png";
+
 
         return "/onboarding/Onboarding-page-illustration.png";
     };

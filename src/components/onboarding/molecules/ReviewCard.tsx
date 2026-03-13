@@ -53,10 +53,10 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
                     {isStatusType ? (
 
                         <>
-                            <button onClick={onEditClick} className="hover:opacity-70 transition-all" aria-label="Edit section">
+                            <button onClick={onEditClick} className="hover:opacity-70 transition-all cursor-pointer" aria-label="Edit section">
                                 <SquarePen size={18} className="text-[#2C2C2C]" />
                             </button>
-                            <button className="hover:opacity-70 transition-all">
+                            <button className="hover:opacity-70 transition-all cursor-pointer">
                                 <Trash size={18} className="text-[#2C2C2C]" />
                             </button>
                         </>
@@ -64,7 +64,7 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
 
                         <button
                             onClick={onEditClick}
-                            className="flex items-center gap-2 text-[#A7B832] hover:opacity-70 transition-all"
+                            className="flex items-center gap-2 text-[#A7B832] hover:opacity-70 transition-all cursor-pointer"
                             aria-label="Edit section"
                         >
                             <span className="text-sm font-medium">Edit</span>

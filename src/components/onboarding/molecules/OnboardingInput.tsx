@@ -22,11 +22,16 @@ interface InputProps {
     type?: string
     placeholder?: string
     value?: string | Date | number | null
-    onChange?: (e: ChangeEvent<HTMLInputElement> | CustomChangeEvent) => void
+    onChange?: (e: OnboardingChangeEvent) => void
     onBlur?: () => void
     name?: string
     inputAreaStyle?: string
 }
+
+type OnboardingChangeEvent =
+    | ChangeEvent<HTMLInputElement>
+    | ChangeEvent<HTMLTextAreaElement>
+    | CustomChangeEvent;
 
 type OnboardingRef = HTMLInputElement | HTMLTextAreaElement
 
@@ -95,7 +100,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                             ref={ref as React.Ref<HTMLTextAreaElement>}
                             placeholder={placeholder}
                             value={typeof value === 'string' ? value : ''}
-                            onChange={onChange as (e: ChangeEvent<HTMLTextAreaElement>) => void}
+                            onChange={onChange}
                             onBlur={onBlur}
                             className={inputStyles}
                             name={props.name}
@@ -107,7 +112,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                             type={isPassword ? (showPassword ? "text" : "password") : type}
                             placeholder={placeholder}
                             value={typeof value === 'string' ? value : ''}
-                            onChange={onChange as (e: ChangeEvent<HTMLInputElement>) => void}
+                            onChange={onChange}
                             onBlur={onBlur}
                             className={inputStyles}
                             {...props}

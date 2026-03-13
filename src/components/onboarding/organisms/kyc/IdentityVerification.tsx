@@ -45,7 +45,16 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
     const isStep0Valid = useMemo(() => {
         if (isFundraiser) {
-            return !!(formData.repFullName && formData.repEmail && formData.repPhoneNumber);
+            return !!(
+                formData.repFullName &&
+                formData.repEmail &&
+                formData.repPhoneNumber &&
+                formData.repJobTitle &&
+                formData.repDob &&
+                formData.repNationality &&
+                formData.repResidence &&
+                formData.repAddress
+            );
         }
         return !!(kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
     }, [isFundraiser, formData, kycData]);

@@ -1,6 +1,6 @@
-export type PaymentSubStep = "summary" | "method" | "details"
+export type PaymentSubStep = "summary" | "method" | "details";
 
-export type PaymentMethod = "card" | "transfer" | "opay"
+export type PaymentMethod = "card" | "transfer" | "opay";
 
 export interface ApplicationFee {
     amount: number

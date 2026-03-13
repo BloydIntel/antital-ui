@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { PaymentSubStep, PaymentMethod, CardFormData } from "@/types/payment"
+import { useState, useMemo, useEffect } from "react"
+import { PaymentMethod, CardFormData } from "@/types/payment"
 import { TYPOGRAPHY } from "@/constants/styles"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
 import { useRouter } from "next/navigation"
@@ -10,50 +10,75 @@ import { PaymentSummary } from "@/components/onboarding/organisms/fundraiser/pay
 import { PaymentMethodSelect } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentMethodSelect"
 import { PaymentCardDetails } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentCardDetails"
 import { useOnboardingStore } from "@/store/onboardingStore"
+import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
 
 export function PaymentApplicationFee() {
     const router = useRouter();
     const { formData, updateFormData } = useOnboardingStore();
 
-    const [subStep, setSubStep] = useState<PaymentSubStep>("summary");
+    const [subStepIndex, setSubStepIndex] = useState(0);
     const [method, setMethod] = useState<PaymentMethod | null>(formData.paymentMethod);
-    const [cardData, setCardData] = useState<CardFormData>(formData.paymentCardDetails);
+    const [cardData, setCardData] = useState<CardFormData>({
+        nameOnCard: "",
+        cardNumber: "",
+        expiry: "",
+        cvv: ""
+    });
+
+    const currentSubStep = PAYMENT_SUBSTEPS[subStepIndex];
+
+    useEffect(() => {
+        updateFormData({ paymentMethod: method });
+    }, [method, updateFormData]);
 
     const handleNext = () => {
-        switch (subStep) {
-            case "summary":
-                setSubStep("method");
-                break;
-            case "method":
-                updateFormData({ paymentMethod: method });
-                setSubStep("details");
-                break;
-            case "details":
-                updateFormData({
-                    paymentCardDetails: cardData,
-                    applicationFeePaid: true
-                });
-                console.log("Payment Saved to Store for:", formData.email);
-                router.push('/onboarding/fundraiser/review');
-                break;
+        const isLastSubStep = subStepIndex === PAYMENT_SUBSTEPS.length - 1;
+
+        if (currentSubStep === "method") {
+            if (!method) return;
+
+            if (method !== "card") {
+                finalizePayment();
+                return;
+            }
+        }
+
+        if (isLastSubStep) {
+            finalizePayment();
+        } else {
+            setSubStepIndex(prev => prev + 1);
         }
     };
 
+    const finalizePayment = () => {
+
+        updateFormData({
+            paymentMethod: method,
+            applicationFeePaid: true,
+        });
+        router.push('/onboarding/fundraiser/review');
+    };
+
     const handleBack = () => {
-        if (subStep === "details") setSubStep("method")
-        else if (subStep === "method") setSubStep("summary")
-        else if (subStep === "summary") window.history.back()
-    }
+        if (subStepIndex > 0) {
+            setSubStepIndex(prev => prev - 1);
+        } else {
+            router.back();
+        }
+    };
 
     const isNextDisabled = useMemo(() => {
-        if (subStep === "method") return !method
-        if (subStep === "details") {
-            return !cardData.nameOnCard || !cardData.cardNumber || !cardData.expiry || !cardData.cvv
+        switch (currentSubStep) {
+            case "method":
+                return !method;
+            case "details":
+                return !cardData.nameOnCard || !cardData.cardNumber || !cardData.expiry || !cardData.cvv;
+            default:
+                return false;
         }
-        return false
-    }, [subStep, method, cardData])
+    }, [currentSubStep, method, cardData]);
 
-    const nextLabel = subStep === "details" ? "Pay" : "Next"
+    const nextLabel = currentSubStep === "details" ? "Pay" : "Next";
 
     return (
         <div className="w-full lg:w-[568px] mx-auto">
@@ -69,15 +94,21 @@ export function PaymentApplicationFee() {
 
             {/* Sub-step content */}
             <main>
-                {subStep === "summary" && <PaymentSummary email={formData.loginEmail} />}
-                {subStep === "method" && <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />}
-                {subStep === "details" && <PaymentCardDetails cardData={cardData} setCardData={setCardData} />}
+                {currentSubStep === "summary" && (
+                    <PaymentSummary email={formData.loginEmail} />
+                )}
+                {currentSubStep === "method" && (
+                    <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />
+                )}
+                {currentSubStep === "details" && (
+                    <PaymentCardDetails cardData={cardData} setCardData={setCardData} />
+                )}
             </main>
 
             <footer className="flex gap-4 mt-10">
                 <div className="flex-1">
                     <OnboardingButton
-                        label={subStep === "summary" ? "Go Back" : "Go back"}
+                        label="Go back"
                         variant="plain"
                         onClick={handleBack}
                         className="mt-0"

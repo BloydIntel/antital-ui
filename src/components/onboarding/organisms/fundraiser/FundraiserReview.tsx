@@ -18,7 +18,7 @@ export function FundraiserReview() {
         setKycSubStep
     } = useOnboardingStore();
 
-    const activeType = (params?.investorUserType as InvestorUserType) || investorUserType || "corporate";
+    const activeType = (params?.investorUserType as InvestorUserType) || investorUserType || "fundraiser";
 
 
     const handleEdit = (section: "representative-kyc" | "company-documentation" | "details" | "address") => {
@@ -27,7 +27,7 @@ export function FundraiserReview() {
         switch (section) {
             case "representative-kyc":
                 setCurrentStep("representative-kyc");
-                setKycSubStep(2);
+                setKycSubStep(1);
                 router.push(`${baseUrl}/representative-kyc`);
                 break;
 
@@ -39,13 +39,13 @@ export function FundraiserReview() {
             case "details":
                 setCurrentStep("company");
                 setFundraiserCompanySubStep(0);
-                router.push(`${baseUrl}/details`);
+                router.push(`${baseUrl}/company`);
                 break;
 
             case "address":
                 setCurrentStep("company");
                 setFundraiserCompanySubStep(1);
-                router.push(`${baseUrl}/address`);
+                router.push(`${baseUrl}/company`);
                 break;
 
             default:
@@ -101,7 +101,7 @@ export function FundraiserReview() {
                 isStatusType
                 onEditClick={() => handleEdit("representative-kyc")}
                 items={[
-                    { label: "Uploaded document", value: "completed" },
+                    { label: "Uploaded document", value: "Completed" },
                     { label: "Payment of Application Fee", value: formData.applicationFeePaid ? "Completed" : "Payment Pending" },
                 ]}
             />

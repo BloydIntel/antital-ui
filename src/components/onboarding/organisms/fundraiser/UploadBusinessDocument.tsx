@@ -19,7 +19,7 @@ interface OfferingField {
 }
 
 const businessDocuments = [
-    { id: 'founderAndTeamItroduction', field: 'founderAndTeamItroduction', title: 'Founder and Team Introduction', required: true },
+    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamItroduction', title: 'Founder and Team Introduction', required: true },
     { id: 'fundraisingDeck', field: 'fundraisingDeck', title: 'Fundraising deck (high-level pitch)', required: true },
     { id: 'investmentMemo', field: 'investmentMemo', title: 'Investment memo/prospectus (thorough analysis)', required: true },
     { id: 'termsOfOffering', field: 'termsOfOffering', title: 'Terms of offering', required: true },
@@ -145,12 +145,24 @@ export function UploadBusinessDocument() {
         [formData.businessSize]);
 
     const isStepValid = useMemo(() => {
-        return businessDocuments
+
+        const areDocsValid = businessDocuments
             .filter(doc => doc.required)
-            .every(doc => {
-                const value = formData[doc.field as keyof typeof formData];
-                return !!value;
-            });
+            .every(doc => !!formData[doc.field as keyof typeof formData]);
+
+
+        const areFieldsFilled = OFFERING_FIELDS.every(field => {
+            const val = formData[field.id as keyof typeof formData];
+            return val !== undefined && val !== null && val !== "";
+        });
+
+        const fundingError = getFundingError(
+            formData.fundingTarget as string,
+            formData.businessSize as string
+        );
+        const isFundingRangeValid = !fundingError;
+
+        return areDocsValid && areFieldsFilled && isFundingRangeValid;
     }, [formData]);
 
     const handleNext = () => {
