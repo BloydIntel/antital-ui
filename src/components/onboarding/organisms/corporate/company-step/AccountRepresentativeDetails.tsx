@@ -75,7 +75,13 @@ const REPRESENTATIVE_FIELDS = [
     }
 ] as const;
 
-export function AccountRepresentativeDetails({ onValidationChange }: { onValidationChange: (isValid: boolean) => void }) {
+export function AccountRepresentativeDetails({
+    onValidationChange,
+    showErrors
+}: {
+    onValidationChange?: (isValid: boolean) => void,
+    showErrors?: boolean
+}) {
     const { formData, updateFormData } = useOnboardingStore()
     const [touched, setTouched] = useState<Record<string, boolean>>({})
 
@@ -94,7 +100,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
 
     useEffect(() => {
         const isValid = !Object.values(errors).some(err => err !== "");
-        onValidationChange(isValid);
+        onValidationChange?.(isValid);
     }, [errors, onValidationChange]);
 
     const handleBlur = (name: string) => setTouched(prev => ({ ...prev, [name]: true }));
@@ -110,7 +116,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                 </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-1">
                 {REPRESENTATIVE_FIELDS.map((fieldGroup, idx) => {
 
                     if ("isGrid" in fieldGroup) {
@@ -119,7 +125,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                                 {fieldGroup.fields.map((field) => {
                                     const fieldName = field.name as keyof typeof formData;
                                     const errorKey = field.name as keyof typeof errors;
-                                    const errorMsg = touched[field.name] ? errors[errorKey] : "";
+                                    const errorMsg = (touched[field.name] || showErrors) ? errors[errorKey] : "";
 
                                     if (field.type === "select") {
                                         return (
@@ -134,6 +140,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                                                     updateFormData({ [field.name]: val });
                                                     handleBlur(field.name);
                                                 }}
+                                                className='pb-0'
                                             />
                                         );
                                     }
@@ -148,6 +155,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                                             error={errorMsg}
                                             onChange={(e) => updateFormData({ [field.name]: e.target.value })}
                                             onBlur={() => handleBlur(field.name)}
+                                            className='pb-0'
                                         />
                                     );
                                 })}
@@ -159,7 +167,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                     const fieldName = fieldGroup.name as keyof typeof formData;
                     const fieldType = 'type' in fieldGroup ? fieldGroup.type : 'text';
                     const errorKey = fieldGroup.name as keyof typeof errors;
-                    const errorMsg = touched[fieldGroup.name] ? errors[errorKey] : "";
+                    const errorMsg = (touched[fieldGroup.name] || showErrors) ? errors[errorKey] : "";
 
                     if (fieldType === "select" && 'options' in fieldGroup) {
                         return (
@@ -174,6 +182,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                                     updateFormData({ [fieldGroup.name]: val });
                                     handleBlur(fieldGroup.name);
                                 }}
+                                className='pb-0'
                             />
                         );
                     }
@@ -188,6 +197,7 @@ export function AccountRepresentativeDetails({ onValidationChange }: { onValidat
                             error={errorMsg}
                             onChange={(e) => updateFormData({ [fieldGroup.name]: e.target.value })}
                             onBlur={() => handleBlur(fieldGroup.name)}
+                            className='pb-0'
                         />
                     );
                 })}

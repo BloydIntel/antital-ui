@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import StepRenderer from "@/components/onboarding/organisms/StepRenderer"
-import { ONBOARDING_CONFIG, StepKey, isKnownOnboardingStep, InvestorUserType, isInvestorUserType, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/components/onboarding/steps"
+import { ONBOARDING_CONFIG, StepKey, isKnownOnboardingStep, InvestorUserType, isInvestorUserType, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/constants/steps"
 import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
 
 const LAST_ALLOWED_STEP_KEY = "onboarding_lastAllowedStep"

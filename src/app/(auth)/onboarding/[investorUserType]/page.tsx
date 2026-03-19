@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { ONBOARDING_CONFIG, isInvestorUserType } from "@/components/onboarding/steps";
+import { ONBOARDING_CONFIG, isInvestorUserType } from "@/constants/steps";
 
 export default async function OnboardingRedirectPage({
     params,

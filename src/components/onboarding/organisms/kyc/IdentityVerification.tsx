@@ -7,8 +7,9 @@ import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload
 import { IncomeVerification } from '@/components/onboarding/organisms/kyc/IncomeVerification'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
-import { CORPORATE_CATEGORY_STEPS, CORPORATE_BASE_KYC, INDIVIDUAL_KYC_SUB_STEPS } from '@/components/onboarding/subSteps'
+import { CORPORATE_CATEGORY_STEPS, CORPORATE_BASE_KYC, INDIVIDUAL_KYC_SUB_STEPS, FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS } from '@/constants/subSteps'
 import { OtherCorporateInvestor } from '@/components/onboarding/organisms/corporate/OtherCorporateInvestor'
+import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/corporate/company-step/AccountRepresentativeDetails'
 
 interface IdentityVerificationProps {
     onNext: () => void
@@ -21,25 +22,52 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
     const subStep = useOnboardingStore((s) => s.kycSubStep);
     const setSubStep = useOnboardingStore((s) => s.setKycSubStep);
     const kycData = useOnboardingStore((s) => s.formData.kycData);
+    const formData = useOnboardingStore((s) => s.formData);
     const categoryId = useOnboardingStore((s) => s.formData.selectedCategoryId);
     const [showErrors, setShowErrors] = useState(false);
 
     const isCorporate = userType === 'corporate';
+    const isFundraiser = userType === 'fundraiser';
 
+    // 1. Correct Step Array logic
     const currentSteps = useMemo(() => {
+        if (isFundraiser) return FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS;
         if (!isCorporate) return INDIVIDUAL_KYC_SUB_STEPS;
+
         const steps = [...CORPORATE_BASE_KYC];
         if (categoryId && CORPORATE_CATEGORY_STEPS[categoryId]) {
             steps.push(CORPORATE_CATEGORY_STEPS[categoryId]);
         }
         return steps;
-    }, [isCorporate, categoryId]);
+    }, [isCorporate, isFundraiser, categoryId]);
 
     const currentHeader = currentSteps[subStep];
 
-    const isStep0Valid = kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile;
-    const isStep1Valid = !!kycData.selfie;
+    const isStep0Valid = useMemo(() => {
+        if (isFundraiser) {
+            return !!(
+                formData.repFullName &&
+                formData.repEmail &&
+                formData.repPhoneNumber &&
+                formData.repJobTitle &&
+                formData.repDob &&
+                formData.repNationality &&
+                formData.repResidence &&
+                formData.repAddress
+            );
+        }
+        return !!(kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
+    }, [isFundraiser, formData, kycData]);
+
+    const isStep1Valid = useMemo(() => {
+        if (isFundraiser) {
+            return !!(kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
+        }
+        return !!kycData.selfie;
+    }, [isFundraiser, kycData]);
+
     const isStep2Valid = useMemo(() => {
+        if (isFundraiser) return true;
         if (isCorporate) {
             if (categoryId === "qii") {
                 return !!(kycData.statusReport && kycData.qiiLicense && kycData.boardResolution);
@@ -47,15 +75,20 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
             return !!(kycData.incorporationCertificate && kycData.statusReport && kycData.boardResolution);
         }
         return kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
-    }, [isCorporate, categoryId, kycData]);
+    }, [isCorporate, isFundraiser, categoryId, kycData]);
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
     const handleNext = () => {
-        if (subStep < 2) {
+        const maxSubStep = currentSteps.length - 1;
+        if (subStep < maxSubStep) {
             setSubStep(subStep + 1);
         } else {
-            if (isAllKycValid) onNext();
+            const isCurrentFlowValid = isFundraiser
+                ? (isStep0Valid && isStep1Valid)
+                : (isStep0Valid && isStep1Valid && isStep2Valid);
+
+            if (isCurrentFlowValid) onNext();
             else setShowErrors(true);
         }
     };
@@ -70,7 +103,7 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
     return (
         <div className="w-full lg:w-[558px] flex flex-col gap-10">
-            <div className="flex flex-col gap-2">
+            {currentHeader.title && <div className="flex flex-col gap-2">
                 <div className="flex flex-col-reverse lg:flex-row justify-between items-start">
                     <h2 className="text-[28px] text-[#1B1B1B] leading-tight font-[family-name:var(--font-rethink-sans)] font-medium tracking-[-1%]">
                         {currentHeader.title}
@@ -81,9 +114,9 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                         )}
                     </h2>
 
-                    {(subStep === 0 || subStep === 2) && (
+                    {((!isFundraiser && (subStep === 0 || subStep === 2)) || (isFundraiser && subStep === 1)) && (
                         <button
-                            className="text-[#0F3D2E] text-sm pl-42 lg:pl-0 font-semibold hover:underline"
+                            className="text-[#0F3D2E] text-sm font-semibold hover:underline"
                             onClick={() => onNext()}
                         >
                             Skip to complete KYC later
@@ -91,12 +124,16 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                     )}
                 </div>
 
-                <p className="text-[16px] text-[#2C2C2C] leading-tight max-w-[500px] font-[family-name:var(--font-dm-sans)] tracking-[-1%]">
-                    {currentHeader.description}
-                </p>
-            </div>
+                {currentHeader.description &&
+                    (<p className="text-[16px] text-[#2C2C2C] leading-tight max-w-[500px] font-[family-name:var(--font-dm-sans)] tracking-[-1%]">
+                        {currentHeader.description}
+                    </p>
+                    )}
+            </div>}
 
             <div>
+                {currentHeader?.id === 'representative' && <AccountRepresentativeDetails showErrors={showErrors} />}
+
                 {currentHeader?.id === 'docs' && <DocumentUpload showErrors={showErrors} />}
                 {currentHeader?.id === 'selfie' && <SelfieUpload showErrors={showErrors} />}
 
@@ -120,7 +157,7 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 />
 
                 <div className="flex gap-2">
-                    {INDIVIDUAL_KYC_SUB_STEPS.map((_, i) => (
+                    {currentSteps.map((_, i) => (
                         <div
                             key={i}
                             className={`h-1.5 rounded-full transition-all duration-300 ${i === subStep ? 'w-8 bg-[#042E27]' : 'w-2 bg-[#E6EEDC]'}`}

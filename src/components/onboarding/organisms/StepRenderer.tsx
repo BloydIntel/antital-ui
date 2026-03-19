@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { StepKey, ONBOARDING_CONFIG, InvestorUserType } from "@/components/onboarding/steps"
+import { StepKey, ONBOARDING_CONFIG, InvestorUserType } from "@/constants/steps"
 
 // Individual Components
 import { PersonalStep } from "@/components/onboarding/organisms/individual/personal-step/PersonalStep"
@@ -17,6 +17,10 @@ import { AccountActivation } from "@/components/onboarding/organisms/AccountActi
 import { CompanyInformation } from "@/components/onboarding/organisms/corporate/company-step/CompanyInformation"
 import { CorporateCategorization } from "@/components/onboarding/organisms/corporate/corporate-categorization/CorporateCategorization"
 import { InvestmentProfile } from "@/components/onboarding/organisms/corporate/InvestmentProfile"
+
+// Fundraiser Components
+import { UploadBusinessDocument } from "./fundraiser/UploadBusinessDocument"
+import { PaymentApplicationFee } from "./fundraiser/payment-application-fee/PaymentApplicationFee"
 
 
 interface StepRendererProps {
@@ -53,6 +57,9 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
         case "email":
             return <EmailStep onNext={navigateToNext} />;
 
+        case "company-documentation":
+            return <UploadBusinessDocument />
+
         case "investor":
             return <InvestorStep onNext={navigateToNext} />;
         case "categorization":
@@ -62,12 +69,17 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return <InvestmentProfile onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "kyc":
+        case "representative-kyc":
             return <IdentityVerification onBack={navigateToBack} onNext={navigateToNext} />;
+
+        case "application-fee":
+            return <PaymentApplicationFee />
 
         case "review":
             return <Review onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "activation":
+        case "application-submitted":
             return <AccountActivation />;
 
         default:
