@@ -1,12 +1,17 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { OnboardingInput } from "@/components/onboarding/molecules/OnboardingInput";
 import { SelectInput } from "@/components/onboarding/molecules/SelectInput";
 import { House } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { useOnboardingStore } from "@/store/onboardingStore";
+
+interface LocationFormProps {
+    showErrors: boolean
+    levelLabel?: string
+}
 
 const COUNTRIES = [
     { label: "Nigeria", value: "nigeria" },
@@ -28,10 +33,8 @@ const NIGERIAN_STATES = [
     { label: "Edo", value: "edo" },
 ];
 
-export function LocationForm({ onValidationChange }: { onValidationChange: (isValid: boolean) => void }) {
-    const formData = useOnboardingStore((s) => s.formData);
-    const updateFormData = useOnboardingStore((s) => s.updateFormData);
-
+export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
+    const { formData, updateFormData } = useOnboardingStore();
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
     const handleChange = (field: keyof typeof formData, value: string | boolean) => {
@@ -52,27 +55,19 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
         agreed: !formData.agreed ? "You must agree to the terms" : ""
     }), [formData]);
 
-    useEffect(() => {
-        const isValid = !Object.values(errors).some(err => err !== "");
-        onValidationChange(isValid);
-    }, [errors, onValidationChange, formData, updateFormData]);
+    const getError = (field: keyof typeof errors) =>
+        (touched[field] || showErrors) ? errors[field] : "";
 
     return (
         <div>
             <section className="max-w-[558px]">
-                <div>
-                    <h2 className="text-[36px] text-[#1B1B1B] leading-tight" style={TYPOGRAPHY.heading}>
-                        Start Your Investment Journey
-                    </h2>
-                    <p className="text-[16px] text-[#2C2C2C] leading-tight" style={TYPOGRAPHY.body}>
-                        Join Nigerians building wealth through startup investing
-                    </p>
-                </div>
 
                 <div className="pt-[32px] flex flex-col gap-1">
-                    <p className="text-[24px] text-[#1B1B1B] leading-tight pb-[9px]" style={TYPOGRAPHY.heading}>
-                        Location Information
-                    </p>
+                    {levelLabel &&
+                        (<p className="text-[24px] text-[#1B1B1B] leading-tight pb-[25px]" style={TYPOGRAPHY.heading}>
+                            {levelLabel}
+                        </p>)
+                    }
 
                     <SelectInput
                         label="Nationality"
@@ -154,8 +149,8 @@ export function LocationForm({ onValidationChange }: { onValidationChange: (isVa
                                 I agree to the Terms of Service and acknowledge the Trading Policies.
                             </label>
                         </div>
-                        {touched.agreed && errors.agreed && (
-                            <span className="text-red-500 text-[12px]">{errors.agreed}</span>
+                        {getError('agreed') && (
+                            <p className="text-red-500 text-[12px] mt-1">{errors.agreed}</p>
                         )}
                     </div>
                 </div>

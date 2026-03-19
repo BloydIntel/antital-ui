@@ -15,17 +15,25 @@ interface CustomChangeEvent {
 }
 
 interface InputProps {
-    label: string
+    label?: string
     error?: string
     icon?: LucideIcon
     className?: string
     type?: string
     placeholder?: string
     value?: string | Date | number | null
-    onChange?: (e: ChangeEvent<HTMLInputElement> | CustomChangeEvent) => void
+    onChange?: (e: OnboardingChangeEvent) => void
     onBlur?: () => void
     name?: string
+    inputAreaStyle?: string
 }
+
+type OnboardingChangeEvent =
+    | ChangeEvent<HTMLInputElement>
+    | ChangeEvent<HTMLTextAreaElement>
+    | CustomChangeEvent;
+
+type OnboardingRef = HTMLInputElement | HTMLTextAreaElement
 
 const getDateObject = (val: unknown): Date | null => {
     if (!val) return null;
@@ -40,19 +48,22 @@ const getDateObject = (val: unknown): Date | null => {
     return null;
 };
 
-export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
-    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, ...props }, ref) => {
+export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
+    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false)
         const isPassword = type === "password"
         const isDate = type === "date"
+        const isTextarea = type === "textarea"
 
         const inputStyles = cn(
             "w-full h-[48px] px-4 rounded-lg",
-            "bg-[#F4F5F7] border-none text-[#1A1A1A]",
+            "bg-[#F4F5F7] text-[#1A1A1A]",
             "placeholder:text-[#858585]",
             "placeholder:text-[12px] lg:placeholder:text-[16px]",
             "focus:ring-2 focus:ring-[#0F3D2E]",
             "transition-all outline-none appearance-none",
+            isTextarea ? "min-h-[120px] py-3 resize-none" : "h-[48px]",
+            inputAreaStyle,
             error && "ring-2 ring-red-500"
         )
 
@@ -60,14 +71,15 @@ export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
 
         return (
             <div className={`w-full flex flex-col gap-2 pb-[16px] ${className || ""}`}>
-                <label
+                {label && <label
                     className="text-[16px] text-[#1A1A1A] leading-tight"
                     style={TYPOGRAPHY.body}
                 >
                     {label}
-                </label>
+                </label>}
 
                 <div className="relative group">
+
                     {isDate ? (
                         <DatePicker
                             selected={getDateObject(value)}
@@ -83,13 +95,24 @@ export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
                             yearDropdownItemNumber={100}
                             className={inputStyles}
                         />
+                    ) : isTextarea ? (
+                        <textarea
+                            ref={ref as React.Ref<HTMLTextAreaElement>}
+                            placeholder={placeholder}
+                            value={typeof value === 'string' ? value : ''}
+                            onChange={onChange}
+                            onBlur={onBlur}
+                            className={inputStyles}
+                            name={props.name}
+                            rows={4}
+                        />
                     ) : (
                         <input
-                            ref={ref}
+                            ref={ref as React.Ref<HTMLInputElement>}
                             type={isPassword ? (showPassword ? "text" : "password") : type}
                             placeholder={placeholder}
                             value={typeof value === 'string' ? value : ''}
-                            onChange={onChange as (e: ChangeEvent<HTMLInputElement>) => void}
+                            onChange={onChange}
                             onBlur={onBlur}
                             className={inputStyles}
                             {...props}
@@ -97,7 +120,7 @@ export const OnboardingInput = React.forwardRef<HTMLInputElement, InputProps>(
                     )}
 
                     {/* Icon for Address/Date/Regular fields */}
-                    {Icon && !isPassword && (
+                    {Icon && !isPassword && !isTextarea && (
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#323232] pointer-events-none">
                             <Icon size={20} />
                         </div>

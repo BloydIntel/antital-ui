@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { QuestionValue, useOnboardingStore } from "@/store/onboardingStore";
 
 interface ReviewItem {
-    label: string;
-    value: QuestionValue | string | File | null;
+    label: string | undefined;
+    value: QuestionValue | string | File | boolean | null;
 }
 
 interface ReviewCardProps {
@@ -22,14 +22,14 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
 
     const formatValue = (item: ReviewItem): string => {
         const val = item.value;
-        const label = item.label.toLowerCase();
+        const label = item.label?.toLowerCase();
         const isCorporate = investorUserType === "corporate";
 
         if (val === null || val === undefined) return "Not set";
 
         if (val instanceof File || val === "File Uploaded") {
             if (isCorporate) {
-                return label.includes("selfie") ? "Verified" : "Uploaded";
+                return label?.includes("selfie") ? "Verified" : "Uploaded";
             }
             return "Completed";
         }
@@ -38,7 +38,7 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
         if (typeof val === "object" && "amount" in val) return val.amount;
 
         if (val === "Completed" && isCorporate) {
-            return label.includes("selfie") ? "Verified" : "Uploaded";
+            return label?.includes("selfie") ? "Verified" : "Uploaded";
         }
 
         return String(val);
@@ -53,10 +53,10 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
                     {isStatusType ? (
 
                         <>
-                            <button onClick={onEditClick} className="hover:opacity-70 transition-all" aria-label="Edit section">
+                            <button onClick={onEditClick} className="hover:opacity-70 transition-all cursor-pointer" aria-label="Edit section">
                                 <SquarePen size={18} className="text-[#2C2C2C]" />
                             </button>
-                            <button className="hover:opacity-70 transition-all">
+                            <button className="hover:opacity-70 transition-all cursor-pointer">
                                 <Trash size={18} className="text-[#2C2C2C]" />
                             </button>
                         </>
@@ -64,7 +64,7 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
 
                         <button
                             onClick={onEditClick}
-                            className="flex items-center gap-2 text-[#A7B832] hover:opacity-70 transition-all"
+                            className="flex items-center gap-2 text-[#A7B832] hover:opacity-70 transition-all cursor-pointer"
                             aria-label="Edit section"
                         >
                             <span className="text-sm font-medium">Edit</span>

@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { TYPOGRAPHY } from '@/constants/styles';
+import { cn } from '@/lib/utils';
 
 export interface SelectOption {
     label: string;
@@ -16,24 +18,34 @@ interface SelectInputProps {
     className?: string;
     label?: string;
     error?: string;
+    selectAreaStyle?: string
 }
 
 export function SelectInput({
     options,
     value,
-    placeholder = "Select an option",
+    placeholder,
     onChange,
     className = "",
     label,
     error,
+    selectAreaStyle = ''
 }: SelectInputProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const displayPlaceholder = placeholder || "-- Select an option --";
+
+    const selectStyles = cn(
+        "w-full h-[48px] px-4 rounded-lg text-sm appearance-none outline-none cursor-pointer transition-all border",
+        selectAreaStyle || "bg-[#F4F5F7] border-transparent",
+        error ? "border-red-500" : "focus:border-[#042E27]",
+        !value ? "text-[#858585]" : "text-[#1A1A1A]"
+    );
+
 
     const selectElement = (
         <div className="relative w-full">
             <select
-                className={`w-full h-[48px] px-4 bg-[#F4F5F7] border rounded-lg text-sm appearance-none outline-none cursor-pointer text-[#858585] transition-all 
-                ${error ? 'border-red-500' : 'border-transparent focus:border-[#042E27]'}`}
+                className={selectStyles}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setIsOpen(false)}
                 onChange={(e) => {
@@ -43,7 +55,7 @@ export function SelectInput({
                 value={value || ""}
             >
                 <option value="" disabled>
-                    {placeholder}
+                    {displayPlaceholder}
                 </option>
 
                 {options.map((option) => (
@@ -67,11 +79,7 @@ export function SelectInput({
             {label && (
                 <label
                     className="text-[16px] text-[#1A1A1A] leading-tight"
-                    style={{
-                        fontFamily: "var(--font-dm-sans)",
-                        fontWeight: 400,
-                        letterSpacing: "-1%",
-                    }}
+                    style={TYPOGRAPHY.body}
                 >
                     {label}
                 </label>

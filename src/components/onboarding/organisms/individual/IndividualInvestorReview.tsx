@@ -4,7 +4,7 @@ import React from "react"
 import { useRouter } from "next/navigation"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { ReviewCard } from "@/components/onboarding/molecules/ReviewCard"
-import { PERSONAL_SUB_STEPS, INDIVIDUAL_KYC_SUB_STEPS } from "@/components/onboarding/subSteps"
+import { PERSONAL_SUB_STEPS, INDIVIDUAL_KYC_SUB_STEPS } from "@/constants/subSteps"
 
 export function IndividualInvestorReview() {
     const router = useRouter();
@@ -68,9 +68,9 @@ export function IndividualInvestorReview() {
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
                 items={[
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[0].title, value: "Completed" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[1].title, value: "Completed" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[2].title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: "Completed" },
                 ]}
             />
         </div>

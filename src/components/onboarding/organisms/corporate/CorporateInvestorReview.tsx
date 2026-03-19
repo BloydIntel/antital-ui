@@ -4,7 +4,7 @@ import React from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { ReviewCard } from "@/components/onboarding/molecules/ReviewCard"
-import { InvestorUserType } from "@/components/onboarding/steps"
+import { InvestorUserType } from "@/constants/steps"
 
 export function CorporateInvestorReview() {
     const router = useRouter();

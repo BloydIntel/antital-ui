@@ -9,10 +9,15 @@ export const COMPANY_SUB_STEPS = [
     { id: 'representative', title: 'Account representative details' }
 ] as const;
 
+export const FUNDRAISER_COMPANY_SUB_STEPS = [
+    { id: 'details', title: 'Company Details' },
+    { id: 'address', title: 'Company Address' },
+] as const;
+
 export interface KYCSubStep {
-    readonly id: 'docs' | 'selfie' | 'income' | 'oci' | 'qii';
-    readonly title: string;
-    readonly description: string;
+    readonly id: 'docs' | 'selfie' | 'income' | 'oci' | 'qii' | 'representative';
+    readonly title?: string;
+    readonly description?: string;
     readonly sideBarTitle: string;
     readonly span?: string;
 }
@@ -32,3 +37,8 @@ export const CORPORATE_CATEGORY_STEPS: Record<string, KYCSubStep> = {
     qii: { id: 'qii', title: "QII KYC", sideBarTitle: "Qualified Institutional Investor", description: "Complete your institutional verification" },
     oci: { id: 'oci', title: "OCI KYC", sideBarTitle: "Other Corporate Investor", description: "Other Corporate Investor Details" },
 };
+
+export const FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS: readonly KYCSubStep[] = [
+    { id: 'representative', sideBarTitle: 'Personal Details', },
+    { id: 'docs', title: 'Account Representative KYC', sideBarTitle: 'Upload your document', description: 'Upload your document' },
+] as const;
