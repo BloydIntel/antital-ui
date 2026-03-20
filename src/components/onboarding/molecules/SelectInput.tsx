@@ -37,10 +37,9 @@ export function SelectInput({
     const selectStyles = cn(
         "w-full h-[48px] px-4 rounded-lg text-sm appearance-none outline-none cursor-pointer transition-all border",
         selectAreaStyle || "bg-[#F4F5F7] border-transparent",
-        error ? "border-red-500" : "focus:border-[#042E27]",
-        !value ? "text-[#858585]" : "text-[#1A1A1A]"
+        !value ? "text-[#858585]" : "text-[#1A1A1A]",
+        error && "ring-2 ring-red-500"
     );
-
 
     const selectElement = (
         <div className="relative w-full">

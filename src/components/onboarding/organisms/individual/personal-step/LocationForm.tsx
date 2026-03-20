@@ -74,7 +74,7 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                         options={COUNTRIES}
                         value={formData.nationality}
                         placeholder="Select nationality"
-                        error={touched.nationality ? errors.nationality : ""}
+                        error={getError('nationality')}
                         onChange={(val) => {
                             handleChange("nationality", val);
                             handleBlur("nationality");
@@ -87,7 +87,7 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                             options={COUNTRIES}
                             value={formData.residence}
                             placeholder="Select country"
-                            error={touched.residence ? errors.residence : ""}
+                            error={getError('residence')}
                             onChange={(val) => {
                                 handleChange("residence", val);
                                 handleBlur("residence");
@@ -98,7 +98,7 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                             options={NIGERIAN_STATES}
                             value={formData.state}
                             placeholder="Select state"
-                            error={touched.state ? errors.state : ""}
+                            error={getError('state')}
                             onChange={(val) => {
                                 handleChange("state", val);
                                 handleBlur("state");
@@ -111,7 +111,7 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                         value={formData.address}
                         placeholder="23A Unity Crescent Lekki Phase 1..."
                         icon={House}
-                        error={touched.address ? errors.address : ""}
+                        error={getError('address')}
                         onChange={(e) => handleChange("address", e.target.value)}
                         onBlur={() => handleBlur("address")}
                     />
@@ -122,7 +122,7 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                             type="password"
                             value={formData.password}
                             placeholder="********"
-                            error={touched.password ? errors.password : ""}
+                            error={getError('password')}
                             onChange={(e) => handleChange("password", e.target.value)}
                             onBlur={() => handleBlur("password")}
                         />
@@ -131,7 +131,7 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                             type="password"
                             value={formData.confirmPassword}
                             placeholder="********"
-                            error={touched.confirmPassword ? errors.confirmPassword : ""}
+                            error={getError('confirmPassword')}
                             onChange={(e) => handleChange("confirmPassword", e.target.value)}
                             onBlur={() => handleBlur("confirmPassword")}
                         />
