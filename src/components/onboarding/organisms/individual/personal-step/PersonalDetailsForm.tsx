@@ -30,8 +30,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
     // Validation Rules
     const errors = useMemo(() => {
         return {
-            firstName: formData.firstName.trim().length < 2 ? "First name is too short" : "",
-            lastName: formData.lastName.trim().length < 2 ? "Last name is too short" : "",
+            firstName: !formData.firstName ? "First name is required" : "",
+            lastName: !formData.lastName ? "Last name is required" : "",
             email: !validateEmail(formData.email) ? "Please enter a valid email address" : "",
             phone: formData.phone.trim().length < 10 ? "Enter a valid phone number" : "",
             dob: !formData.dob ? "Date of birth is required" : ""
