@@ -1,0 +1,58 @@
+import React from 'react'
+import { Input } from '@/components/ui/input'
+import { Search, HelpCircle, Bell, MessageSquare } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { TYPOGRAPHY } from '@/constants/styles'
+
+export function DashboardHeader() {
+    return (
+        <header className="flex h-[52px] items-center justify-between px-8 pt-10">
+            <div className="flex-1 max-w-[523px]">
+                <div className="relative w-full">
+                    <Input
+                        type="search"
+                        placeholder="Search for anything..."
+                        className="h-[48px] px-4 pr-12 bg-white border-[#EAEAEA] rounded-md text-[16px] text-foreground placeholder:text-[#A2A3A1]"
+                        style={TYPOGRAPHY.body}
+                    />
+                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#A2A3A1]" />
+                </div>
+            </div>
+
+            {/* Actions Section */}
+            <div className="flex items-center gap-6">
+                <div className='flex'>
+                    {/* Help Icon */}
+                    <Button variant="ghost" size="icon" className="text-[#1A1C1E]">
+                        <HelpCircle className="h-6 w-6" />
+                    </Button>
+
+                    {/* Notifications Icon with Badge */}
+                    <div className="relative">
+                        <Button variant="ghost" size="icon" className="text-[#1A1C1E]">
+                            <Bell className="h-6 w-6" />
+                        </Button>
+                        <span className="absolute -top-1/20 -right-1/20 flex h-5 w-5 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
+                            4
+                        </span>
+                    </div>
+                </div>
+
+                {/* Chat Button */}
+                <Button
+                    className="bg-[#4379B7] hover:bg-[#366295] h-11 px-6 rounded-md gap-2 text-white font-medium"
+                >
+                    <span>Chat</span>
+                    <MessageSquare className="h-4 w-4" />
+                </Button>
+
+                {/* User Profile */}
+                <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
+                    <AvatarImage src="/path-to-your-user-image.jpg" alt="User" />
+                    <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+            </div>
+        </header>
+    )
+}

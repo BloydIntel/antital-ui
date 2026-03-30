@@ -24,7 +24,7 @@ export function NavMain({
   label,
   items,
 }: {
-  label: string
+  label?: string
   items: {
     title: string
     url: string
@@ -47,8 +47,8 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{label}</SidebarGroupLabel>
-      <SidebarMenu>
+      {label && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
+      <SidebarMenu className="pb-[336px]">
         {items.map((item) => (
           <Collapsible
             key={item.title}
@@ -85,10 +85,15 @@ export function NavMain({
                   </CollapsibleContent>
                 </>
               ) : (
-                <SidebarMenuButton asChild tooltip={item.title} className="cursor-pointer" isActive={pathname === item.url}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  className="cursor-pointer"
+                  isActive={pathname === item.url}
+                >
                   <Link href={item.url}>
                     {item.icon && <item.icon />}
-                    <span>{item.title}</span>
+                    <span className="text-[16px]">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               )}
