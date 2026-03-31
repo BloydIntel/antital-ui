@@ -5,9 +5,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { TYPOGRAPHY } from '@/constants/styles'
 
+const dashboardHeaderData = {
+    notificationBadge: 4,
+    userAvatarURL: "dashboard/User-Avatar.png",
+    userAvatarFallback: "JD"
+
+}
+
 export function DashboardHeader() {
     return (
-        <header className="flex h-[52px] items-center justify-between px-8 pt-10">
+        <header className="flex h-[52px] items-center justify-between px-8 pt-10 pb-8">
             <div className="flex-1 max-w-[523px]">
                 <div className="relative w-full">
                     <Input
@@ -34,23 +41,23 @@ export function DashboardHeader() {
                             <Bell className="h-6 w-6" />
                         </Button>
                         <span className="absolute -top-1/20 -right-1/20 flex h-5 w-5 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
-                            4
+                            {dashboardHeaderData.notificationBadge}
                         </span>
                     </div>
                 </div>
 
                 {/* Chat Button */}
                 <Button
-                    className="bg-[#4379B7] hover:bg-[#366295] h-11 px-6 rounded-md gap-2 text-white font-medium"
+                    className="bg-[#4379B7] hover:bg-[#366295] h-11 px-6 rounded-md gap-2 text-white font-medium cursor-pointer"
                 >
-                    <span>Chat</span>
+                    <span style={TYPOGRAPHY.body}>Chat</span>
                     <MessageSquare className="h-4 w-4" />
                 </Button>
 
                 {/* User Profile */}
                 <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
-                    <AvatarImage src="/path-to-your-user-image.jpg" alt="User" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
+                    <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
                 </Avatar>
             </div>
         </header>

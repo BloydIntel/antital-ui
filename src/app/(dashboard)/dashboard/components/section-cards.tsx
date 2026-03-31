@@ -1,102 +1,89 @@
-import { TrendingDown, TrendingUp } from "lucide-react"
+import { ArrowRight, Wallet, HandCoins, ChartBarIncreasing } from "lucide-react"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
-import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+interface SummaryCardProps {
+  title: string
+  subtitle: string
+  value: string
+  icon: React.ElementType
+  footerText: string
+  isPrimary?: boolean
+}
+
+function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary }: SummaryCardProps) {
+  return (
+    <Card className={cn(
+      "overflow-hidden border-[#EAEAEA] shadow-none rounded-md",
+      isPrimary ? "bg-[#052119] text-white" : "bg-white text-[#1A1C1E]"
+    )}>
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <div className={cn(
+            "p-2 rounded-md",
+            isPrimary ? "bg-white/10" : "bg-[#F4F5F7]"
+          )}>
+            <Icon className={cn("size-6", isPrimary ? "text-white" : "text-[#1A1C1E]")} />
+          </div>
+          <div className="space-y-1">
+            <p className={cn("text-lg font-medium leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")}>
+              {title}
+            </p>
+            <p className={cn("text-xs", isPrimary ? "text-white/60" : "text-[#6A7682]")}>
+              {subtitle}
+            </p>
+          </div>
+        </div>
+        <div className="mt-6">
+          <h3 className="text-3xl font-bold tracking-tight">
+            {value}
+          </h3>
+        </div>
+      </CardContent>
+      <CardFooter className={cn(
+        "px-6 py-3 flex justify-between items-center border-t cursor-pointer hover:opacity-80 transition-opacity",
+        isPrimary ? "bg-white/5 border-white/10" : "bg-[#F4F5F7]/50 border-[#EAEAEA]"
+      )}>
+        <span className={cn("text-sm font-medium", isPrimary ? "text-white" : "text-[#052119]")}>
+          {footerText}
+        </span>
+        <ArrowRight className={cn("size-4", isPrimary ? "text-white" : "text-[#052119]")} />
+      </CardFooter>
+    </Card>
+  )
+}
 
 export function SectionCards() {
+  const cardData = [
+    {
+      title: "Available balance",
+      subtitle: "Overview",
+      value: "₦0.00",
+      icon: Wallet,
+      footerText: "See details",
+      isPrimary: true,
+    },
+    {
+      title: "Total Invested",
+      subtitle: "Total funds committed",
+      value: "₦0.00",
+      icon: HandCoins,
+      footerText: "View Summary",
+    },
+    {
+      title: "Total returns",
+      subtitle: "Overview",
+      value: "₦0.00",
+      icon: ChartBarIncreasing,
+      footerText: "See details",
+    },
+  ]
+
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUp />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month <TrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>New Customers</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingDown />
-              -20%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period <TrendingDown className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUp />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention <TrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUp />
-              +4.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <TrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter>
-      </Card>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {cardData.map((card, index) => (
+        <SummaryCard key={index} {...card} />
+      ))}
     </div>
   )
 }
