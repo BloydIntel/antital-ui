@@ -1,6 +1,7 @@
 import { ArrowRight, Wallet, HandCoins, ChartBarIncreasing } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { TYPOGRAPHY } from "@/constants/styles"
 
 interface SummaryCardProps {
   title: string
@@ -14,40 +15,37 @@ interface SummaryCardProps {
 function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary }: SummaryCardProps) {
   return (
     <Card className={cn(
-      "overflow-hidden border-[#EAEAEA] shadow-none rounded-md",
+      "h-[184px] w-[380px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md",
       isPrimary ? "bg-[#052119] text-white" : "bg-white text-[#1A1C1E]"
     )}>
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
+      <CardContent className="-mt-3">
+        <div className="flex items-center gap-4">
           <div className={cn(
             "p-2 rounded-md",
-            isPrimary ? "bg-white/10" : "bg-[#F4F5F7]"
+            isPrimary ? "bg-white" : "bg-[#E6EAE9]"
           )}>
-            <Icon className={cn("size-6", isPrimary ? "text-white" : "text-[#1A1C1E]")} />
+            <Icon className={cn("size-6 text-[#1A1C1E]")} />
           </div>
-          <div className="space-y-1">
-            <p className={cn("text-lg font-medium leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")}>
+          <div >
+            <p className={cn("text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
               {title}
             </p>
-            <p className={cn("text-xs", isPrimary ? "text-white/60" : "text-[#6A7682]")}>
+            <p className={cn("text-[16px]", isPrimary ? "text-[#F1F1F1]" : "text-[#2C2C2C]")} style={TYPOGRAPHY.body}>
               {subtitle}
             </p>
           </div>
         </div>
-        <div className="mt-6">
-          <h3 className="text-3xl font-bold tracking-tight">
+        <div className="mt-5">
+          <h3 className={cn("text-[28px] tracking-tight", isPrimary ? "text-[#F1F1F1]" : "text-[#1B1B1B]")} style={TYPOGRAPHY.heading}>
             {value}
           </h3>
         </div>
       </CardContent>
-      <CardFooter className={cn(
-        "px-6 py-3 flex justify-between items-center border-t cursor-pointer hover:opacity-80 transition-opacity",
-        isPrimary ? "bg-white/5 border-white/10" : "bg-[#F4F5F7]/50 border-[#EAEAEA]"
-      )}>
-        <span className={cn("text-sm font-medium", isPrimary ? "text-white" : "text-[#052119]")}>
+      <CardFooter className="px-4 py-[13.5px] flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity bg-[#E6EAE9]">
+        <span className="text-[16px] text-[#042E27]" style={TYPOGRAPHY.heading}>
           {footerText}
         </span>
-        <ArrowRight className={cn("size-4", isPrimary ? "text-white" : "text-[#052119]")} />
+        <ArrowRight className="size-4 text-[#052119]" />
       </CardFooter>
     </Card>
   )

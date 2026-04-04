@@ -1,6 +1,6 @@
 "use client"
 
-import { ChartAreaInteractive } from "./components/chart-area-interactive"
+import { PortfolioStatChart } from "./components/chart-area-interactive"
 import { DataTable } from "./components/data-table"
 import { SectionCards } from "./components/section-cards"
 
@@ -71,7 +71,7 @@ export default function Dashboard() {
 
             <div className="@container/main px-4 lg:px-6 space-y-6">
                 <SectionCards />
-                <ChartAreaInteractive />
+                <PortfolioStatChart />
             </div>
             <div className="@container/main">
                 <DataTable
