@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { ApiResponse } from "@/types/api";
-import { ApiError } from "@/lib/api-error";
+import { ApiError, toApiError } from "@/lib/api-error";
 
 /**
  * API base URL. When unset (empty string), requests are relative to the current
@@ -27,8 +27,11 @@ const apiClient = request;
 
 export function unwrap<U>(data: ApiResponse<U>): U {
   if (!data.isSuccess) {
+    const validationMessages = Object.values(data.validationErrors ?? {}).flat();
     const message =
-      data.errors?.length ? data.errors.join(", ") : "Request failed";
+      validationMessages[0] ??
+      data.errors?.[0] ??
+      "Request failed";
     throw new ApiError(
       message,
       data.errors ?? [],
@@ -46,28 +49,48 @@ class ApiClient<T, U = T> {
   }
 
   getAll = async (): Promise<U[]> => {
-    const res = await apiClient.get<ApiResponse<U[]>>(this.endpoint);
-    return unwrap(res.data);
+    try {
+      const res = await apiClient.get<ApiResponse<U[]>>(this.endpoint);
+      return unwrap(res.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
   };
 
   get = async (id: string): Promise<U> => {
-    const res = await apiClient.get<ApiResponse<U>>(`${this.endpoint}/${id}`);
-    return unwrap(res.data);
+    try {
+      const res = await apiClient.get<ApiResponse<U>>(`${this.endpoint}/${id}`);
+      return unwrap(res.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
   };
 
   post = async (data: T): Promise<U> => {
-    const res = await apiClient.post<ApiResponse<U>>(this.endpoint, data);
-    return unwrap(res.data);
+    try {
+      const res = await apiClient.post<ApiResponse<U>>(this.endpoint, data);
+      return unwrap(res.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
   };
 
   put = async (data: T): Promise<U> => {
-    const res = await apiClient.put<ApiResponse<U>>(this.endpoint, data);
-    return unwrap(res.data);
+    try {
+      const res = await apiClient.put<ApiResponse<U>>(this.endpoint, data);
+      return unwrap(res.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
   };
 
   delete = async (id: string): Promise<void> => {
-    const res = await apiClient.delete<ApiResponse<void>>(`${this.endpoint}/${id}`);
-    unwrap(res.data);
+    try {
+      const res = await apiClient.delete<ApiResponse<void>>(`${this.endpoint}/${id}`);
+      unwrap(res.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
   };
 }
 

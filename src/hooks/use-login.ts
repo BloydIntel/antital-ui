@@ -2,10 +2,10 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import authService, { type LoginRequest, type LoginResponse } from "@/services/authService";
 import { CACHE_KEY_USER } from "@/constants";
 import { tokenStorage } from "@/lib/token-storage";
+import { showApiErrorToast } from "@/lib/error-feedback";
 
 export type { LoginRequest, LoginResponse };
 
@@ -28,7 +28,7 @@ const useLogin = () => {
       });
     },
     onError: (err) => {
-      toast.error(err.message);
+      showApiErrorToast(err, "Unable to login.");
     },
   });
 };
