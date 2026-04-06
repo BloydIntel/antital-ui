@@ -91,10 +91,16 @@ export function PersonalStep() {
             </div>
 
             <OnboardingButton
-                label={subStep === 0 ? "Proceed" : "Create Account"}
+                label={
+                    subStep === 0
+                        ? "Proceed"
+                        : isSubmitting
+                          ? "Creating account…"
+                          : "Create Account"
+                }
                 variant="solid"
                 onClick={handleNext}
-                disabled={isSubmitting}
+                loading={isSubmitting}
             />
         </div>
     )

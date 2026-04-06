@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react"
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -5,6 +6,8 @@ interface OnboardingButtonProps {
     label: string
     onClick?: () => void
     disabled?: boolean
+    /** Shows a spinner like the sign-in button while an async action runs. */
+    loading?: boolean
     variant?: 'solid' | 'plain'
     type?: "button" | "submit" | "reset"
     icon?: React.ReactNode
@@ -15,6 +18,7 @@ export function OnboardingButton({
     label,
     onClick,
     disabled,
+    loading = false,
     variant = 'solid',
     type = "button",
     icon,
@@ -28,15 +32,22 @@ export function OnboardingButton({
         plain: "bg-transparent text-[#11110F] border-[#A8A8A8] hover:bg-[#B9C65B]"
     }
 
+    const isBusy = loading || disabled
+
     return (
         <Button
             type={type}
             className={cn(baseStyles, variants[variant], className, "disabled:opacity-50")}
             style={{ fontFamily: "var(--font-rethink-sans)" }}
             onClick={onClick}
-            disabled={disabled}
+            disabled={isBusy}
+            aria-busy={loading}
         >
-            {icon && <span>{icon}</span>}
+            {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
+            ) : (
+                icon && <span className="shrink-0">{icon}</span>
+            )}
             {label}
         </Button>
     )
