@@ -73,11 +73,11 @@ export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => v
                     disabled={isSubmitting}
                 />
                 <OnboardingButton
-                    label={isSubmitting ? "Submitting..." : "Submit"}
+                    label={isSubmitting ? "Submitting…" : "Submit"}
                     variant="solid"
                     onClick={handleSubmit}
                     className="w-[230px]"
-                    disabled={isSubmitting}
+                    loading={isSubmitting}
                 />
             </div>
         </div>

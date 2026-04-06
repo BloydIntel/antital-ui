@@ -184,11 +184,11 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 </div>
 
                 <OnboardingButton
-                    label={isSavingKyc ? "Saving..." : "Next"}
+                    label={isSavingKyc ? "Saving…" : "Next"}
                     onClick={handleNext}
                     icon={<ArrowRight size={20} />}
                     className="flex-row-reverse w-fit"
-                    disabled={isSavingKyc}
+                    loading={isSavingKyc}
                 />
 
             </div>
