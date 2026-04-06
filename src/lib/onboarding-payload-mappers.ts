@@ -195,7 +195,7 @@ export function mapToInvestmentProfilePayload(
 
 function mapKycIdType(idType: string): SaveKycIdType {
   if (idType === "passport") return "InternationalPassport";
-  if (idType === "voters_card") return "DriversLicence";
+  if (idType === "voters_card") return "VotersCard";
   return "NationalIdCard";
 }
 

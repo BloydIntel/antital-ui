@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { VerifyEmailCallback } from "./components/verify-email-callback";
+import { VerifyEmailCallback } from "@/components/auth/organisms/VerifyEmailCallback";
 
 export const metadata: Metadata = {
   title: "Verify Email | Antital",

@@ -107,6 +107,8 @@ export function OnboardingClient({ step, investorUserType }: Props) {
                 return;
             }
 
+            if (!cancelled) setIsHydrationResolved(false);
+
             try {
                 const onboarding = await onboardingService.getOnboarding();
                 if (!cancelled) {

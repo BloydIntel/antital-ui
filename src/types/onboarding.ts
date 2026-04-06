@@ -95,7 +95,7 @@ export interface SaveInvestmentProfilePayload {
   confirmSecHniCriteria: boolean | null;
 }
 
-export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "DriversLicence";
+export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "VotersCard";
 
 export interface SaveKycPayload {
   idType: SaveKycIdType;
