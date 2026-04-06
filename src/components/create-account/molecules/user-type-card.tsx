@@ -1,5 +1,7 @@
 import Image from "next/image"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { PageLoader } from "@/components/ui/page-loader"
 
 const DEFAULT_IMAGES = {
     user: "/create-account/User-icon.png",
@@ -34,6 +36,7 @@ type UserTypeCardProps = CustomImageProps | DefaultImageProps
 export function UserTypeCard(props: UserTypeCardProps) {
     const { title, subTitle, description, src, alt, cardType, userPath, onClick } = props
     const router = useRouter()
+    const [isNavigating, setIsNavigating] = useState(false)
     const imageSrc = src || (cardType ? DEFAULT_IMAGES[cardType] : "")
     const imageAlt = alt || (cardType ? `${cardType} icon` : "icon")
 
@@ -44,11 +47,14 @@ export function UserTypeCard(props: UserTypeCardProps) {
         }
 
         if (userPath) {
+            setIsNavigating(true)
             router.push(`/onboarding/${userPath}`);
         }
     }
 
     return (
+        <>
+            {isNavigating && <PageLoader />}
         <button
             type="button"
             onClick={handleClick}
@@ -82,5 +88,6 @@ export function UserTypeCard(props: UserTypeCardProps) {
                 </p>
             </div>
         </button>
+        </>
     )
 }

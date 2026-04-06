@@ -32,6 +32,19 @@ export function CreateAccount() {
             <div className="grid gap-4 pt-4">
                 <SelectUserType />
             </div>
+
+            <div
+                className="text-center text-base pt-2"
+                style={{
+                    fontFamily: "var(--font-dm-sans)",
+                    fontWeight: 400,
+                }}
+            >
+                Already have an account?{" "}
+                <Link href="/sign-in" className="text-[#7BA147]">
+                    Log in
+                </Link>
+            </div>
         </div>
     )
 }
