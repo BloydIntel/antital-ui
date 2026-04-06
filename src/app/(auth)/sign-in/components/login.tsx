@@ -174,7 +174,7 @@ export function Login({
                 </FormItem>
               )}
             />
-            <a
+            <Link
               href="/auth/forgot-password-2"
               className="text-[#7BA147] ml-auto text-sm lg:text-base"
               style={{
@@ -183,7 +183,7 @@ export function Login({
               }}
             >
               Forgot your password?
-            </a>
+            </Link>
           </div>
 
           <Button
@@ -214,9 +214,9 @@ export function Login({
         }}
       >
         Don&apos;t have an account yet?{" "}
-        <a href="/create-account" className="text-[#7BA147]">
+        <Link href="/create-account" className="text-[#7BA147]">
           Sign up
-        </a>
+        </Link>
       </div>
     </div>
   )

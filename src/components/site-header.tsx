@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -46,14 +47,9 @@ export function SiteHeader() {
               </a>
             </Button>
             <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-              <a
-                href="/landing"
-                rel="noopener noreferrer"
-                target="_blank"
-                className="dark:text-foreground"
-              >
+              <Link href="/landing" className="dark:text-foreground">
                 Landing Page
-              </a>
+              </Link>
             </Button>
             <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
               <a
