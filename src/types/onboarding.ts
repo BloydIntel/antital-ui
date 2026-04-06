@@ -6,6 +6,18 @@ export type ApiOnboardingStep =
   | "Submitted"
   | number;
 
+/** Matches API `OnboardingStatus` (JSON camelCase + numeric enum fallback). */
+export type ApiOnboardingStatus =
+  | "draft"
+  | "submitted"
+  | "underReview"
+  | "activated"
+  | "Draft"
+  | "Submitted"
+  | "UnderReview"
+  | "Activated"
+  | number;
+
 export type ApiInvestorCategory =
   | "Retail"
   | "Sophisticated"
@@ -54,6 +66,8 @@ export interface OnboardingKycDto {
 
 export interface OnboardingResponse {
   currentStep: ApiOnboardingStep;
+  status?: ApiOnboardingStatus;
+  submittedAt?: string | null;
   personalInfo?: OnboardingPersonalInfoDto | null;
   locationInfo?: OnboardingLocationInfoDto | null;
   investorProfile?: OnboardingInvestorProfileDto | null;

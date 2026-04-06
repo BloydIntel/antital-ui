@@ -219,15 +219,17 @@ export function EmailStep({ onNext }: EmailStepProps) {
 
                 <div className="grid grid-cols-2 gap-4 w-full">
                     <OnboardingButton
-                        label={isDeleting ? "Deleting..." : "Delete Account"}
+                        label={isDeleting ? "Deleting…" : "Delete Account"}
                         variant="plain"
                         onClick={handleDeleteAccount}
-                        disabled={isDeleting || isVerifying || isResending}
+                        disabled={isVerifying || isResending}
+                        loading={isDeleting}
                     />
                     <OnboardingButton
-                        label={isVerifying ? "Checking..." : "Verify Email"}
+                        label={isVerifying ? "Checking…" : "Verify Email"}
                         onClick={handleVerifyEmail}
-                        disabled={isVerifying || isResending || isDeleting}
+                        disabled={isResending || isDeleting}
+                        loading={isVerifying}
                     />
                 </div>
 

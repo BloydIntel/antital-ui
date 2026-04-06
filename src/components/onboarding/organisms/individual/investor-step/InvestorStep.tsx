@@ -120,9 +120,10 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                     }}
                 />
                 <OnboardingButton
-                    label={isSavingCategory || isSavingProfile ? "Saving..." : "Proceed"}
+                    label={isSavingCategory || isSavingProfile ? "Saving…" : "Proceed"}
                     onClick={handleProceed}
-                    disabled={!selectedId || isSavingCategory || isSavingProfile}
+                    disabled={!selectedId}
+                    loading={isSavingCategory || isSavingProfile}
                 />
             </div>
         </section>
