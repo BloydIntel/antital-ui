@@ -2,10 +2,10 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import authService from "@/services/authService";
 import { CACHE_KEY_USER } from "@/constants";
 import { tokenStorage } from "@/lib/token-storage";
+import { showApiErrorToast } from "@/lib/error-feedback";
 
 const useLogout = () => {
   const router = useRouter();
@@ -20,7 +20,7 @@ const useLogout = () => {
       router.push("/sign-in");
     },
     onError: (err) => {
-      toast.error(err.message);
+      showApiErrorToast(err, "Unable to logout.");
     },
   });
 };

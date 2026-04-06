@@ -1,10 +1,17 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import StepRenderer from "@/components/onboarding/organisms/StepRenderer"
 import { ONBOARDING_CONFIG, StepKey, isKnownOnboardingStep, InvestorUserType, isInvestorUserType, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/constants/steps"
 import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
+import { tokenStorage } from "@/lib/token-storage"
+import authService from "@/services/authService"
+import onboardingService from "@/services/onboardingService"
+import {
+    buildFormPatchFromOnboarding,
+    mapOnboardingStepToUiStep,
+} from "@/lib/onboarding-hydration"
 
 const LAST_ALLOWED_STEP_KEY = "onboarding_lastAllowedStep"
 
@@ -24,8 +31,12 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         setCurrentStep,
         setLastAllowedStep,
         emailVerified,
-        setInvestorUserType
+        setEmailVerified,
+        setInvestorUserType,
+        updateFormData
     } = useOnboardingStore()
+    const [isAuthResolved, setIsAuthResolved] = useState(false);
+    const [isHydrationResolved, setIsHydrationResolved] = useState(false);
 
     const configData = useMemo(() => {
         const STEPS = ONBOARDING_CONFIG[type]
@@ -42,6 +53,92 @@ export function OnboardingClient({ step, investorUserType }: Props) {
     const isRestricted = !emailVerified && configData.REQUIRING_VERIFICATION.includes(stepKey);
 
     useEffect(() => {
+        let cancelled = false;
+
+        const bootstrapAuth = async () => {
+            // Only bootstrap refresh when user is trying to access steps that require verification.
+            if (!configData.REQUIRING_VERIFICATION.includes(stepKey)) {
+                if (!cancelled) setIsAuthResolved(true);
+                return;
+            }
+
+            const refreshToken = tokenStorage.getRefreshToken();
+            if (!refreshToken) {
+                if (!cancelled) setIsAuthResolved(true);
+                return;
+            }
+
+            try {
+                const data = await authService.refresh(refreshToken);
+                tokenStorage.setAccessToken(data.token);
+                if (data.refreshToken) tokenStorage.setRefreshToken(data.refreshToken);
+                if (!cancelled) {
+                    setEmailVerified(data.isEmailVerified);
+                }
+            } catch {
+                // Ignore bootstrap errors; existing route guard will handle access.
+            } finally {
+                if (!cancelled) setIsAuthResolved(true);
+            }
+        };
+
+        void bootstrapAuth();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [setEmailVerified, configData, stepKey]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const hydrateOnboarding = async () => {
+            if (!isAuthResolved) return;
+
+            // Only individual onboarding currently has this backend contract.
+            if (type !== "individual" || !emailVerified) {
+                if (!cancelled) setIsHydrationResolved(true);
+                return;
+            }
+
+            // Hydrate only for steps after verification.
+            if (!configData.REQUIRING_VERIFICATION.includes(stepKey)) {
+                if (!cancelled) setIsHydrationResolved(true);
+                return;
+            }
+
+            try {
+                const onboarding = await onboardingService.getOnboarding();
+                if (!cancelled) {
+                    updateFormData(buildFormPatchFromOnboarding(onboarding));
+                    const serverStep = mapOnboardingStepToUiStep(onboarding.currentStep);
+                    setCurrentStep(serverStep);
+                }
+            } catch {
+                // Keep the current route even if hydration fails; user can continue.
+            } finally {
+                if (!cancelled) setIsHydrationResolved(true);
+            }
+        };
+
+        void hydrateOnboarding();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        isAuthResolved,
+        type,
+        emailVerified,
+        configData,
+        stepKey,
+        updateFormData,
+        setCurrentStep,
+    ]);
+
+    useEffect(() => {
+        if (!isAuthResolved || !isHydrationResolved) return;
+
         setInvestorUserType(type)
 
         // If route is nonsense, go to start
@@ -79,10 +176,12 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         configData,
         setCurrentStep,
         setInvestorUserType,
-        setLastAllowedStep
+        setLastAllowedStep,
+        isAuthResolved,
+        isHydrationResolved
     ])
 
-    if (!isValid || isRestricted) return null;
+    if (!isAuthResolved || !isHydrationResolved || !isValid || isRestricted) return null;
 
     return (
         <StepRenderer
