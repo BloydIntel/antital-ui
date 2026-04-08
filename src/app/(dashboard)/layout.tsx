@@ -2,9 +2,8 @@
 
 import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SiteFooter } from "@/components/site-footer";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { ThemeCustomizer, ThemeCustomizerTrigger } from "@/components/theme-customizer";
+import { FloatingChatButton } from "@/components/dashboard/FloatingChatButton";
 import { useSidebarConfig } from "@/hooks/use-sidebar-config";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
@@ -13,7 +12,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [themeCustomizerOpen, setThemeCustomizerOpen] = React.useState(false);
   const { config } = useSidebarConfig();
 
   return (
@@ -44,7 +42,6 @@ export default function DashboardLayout({
                 </div>
               </div>
             </div>
-            <SiteFooter />
           </SidebarInset>
         </>
       ) : (
@@ -59,7 +56,6 @@ export default function DashboardLayout({
                 </div>
               </div>
             </div>
-            <SiteFooter />
           </SidebarInset>
           <AppSidebar
             variant={config.variant}
@@ -69,12 +65,7 @@ export default function DashboardLayout({
         </>
       )}
 
-      {/* Theme Customizer */}
-      <ThemeCustomizerTrigger onClick={() => setThemeCustomizerOpen(true)} />
-      <ThemeCustomizer
-        open={themeCustomizerOpen}
-        onOpenChange={setThemeCustomizerOpen}
-      />
+      <FloatingChatButton />
     </SidebarProvider>
   );
 }

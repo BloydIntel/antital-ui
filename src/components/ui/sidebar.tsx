@@ -487,7 +487,7 @@ const sidebarMenuButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: "py-6 text-[#6A7682] [&>svg]:text-[#6A7682] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-[#A7B832] data-[active=true]:text-white data-[active=true]:[&>svg]:text-white",
+        default: "py-6 text-[#6A7682] [&>svg]:text-[#6A7682] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-[#A7B832] data-[active=true]:text-white data-[active=true]:[&>svg]:text-white data-[active=true]:[&>svg]:fill-white",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
