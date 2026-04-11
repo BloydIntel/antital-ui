@@ -1,14 +1,12 @@
 "use client"
 
-import { DashboardSubHeader } from "@/components/dashboard/organisms/DashboardSubHeader"
-import { PortfolioStatChart } from "@/app/(dashboard)/dashboard/components/chart-area-interactive"
+import { DashboardSubHeader } from '@/components/dashboard/organisms/DashboardSubHeader'
+import React, { useState } from 'react'
+import { SectionCards } from '@/app/(dashboard)/dashboard/components/section-cards'
+import { PortfolioStatChart } from '@/app/(dashboard)/dashboard/components/chart-area-interactive'
 import { DataTable } from "@/app/(dashboard)/dashboard/components/data-table"
-import { SectionCards } from "@/app/(dashboard)/dashboard/components/section-cards"
 
-import { useState } from "react"
-
-export function Dashboard() {
-
+export function Portfolio() {
     const [selectedMonth, setSelectedMonth] = useState("This month")
 
     const months = ["This month", "Last month", "October", "September"]
@@ -16,8 +14,8 @@ export function Dashboard() {
     return (
         <main>
             <DashboardSubHeader
-                title="Welcome back, John Doe"
-                desc="Here is a summary of overall data"
+                title="My Portfolio"
+                desc="Manage your investments and track performance"
                 selectedMonth={selectedMonth}
                 months={months}
                 onMonthChange={setSelectedMonth}

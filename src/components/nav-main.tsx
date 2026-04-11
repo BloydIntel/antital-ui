@@ -48,7 +48,7 @@ export function NavMain({
   return (
     <SidebarGroup>
       {label && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
-      <SidebarMenu className="pb-[336px]">
+      <SidebarMenu className="pb-6 lg:pb-[336px]">
         {items.map((item) => (
           <Collapsible
             key={item.title}

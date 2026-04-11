@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { FloatingChatButton } from "@/components/dashboard/FloatingChatButton";
+import { FloatingChatButton } from "@/components/dashboard/molecules/FloatingChatButton";
 import { useSidebarConfig } from "@/hooks/use-sidebar-config";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { DashboardHeader } from "@/components/dashboard/organisms/DashboardHeader";
 
 export default function DashboardLayout({
   children,
@@ -14,10 +14,19 @@ export default function DashboardLayout({
 }) {
   const { config } = useSidebarConfig();
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <SidebarProvider
       style={{
-        "--sidebar-width": "16rem",
+        "--sidebar-width": isMobile ? "50vw" : "16rem",
         "--sidebar-width-icon": "3rem",
         "--header-height": "calc(var(--spacing) * 14)",
         "backgroundColor": "#FFFFFF",
@@ -33,7 +42,6 @@ export default function DashboardLayout({
             className="[h-1024px]"
           />
           <SidebarInset className="bg-[#F8F8F8F8]">
-            {/* <SiteHeader /> */}
             <DashboardHeader />
             <div className="flex flex-1 flex-col">
               <div className="@container/main flex flex-1 flex-col gap-2">

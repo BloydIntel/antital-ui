@@ -3,6 +3,22 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY } from "@/constants/styles"
 
+const formatCurrency = (val: string | number) => {
+  // Extract numbers if a string like "₦1000" is passed, otherwise use number
+  const numericValue = typeof val === "string"
+    ? parseFloat(val.replace(/[^0-9.-]+/g, ""))
+    : val;
+
+  if (isNaN(numericValue)) return "₦0.00";
+
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(numericValue).replace("NGN", "₦");
+};
+
 interface SummaryCardProps {
   title: string
   subtitle: string
@@ -15,29 +31,29 @@ interface SummaryCardProps {
 function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary }: SummaryCardProps) {
   return (
     <Card className={cn(
-      "h-[184px] w-[380px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md",
+      "h-[170px] lg:h-[165px] xl:h-[184px] w-full xl:w-[380px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md",
       isPrimary ? "bg-[#052119] text-white" : "bg-white text-[#1A1C1E]"
     )}>
       <CardContent className="-mt-3">
         <div className="flex items-center gap-4">
           <div className={cn(
-            "p-2 rounded-md",
+            "p-1 xl:p-2 rounded-md",
             isPrimary ? "bg-white" : "bg-[#E6EAE9]"
           )}>
-            <Icon className={cn("size-6 text-[#1A1C1E]")} />
+            <Icon className={cn(" size-5 xl:size-6 text-[#1A1C1E]")} />
           </div>
           <div >
-            <p className={cn("text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
+            <p className={cn("text-[20px] lg:text-[16px] xl:text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
               {title}
             </p>
-            <p className={cn("text-[16px]", isPrimary ? "text-[#F1F1F1]" : "text-[#2C2C2C]")} style={TYPOGRAPHY.body}>
+            <p className={cn("text-[12px] xl:text-[16px]", isPrimary ? "text-[#F1F1F1]" : "text-[#2C2C2C]")} style={TYPOGRAPHY.body}>
               {subtitle}
             </p>
           </div>
         </div>
         <div className="mt-5">
-          <h3 className={cn("text-[28px] tracking-tight", isPrimary ? "text-[#F1F1F1]" : "text-[#1B1B1B]")} style={TYPOGRAPHY.heading}>
-            {value}
+          <h3 className={cn("text-[24px] tracking-tight", isPrimary ? "text-[#F1F1F1]" : "text-[#1B1B1B]")} style={TYPOGRAPHY.heading}>
+            {formatCurrency(value)}
           </h3>
         </div>
       </CardContent>
@@ -78,7 +94,7 @@ export function SectionCards() {
   ]
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {cardData.map((card, index) => (
         <SummaryCard key={index} {...card} />
       ))}

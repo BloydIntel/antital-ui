@@ -4,6 +4,7 @@ import { Search, HelpCircle, Bell, MessageSquare } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { TYPOGRAPHY } from '@/constants/styles'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 
 const dashboardHeaderData = {
     notificationBadge: 4,
@@ -14,7 +15,12 @@ const dashboardHeaderData = {
 
 export function DashboardHeader() {
     return (
-        <header className="flex h-[52px] items-center justify-between px-8 pt-10 pb-8">
+        <header className="flex flex-col-reverse gap-2 md:gap-0 md:flex-row md:h-[52px] items-center justify-between md:px-8 md:pt-10 pt-2 pb-8">
+
+            <div className="absolute left-1 top-4">
+                <SidebarTrigger className="-ml-1 md:hidden" />
+            </div>
+
             <div className="flex-1 max-w-[523px]">
                 <div className="relative w-full">
                     <Input
