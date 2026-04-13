@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Filter, MoreVertical, Search } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TYPOGRAPHY } from "@/constants/styles"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
@@ -74,12 +74,26 @@ export function DataTable() {
             ) : (
               <>
                 <Select>
-                  <SelectTrigger className="py-6 px-4 border-[#A8A8A8] rounded-xs bg-white cursor-pointer">
-                    <SelectGroup>
-                      <SelectLabel className="text-[24px] text-[#000000]" style={{ fontFamily: 'var(--font-clash), sans-serif', fontWeight: 500 }}>Investment Holding</SelectLabel>
-                    </SelectGroup>
+                  <SelectTrigger
+                    className="h-auto py-6 px-4 border-[#A8A8A8] rounded-md bg-white cursor-pointer focus:ring-0 text-black"
+                    style={{
+                      fontFamily: 'var(--font-clash), sans-serif',
+                      fontSize: '24px',
+                      fontWeight: 500
+                    }}
+                  >
+                    {/* Use SelectValue as the slot for the text */}
+                    <SelectValue placeholder="Investment Holding" className="text-[24px]" />
                   </SelectTrigger>
-                  <SelectContent><SelectItem value="sector">Sector</SelectItem></SelectContent>
+
+                  <SelectContent className="bg-white border-[#EAEAEA]">
+
+                    <SelectGroup>
+                      <SelectItem value="sector" className="cursor-pointer">
+                        Sector
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
                 </Select>
                 <p className="text-[16px] text-[#505050] pt-2" style={TYPOGRAPHY.body}>Recent investment performance</p>
               </>
@@ -92,13 +106,18 @@ export function DataTable() {
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#A2A3A1]" />
             </div>
             <Select>
-              <SelectTrigger className="py-2 px-4 border-[#A8A8A8] rounded-xs bg-white">
+              <SelectTrigger className="py-2 px-4 border-[#A8A8A8] rounded-xs bg-white cursor-pointer">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" fill={isPortfolioPage ? "none" : "#000000"} stroke={isPortfolioPage ? "#000000" : "none"} />
+                  <Filter className="h-4 w-4" fill={isPortfolioPage ? "none" : "#000000"} />
                   <span className="text-[16px] text-[#000000]" style={TYPOGRAPHY.heading}>Filter</span>
                 </div>
               </SelectTrigger>
-              <SelectContent><SelectItem value="all">All</SelectItem></SelectContent>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="funding-goal">Funding Goal</SelectItem>
+                <SelectItem value="risk-score">Risk Score</SelectItem>
+                <SelectItem value="amount-raised">Amount Raised</SelectItem>
+              </SelectContent>
             </Select>
             <MoreVertical className="h-5 w-5 text-[#323232] cursor-pointer" />
           </div>

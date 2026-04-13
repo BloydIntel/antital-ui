@@ -39,7 +39,7 @@ export default function DashboardLayout({
             variant={config.variant}
             collapsible={config.collapsible}
             side={config.side}
-            className="[h-1024px]"
+            className="h-[1024px]"
           />
           <SidebarInset className="bg-[#F8F8F8F8]">
             <DashboardHeader />

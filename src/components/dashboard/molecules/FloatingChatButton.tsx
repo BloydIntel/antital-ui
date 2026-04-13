@@ -7,10 +7,13 @@ import { cn } from "@/lib/utils"
 export function FloatingChatButton() {
     const [unreadCount] = React.useState(4)
 
+    const handleClick = () => { }
+
     return (
         <div className="fixed bottom-6 right-6 z-[100]">
             <button
-                onClick={() => console.log("Open Support/Chat")}
+                onClick={handleClick}
+                aria-label="Open support chat"
                 className={cn(
                     "relative flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all active:scale-95 hover:scale-105",
                     "bg-[#3B73B5] text-white"

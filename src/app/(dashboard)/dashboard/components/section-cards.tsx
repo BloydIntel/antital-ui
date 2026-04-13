@@ -1,3 +1,4 @@
+import React from 'react'
 import { ArrowRight, Wallet, HandCoins, ChartBarIncreasing } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"

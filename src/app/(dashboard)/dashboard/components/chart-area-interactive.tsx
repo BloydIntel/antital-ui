@@ -16,7 +16,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectLabel
+  SelectValue
 } from "@/components/ui/select"
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { TYPOGRAPHY } from "@/constants/styles"
@@ -101,15 +101,22 @@ export function PortfolioStatChart() {
           ) : (
             // Dashboard Header (Select Dropdown)
             <Select>
-              <SelectTrigger className="py-6 px-4 border-[#A8A8A8] rounded-xs bg-white cursor-pointer">
-                <SelectGroup>
-                  <SelectLabel className="text-[24px] text-[#000000]" style={{ fontFamily: 'var(--font-clash), sans-serif', fontWeight: 500 }}>
-                    Portfolio Stat
-                  </SelectLabel>
-                </SelectGroup>
+              <SelectTrigger
+                className="h-auto py-6 px-4 border-[#A8A8A8] rounded-md bg-white cursor-pointer focus:ring-0 font-bold text-black"
+                style={{
+                  fontFamily: 'var(--font-clash), sans-serif',
+                  fontSize: '24px',
+                  fontWeight: 500
+                }}
+              >
+                <SelectValue placeholder="Portfolio Stat" />
               </SelectTrigger>
+
               <SelectContent>
-                <SelectItem value="investment-dist">Investment dist</SelectItem>
+                {/* Grouping and Labels belong here */}
+                <SelectGroup>
+                  <SelectItem value="investment-dist">Investment dist</SelectItem>
+                </SelectGroup>
               </SelectContent>
             </Select>
           )}

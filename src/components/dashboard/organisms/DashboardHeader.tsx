@@ -8,7 +8,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 
 const dashboardHeaderData = {
     notificationBadge: 4,
-    userAvatarURL: "dashboard/User-Avatar.png",
+    userAvatarURL: "/dashboard/User-Avatar.png",
     userAvatarFallback: "JD"
 
 }
@@ -42,11 +42,12 @@ export function DashboardHeader() {
                     </Button>
 
                     {/* Notifications Icon with Badge */}
-                    <div className="relative">
+                    <div className="relative inline-flex">
                         <Button variant="ghost" size="icon" className="text-[#1A1C1E]">
                             <Bell className="h-6 w-6" />
                         </Button>
-                        <span className="absolute -top-1/20 -right-1/20 flex h-5 w-5 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
+
+                        <span className="absolute top-0.5 right-0.5 flex h-5 w-5 -mr-1 -mt-1 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
                             {dashboardHeaderData.notificationBadge}
                         </span>
                     </div>

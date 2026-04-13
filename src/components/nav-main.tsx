@@ -46,9 +46,9 @@ export function NavMain({
   }
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className="flex flex-col">
       {label && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
-      <SidebarMenu className="pb-6 lg:pb-[336px]">
+      <SidebarMenu>
         {items.map((item) => (
           <Collapsible
             key={item.title}
@@ -101,6 +101,9 @@ export function NavMain({
           </Collapsible>
         ))}
       </SidebarMenu>
+
+      <div className="flex-1 h-[24px] lg:min-h-[336px]" />
+
     </SidebarGroup>
   )
 }
