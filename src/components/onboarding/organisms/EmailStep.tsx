@@ -1,10 +1,17 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Info } from 'lucide-react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
+import { tokenStorage } from '@/lib/token-storage'
+import authService from '@/services/authService'
+import onboardingService from '@/services/onboardingService'
+import { ApiError } from '@/lib/api-error'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { buildFormPatchFromOnboarding, mapOnboardingStepToUiStep } from '@/lib/onboarding-hydration'
 
 interface EmailStepProps {
     onNext: () => void;
@@ -26,11 +33,103 @@ const fundraiserMessage = {
 }
 
 export function EmailStep({ onNext }: EmailStepProps) {
-    const { setEmailVerified, investorUserType } = useOnboardingStore()
+    const { setEmailVerified, investorUserType, formData, updateFormData, setCurrentStep } = useOnboardingStore()
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [isResending, setIsResending] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const router = useRouter();
 
-    const handleVerifyEmail = () => {
-        setEmailVerified(true)
-        onNext()
+    const handleVerifyEmail = async () => {
+        const refreshToken = tokenStorage.getRefreshToken();
+        if (!refreshToken) {
+            toast.error("Session expired. Please sign in again.");
+            return;
+        }
+
+        setIsVerifying(true);
+        try {
+            const data = await authService.refresh(refreshToken);
+            tokenStorage.setAccessToken(data.token);
+            if (data.refreshToken) tokenStorage.setRefreshToken(data.refreshToken);
+
+            if (data.isEmailVerified) {
+                setEmailVerified(true);
+
+                // For this integration slice, hydrate only individual onboarding from backend progress.
+                if (investorUserType !== "individual") {
+                    onNext();
+                    return;
+                }
+
+                try {
+                    const onboarding = await onboardingService.getOnboarding();
+                    updateFormData(buildFormPatchFromOnboarding(onboarding));
+                    const nextStep = mapOnboardingStepToUiStep(onboarding.currentStep);
+                    setCurrentStep(nextStep);
+                    router.push(`/onboarding/individual/${nextStep}`);
+                } catch (hydrateError) {
+                    if (hydrateError instanceof ApiError) toast.error(hydrateError.primaryMessage);
+                    else if (hydrateError instanceof Error) toast.error(hydrateError.message);
+                    else toast.error("Could not load saved onboarding data. Continuing with current flow.");
+                    onNext();
+                }
+            } else {
+                toast.error("Email not verified yet. Check your inbox and click the verification link.");
+            }
+        } catch (error) {
+            if (error instanceof ApiError) toast.error(error.primaryMessage);
+            else if (error instanceof Error) toast.error(error.message);
+            else toast.error("Unable to verify email status.");
+        } finally {
+            setIsVerifying(false);
+        }
+    }
+
+    const handleResendVerification = async () => {
+        if (!formData.email) {
+            toast.error("Email address is missing. Go back and complete personal details.");
+            return;
+        }
+
+        setIsResending(true);
+        try {
+            await authService.resendVerification(formData.email);
+            toast.success("Verification email resent. Check your inbox.");
+        } catch (error) {
+            if (error instanceof ApiError) toast.error(error.primaryMessage);
+            else if (error instanceof Error) toast.error(error.message);
+            else toast.error("Unable to resend verification email.");
+        } finally {
+            setIsResending(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        const refreshToken = tokenStorage.getRefreshToken();
+        if (!refreshToken) {
+            tokenStorage.clear();
+            router.push("/sign-in");
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const data = await authService.refresh(refreshToken);
+            tokenStorage.setAccessToken(data.token);
+            if (data.refreshToken) tokenStorage.setRefreshToken(data.refreshToken);
+
+            await authService.deleteAccount(data.userId);
+            tokenStorage.clear();
+            setEmailVerified(false);
+            toast.success("Account deleted.");
+            router.push("/sign-in");
+        } catch (error) {
+            if (error instanceof ApiError) toast.error(error.primaryMessage);
+            else if (error instanceof Error) toast.error(error.message);
+            else toast.error("Unable to delete account.");
+        } finally {
+            setIsDeleting(false);
+        }
     }
 
     const isFundraiser = investorUserType === 'fundraiser';
@@ -102,7 +201,16 @@ export function EmailStep({ onNext }: EmailStepProps) {
                                 ...bodyStyle,
                             }}
                         >
-                            Didn&apos;t receive the email? Check your spam folder or click <a href="#" style={{ fontWeight: 700 }}>here</a> to resend
+                            Didn&apos;t receive the email? Check your spam folder or click{" "}
+                            <button
+                                type="button"
+                                onClick={handleResendVerification}
+                                disabled={isResending || isVerifying || isDeleting}
+                                style={{ fontWeight: 700 }}
+                            >
+                                here
+                            </button>{" "}
+                            to resend
                         </p>
 
                     </div>
@@ -110,8 +218,19 @@ export function EmailStep({ onNext }: EmailStepProps) {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 w-full">
-                    <OnboardingButton label="Delete Account" variant="plain" />
-                    <OnboardingButton label="Verify Email" onClick={handleVerifyEmail} />
+                    <OnboardingButton
+                        label={isDeleting ? "Deleting…" : "Delete Account"}
+                        variant="plain"
+                        onClick={handleDeleteAccount}
+                        disabled={isVerifying || isResending}
+                        loading={isDeleting}
+                    />
+                    <OnboardingButton
+                        label={isVerifying ? "Checking…" : "Verify Email"}
+                        onClick={handleVerifyEmail}
+                        disabled={isResending || isDeleting}
+                        loading={isVerifying}
+                    />
                 </div>
 
             </div>

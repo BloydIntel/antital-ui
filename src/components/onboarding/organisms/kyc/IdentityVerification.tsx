@@ -10,6 +10,9 @@ import { useOnboardingStore } from '@/store/onboardingStore'
 import { CORPORATE_CATEGORY_STEPS, CORPORATE_BASE_KYC, INDIVIDUAL_KYC_SUB_STEPS, FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS } from '@/constants/subSteps'
 import { OtherCorporateInvestor } from '@/components/onboarding/organisms/corporate/OtherCorporateInvestor'
 import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/corporate/company-step/AccountRepresentativeDetails'
+import onboardingService from '@/services/onboardingService'
+import { mapToKycPayload } from '@/lib/onboarding-payload-mappers'
+import { showApiErrorToast } from '@/lib/error-feedback'
 
 interface IdentityVerificationProps {
     onNext: () => void
@@ -25,6 +28,7 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
     const formData = useOnboardingStore((s) => s.formData);
     const categoryId = useOnboardingStore((s) => s.formData.selectedCategoryId);
     const [showErrors, setShowErrors] = useState(false);
+    const [isSavingKyc, setIsSavingKyc] = useState(false);
 
     const isCorporate = userType === 'corporate';
     const isFundraiser = userType === 'fundraiser';
@@ -79,7 +83,7 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
-    const handleNext = () => {
+    const handleNext = async () => {
         const maxSubStep = currentSteps.length - 1;
         if (subStep < maxSubStep) {
             setSubStep(subStep + 1);
@@ -88,8 +92,21 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 ? (isStep0Valid && isStep1Valid)
                 : (isStep0Valid && isStep1Valid && isStep2Valid);
 
-            if (isCurrentFlowValid) onNext();
-            else setShowErrors(true);
+            if (!isCurrentFlowValid) {
+                setShowErrors(true);
+                return;
+            }
+
+            setIsSavingKyc(true);
+            try {
+                await onboardingService.saveKyc(mapToKycPayload(kycData));
+                onNext();
+            } catch (error) {
+                showApiErrorToast(error, "Unable to save KYC details.");
+                setShowErrors(true);
+            } finally {
+                setIsSavingKyc(false);
+            }
         }
     };
 
@@ -154,6 +171,7 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                     onClick={handleBack}
                     icon={<ArrowLeft size={20} />}
                     className='w-fit'
+                    disabled={isSavingKyc}
                 />
 
                 <div className="flex gap-2">
@@ -166,10 +184,11 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 </div>
 
                 <OnboardingButton
-                    label="Next"
+                    label={isSavingKyc ? "Saving…" : "Next"}
                     onClick={handleNext}
                     icon={<ArrowRight size={20} />}
                     className="flex-row-reverse w-fit"
+                    loading={isSavingKyc}
                 />
 
             </div>

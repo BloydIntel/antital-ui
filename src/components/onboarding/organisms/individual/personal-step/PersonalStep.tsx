@@ -9,10 +9,14 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import { PERSONAL_SUB_STEPS } from '@/constants/subSteps';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { PersonalSubStepId, validatePersonalStep } from '@/lib/onboardingValidation';
+import authService from '@/services/authService';
+import { tokenStorage } from '@/lib/token-storage';
+import { showApiErrorToast } from '@/lib/error-feedback';
 
 export function PersonalStep() {
-    const { personalSubStep: subStep, setPersonalSubStep: setSubStep, formData } = useOnboardingStore();
+    const { personalSubStep: subStep, setPersonalSubStep: setSubStep, formData, setEmailVerified } = useOnboardingStore();
     const [showErrors, setShowErrors] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const router = useRouter()
 
@@ -26,7 +30,7 @@ export function PersonalStep() {
 
     const canProceed = validatePersonalStep(currentStep.id as PersonalSubStepId, formData);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (!canProceed) {
             setShowErrors(true);
             return;
@@ -34,7 +38,37 @@ export function PersonalStep() {
 
         setShowErrors(false);
         if (isLastSubStep) {
-            router.push('/onboarding/individual/email');
+            setIsSubmitting(true);
+
+            try {
+                const data = await authService.signup({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    preferredName: formData.alias || undefined,
+                    phoneNumber: formData.phone,
+                    dateOfBirth: formData.dob,
+                    nationality: formData.nationality,
+                    countryOfResidence: formData.residence,
+                    stateOfResidence: formData.state,
+                    residentialAddress: formData.address,
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword,
+                    hasAgreedToTerms: formData.agreed,
+                });
+
+                tokenStorage.setAccessToken(data.token);
+                if (data.refreshToken) {
+                    tokenStorage.setRefreshToken(data.refreshToken);
+                }
+                setEmailVerified(data.isEmailVerified);
+
+                router.push('/onboarding/individual/email');
+            } catch (error) {
+                showApiErrorToast(error, "Unable to create account.");
+            } finally {
+                setIsSubmitting(false);
+            }
         } else {
             setSubStep(subStep + 1);
         }
@@ -57,9 +91,16 @@ export function PersonalStep() {
             </div>
 
             <OnboardingButton
-                label={subStep === 0 ? "Proceed" : "Create Account"}
+                label={
+                    subStep === 0
+                        ? "Proceed"
+                        : isSubmitting
+                          ? "Creating account…"
+                          : "Create Account"
+                }
                 variant="solid"
                 onClick={handleNext}
+                loading={isSubmitting}
             />
         </div>
     )

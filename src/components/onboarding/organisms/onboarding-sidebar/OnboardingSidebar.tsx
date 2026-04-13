@@ -7,6 +7,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, OnboardingStep, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/constants/steps"
 import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
 import { SubSteps } from "@/components/onboarding/organisms/onboarding-sidebar/subSteps"
+import { toast } from "sonner"
 
 export default function OnboardingSidebar() {
     const router = useRouter()
@@ -57,7 +58,33 @@ export default function OnboardingSidebar() {
         setLastAllowedStep
     ]);
 
+    const hasMovedPastVerificationGate =
+        emailVerified && !ALLOWED_STEP_BEFORE_VERIFICATION.includes(currentStep);
+
+    const isInReviewLockPhase = ["review", "activation", "application-submitted"].includes(currentStep);
+
+    const isMenuLockedStep = (stepKey: StepKey): boolean => {
+        if (hasMovedPastVerificationGate && ALLOWED_STEP_BEFORE_VERIFICATION.includes(stepKey)) {
+            return true;
+        }
+
+        // Once user reaches review/final stage, keep navigation on the current stage.
+        if (isInReviewLockPhase && stepKey !== currentStep) {
+            return true;
+        }
+
+        return false;
+    };
+
     const handleMainStepClick = (stepKey: StepKey) => {
+        if (isMenuLockedStep(stepKey)) {
+            if (isInReviewLockPhase) {
+                toast.info("Navigation is locked at application review stage.");
+            } else {
+                toast.info("This step is locked after verification.");
+            }
+            return;
+        }
         router.push(`/onboarding/${activeType}/${stepKey}`)
     }
 
@@ -100,6 +127,7 @@ export default function OnboardingSidebar() {
                     const isCompletedOrActive = fullIndex <= currentStepIndex
                     const isCurrentPage = currentStep === step.key
                     const isLast = index === stepsToShow.length - 1
+                    const isLocked = isMenuLockedStep(step.key as StepKey)
 
                     const hasActiveSubsteps = isCurrentPage && step.hasSubsteps;
 
@@ -126,8 +154,10 @@ export default function OnboardingSidebar() {
 
                                 <button
                                     onClick={() => handleMainStepClick(step.key as StepKey)}
+                                    disabled={isLocked}
                                     className={`transition-colors flex items-center h-[48px] text-left
-                                        ${isCompletedOrActive ? "text-[#042E27] font-medium" : "text-[#858585] hover:text-[#042E27]"}`}
+                                        ${isCompletedOrActive ? "text-[#042E27] font-medium" : "text-[#858585] hover:text-[#042E27]"}
+                                        ${isLocked ? "opacity-50 cursor-not-allowed hover:text-[#858585]" : ""}`}
                                 >
                                     <span className="text-[18px] leading-none block font-[family-name:var(--font-dm-sans)] cursor-pointer tracking-[-1%]">
                                         {step.label}

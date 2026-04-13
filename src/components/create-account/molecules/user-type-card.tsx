@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 
@@ -44,7 +46,7 @@ export function UserTypeCard(props: UserTypeCardProps) {
         }
 
         if (userPath) {
-            router.push(`/onboarding/${userPath}`);
+            router.push(`/onboarding/${userPath}`)
         }
     }
 

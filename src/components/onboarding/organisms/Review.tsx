@@ -1,20 +1,35 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Info } from "lucide-react"
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { IndividualInvestorReview } from '@/components/onboarding/organisms/individual/IndividualInvestorReview'
 import { CorporateInvestorReview } from '@/components/onboarding/organisms/corporate/CorporateInvestorReview'
 import { FundraiserReview } from '@/components/onboarding/organisms/fundraiser/FundraiserReview'
+import onboardingService from '@/services/onboardingService'
+import { showApiErrorToast } from '@/lib/error-feedback'
 
 export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => void }) {
     const { investorUserType } = useOnboardingStore();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const ReviewComponents = {
         individual: <IndividualInvestorReview />,
         corporate: <CorporateInvestorReview />,
         fundraiser: <FundraiserReview />
+    };
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            await onboardingService.submitOnboarding();
+            onNext();
+        } catch (error) {
+            showApiErrorToast(error, "Unable to submit onboarding.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -50,8 +65,20 @@ export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => v
             </div>
 
             <div className="flex items-center justify-between pt-8 pb-10">
-                <OnboardingButton label='Back' variant="plain" onClick={onBack} className="w-[115px]" />
-                <OnboardingButton label="Submit" variant="solid" onClick={onNext} className="w-[230px]" />
+                <OnboardingButton
+                    label='Back'
+                    variant="plain"
+                    onClick={onBack}
+                    className="w-[115px]"
+                    disabled={isSubmitting}
+                />
+                <OnboardingButton
+                    label={isSubmitting ? "Submitting…" : "Submit"}
+                    variant="solid"
+                    onClick={handleSubmit}
+                    className="w-[230px]"
+                    loading={isSubmitting}
+                />
             </div>
         </div>
     )
