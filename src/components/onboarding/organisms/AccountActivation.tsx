@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { Clock, Mail, MessageSquare, FileText, UsersRound } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
@@ -56,6 +57,7 @@ const fundraiserSubmissionMessage = [
 ]
 
 export function AccountActivation() {
+    const router = useRouter();
     const { investorUserType } = useOnboardingStore();
     const isCorporate = investorUserType === "corporate";
     const isFundraiser = investorUserType === "fundraiser"
@@ -132,7 +134,7 @@ export function AccountActivation() {
                 }
             </div>
 
-            <OnboardingButton label="Return to Dashboard" className="mt-[32px]" />
+            <OnboardingButton label="Go to Login" className="mt-[32px]" onClick={() => router.push("/sign-in")} />
         </div>
     )
 }

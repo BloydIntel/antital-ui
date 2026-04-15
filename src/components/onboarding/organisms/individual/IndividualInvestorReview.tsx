@@ -68,9 +68,9 @@ export function IndividualInvestorReview() {
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
                 items={[
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: "Completed" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: "Completed" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: "Completed" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: formData.kycData.idFile instanceof File && formData.kycData.idFile.size > 0 ? "Completed" : "Pending" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: formData.kycData.selfie instanceof File && formData.kycData.selfie.size > 0 ? "Completed" : "Pending" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: formData.kycData.incomeFile instanceof File && formData.kycData.incomeFile.size > 0 ? "Completed" : "Pending" },
                 ]}
             />
         </div>
