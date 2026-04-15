@@ -13,13 +13,14 @@ interface LocationFormProps {
     levelLabel?: string
 }
 
+// Only Nigeria is supported for now; other countries will be enabled once the diaspora flow is available.
 const COUNTRIES = [
     { label: "Nigeria", value: "nigeria" },
-    { label: "Ghana", value: "ghana" },
-    { label: "Kenya", value: "kenya" },
-    { label: "South Africa", value: "south_africa" },
-    { label: "Egypt", value: "egypt" },
-    { label: "Cameroon", value: "cameroon" },
+    // { label: "Ghana", value: "ghana" },
+    // { label: "Kenya", value: "kenya" },
+    // { label: "South Africa", value: "south_africa" },
+    // { label: "Egypt", value: "egypt" },
+    // { label: "Cameroon", value: "cameroon" },
 ];
 
 const NIGERIAN_STATES = [
