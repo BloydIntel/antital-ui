@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
 import { MessageCircle } from "lucide-react" // Or "MessageCircle"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 export function FloatingChatButton() {
-    const [unreadCount] = React.useState(4)
+    const [unreadCount] = useState(4)
 
     const handleClick = () => { }
 

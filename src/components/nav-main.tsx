@@ -102,8 +102,6 @@ export function NavMain({
         ))}
       </SidebarMenu>
 
-      <div className="flex-1 h-[24px] lg:min-h-[336px]" />
-
     </SidebarGroup>
   )
 }

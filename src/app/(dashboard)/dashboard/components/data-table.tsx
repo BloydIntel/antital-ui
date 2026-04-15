@@ -62,7 +62,7 @@ export function DataTable() {
   const isEmpty = activeData.length === 0;
 
   return (
-    <div>
+    <div className="px-4 lg:px-6 space-y-6">
       <Card className="shadow-none min-h-[518px] bg-white border-[#EAEAEA]">
         <CardHeader className="flex flex-col xl:flex-row items-center justify-between pb-2">
           <div>
@@ -89,9 +89,10 @@ export function DataTable() {
                   <SelectContent className="bg-white border-[#EAEAEA]">
 
                     <SelectGroup>
-                      <SelectItem value="sector" className="cursor-pointer">
-                        Sector
-                      </SelectItem>
+                      <SelectItem value="sector">Sector</SelectItem>
+                      <SelectItem value="funding-goal">Funding Goal</SelectItem>
+                      <SelectItem value="risk-score">Risk Score</SelectItem>
+                      <SelectItem value="amount-raised">Amount Raised</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -113,7 +114,7 @@ export function DataTable() {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="sector">Sector</SelectItem>
                 <SelectItem value="funding-goal">Funding Goal</SelectItem>
                 <SelectItem value="risk-score">Risk Score</SelectItem>
                 <SelectItem value="amount-raised">Amount Raised</SelectItem>

@@ -1,7 +1,7 @@
 "use client"
 
 import { DashboardSubHeader } from '@/components/dashboard/organisms/DashboardSubHeader'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { SectionCards } from '@/app/(dashboard)/dashboard/components/section-cards'
 import { PortfolioStatChart } from '@/app/(dashboard)/dashboard/components/chart-area-interactive'
 import { DataTable } from "@/app/(dashboard)/dashboard/components/data-table"
@@ -27,10 +27,9 @@ export function Portfolio() {
                 <PortfolioStatChart />
             </div>
 
-            <div className="@container/main px-4 lg:px-6 space-y-6">
-                <DataTable
-                />
-            </div>
+            <DataTable
+            />
+
         </main>
     )
 }

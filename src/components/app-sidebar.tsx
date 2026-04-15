@@ -86,18 +86,18 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props} className="h-[1024px] bg-[#FFFFFF] !static !overflow-visible shrink-0 scrollbar-hide">
+    <Sidebar {...props} className="bg-[#FFFFFF] shrink-0 scrollbar-hide">
       <SidebarHeader className="pt-10 pb-7 bg-[#FFFFFF]">
         <Image
           src="/icons/antital.svg"
           alt="Antital Logo"
           width={80}
           height={80}
-          priority // Good for LCP since it's the logo
+          priority
           className="object-contain"
         />
       </SidebarHeader>
-      <SidebarContent className="overflow-visible scrollbar-hide bg-[#FFFFFF]">
+      <SidebarContent className="flex flex-col justify-between h-full overflow-visible scrollbar-hide bg-[#FFFFFF]">
         {data.navGroups.map((group) => (
           <NavMain key={group.label} items={group.items} />
         ))}

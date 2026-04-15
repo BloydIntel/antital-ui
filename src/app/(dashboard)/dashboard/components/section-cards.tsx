@@ -1,4 +1,3 @@
-import React from 'react'
 import { ArrowRight, Wallet, HandCoins, ChartBarIncreasing } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -31,11 +30,12 @@ interface SummaryCardProps {
 
 function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary }: SummaryCardProps) {
   return (
-    <Card className={cn(
-      "h-[170px] lg:h-[165px] xl:h-[184px] w-full xl:w-[380px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md",
-      isPrimary ? "bg-[#052119] text-white" : "bg-white text-[#1A1C1E]"
-    )}>
-      <CardContent className="-mt-3">
+    <Card className="w-full xl:w-[380px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md"
+    >
+      <CardContent className={cn(
+        "-mt-6 pt-3 pb-6",
+        isPrimary ? "bg-[#052119] text-white" : "bg-white text-[#1A1C1E]"
+      )}>
         <div className="flex items-center gap-4">
           <div className={cn(
             "p-1 xl:p-2 rounded-md",
@@ -58,7 +58,7 @@ function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary
           </h3>
         </div>
       </CardContent>
-      <CardFooter className="px-4 py-[13.5px] flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity bg-[#E6EAE9]">
+      <CardFooter className="-my-6 px-4 py-[13.5px] flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity bg-[#E6EAE9]">
         <span className="text-[16px] text-[#042E27]" style={TYPOGRAPHY.heading}>
           {footerText}
         </span>

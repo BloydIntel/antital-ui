@@ -29,10 +29,10 @@ export function Dashboard() {
                 <PortfolioStatChart />
             </div>
 
-            <div className="@container/main px-4 lg:px-6 space-y-6">
-                <DataTable
-                />
-            </div>
+
+            <DataTable
+            />
+
         </main>
     )
 }

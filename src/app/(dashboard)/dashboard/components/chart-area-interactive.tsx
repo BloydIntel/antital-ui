@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { MoreVertical, Plus } from "lucide-react"
 import Image from "next/image"
@@ -166,7 +165,7 @@ export function PortfolioStatChart() {
       {!isPortfolioPage && (
         <Card className="bg-white">
           <CardHeader className="flex justify-between items-center">
-            <p className="text-[16px]" style={TYPOGRAPHY.heading}>Active Deals</p>
+            <p className="text-[16px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>Active Deals</p>
             <button className="bg-[#042E27] p-1 rounded-sm"><Plus className="h-4 w-4 text-white" /></button>
           </CardHeader>
 

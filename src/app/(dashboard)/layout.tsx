@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { FloatingChatButton } from "@/components/dashboard/molecules/FloatingChatButton";
@@ -39,7 +39,7 @@ export default function DashboardLayout({
             variant={config.variant}
             collapsible={config.collapsible}
             side={config.side}
-            className="h-[1024px]"
+            className="h-screen sticky top-0"
           />
           <SidebarInset className="bg-[#F8F8F8F8]">
             <DashboardHeader />

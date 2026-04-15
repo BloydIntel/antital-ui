@@ -1,4 +1,3 @@
-import React from 'react'
 import { Input } from '@/components/ui/input'
 import { Search, HelpCircle, Bell, MessageSquare } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,6 +13,9 @@ const dashboardHeaderData = {
 }
 
 export function DashboardHeader() {
+    const onHelpIconClick = () => { }
+    const onNotificationIconClick = () => { }
+
     return (
         <header className="flex flex-col-reverse gap-2 md:gap-0 md:flex-row md:h-[52px] items-center justify-between md:px-8 md:pt-10 pt-2 pb-8">
 
@@ -21,7 +23,7 @@ export function DashboardHeader() {
                 <SidebarTrigger className="-ml-1 md:hidden" />
             </div>
 
-            <div className="flex-1 max-w-[523px]">
+            <div className="xl:flex-1 lg:w-2/5 xl:max-w-[523px]">
                 <div className="relative w-full">
                     <Input
                         type="search"
@@ -35,19 +37,19 @@ export function DashboardHeader() {
 
             {/* Actions Section */}
             <div className="flex items-center gap-6">
-                <div className='flex'>
+                <div className='flex gap-2'>
                     {/* Help Icon */}
-                    <Button variant="ghost" size="icon" className="text-[#1A1C1E]">
-                        <HelpCircle className="h-6 w-6" />
-                    </Button>
+                    <div className='flex items-center justify-center cursor-pointer' onClick={onHelpIconClick}>
+                        <HelpCircle />
+                    </div>
 
                     {/* Notifications Icon with Badge */}
                     <div className="relative inline-flex">
-                        <Button variant="ghost" size="icon" className="text-[#1A1C1E]">
-                            <Bell className="h-6 w-6" />
-                        </Button>
+                        <div className='flex items-center justify-center cursor-pointer' onClick={onNotificationIconClick}>
+                            <Bell size={24} className="text-[#1A1C1E]" />
+                        </div>
 
-                        <span className="absolute top-0.5 right-0.5 flex h-5 w-5 -mr-1 -mt-1 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
+                        <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 -mr-1 -mt-1 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
                             {dashboardHeaderData.notificationBadge}
                         </span>
                     </div>
@@ -55,14 +57,14 @@ export function DashboardHeader() {
 
                 {/* Chat Button */}
                 <Button
-                    className="bg-[#4379B7] hover:bg-[#366295] h-11 px-6 rounded-md gap-2 text-white font-medium cursor-pointer"
+                    className="bg-[#4379B7] hover:bg-[#366295] h-12 px-6 rounded-md gap-2 text-white font-medium cursor-pointer"
                 >
                     <span style={TYPOGRAPHY.body}>Chat</span>
                     <MessageSquare className="h-4 w-4" />
                 </Button>
 
                 {/* User Profile */}
-                <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
+                <Avatar className="h-13 w-13 border border-[#EAEAEA] cursor-pointer">
                     <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
                     <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
                 </Avatar>
