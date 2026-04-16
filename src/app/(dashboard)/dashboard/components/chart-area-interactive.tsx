@@ -52,7 +52,7 @@ const activeDealTextStyle = {
   color: "#1F1F1F"
 };
 
-export function PortfolioStatChart() {
+export function PortfolioStatChart({ state = false }: { state: boolean }) {
 
   const pathname = usePathname();
   const isPortfolioPage = pathname === "/portfolio";
@@ -60,8 +60,12 @@ export function PortfolioStatChart() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
 
-  const hasActiveDeals = activeDeals.length > 0;
-  const hasActivePortfolio = useMemo(() => portfolioData.some(d => d.units !== undefined), []);
+  const portfolioHasData = useMemo(() =>
+    portfolioData.some(d => d.units !== undefined),
+    []);
+
+  const hasActiveDeals = state && activeDeals.length > 0;
+  const hasActivePortfolio = state && portfolioHasData;
 
   const handleScrollAction = () => {
     if (scrollRef.current) {

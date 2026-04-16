@@ -53,13 +53,13 @@ const portfolioData: PortfolioInvestment[] = [
   { company: "YieldTrack Global Limited", sector: "Consumer Goods", goal: "₦525,400,000.00", raised: "₦205,320,000.00", invested: "₦57,200.00" }
 ];
 
-export function DataTable() {
+export function DataTable({ state = false }: { state: boolean }) {
   const pathname = usePathname();
   const isPortfolioPage = pathname === "/portfolio";
 
   // Select the appropriate data array based on the route
   const activeData = isPortfolioPage ? portfolioData : investmentData;
-  const isEmpty = activeData.length === 0;
+  const isEmpty = !state || activeData.length === 0;
 
   return (
     <div className="px-4 lg:px-6 space-y-6">
@@ -131,7 +131,7 @@ export function DataTable() {
                 alt="Empty investment holding illustration"
                 src="/dashboard/empty-dashboard-table.png"
                 fill
-                className="object-cover"
+                className="hidden lg:block object-cover"
                 priority
               />
             </div>

@@ -9,7 +9,9 @@ import { DataTable } from "@/app/(dashboard)/dashboard/components/data-table"
 export function Portfolio() {
     const [selectedMonth, setSelectedMonth] = useState("This month")
 
-    const months = ["This month", "Last month", "October", "September"]
+    const months = ["This month", "Last month", "October", "September", "Active"]
+
+    const uiState = selectedMonth === "Active" ? true : false
 
     return (
         <main>
@@ -23,12 +25,11 @@ export function Portfolio() {
             />
 
             <div className="@container/main px-4 lg:px-6 space-y-6">
-                <SectionCards />
-                <PortfolioStatChart />
+                <SectionCards state={uiState} />
+                <PortfolioStatChart state={uiState} />
             </div>
 
-            <DataTable
-            />
+            <DataTable state={uiState} />
 
         </main>
     )

@@ -68,12 +68,12 @@ function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary
   )
 }
 
-export function SectionCards() {
+export function SectionCards({ state = false }: { state: boolean }) {
   const cardData = [
     {
       title: "Available balance",
       subtitle: "Overview",
-      value: "₦0.00",
+      value: state ? "5325400" : "0",
       icon: Wallet,
       footerText: "See details",
       isPrimary: true,
@@ -81,14 +81,14 @@ export function SectionCards() {
     {
       title: "Total Invested",
       subtitle: "Total funds committed",
-      value: "₦0.00",
+      value: state ? "2215200.00" : "0",
       icon: HandCoins,
       footerText: "View Summary",
     },
     {
       title: "Total returns",
       subtitle: "Overview",
-      value: "₦0.00",
+      value: state ? "1215200.00" : "0",
       icon: ChartBarIncreasing,
       footerText: "See details",
     },
