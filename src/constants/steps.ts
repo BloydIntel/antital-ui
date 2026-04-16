@@ -54,3 +54,20 @@ export const isKnownOnboardingStep = (
 }
 
 export const ALLOWED_STEP_BEFORE_VERIFICATION = ["personal", "company", "email"];
+
+
+
+export type OnboardingStatus = 'IN_PROGRESS' | 'PENDING_REVIEW' | 'ACTIVE' | 'REJECTED';
+
+export interface AppUser {
+    id: string;
+    type: InvestorUserType;
+    currentStep: StepKey;
+    onboardingStatus: OnboardingStatus;
+    // Data collected from steps
+    profile?: {
+        firstName: string;
+        lastName: string;
+        isVerified: boolean;
+    };
+}
