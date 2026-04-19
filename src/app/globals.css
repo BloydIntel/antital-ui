@@ -304,3 +304,18 @@ html {
   color: white !important;
   border-radius: 8px !important;
 }
+
+@layer utilities {
+
+  /* This creates the "fade away" look at the bottom */
+  .mask-gradient {
+    -webkit-mask-image: linear-gradient(to bottom,
+        black 0%,
+        black 75%,
+        transparent 98%);
+    mask-image: linear-gradient(to bottom,
+        black 0%,
+        black 75%,
+        transparent 98%);
+  }
+}

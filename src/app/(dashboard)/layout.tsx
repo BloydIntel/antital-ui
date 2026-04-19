@@ -1,28 +1,35 @@
 "use client";
 
-import React from "react";
+import { useState, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { ThemeCustomizer, ThemeCustomizerTrigger } from "@/components/theme-customizer";
-import { UpgradeToProButton } from "@/components/upgrade-to-pro-button";
+import { FloatingChatButton } from "@/components/dashboard/molecules/FloatingChatButton";
 import { useSidebarConfig } from "@/hooks/use-sidebar-config";
+import { DashboardHeader } from "@/components/dashboard/organisms/DashboardHeader";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [themeCustomizerOpen, setThemeCustomizerOpen] = React.useState(false);
   const { config } = useSidebarConfig();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <SidebarProvider
       style={{
-        "--sidebar-width": "16rem",
+        "--sidebar-width": isMobile ? "50vw" : "16rem",
         "--sidebar-width-icon": "3rem",
         "--header-height": "calc(var(--spacing) * 14)",
+        "backgroundColor": "#FFFFFF",
       } as React.CSSProperties}
       className={config.collapsible === "none" ? "sidebar-none-mode" : ""}
     >
@@ -32,9 +39,10 @@ export default function DashboardLayout({
             variant={config.variant}
             collapsible={config.collapsible}
             side={config.side}
+            className="h-screen sticky top-0"
           />
-          <SidebarInset>
-            <SiteHeader />
+          <SidebarInset className="bg-[#F8F8F8F8]">
+            <DashboardHeader />
             <div className="flex flex-1 flex-col">
               <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -42,13 +50,13 @@ export default function DashboardLayout({
                 </div>
               </div>
             </div>
-            <SiteFooter />
           </SidebarInset>
         </>
       ) : (
         <>
-          <SidebarInset>
-            <SiteHeader />
+          <SidebarInset className="bg-[#F8F8F8F8]">
+            {/* <SiteHeader /> */}
+            <DashboardHeader />
             <div className="flex flex-1 flex-col">
               <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -56,7 +64,6 @@ export default function DashboardLayout({
                 </div>
               </div>
             </div>
-            <SiteFooter />
           </SidebarInset>
           <AppSidebar
             variant={config.variant}
@@ -66,13 +73,7 @@ export default function DashboardLayout({
         </>
       )}
 
-      {/* Theme Customizer */}
-      <ThemeCustomizerTrigger onClick={() => setThemeCustomizerOpen(true)} />
-      <ThemeCustomizer
-        open={themeCustomizerOpen}
-        onOpenChange={setThemeCustomizerOpen}
-      />
-      <UpgradeToProButton />
+      <FloatingChatButton />
     </SidebarProvider>
   );
 }
