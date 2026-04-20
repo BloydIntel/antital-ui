@@ -54,6 +54,7 @@ const portfolioData: PortfolioInvestment[] = [
 ];
 
 export function DataTable({ state = false }: { state: boolean }) {
+
   const pathname = usePathname();
   const isPortfolioPage = pathname === "/portfolio";
 

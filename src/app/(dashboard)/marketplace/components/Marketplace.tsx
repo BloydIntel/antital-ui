@@ -7,6 +7,7 @@ import investmentDataRaw from '@/data/dashboardInvestmentData.json'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import Image from 'next/image'
 import { Clock4 } from 'lucide-react'
+import { MarketFilterBar } from '@/components/marketplace/organisms/MarketplaceFilterBar'
 
 const marketTypes = ["Primary Market", "Secondary Market"]
 
@@ -18,14 +19,23 @@ const getInitials = (name: string) => {
         .map(word => word[0])
         .join('')
         .toUpperCase()
-        .slice(0, 2); // Limits to 2 characters (e.g., "GT" for GreenTech)
+        .slice(0, 2);
 };
 
 export function Marketplace() {
     const [activeMarket, setActiveMarket] = useState("Primary Market")
+    const [activeSector, setActiveSector] = useState("All Sector")
+    const [activeRisk, setActiveRisk] = useState("all");
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isAtBottom, setIsAtBottom] = useState(false);
+
+    const filteredData = INVESTMENTS.filter((item) => {
+        const sectorMatch = activeSector === "All Sector" || item.category === activeSector;
+        const riskMatch = activeRisk === "all" || item.risk === activeRisk;
+
+        return sectorMatch && riskMatch;
+    });
 
     const handleScrollAction = () => {
         if (scrollRef.current) {
@@ -87,17 +97,32 @@ export function Marketplace() {
                 </div>
             </div>
 
+            <MarketFilterBar
+                activeSector={activeSector}
+                onSectorChange={setActiveSector}
+                activeRisk={activeRisk}
+                onRiskChange={setActiveRisk}
+            />
+
             {/* Conditional Rendering Area */}
             <div
                 ref={scrollRef}
                 onScroll={onScroll}
-                className="flex flex-col h-[774px] overflow-y-auto px-0 xl:px-6 pt-2"
+                className="flex flex-col h-[774px] overflow-y-auto px-0 pt-2"
             >
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    {INVESTMENTS.filter(item => item.market === activeMarket).map(item => (
-                        <MarketCard key={item.id} data={item} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {filteredData.map((investment) => (
+                        <MarketCard key={investment.id} data={investment} />
                     ))}
                 </div>
+
+                {filteredData.length === 0 && (
+                    <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-xl">
+                        <p className="text-[#505050]" style={TYPOGRAPHY.body}>
+                            No results match your selected filters. Try adjusting your criteria.
+                        </p>
+                    </div>
+                )}
 
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
                     <button
@@ -123,7 +148,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
     );
 }
 
-// Simple Card Component to match screenshot
+// Card Component
 function MarketCard({ data }: { data: InvestmentData }) {
     const hasLogo = data.logoSrc && data.logoSrc.trim() !== "";
 
@@ -131,26 +156,26 @@ function MarketCard({ data }: { data: InvestmentData }) {
 
     return (
         <div className="group border border-[#E0E0E0] rounded-xl p-2 lg:p-5 shadow-sm w-full">
-            <div className='flex justify-between mb-4'>
+            <div className='flex justify-between items-center mb-4'>
                 <div className='flex flex-col lg:flex-row item-start lg:items-center gap-4'>
                     <div className="w-[78px] h-[75px] bg-[#F4F7F6] rounded-lg flex items-center justify-center overflow-hidden border border-[#EAEAEA]">
                         {hasLogo ? (
                             <Image
                                 src={data.logoSrc!}
                                 alt={`${data.name} logo`}
-                                width={48}
-                                height={48}
+                                width={78}
+                                height={75}
                                 className="object-contain"
                             />
                         ) : (
-                            <span className="text-[#1F1F1F] font-bold text-[16px]" style={TYPOGRAPHY.heading}>
+                            <span className="text-[#1F1F1F] font-bold text-[28px]" style={TYPOGRAPHY.heading}>
                                 {getInitials(data.name)}
                             </span>
                         )}
                     </div>
-                    <div>
-                        <h4 className="text-[16px] mb-3 text-[#1F1F1F]" style={TYPOGRAPHY.heading}>{data.name}</h4>
-                        <div className="flex gap-2 mb-4">
+                    <div className="flex flex-col justify-center gap-3">
+                        <h4 className="text-[16px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>{data.name}</h4>
+                        <div className="flex gap-2">
                             <span className="text-[#505050] text-[14px] px-2 py-1 rounded border border-[#75757566]" style={TYPOGRAPHY.body}>{data.category}</span>
                             <span className={`text-[12px] text-[#F6FBEF] px-2 py-2 rounded capitalize`} style={{ backgroundColor }}>
                                 {data.risk === 'moderate' ? 'Medium' : data.risk} Risk
@@ -158,7 +183,7 @@ function MarketCard({ data }: { data: InvestmentData }) {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-start mb-4 self-start">
                     <span className="text-[16px] text-[#858585] flex items-center gap-1">
                         <Clock4 width={24} height={24} className='pr-1' /> {data.daysLeft} days left
                     </span>
@@ -198,7 +223,7 @@ function MarketCard({ data }: { data: InvestmentData }) {
                 </div>
             </div>
 
-            <button className="w-full mt-4 bg-[#00332C] text-white py-3 rounded-lg font-medium 
+            <button className="w-full mt-4 bg-[#00332C] text-white py-3 rounded-lg font-medium cursor-pointer
   transition-all duration-300 ease-in-out
   /* Mobile: Always visible */
   opacity-100 translate-y-0 
