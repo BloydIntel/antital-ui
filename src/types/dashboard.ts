@@ -23,6 +23,13 @@ export interface InvestmentData {
     unitHolding?: number;
     currentValue?: number;
     returns?: number;
+
+    tradeType?: "buy" | "sell";
+    price?: number;
+    priceChange?: number;
+    volume?: number;
+    marketCap?: number;
+    offersCount?: number;
 }
 
 export type MarketType = "Primary Market" | "Secondary Market";

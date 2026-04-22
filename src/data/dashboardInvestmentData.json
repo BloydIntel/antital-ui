@@ -19,7 +19,13 @@
         "currentValue": 1250,
         "returns": 432650,
         "date": "16/02/2026",
-        "market": "Primary Market"
+        "market": "Primary Market",
+        "tradeType": "buy",
+        "price": 1250,
+        "priceChange": 8.5,
+        "volume": 450,
+        "marketCap": 1000000,
+        "offersCount": 3
     },
     {
         "id": "2",
@@ -38,7 +44,13 @@
         "percentage": 89,
         "invested": 0,
         "returns": 0,
-        "market": "Secondary Market"
+        "market": "Secondary Market",
+        "tradeType": "sell",
+        "price": 450,
+        "priceChange": -1.5,
+        "volume": 500,
+        "marketCap": 100000,
+        "offersCount": 5
     },
     {
         "id": "3",
@@ -60,7 +72,13 @@
         "currentValue": 0,
         "returns": 0,
         "date": "12/04/2026",
-        "market": "Primary Market"
+        "market": "Primary Market",
+        "tradeType": "buy",
+        "price": 2050,
+        "priceChange": 0.5,
+        "volume": 150,
+        "marketCap": 2500000,
+        "offersCount": 2
     },
     {
         "id": "4",
@@ -79,7 +97,13 @@
         "percentage": 60,
         "invested": 0,
         "returns": 0,
-        "market": "Secondary Market"
+        "market": "Secondary Market",
+        "tradeType": "sell",
+        "price": 1250,
+        "priceChange": 8.5,
+        "volume": 450,
+        "marketCap": 1000000,
+        "offersCount": 3
     },
     {
         "id": "5",
@@ -98,7 +122,13 @@
         "percentage": 75,
         "invested": 0,
         "returns": 0,
-        "market": "Primary Market"
+        "market": "Primary Market",
+        "tradeType": "buy",
+        "price": 5000,
+        "priceChange": 6,
+        "volume": 250,
+        "marketCap": 2550000,
+        "offersCount": 4
     },
     {
         "id": "6",
@@ -118,7 +148,13 @@
         "invested": 0,
         "returns": 0,
         "date": "12/04/2026",
-        "market": "Primary Market"
+        "market": "Primary Market",
+        "tradeType": "sell",
+        "price": 1250,
+        "priceChange": 8.5,
+        "volume": 450,
+        "marketCap": 1000000,
+        "offersCount": 3
     },
     {
         "id": "7",
@@ -137,7 +173,13 @@
         "percentage": 85,
         "invested": 0,
         "returns": 0,
-        "market": "Secondary Market"
+        "market": "Secondary Market",
+        "tradeType": "buy",
+        "price": 12500,
+        "priceChange": -8.5,
+        "volume": 250,
+        "marketCap": 255000,
+        "offersCount": 20
     },
     {
         "id": "13",
@@ -159,7 +201,13 @@
         "currentValue": 959,
         "returns": 50567,
         "date": "14/02/2026",
-        "market": "Primary Market"
+        "market": "Primary Market",
+        "tradeType": "sell",
+        "price": 25000,
+        "priceChange": 15,
+        "volume": 1000,
+        "marketCap": 10000000,
+        "offersCount": 7
     },
     {
         "id": "14",
@@ -181,7 +229,13 @@
         "currentValue": 856,
         "returns": 2200000,
         "date": "12/02/2026",
-        "market": "Secondary Market"
+        "market": "Secondary Market",
+        "tradeType": "buy",
+        "price": 1850,
+        "priceChange": 4,
+        "volume": 250,
+        "marketCap": 125400000,
+        "offersCount": 10
     },
     {
         "id": "15",
@@ -203,7 +257,13 @@
         "currentValue": 1750,
         "returns": 60760,
         "date": "08/02/2026",
-        "market": "Primary Market"
+        "market": "Primary Market",
+        "tradeType": "sell",
+        "price": 1750,
+        "priceChange": -2.5,
+        "volume": 450,
+        "marketCap": 3005000,
+        "offersCount": 15
     },
     {
         "id": "16",
@@ -223,6 +283,12 @@
         "invested": 0,
         "returns": 0,
         "date": "12/04/2026",
-        "market": "Secondary Market"
+        "market": "Secondary Market",
+        "tradeType": "buy",
+        "price": 100000,
+        "priceChange": 10,
+        "volume": 1500,
+        "marketCap": 100000000,
+        "offersCount": 10
     }
 ]
