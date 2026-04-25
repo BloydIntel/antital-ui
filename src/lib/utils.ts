@@ -6,13 +6,18 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-export const formatCompactNumber = (value: number): string => {
-  if (!value && value !== 0) return "0";
+export const formatCompactNumber = (value: number | null | undefined): string => {
+  // Handle null, undefined, or non-finite numbers (NaN/Infinity)
+  if (value == null || !Number.isFinite(value)) {
+    return "0";
+  }
 
-  // For numbers less than 1000, just return the number
-  if (value < 1000) return value.toString();
+  // Return raw string for small values to avoid "1.0" for small integers
+  if (Math.abs(value) < 1000) {
+    return value.toString();
+  }
 
-  const formatter = Intl.NumberFormat('en', {
+  const formatter = new Intl.NumberFormat('en', {
     notation: 'compact',
     compactDisplay: 'short',
     minimumFractionDigits: 1,

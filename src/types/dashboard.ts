@@ -3,6 +3,7 @@ export interface InvestmentData {
     id: string;
     name: string;
     category: string;
+    sector: string;
     description?: string | null;
     image?: string;
     logoSrc?: string | null;
@@ -16,7 +17,7 @@ export interface InvestmentData {
     investors?: number;
     daysLeft?: number;
     minInvestment?: number;
-    market?: string;
+    market?: MarketType;
 
     // --- User Portfolio Details (Optional based on user holdings) ---
     invested?: number;
@@ -32,9 +33,9 @@ export interface InvestmentData {
     offersCount?: number;
 }
 
-export type MarketType = "Primary Market" | "Secondary Market";
+export type MarketType = "primary" | "secondary";
 export type RiskLevel = "All Risk" | "low" | "moderate" | "high";
-export type Sector = ["All Sector", "Technology", "Health", "Energy", "Agriculture"];
+export type Sector = "All Sector" | "Technology" | "Health" | "Energy" | "Agriculture";
 export const RISK_COLORS: Record<Exclude<RiskLevel, "All Risk">, string> = {
     low: "#94C155",      // Green
     moderate: "#DCA73B", // Medium/Yellow

@@ -3,19 +3,20 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { TYPOGRAPHY } from "@/constants/styles";
+import { MarketType, RiskLevel, Sector } from "@/types/dashboard";
 
 interface MarketFilterBarProps {
-    marketType: "primary" | "secondary";
-    activeSector: string;
-    onSectorChange: (sector: string) => void;
-    activeRisk: string;
-    onRiskChange: (risk: string) => void;
+    marketType: MarketType;
+    activeSector: Sector; // Updated from string
+    onSectorChange: (sector: Sector) => void;
+    activeRisk: RiskLevel | "all";
+    onRiskChange: (risk: RiskLevel | "all") => void;
     tradeType?: "buy" | "sell";
     onTradeTypeChange?: (type: "buy" | "sell") => void;
     onRefresh?: () => void;
 }
 
-const sectors = ["All Sector", "Technology", "Health", "Energy", "Agriculture"];
+const sectors: Sector[] = ["All Sector", "Technology", "Health", "Energy", "Agriculture"];
 
 export function MarketFilterBar({ marketType, activeSector, onSectorChange, activeRisk, onRiskChange, tradeType, onTradeTypeChange, onRefresh }: MarketFilterBarProps) {
 

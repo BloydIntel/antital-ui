@@ -24,9 +24,12 @@ export function SecondaryMarketCard({
     const isBuyMode = tradeType === "buy";
     const hasLogo = data.logoSrc && data.logoSrc.trim() !== "";
 
-    const isPos = data.priceChange! >= 0;
+    const hasPriceChange = data.priceChange !== undefined && data.priceChange !== null;
+    const isPos = hasPriceChange ? data.priceChange! >= 0 : true;
 
-    const textColor = isPos ? "text-[#45B424]" : "text-[#EF4444]";
+    const textColor = hasPriceChange
+        ? (isPos ? "text-[#45B424]" : "text-[#EF4444]")
+        : "text-[#505050]";
     const iconRotation = isPos ? "" : "rotate-90";
 
     return (
@@ -77,13 +80,13 @@ export function SecondaryMarketCard({
                     <div>
                         <p className="text-[16px] text-[#858585] mb-1" style={TYPOGRAPHY.body}>24h Volume</p>
                         <p className="text-[16px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
-                            {formatCompactNumber(data.volume!)} shares
+                            {data.volume != null ? `${formatCompactNumber(data.volume)} shares` : '—'}
                         </p>
                     </div>
                     <div>
                         <p className="text-[16px] text-[#858585] mb-1" style={TYPOGRAPHY.body}>Market Cap</p>
                         <p className="text-[16px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
-                            ₦{formatCompactNumber(data.marketCap!)}
+                            {data.marketCap != null ? `₦${formatCompactNumber(data.marketCap)}` : '—'}
                         </p>
                     </div>
                     <div>
