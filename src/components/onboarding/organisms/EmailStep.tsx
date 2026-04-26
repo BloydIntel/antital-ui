@@ -248,7 +248,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
             </div>
 
             <Dialog open={showDeleteConfirm} onOpenChange={(open) => { if (!isDeleting) setShowDeleteConfirm(open); }}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-md" showCloseButton={!isDeleting}>
                     <DialogHeader>
                         <DialogTitle>Delete Account</DialogTitle>
                         <DialogDescription>
