@@ -12,6 +12,15 @@ import { ApiError } from '@/lib/api-error'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { buildFormPatchFromOnboarding, mapOnboardingStepToUiStep } from '@/lib/onboarding-hydration'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 interface EmailStepProps {
     onNext: () => void;
@@ -37,6 +46,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const router = useRouter();
 
     const handleVerifyEmail = async () => {
@@ -108,6 +118,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
         const refreshToken = tokenStorage.getRefreshToken();
         if (!refreshToken) {
             tokenStorage.clear();
+            setShowDeleteConfirm(false);
             router.push("/sign-in");
             return;
         }
@@ -121,6 +132,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
             await authService.deleteAccount(data.userId);
             tokenStorage.clear();
             setEmailVerified(false);
+            setShowDeleteConfirm(false);
             toast.success("Account deleted.");
             router.push("/sign-in");
         } catch (error) {
@@ -221,8 +233,8 @@ export function EmailStep({ onNext }: EmailStepProps) {
                     <OnboardingButton
                         label={isDeleting ? "Deleting…" : "Delete Account"}
                         variant="plain"
-                        onClick={handleDeleteAccount}
-                        disabled={isVerifying || isResending}
+                        onClick={() => setShowDeleteConfirm(true)}
+                        disabled={isVerifying || isResending || isDeleting}
                         loading={isDeleting}
                     />
                     <OnboardingButton
@@ -234,6 +246,36 @@ export function EmailStep({ onNext }: EmailStepProps) {
                 </div>
 
             </div>
+
+            <Dialog open={showDeleteConfirm} onOpenChange={(open) => { if (!isDeleting) setShowDeleteConfirm(open); }}>
+                <DialogContent className="sm:max-w-md" showCloseButton={!isDeleting}>
+                    <DialogHeader>
+                        <DialogTitle>Delete Account</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowDeleteConfirm(false)}
+                            disabled={isDeleting}
+                            className="cursor-pointer"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteAccount}
+                            disabled={isDeleting}
+                            aria-busy={isDeleting}
+                            className="cursor-pointer"
+                        >
+                            {isDeleting ? "Deleting…" : "Delete Account"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
         </section>
     )
