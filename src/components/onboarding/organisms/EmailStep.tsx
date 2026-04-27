@@ -69,8 +69,8 @@ export function EmailStep({ onNext }: EmailStepProps) {
             if (data.isEmailVerified) {
                 setEmailVerified(true);
 
-                // For this integration slice, hydrate only individual onboarding from backend progress.
-                if (investorUserType !== "individual") {
+                // Hydrate individual and corporate flows from backend progress.
+                if (investorUserType !== "individual" && investorUserType !== "corporate") {
                     onNext();
                     return;
                 }
@@ -78,9 +78,9 @@ export function EmailStep({ onNext }: EmailStepProps) {
                 try {
                     const onboarding = await onboardingService.getOnboarding();
                     updateFormData(buildFormPatchFromOnboarding(onboarding));
-                    const nextStep = mapOnboardingStepToUiStep(onboarding.currentStep);
+                    const nextStep = mapOnboardingStepToUiStep(onboarding.currentStep, investorUserType ?? undefined);
                     setCurrentStep(nextStep);
-                    router.push(`/onboarding/individual/${nextStep}`);
+                    router.push(`/onboarding/${investorUserType}/${nextStep}`);
                 } catch (hydrateError) {
                     if (hydrateError instanceof ApiError) toast.error(hydrateError.primaryMessage);
                     else if (hydrateError instanceof Error) toast.error(hydrateError.message);

@@ -22,6 +22,8 @@ export type ApiInvestorCategory =
   | "Retail"
   | "Sophisticated"
   | "HighNetWorth"
+  | "QualifiedInstitutionalInvestor"
+  | "OtherCorporateInvestor"
   | number
   | null
   | undefined;
@@ -85,6 +87,7 @@ export type ApiNetInvestmentAssetsRange =
 
 export interface SaveInvestmentProfilePayload {
   investorCategory: Exclude<ApiInvestorCategory, number | null | undefined>;
+  // Individual – Retail fields
   highRiskAllocationPast12MonthsPercent: number | null;
   highRiskAllocationNext12MonthsPercent: number | null;
   annualIncomeRange: string | null;
@@ -94,6 +97,7 @@ export interface SaveInvestmentProfilePayload {
   readRiskDisclosureAndSecRules: boolean | null;
   understandsPastPerformanceNoGuarantee: boolean | null;
   awareOfLimitedLiquidity: boolean | null;
+  // Individual – Sophisticated fields
   yearsActivelyInvesting: number | null;
   investmentTypesCommaSeparated: string | null;
   investedInPrivateMarketsBefore: boolean | null;
@@ -102,11 +106,24 @@ export interface SaveInvestmentProfilePayload {
   sourceOfWealthCommaSeparated: string | null;
   sourceOfWealthOther: string | null;
   confirmSecSophisticatedCriteria: boolean | null;
+  // Individual – High Net Worth fields
   netAssetsExceed100m: boolean | null;
   netInvestmentAssetsRange: ApiNetInvestmentAssetsRange | null;
   adequateLiquidityForLosses: boolean | null;
   awareOfLimitedLiquidityHni: boolean | null;
   confirmSecHniCriteria: boolean | null;
+  // Corporate – QII fields (optional)
+  entityType?: string | null;
+  entityTypeOther?: string | null;
+  hasQiiLicense?: boolean | null;
+  hasInvestmentMandate?: boolean | null;
+  confirmSecQiiCriteria?: boolean | null;
+  // Corporate – OCI fields (optional)
+  hasBoardResolutionForInvestment?: boolean | null;
+  companyNetAssetValueRange?: string | null;
+  canWithstandLoss?: boolean | null;
+  corporateUnderstandsCrowdfundingRisk?: boolean | null;
+  hasQualifiedInvestmentProfessionals?: boolean | null;
 }
 
 export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "VotersCard";

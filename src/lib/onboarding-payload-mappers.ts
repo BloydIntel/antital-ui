@@ -230,3 +230,115 @@ export function mapToKycPayload(kycData: KYCData): SaveKycPayload {
         : null,
   };
 }
+
+/**
+ * Maps corporate questionnaire answers to the SaveInvestmentProfilePayload.
+ * Corporate categories: "qii" (Qualified Institutional Investor) and
+ * "oci" (Other Corporate Investor).
+ *
+ * NOTE: API enum values assumed as "QualifiedInstitutionalInvestor" / "OtherCorporateInvestor".
+ * Adjust if the backend uses different casing.
+ */
+export function mapToCorporateInvestmentProfilePayload(
+  selectedCategoryId: string,
+  answers: Record<string, QuestionValue>
+): SaveInvestmentProfilePayload {
+  const base: SaveInvestmentProfilePayload = {
+    investorCategory: "QualifiedInstitutionalInvestor",
+    highRiskAllocationPast12MonthsPercent: null,
+    highRiskAllocationNext12MonthsPercent: null,
+    annualIncomeRange: null,
+    netInvestmentAssetsValue: null,
+    canAffordToLoseWithoutAffectingStability: null,
+    understandsCrowdfundingIsHighRisk: null,
+    readRiskDisclosureAndSecRules: null,
+    understandsPastPerformanceNoGuarantee: null,
+    awareOfLimitedLiquidity: null,
+    yearsActivelyInvesting: null,
+    investmentTypesCommaSeparated: null,
+    investedInPrivateMarketsBefore: null,
+    awareOfLimitedLiquiditySophisticated: null,
+    confirmCrowdfundingAssessment: null,
+    sourceOfWealthCommaSeparated: null,
+    sourceOfWealthOther: null,
+    confirmSecSophisticatedCriteria: null,
+    netAssetsExceed100m: null,
+    netInvestmentAssetsRange: null,
+    adequateLiquidityForLosses: null,
+    awareOfLimitedLiquidityHni: null,
+    confirmSecHniCriteria: null,
+    // Corporate fields default to null
+    entityType: null,
+    entityTypeOther: null,
+    hasQiiLicense: null,
+    hasInvestmentMandate: null,
+    confirmSecQiiCriteria: null,
+    hasBoardResolutionForInvestment: null,
+    companyNetAssetValueRange: null,
+    canWithstandLoss: null,
+    corporateUnderstandsCrowdfundingRisk: null,
+    hasQualifiedInvestmentProfessionals: null,
+  };
+
+  if (selectedCategoryId === "qii") {
+    base.investorCategory = "QualifiedInstitutionalInvestor";
+
+    const entityTypeVal = answers["What type of institutional entity do you represent?"];
+    if (typeof entityTypeVal === "object" && !Array.isArray(entityTypeVal) && entityTypeVal) {
+      base.entityType =
+        Array.isArray(entityTypeVal.selections) && entityTypeVal.selections.length > 0
+          ? entityTypeVal.selections[0]
+          : null;
+      base.entityTypeOther =
+        typeof entityTypeVal.amount === "string" && entityTypeVal.amount.trim() !== ""
+          ? entityTypeVal.amount
+          : null;
+    } else if (typeof entityTypeVal === "string") {
+      base.entityType = entityTypeVal || null;
+    }
+
+    base.hasQiiLicense = toBooleanYesNo(
+      answers[
+        "Does your institution have a valid registration or license as Qualified Institutional Investor?"
+      ]
+    );
+    base.hasInvestmentMandate = toBooleanYesNo(
+      answers[
+        "Does your institution have an approved investment mandate that allows participation in alternative or high-risk investments such as crowdfunding?"
+      ]
+    );
+    base.confirmSecQiiCriteria = toBooleanYesNo(
+      answers[
+        "Do you confirm that your institution meets the SEC Nigeria criteria for a Qualified Institutional Investor and consent to be categorized as such on Antital?"
+      ]
+    );
+    return base;
+  }
+
+  // OCI – Other Corporate Investor
+  base.investorCategory = "OtherCorporateInvestor";
+  base.hasBoardResolutionForInvestment = toBooleanYesNo(
+    answers[
+      "Does the company have a Board resolution or internal approval mandate permitting investment in private, alternative, or high-risk opportunities?"
+    ]
+  );
+  const rangeVal = answers["What is the company\u2019s approximate net asset value?"];
+  base.companyNetAssetValueRange =
+    typeof rangeVal === "string" && rangeVal.trim() !== "" ? rangeVal : null;
+  base.canWithstandLoss = toBooleanYesNo(
+    answers[
+      "Does the company have the financial capacity to withstand loss of invested funds without impairing operations or liquidity?"
+    ]
+  );
+  base.corporateUnderstandsCrowdfundingRisk = toBooleanYesNo(
+    answers[
+      "Does the company understand that crowdfunding investments are high-risk and may result in partial or total loss of capital?"
+    ]
+  );
+  base.hasQualifiedInvestmentProfessionals = toBooleanYesNo(
+    answers[
+      "Does your institution employ or have access to qualified investment professionals who can evaluate high-risk or complex offerings?"
+    ]
+  );
+  return base;
+}

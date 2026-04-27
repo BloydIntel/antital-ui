@@ -95,8 +95,8 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         const hydrateOnboarding = async () => {
             if (!isAuthResolved) return;
 
-            // Only individual onboarding currently has this backend contract.
-            if (type !== "individual" || !emailVerified) {
+            // Only individual and corporate onboarding have this backend contract.
+            if ((type !== "individual" && type !== "corporate") || !emailVerified) {
                 if (!cancelled) setIsHydrationResolved(true);
                 return;
             }
@@ -113,7 +113,7 @@ export function OnboardingClient({ step, investorUserType }: Props) {
                 const onboarding = await onboardingService.getOnboarding();
                 if (!cancelled) {
                     updateFormData(buildFormPatchFromOnboarding(onboarding));
-                    const serverStep = mapOnboardingStepToUiStep(onboarding.currentStep);
+                    const serverStep = mapOnboardingStepToUiStep(onboarding.currentStep, type);
                     setCurrentStep(serverStep);
                 }
             } catch {

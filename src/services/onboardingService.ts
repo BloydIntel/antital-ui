@@ -41,7 +41,14 @@ async function saveOnboarding(requestBody: SaveOnboardingRequest): Promise<void>
   }
 }
 
-async function saveInvestorCategory(investorCategory: "Retail" | "Sophisticated" | "HighNetWorth"): Promise<void> {
+async function saveInvestorCategory(
+  investorCategory:
+    | "Retail"
+    | "Sophisticated"
+    | "HighNetWorth"
+    | "QualifiedInstitutionalInvestor"
+    | "OtherCorporateInvestor"
+): Promise<void> {
   await saveOnboarding({
     step: "InvestorCategory",
     investorCategoryPayload: { investorCategory },
