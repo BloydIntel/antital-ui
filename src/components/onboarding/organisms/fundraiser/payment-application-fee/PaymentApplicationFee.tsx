@@ -4,17 +4,25 @@ import { useState, useMemo, useEffect } from "react"
 import { PaymentMethod, CardFormData } from "@/types/payment"
 import { TYPOGRAPHY } from "@/constants/styles"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 import { PaymentSummary } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentSummary"
 import { PaymentMethodSelect } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentMethodSelect"
 import { PaymentCardDetails } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentCardDetails"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
+import { useUserStore } from "@/store/userStore"
+
+const companyDetails = {
+    name: "Green Tech Solution"
+}
 
 export function PaymentApplicationFee() {
+    const pathName = usePathname()
     const router = useRouter();
     const { formData, updateFormData } = useOnboardingStore();
+
+    const userId = useUserStore((state) => state.userId);
 
     const [subStepIndex, setSubStepIndex] = useState(0);
     const [method, setMethod] = useState<PaymentMethod | null>(formData.paymentMethod);
@@ -24,6 +32,8 @@ export function PaymentApplicationFee() {
         expiry: "",
         cvv: ""
     });
+
+    const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
 
     const currentSubStep = PAYMENT_SUBSTEPS[subStepIndex];
 
@@ -83,19 +93,42 @@ export function PaymentApplicationFee() {
     return (
         <div className="w-full lg:w-[568px] mx-auto">
 
-            <header className="mb-8">
-                <h2 className="text-[28px] text-[#1B1B1B] font-bold" style={TYPOGRAPHY.heading}>
-                    Payment of Application Fee
-                </h2>
-                <p className="text-[16px] text-[#2C2C2C] mt-2" style={TYPOGRAPHY.body}>
-                    Confirm application by paying application fee
-                </p>
-            </header>
+            {isFundraiserPaymentPage ? (
+                <header className="mb-8">
+                    <h2 className="text-[28px] text-[#1B1B1B] font-bold" style={TYPOGRAPHY.heading}>
+                        Payment of Application Fee
+                    </h2>
+                    <p className="text-[16px] text-[#2C2C2C] mt-2" style={TYPOGRAPHY.body}>
+                        Confirm application by paying application fee
+                    </p>
+                </header>
+            ) : (
+                <header className="mb-8">
+                    <div className="flex justify-between">
+                        <h2 className="text-[24px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
+                            Stage 1: Invest in {companyDetails.name}
+                        </h2>
+
+                        {/* To be made dymanic later */}
+                        <p className="text-[#505050]">1/4</p>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                        {[1, 2, 3, 4].map((step) => (
+                            <div
+                                key={step}
+                                className={`h-1.5 flex-1 rounded-full ${step === 1 ? 'bg-[#062F24]' : 'bg-[#D9E3C8]'}`}
+                            />
+                        ))}
+                    </div>
+                </header>
+            )}
 
             {/* Sub-step content */}
             <main>
                 {currentSubStep === "summary" && (
-                    <PaymentSummary email={formData.loginEmail} />
+                    isFundraiserPaymentPage
+                        ? <PaymentSummary email={formData.loginEmail} isFundraiserPaymentPage />
+                        : <PaymentSummary userId={userId!} isFundraiserPaymentPage />
                 )}
                 {currentSubStep === "method" && (
                     <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />
