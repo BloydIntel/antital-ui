@@ -193,11 +193,11 @@ export function DataTable({ state = false }: { state: boolean }) {
                     </>
                   ) : (
                     <>
-                      <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>Funding Goal</TableHead>
-                      <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>Amount raised</TableHead>
-                      <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>Minimum investment</TableHead>
-                      <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>Risk Score</TableHead>
-                      <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}></TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Funding Goal</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Amount raised</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Minimum investment</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Risk Score</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}></TableHead>
                     </>
                   ))}
                 </TableRow>
@@ -228,18 +228,23 @@ export function DataTable({ state = false }: { state: boolean }) {
                 ) : (
                   (activeData as MarketplaceInvestment[]).map((row, index) => (
                     <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#F4F7F6]">
-                      <TableCell className="py-4 font-medium text-[#595959]">{row.name}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.fundingGoal}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.amountRaised}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.minInvestment}</TableCell>
-                      <TableCell className="py-4">
-                        <span className={`px-3 py-1 rounded-md text-white text-[12px] capitalize`} style={{ backgroundColor: RISK_COLORS[row.riskScore] }}>
-                          {row.riskScore === 'moderate' ? 'Medium' : row.riskScore} Risk
-                        </span>
+                      <TableCell className="py-4 align-middle font-medium text-[#595959]">{row.name}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585]">{row.sector}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.fundingGoal}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.amountRaised}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.minInvestment}</TableCell>
+                      <TableCell className="py-4 align-middle">
+                        <div className="flex items-center justify-center h-full">
+                          <span 
+                            className="px-3 py-1 rounded-md text-white text-[12px] capitalize inline-block" 
+                            style={{ backgroundColor: RISK_COLORS[row.riskScore] }}
+                          >
+                            {row.riskScore === 'moderate' ? 'Medium' : row.riskScore} Risk
+                          </span>
+                        </div>
                       </TableCell>
-                      <TableCell className="py-4 text-right">
-                        <button className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] hover:bg-gray-50 transition-colors">
+                      <TableCell className="py-4 align-middle text-center">
+                        <button className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
                           Invest Now
                         </button>
                       </TableCell>

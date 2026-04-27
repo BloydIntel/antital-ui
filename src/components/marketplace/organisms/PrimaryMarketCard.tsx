@@ -3,6 +3,7 @@ import { InvestmentData, RISK_COLORS } from "@/types/dashboard";
 import { ProgressBar } from '@/components/ui/progress-bar'
 import Image from 'next/image'
 import { Clock4 } from 'lucide-react'
+import { useRouter } from "next/navigation";
 
 const getInitials = (name: string) => {
     return name
@@ -14,12 +15,19 @@ const getInitials = (name: string) => {
 };
 
 export function PrimaryMarketCard({ data }: { data: InvestmentData }) {
+    const router = useRouter()
+
     const hasLogo = data.logoSrc && data.logoSrc.trim() !== "";
 
     const backgroundColor = RISK_COLORS[data.risk!];
 
     return (
-        <div className="group border border-[#E0E0E0] rounded-xl p-2 lg:p-5 shadow-sm w-full">
+        <div
+            className="group border border-[#E0E0E0] rounded-xl p-2 lg:p-5 shadow-sm w-full cursor-pointer"
+            onClick={() => {
+                router.push(`/explore/${data.id}`)
+            }}
+        >
             <div className='flex justify-between items-center mb-4'>
                 <div className='flex flex-col lg:flex-row item-start lg:items-center gap-4'>
                     <div className="w-[78px] h-[75px] bg-[#F4F7F6] rounded-lg flex items-center justify-center overflow-hidden border border-[#EAEAEA]">
@@ -58,7 +66,7 @@ export function PrimaryMarketCard({ data }: { data: InvestmentData }) {
                 {data.description}
             </p>
 
-            <div className="grid grid-cols-2 lg:flex lg:gap-20 xl:gap-11 mb-4 pt-2">
+            <div className="grid grid-cols-2 lg:grid-cols-4 mb-4 pt-2">
                 <div>
                     <p className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>Raised</p>
                     <p className="text-[16px] text-[#2C2C2C]" style={TYPOGRAPHY.heading}>₦{data.raised?.toLocaleString()}</p>
@@ -92,7 +100,7 @@ export function PrimaryMarketCard({ data }: { data: InvestmentData }) {
   /* Mobile: Always visible */
   opacity-100 translate-y-0 
   /* Desktop (Large screens): Hidden by default, shown on group hover */
-  lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0">
+  xl:opacity-0 xl:translate-y-2 xl:group-hover:opacity-100 xl:group-hover:translate-y-0">
                 Invest Now
             </button>
         </div>

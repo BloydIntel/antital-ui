@@ -43,10 +43,8 @@ export function Marketplace() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isAtBottom, setIsAtBottom] = useState(false);
 
-    // Helper to get current values based on active tab
     const currentFilters = activeMarket === "primary" ? primaryFilters : secondaryFilters;
 
-    // Helper to update filters without affecting the other market
     const updateFilter = <K extends keyof MarketFilters>(key: K, value: MarketFilters[K]) => {
         if (activeMarket === "primary") {
             setPrimaryFilters(prev => ({ ...prev, [key]: value }));
@@ -58,13 +56,11 @@ export function Marketplace() {
     const filteredData = INVESTMENTS.filter((item) => {
         const marketMatch = item.market === activeMarket;
 
-        // Use the filters specific to the active market
         const filters = activeMarket === "primary" ? primaryFilters : secondaryFilters;
 
         const sectorMatch = filters.sector === "All Sector" || item.sector === filters.sector;
         const riskMatch = filters.risk === "all" || item.risk === filters.risk;
 
-        // tradeType only matters for secondary
         const tradeMatch = activeMarket === "primary" || item.tradeType === secondaryFilters.tradeType;
 
         return marketMatch && sectorMatch && riskMatch && tradeMatch;
@@ -121,7 +117,7 @@ export function Marketplace() {
                 <div>
                     <div>
                         <h3 className="text-[26px] text-[#1F1F1F] pb-2" style={TYPOGRAPHY.heading}>
-                            {activeMarket}
+                            {activeMarket === "primary" ? "Primary Market" : "Secondary Market"}
                         </h3>
                         <p className="text-[16px] text-[#505050] mb-8" style={TYPOGRAPHY.body}>
                             {activeMarket === "primary"
@@ -133,14 +129,12 @@ export function Marketplace() {
 
                 <MarketFilterBar
                     marketType={activeMarket}
-                    // Use currentFilters to pass the specific values for the active tab
                     activeSector={currentFilters.sector}
                     onSectorChange={(val) => updateFilter('sector', val)}
 
                     activeRisk={currentFilters.risk}
                     onRiskChange={(val) => updateFilter('risk', val)}
 
-                    // Use secondaryFilters directly for tradeType
                     tradeType={secondaryFilters.tradeType}
                     onTradeTypeChange={(val) => updateFilter('tradeType', val)}
 
@@ -151,9 +145,9 @@ export function Marketplace() {
                 <div
                     ref={scrollRef}
                     onScroll={onScroll}
-                    className={`relative flex flex-col ${activeMarket === "primary" ? "max-h-[710px]" : "max-h-[520px]"} overflow-y-auto px-0 pt-2 mb-12`}
+                    className={`relative flex flex-col ${activeMarket === "primary" ? "max-h-[710px]" : "max-h-[520px]"} overflow-y-auto px-0 pt-2 mb-12 scrollbar-hide`}
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         {filteredData.map((investment) => (
                             activeMarket === "primary"
                                 ? <PrimaryMarketCard key={investment.id} data={investment} />

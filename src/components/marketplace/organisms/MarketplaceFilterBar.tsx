@@ -23,7 +23,7 @@ export function MarketFilterBar({ marketType, activeSector, onSectorChange, acti
     const isPrimary = marketType === "primary";
 
     return (
-        <div className="flex flex-col items-center lg:flex-row lg:justify-between gap-4 w-full pt-4 pb-8">
+        <div className="flex flex-col items-center xl:flex-row xl:justify-between gap-4 w-full pt-4 pb-8">
             {isPrimary ? (
                 <div className="flex items-center bg-[#E6EAE9] p-1 rounded-lg w-auto">
                     {sectors.map((sector) => (
