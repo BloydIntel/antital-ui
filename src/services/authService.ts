@@ -1,18 +1,26 @@
 import ApiClient from "@/services/api-client";
+import { request } from "@/services/api-client";
+import { unwrap } from "@/services/api-client";
 import { tokenStorage } from "@/lib/token-storage";
+import { toApiError } from "@/lib/api-error";
 import type {
+  DeleteUnverifiedRequest,
   LoginRequest,
   LoginResponse,
   RefreshRequest,
+  RequestUnverifiedOtpRequest,
   ResendVerificationRequest,
   SignupRequest,
   VerifyEmailRequest,
 } from "@/types/auth";
+import type { ApiResponse } from "@/types/api";
 
 export type {
   LoginRequest,
   LoginResponse,
   RefreshRequest,
+  RequestUnverifiedOtpRequest,
+  DeleteUnverifiedRequest,
   ResendVerificationRequest,
   SignupRequest,
   VerifyEmailRequest,
@@ -28,6 +36,9 @@ const verifyEmailApi = new ApiClient<VerifyEmailRequest, void>(
 );
 const resendVerificationApi = new ApiClient<ResendVerificationRequest, void>(
   "/api/auth/resend-verification"
+);
+const requestUnverifiedOtpApi = new ApiClient<RequestUnverifiedOtpRequest, void>(
+  "/api/auth/unverified/otp"
 );
 const logoutApi = new ApiClient<RefreshRequest, void>("/api/auth/logout");
 const usersApi = new ApiClient<unknown, void>("/api/users");
@@ -57,6 +68,18 @@ const authService = {
   refresh,
   verifyEmail: (payload: VerifyEmailRequest) => verifyEmailApi.post(payload),
   resendVerification: (email: string) => resendVerificationApi.post({ email }),
+  requestUnverifiedOtp: (payload: RequestUnverifiedOtpRequest) =>
+    requestUnverifiedOtpApi.post(payload),
+  deleteUnverified: async (payload: DeleteUnverifiedRequest): Promise<void> => {
+    try {
+      const response = await request.delete<ApiResponse<void>>("/api/auth/unverified", {
+        data: payload,
+      });
+      unwrap(response.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   deleteAccount: (userId: number) => usersApi.delete(String(userId)),
   logout,
 };

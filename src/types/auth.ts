@@ -41,3 +41,12 @@ export interface VerifyEmailRequest {
 export interface ResendVerificationRequest {
   email: string;
 }
+
+export interface RequestUnverifiedOtpRequest {
+  email: string;
+}
+
+export interface DeleteUnverifiedRequest {
+  email: string;
+  otp: string;
+}
