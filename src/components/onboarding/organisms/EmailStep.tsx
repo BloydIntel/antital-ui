@@ -21,6 +21,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface EmailStepProps {
     onNext: () => void;
@@ -45,8 +46,11 @@ export function EmailStep({ onNext }: EmailStepProps) {
     const { setEmailVerified, investorUserType, formData, updateFormData, setCurrentStep } = useOnboardingStore()
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [isRequestingDeleteOtp, setIsRequestingDeleteOtp] = useState(false);
+    const [isDeletingWithOtp, setIsDeletingWithOtp] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteOtp, setDeleteOtp] = useState("");
+    const [deleteDialogStep, setDeleteDialogStep] = useState<"confirm" | "otp">("confirm");
     const router = useRouter();
 
     const handleVerifyEmail = async () => {
@@ -114,25 +118,47 @@ export function EmailStep({ onNext }: EmailStepProps) {
         }
     };
 
-    const handleDeleteAccount = async () => {
-        const refreshToken = tokenStorage.getRefreshToken();
-        if (!refreshToken) {
-            tokenStorage.clear();
-            setShowDeleteConfirm(false);
-            router.push("/sign-in");
+    const handleRequestDeleteOtp = async () => {
+        const email = formData.email?.trim();
+        if (!email) {
+            toast.error("Email address is missing. Go back and complete personal details.");
             return;
         }
 
-        setIsDeleting(true);
+        setIsRequestingDeleteOtp(true);
         try {
-            const data = await authService.refresh(refreshToken);
-            tokenStorage.setAccessToken(data.token);
-            if (data.refreshToken) tokenStorage.setRefreshToken(data.refreshToken);
+            await authService.requestUnverifiedOtp({ email });
+            toast.success("OTP sent to your email.");
+            setDeleteDialogStep("otp");
+        } catch (error) {
+            if (error instanceof ApiError) toast.error(error.primaryMessage);
+            else if (error instanceof Error) toast.error(error.message);
+            else toast.error("Unable to send OTP.");
+        } finally {
+            setIsRequestingDeleteOtp(false);
+        }
+    }
 
-            await authService.deleteAccount(data.userId);
+    const handleDeleteAccountWithOtp = async () => {
+        const email = formData.email?.trim();
+        if (!email) {
+            toast.error("Email address is missing. Go back and complete personal details.");
+            return;
+        }
+
+        if (!/^\d{6}$/.test(deleteOtp)) {
+            toast.error("Enter a valid 6-digit OTP.");
+            return;
+        }
+
+        setIsDeletingWithOtp(true);
+        try {
+            await authService.deleteUnverified({ email, otp: deleteOtp });
             tokenStorage.clear();
             setEmailVerified(false);
             setShowDeleteConfirm(false);
+            setDeleteDialogStep("confirm");
+            setDeleteOtp("");
             toast.success("Account deleted.");
             router.push("/sign-in");
         } catch (error) {
@@ -140,9 +166,11 @@ export function EmailStep({ onNext }: EmailStepProps) {
             else if (error instanceof Error) toast.error(error.message);
             else toast.error("Unable to delete account.");
         } finally {
-            setIsDeleting(false);
+            setIsDeletingWithOtp(false);
         }
     }
+
+    const isDeleteBusy = isRequestingDeleteOtp || isDeletingWithOtp;
 
     const isFundraiser = investorUserType === 'fundraiser';
 
@@ -217,7 +245,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
                             <button
                                 type="button"
                                 onClick={handleResendVerification}
-                                disabled={isResending || isVerifying || isDeleting}
+                                disabled={isResending || isVerifying || isDeleteBusy}
                                 style={{ fontWeight: 700 }}
                             >
                                 here
@@ -231,48 +259,91 @@ export function EmailStep({ onNext }: EmailStepProps) {
 
                 <div className="grid grid-cols-2 gap-4 w-full">
                     <OnboardingButton
-                        label={isDeleting ? "Deleting…" : "Delete Account"}
+                        label={isDeleteBusy ? "Processing…" : "Delete Account"}
                         variant="plain"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        disabled={isVerifying || isResending || isDeleting}
-                        loading={isDeleting}
+                        onClick={() => {
+                            setDeleteDialogStep("confirm");
+                            setDeleteOtp("");
+                            setShowDeleteConfirm(true);
+                        }}
+                        disabled={isVerifying || isResending || isDeleteBusy}
+                        loading={isDeleteBusy}
                     />
                     <OnboardingButton
                         label={isVerifying ? "Checking…" : "Verify Email"}
                         onClick={handleVerifyEmail}
-                        disabled={isResending || isDeleting}
+                        disabled={isResending || isDeleteBusy}
                         loading={isVerifying}
                     />
                 </div>
 
             </div>
 
-            <Dialog open={showDeleteConfirm} onOpenChange={(open) => { if (!isDeleting) setShowDeleteConfirm(open); }}>
-                <DialogContent className="sm:max-w-md" showCloseButton={!isDeleting}>
+            <Dialog open={showDeleteConfirm} onOpenChange={(open) => { if (!isDeleteBusy) setShowDeleteConfirm(open); }}>
+                <DialogContent className="sm:max-w-md" showCloseButton={!isDeleteBusy}>
                     <DialogHeader>
-                        <DialogTitle>Delete Account</DialogTitle>
+                        <DialogTitle>
+                            {deleteDialogStep === "confirm" ? "Delete Account" : "Enter OTP"}
+                        </DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.
+                            {deleteDialogStep === "confirm"
+                                ? "We'll send a one-time password to your email before deletion. This action cannot be undone."
+                                : "Enter the 6-digit OTP sent to your email to confirm deletion."}
                         </DialogDescription>
                     </DialogHeader>
+                    {deleteDialogStep === "otp" && (
+                        <div className="space-y-2">
+                            <Input
+                                inputMode="numeric"
+                                autoComplete="one-time-code"
+                                maxLength={6}
+                                value={deleteOtp}
+                                onChange={(event) =>
+                                    setDeleteOtp(event.target.value.replace(/\D/g, "").slice(0, 6))
+                                }
+                                placeholder="Enter 6-digit OTP"
+                                disabled={isDeleteBusy}
+                            />
+                            <button
+                                type="button"
+                                onClick={handleRequestDeleteOtp}
+                                disabled={isDeleteBusy}
+                                className="text-sm text-[#3B73B5] hover:underline disabled:opacity-60"
+                            >
+                                Resend OTP
+                            </button>
+                        </div>
+                    )}
                     <DialogFooter>
                         <Button
                             variant="outline"
                             onClick={() => setShowDeleteConfirm(false)}
-                            disabled={isDeleting}
+                            disabled={isDeleteBusy}
                             className="cursor-pointer"
                         >
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleDeleteAccount}
-                            disabled={isDeleting}
-                            aria-busy={isDeleting}
-                            className="cursor-pointer"
-                        >
-                            {isDeleting ? "Deleting…" : "Delete Account"}
-                        </Button>
+                        {deleteDialogStep === "confirm" ? (
+                            <Button
+                                variant="destructive"
+                                onClick={handleRequestDeleteOtp}
+                                disabled={isDeleteBusy}
+                                aria-busy={isDeleteBusy}
+                                className="cursor-pointer"
+                            >
+                                {isRequestingDeleteOtp ? "Sending OTP…" : "Send OTP"}
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="destructive"
+                                onClick={handleDeleteAccountWithOtp}
+                                disabled={isDeleteBusy}
+                                aria-busy={isDeleteBusy}
+                                className="cursor-pointer"
+                            >
+                                {isDeletingWithOtp ? "Deleting…" : "Delete Account"}
+                            </Button>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
