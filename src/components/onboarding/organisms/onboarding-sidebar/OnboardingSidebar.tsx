@@ -63,6 +63,8 @@ export default function OnboardingSidebar() {
 
     const isInReviewLockPhase = ["review", "activation", "application-submitted"].includes(currentStep);
 
+    const currentStepIndex = steps.findIndex(s => s.key === currentStep);
+
     const isMenuLockedStep = (stepKey: StepKey): boolean => {
         if (hasMovedPastVerificationGate && ALLOWED_STEP_BEFORE_VERIFICATION.includes(stepKey)) {
             return true;
@@ -73,13 +75,22 @@ export default function OnboardingSidebar() {
             return true;
         }
 
+        // Prevent navigating to future steps that haven't been reached yet.
+        const stepIndex = steps.findIndex(s => s.key === stepKey);
+        if (stepIndex > currentStepIndex) {
+            return true;
+        }
+
         return false;
     };
 
     const handleMainStepClick = (stepKey: StepKey) => {
+        const stepIndex = steps.findIndex(s => s.key === stepKey);
         if (isMenuLockedStep(stepKey)) {
             if (isInReviewLockPhase) {
                 toast.info("Navigation is locked at application review stage.");
+            } else if (stepIndex > currentStepIndex) {
+                toast.info("Please complete the current step before proceeding.");
             } else {
                 toast.info("This step is locked after verification.");
             }
@@ -87,8 +98,6 @@ export default function OnboardingSidebar() {
         }
         router.push(`/onboarding/${activeType}/${stepKey}`)
     }
-
-    const currentStepIndex = steps.findIndex(s => s.key === currentStep)
 
     const stepsToShow = emailVerified ? steps : steps.slice(0, 2)
 
