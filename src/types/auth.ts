@@ -8,6 +8,7 @@ export interface SignupRequest {
   firstName: string;
   lastName: string;
   email: string;
+  userType?: "IndividualInvestor" | "CorporateInvestor" | "Fundraiser";
   preferredName?: string;
   phoneNumber: string;
   dateOfBirth: string;

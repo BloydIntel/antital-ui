@@ -52,6 +52,11 @@ export function EmailStep({ onNext }: EmailStepProps) {
     const [deleteOtp, setDeleteOtp] = useState("");
     const [deleteDialogStep, setDeleteDialogStep] = useState<"confirm" | "otp">("confirm");
     const router = useRouter();
+    const verificationEmail = (
+        investorUserType === "individual"
+            ? formData.email
+            : formData.loginEmail || formData.email
+    )?.trim();
 
     const handleVerifyEmail = async () => {
         const refreshToken = tokenStorage.getRefreshToken();
@@ -100,14 +105,14 @@ export function EmailStep({ onNext }: EmailStepProps) {
     }
 
     const handleResendVerification = async () => {
-        if (!formData.email) {
-            toast.error("Email address is missing. Go back and complete personal details.");
+        if (!verificationEmail) {
+            toast.error("Email address is missing. Go back and complete account details.");
             return;
         }
 
         setIsResending(true);
         try {
-            await authService.resendVerification(formData.email);
+            await authService.resendVerification(verificationEmail);
             toast.success("Verification email resent. Check your inbox.");
         } catch (error) {
             if (error instanceof ApiError) toast.error(error.primaryMessage);
@@ -119,9 +124,9 @@ export function EmailStep({ onNext }: EmailStepProps) {
     };
 
     const handleRequestDeleteOtp = async () => {
-        const email = formData.email?.trim();
+        const email = verificationEmail;
         if (!email) {
-            toast.error("Email address is missing. Go back and complete personal details.");
+            toast.error("Email address is missing. Go back and complete account details.");
             return;
         }
 
@@ -140,9 +145,9 @@ export function EmailStep({ onNext }: EmailStepProps) {
     }
 
     const handleDeleteAccountWithOtp = async () => {
-        const email = formData.email?.trim();
+        const email = verificationEmail;
         if (!email) {
-            toast.error("Email address is missing. Go back and complete personal details.");
+            toast.error("Email address is missing. Go back and complete account details.");
             return;
         }
 

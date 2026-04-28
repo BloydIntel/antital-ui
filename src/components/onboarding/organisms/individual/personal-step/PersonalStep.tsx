@@ -45,6 +45,7 @@ export function PersonalStep() {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
                     email: formData.email,
+                    userType: "IndividualInvestor",
                     preferredName: formData.alias || undefined,
                     phoneNumber: formData.phone,
                     dateOfBirth: formData.dob,
