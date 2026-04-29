@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
   Table,
   TableBody,
@@ -16,6 +15,7 @@ import { TYPOGRAPHY } from "@/constants/styles"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
+import { RISK_COLORS } from "@/types/dashboard"
 
 interface DashboardInvestment {
   company: string;
@@ -33,6 +33,15 @@ interface PortfolioInvestment {
   goal: string;
   raised: string;
   invested: string;
+}
+
+interface MarketplaceInvestment {
+  name: string;
+  sector: string;
+  fundingGoal: string;
+  amountRaised: string;
+  minInvestment: string;
+  riskScore: 'low' | 'moderate' | 'high';
 }
 
 const investmentData: DashboardInvestment[] = [
@@ -53,12 +62,29 @@ const portfolioData: PortfolioInvestment[] = [
   { company: "YieldTrack Global Limited", sector: "Consumer Goods", goal: "₦525,400,000.00", raised: "₦205,320,000.00", invested: "₦57,200.00" }
 ];
 
-export function DataTable({ state = false }: { state: boolean }) {
-  const pathname = usePathname();
-  const isPortfolioPage = pathname === "/portfolio";
+const marketplaceData: MarketplaceInvestment[] = [
+  { name: "Green Tech Solution", sector: "Technology", fundingGoal: "₦325,400,000.00", amountRaised: "₦25,000,000.00", minInvestment: "₦5,000,000.00", riskScore: 'high' },
+  { name: "MedTech Innovation", sector: "Energy", fundingGoal: "₦25,400,000.00", amountRaised: "₦5,760,000.00", minInvestment: "₦5,000,000.00", riskScore: 'low' },
+  { name: "SeedSync Technologies", sector: "Technology", fundingGoal: "₦125,400,000.00", amountRaised: "₦30,750,000.00", minInvestment: "₦25,000,000.00", riskScore: 'low' },
+  { name: "Lockstone Finance", sector: "Finance", fundingGoal: "₦1,325,400,000.00", amountRaised: "₦934,450,000.00", minInvestment: "₦100,000,000.00", riskScore: 'high' },
+  { name: "HarvestIQ Solutions Inc.", sector: "Healthcare", fundingGoal: "₦75,400,000.00", amountRaised: "₦15,423,000.00", minInvestment: "₦50,000,000.00", riskScore: 'low' },
+  { name: "YieldTrack Global Limited", sector: "Consumer Goods", fundingGoal: "₦525,400,000.00", amountRaised: "₦205,320,000.00", minInvestment: "₦50,000,000.00", riskScore: 'moderate' }
+];
 
-  // Select the appropriate data array based on the route
-  const activeData = isPortfolioPage ? portfolioData : investmentData;
+export function DataTable({ state = false }: { state: boolean }) {
+
+  const pathname = usePathname();
+  const isDashboardPage = pathname === "/dashboard";
+  const isPortfolioPage = pathname === "/portfolio";
+  const isMarketplacePage = pathname === "/marketplace";
+
+  const getActiveContent = () => {
+    if (isPortfolioPage) return { data: portfolioData };
+    if (isMarketplacePage) return { data: marketplaceData };
+    return { data: investmentData };
+  };
+
+  const { data: activeData } = getActiveContent();
   const isEmpty = !state || activeData.length === 0;
 
   return (
@@ -66,12 +92,7 @@ export function DataTable({ state = false }: { state: boolean }) {
       <Card className="shadow-none min-h-[518px] bg-white border-[#EAEAEA]">
         <CardHeader className="flex flex-col xl:flex-row items-center justify-between pb-2">
           <div>
-            {isPortfolioPage ? (
-              <div className="space-y-1">
-                <h2 className="text-[24px] text-[#000000] font-medium" style={{ fontFamily: 'var(--font-clash), sans-serif' }}>My Investment</h2>
-                <p className="text-[14px] text-[#505050]" style={TYPOGRAPHY.body}>Track all your active, pending, and completed investments in one place.</p>
-              </div>
-            ) : (
+            {isDashboardPage ? (
               <>
                 <Select>
                   <SelectTrigger
@@ -98,6 +119,16 @@ export function DataTable({ state = false }: { state: boolean }) {
                 </Select>
                 <p className="text-[16px] text-[#505050] pt-2" style={TYPOGRAPHY.body}>Recent investment performance</p>
               </>
+            ) : isPortfolioPage ? (
+              <div className="space-y-1">
+                <h2 className="text-[24px] text-[#000000] font-medium" style={{ fontFamily: 'var(--font-clash), sans-serif' }}>My Investment</h2>
+                <p className="text-[14px] text-[#505050]" style={TYPOGRAPHY.body}>Track all your active, pending, and completed investments in one place.</p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h2 className="text-[24px] text-[#000000] font-medium" style={{ fontFamily: 'var(--font-clash), sans-serif' }}>New Listings</h2>
+                <p className="text-[14px] text-[#505050]" style={TYPOGRAPHY.body}>Explore new startups and secure your spot as an early investor.</p>
+              </div>
             )}
           </div>
 
@@ -144,15 +175,9 @@ export function DataTable({ state = false }: { state: boolean }) {
             <Table>
               <TableHeader className="border-0">
                 <TableRow className="border-0 hover:bg-transparent">
-                  <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>{isPortfolioPage ? "Start up name" : "Company"}</TableHead>
+                  <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>{isDashboardPage ? "Company" : "Start up name"}</TableHead>
                   <TableHead className="text-[#505050] text-[14px] py-4" style={TYPOGRAPHY.body}>Sector</TableHead>
-                  {isPortfolioPage ? (
-                    <>
-                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Funding Goal</TableHead>
-                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Amount raised</TableHead>
-                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Amount invested</TableHead>
-                    </>
-                  ) : (
+                  {isDashboardPage ? (
                     <>
                       <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Invested</TableHead>
                       <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Unit Holding</TableHead>
@@ -160,21 +185,25 @@ export function DataTable({ state = false }: { state: boolean }) {
                       <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Returns</TableHead>
                       <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Dates</TableHead>
                     </>
-                  )}
+                  ) : (isPortfolioPage ? (
+                    <>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Funding Goal</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Amount raised</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Amount invested</TableHead>
+                    </>
+                  ) : (
+                    <>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Funding Goal</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Amount raised</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Minimum investment</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}>Risk Score</TableHead>
+                      <TableHead className="text-[#505050] text-[14px] py-4 text-center" style={TYPOGRAPHY.body}></TableHead>
+                    </>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isPortfolioPage ? (
-                  (portfolioData as PortfolioInvestment[]).map((row, index) => (
-                    <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#E6EAE9]">
-                      <TableCell className="py-4 font-medium text-[#595959]">{row.company}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.goal}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.raised}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.invested}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+                {isDashboardPage ? (
                   (investmentData as DashboardInvestment[]).map((row, index) => (
                     <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#E6EAE9]">
                       <TableCell className="py-4 font-medium text-[#595959]">{row.company}</TableCell>
@@ -186,7 +215,42 @@ export function DataTable({ state = false }: { state: boolean }) {
                       <TableCell className="py-4 text-[#858585] text-center">{row.date}</TableCell>
                     </TableRow>
                   ))
-                )}
+                ) : (isPortfolioPage ? (
+                  (portfolioData as PortfolioInvestment[]).map((row, index) => (
+                    <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#E6EAE9]">
+                      <TableCell className="py-4 font-medium text-[#595959]">{row.company}</TableCell>
+                      <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
+                      <TableCell className="py-4 text-[#858585] text-center">{row.goal}</TableCell>
+                      <TableCell className="py-4 text-[#858585] text-center">{row.raised}</TableCell>
+                      <TableCell className="py-4 text-[#858585] text-center">{row.invested}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  (activeData as MarketplaceInvestment[]).map((row, index) => (
+                    <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#F4F7F6]">
+                      <TableCell className="py-4 align-middle font-medium text-[#595959]">{row.name}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585]">{row.sector}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.fundingGoal}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.amountRaised}</TableCell>
+                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.minInvestment}</TableCell>
+                      <TableCell className="py-4 align-middle">
+                        <div className="flex items-center justify-center h-full">
+                          <span 
+                            className="px-3 py-1 rounded-md text-white text-[12px] capitalize inline-block" 
+                            style={{ backgroundColor: RISK_COLORS[row.riskScore] }}
+                          >
+                            {row.riskScore === 'moderate' ? 'Medium' : row.riskScore} Risk
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 align-middle text-center">
+                        <button className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
+                          Invest Now
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ))}
               </TableBody>
             </Table>
           </CardContent>

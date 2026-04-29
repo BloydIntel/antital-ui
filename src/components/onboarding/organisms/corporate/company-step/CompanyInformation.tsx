@@ -9,6 +9,9 @@ import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/
 import { COMPANY_SUB_STEPS, FUNDRAISER_COMPANY_SUB_STEPS } from '@/constants/subSteps';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 import { CompanySubStepId, validateFullStep, validateSubStep } from '@/lib/onboardingValidation';
+import authService from '@/services/authService';
+import { tokenStorage } from '@/lib/token-storage';
+import { showApiErrorToast } from '@/lib/error-feedback';
 
 const corporateHeaderLabels = [
     { id: 'details', title: 'Corporate Investment Account', desc: 'Register your organization to invest in vetted Nigerian startups' },
@@ -33,6 +36,7 @@ export function CompanyInformation() {
     } = store;
 
     const [showErrors, setShowErrors] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isFundraiser = investorUserType === 'fundraiser';
     const STEPS_TO_USE = isFundraiser ? FUNDRAISER_COMPANY_SUB_STEPS : COMPANY_SUB_STEPS;
@@ -45,7 +49,7 @@ export function CompanyInformation() {
 
     const canProceedCurrent = validateSubStep(currentStep.id as CompanySubStepId, store);
 
-    const nextSubStep = () => {
+    const nextSubStep = async () => {
         // 1. Always validate the current view first
         if (!canProceedCurrent) {
             setShowErrors(true);
@@ -66,7 +70,45 @@ export function CompanyInformation() {
                 return;
             }
 
-            router.push(`/onboarding/${investorUserType}/email`);
+            if (isFundraiser) {
+                router.push(`/onboarding/${investorUserType}/email`);
+                return;
+            }
+
+            setIsSubmitting(true);
+            try {
+                const [firstName, ...lastNameParts] = (store.formData.repFullName || "").trim().split(/\s+/);
+                const lastName = lastNameParts.join(" ").trim();
+
+                const data = await authService.signup({
+                    firstName: firstName || store.formData.companyName || "Corporate",
+                    lastName: lastName || store.formData.brandName || "Investor",
+                    email: store.formData.loginEmail,
+                    userType: "CorporateInvestor",
+                    preferredName: store.formData.brandName || undefined,
+                    phoneNumber: store.formData.repPhoneNumber,
+                    dateOfBirth: store.formData.repDob,
+                    nationality: store.formData.repNationality,
+                    countryOfResidence: store.formData.repResidence,
+                    stateOfResidence: store.formData.repResidence,
+                    residentialAddress: store.formData.repAddress,
+                    password: store.formData.password,
+                    confirmPassword: store.formData.confirmPassword,
+                    hasAgreedToTerms: true,
+                });
+
+                tokenStorage.setAccessToken(data.token);
+                if (data.refreshToken) {
+                    tokenStorage.setRefreshToken(data.refreshToken);
+                }
+                store.setEmailVerified(data.isEmailVerified);
+
+                router.push(`/onboarding/${investorUserType}/email`);
+            } catch (error) {
+                showApiErrorToast(error, "Unable to create corporate account.");
+            } finally {
+                setIsSubmitting(false);
+            }
             return;
         }
 
@@ -114,9 +156,16 @@ export function CompanyInformation() {
                 />
 
                 <OnboardingButton
-                    label={isLastSubStep ? "Create Account" : "Proceed"}
+                    label={
+                        isLastSubStep
+                            ? isSubmitting
+                                ? "Creating account…"
+                                : "Create Account"
+                            : "Proceed"
+                    }
                     variant="solid"
                     onClick={nextSubStep}
+                    loading={isSubmitting}
                     className="w-[230px]"
                 />
             </div>
