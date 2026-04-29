@@ -1,4 +1,4 @@
-import type { StepKey } from "@/constants/steps";
+import type { StepKey, InvestorUserType } from "@/constants/steps";
 import type {
   KYCData,
   OnboardingFormData,
@@ -16,6 +16,8 @@ const INVESTOR_CATEGORY_TO_UI: Record<string, OnboardingFormData["selectedCatego
     Retail: "retail",
     Sophisticated: "sophisticated",
     HighNetWorth: "hni",
+    QualifiedInstitutionalInvestor: "qii",
+    OtherCorporateInvestor: "oci",
     "0": "retail",
     "1": "sophisticated",
     "2": "hni",
@@ -30,7 +32,7 @@ const KYC_ID_TYPE_TO_UI: Record<string, KYCData["idType"]> = {
   "2": "voters_card",
 };
 
-const API_STEP_TO_UI_STEP: Record<string, StepKey> = {
+const API_STEP_TO_UI_STEP_INDIVIDUAL: Record<string, StepKey> = {
   InvestorCategory: "investor",
   InvestmentProfile: "investor",
   Kyc: "kyc",
@@ -43,6 +45,22 @@ const API_STEP_TO_UI_STEP: Record<string, StepKey> = {
   "4": "activation",
 };
 
+const API_STEP_TO_UI_STEP_CORPORATE: Record<string, StepKey> = {
+  InvestorCategory: "categorization",
+  InvestmentProfile: "profile",
+  Kyc: "kyc",
+  Review: "review",
+  Submitted: "activation",
+  "0": "categorization",
+  "1": "profile",
+  "2": "kyc",
+  "3": "review",
+  "4": "activation",
+};
+
+/** @deprecated use the overload that accepts investorType for correctness */
+const API_STEP_TO_UI_STEP = API_STEP_TO_UI_STEP_INDIVIDUAL;
+
 function mapInvestorCategory(category: ApiInvestorCategory): OnboardingFormData["selectedCategoryId"] {
   if (category === null || category === undefined) return null;
   return INVESTOR_CATEGORY_TO_UI[String(category)] ?? null;
@@ -53,8 +71,15 @@ function mapKycIdType(idType: ApiKycIdType): KYCData["idType"] {
   return KYC_ID_TYPE_TO_UI[String(idType)] ?? "";
 }
 
-export function mapOnboardingStepToUiStep(step: ApiOnboardingStep): StepKey {
-  return API_STEP_TO_UI_STEP[String(step)] ?? "investor";
+export function mapOnboardingStepToUiStep(
+  step: ApiOnboardingStep,
+  investorType?: InvestorUserType
+): StepKey {
+  const map =
+    investorType === "corporate"
+      ? API_STEP_TO_UI_STEP_CORPORATE
+      : API_STEP_TO_UI_STEP;
+  return map[String(step)] ?? (investorType === "corporate" ? "categorization" : "investor");
 }
 
 export function buildFormPatchFromOnboarding(

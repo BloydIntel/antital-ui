@@ -9,6 +9,12 @@ const DEFAULT_IMAGES = {
     naira: "/create-account/Naira-icon.png",
 } as const
 
+const ONBOARDING_FIRST_STEP: Record<string, string> = {
+    individual: "personal",
+    corporate: "company",
+    fundraiser: "company",
+}
+
 type CardType = keyof typeof DEFAULT_IMAGES
 
 interface BaseProps {
@@ -46,7 +52,8 @@ export function UserTypeCard(props: UserTypeCardProps) {
         }
 
         if (userPath) {
-            router.push(`/onboarding/${userPath}`)
+            const firstStep = ONBOARDING_FIRST_STEP[userPath]
+            router.push(firstStep ? `/onboarding/${userPath}/${firstStep}` : `/onboarding/${userPath}`)
         }
     }
 
