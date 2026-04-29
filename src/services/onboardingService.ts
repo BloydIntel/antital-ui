@@ -41,12 +41,23 @@ async function saveOnboarding(requestBody: SaveOnboardingRequest): Promise<void>
   }
 }
 
-async function saveInvestorCategory(investorCategory: "Retail" | "Sophisticated" | "HighNetWorth"): Promise<void> {
+async function saveInvestorCategory(
+  investorCategory:
+    | "Retail"
+    | "Sophisticated"
+    | "HighNetWorth"
+    | "QualifiedInstitutionalInvestor"
+    | "OtherCorporateInvestor"
+): Promise<void> {
   await saveOnboarding({
     step: "InvestorCategory",
     investorCategoryPayload: { investorCategory },
     investmentProfilePayload: null,
     kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
   });
 }
 
@@ -58,15 +69,59 @@ async function saveInvestmentProfile(
     investorCategoryPayload: null,
     investmentProfilePayload,
     kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
   });
 }
 
-async function saveKyc(kycPayload: SaveKycPayload): Promise<void> {
+async function saveCorporateQiiProfile(
+  corporateQiiProfilePayload: NonNullable<SaveOnboardingRequest["corporateQiiProfilePayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateOciProfile(
+  corporateOciProfilePayload: NonNullable<SaveOnboardingRequest["corporateOciProfilePayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+  });
+}
+
+async function saveKyc(
+  kycPayload: SaveKycPayload,
+  payloads?: Pick<
+    SaveOnboardingRequest,
+    "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
+  >
+): Promise<void> {
   await saveOnboarding({
     step: "Kyc",
     investorCategoryPayload: null,
     investmentProfilePayload: null,
     kycPayload,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: payloads?.corporateQiiDocumentsPayload ?? null,
+    corporateOciDocumentsPayload: payloads?.corporateOciDocumentsPayload ?? null,
   });
 }
 
@@ -89,6 +144,8 @@ const onboardingService = {
   getOnboarding,
   saveInvestorCategory,
   saveInvestmentProfile,
+  saveCorporateQiiProfile,
+  saveCorporateOciProfile,
   saveKyc,
   submitOnboarding,
 };

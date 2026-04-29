@@ -11,7 +11,7 @@ import { CORPORATE_CATEGORY_STEPS, CORPORATE_BASE_KYC, INDIVIDUAL_KYC_SUB_STEPS,
 import { OtherCorporateInvestor } from '@/components/onboarding/organisms/corporate/OtherCorporateInvestor'
 import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/corporate/company-step/AccountRepresentativeDetails'
 import onboardingService from '@/services/onboardingService'
-import { mapToKycPayload } from '@/lib/onboarding-payload-mappers'
+import { mapToCorporateDocsPayload, mapToKycPayload } from '@/lib/onboarding-payload-mappers'
 import { showApiErrorToast } from '@/lib/error-feedback'
 
 interface IdentityVerificationProps {
@@ -99,7 +99,10 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
             setIsSavingKyc(true);
             try {
-                await onboardingService.saveKyc(mapToKycPayload(kycData));
+                await onboardingService.saveKyc(
+                    mapToKycPayload(kycData),
+                    isCorporate ? mapToCorporateDocsPayload(categoryId, kycData) : undefined
+                );
                 onNext();
             } catch (error) {
                 showApiErrorToast(error, "Unable to save KYC details.");
