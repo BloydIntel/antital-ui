@@ -106,7 +106,13 @@ async function saveCorporateOciProfile(
   });
 }
 
-async function saveKyc(kycPayload: SaveKycPayload): Promise<void> {
+async function saveKyc(
+  kycPayload: SaveKycPayload,
+  payloads?: Pick<
+    SaveOnboardingRequest,
+    "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
+  >
+): Promise<void> {
   await saveOnboarding({
     step: "Kyc",
     investorCategoryPayload: null,
@@ -114,24 +120,8 @@ async function saveKyc(kycPayload: SaveKycPayload): Promise<void> {
     kycPayload,
     corporateQiiProfilePayload: null,
     corporateOciProfilePayload: null,
-    corporateQiiDocumentsPayload: null,
-    corporateOciDocumentsPayload: null,
-  });
-}
-
-async function saveCorporateDocuments(payloads: Pick<
-  SaveOnboardingRequest,
-  "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
->): Promise<void> {
-  await saveOnboarding({
-    step: "Kyc",
-    investorCategoryPayload: null,
-    investmentProfilePayload: null,
-    kycPayload: null,
-    corporateQiiProfilePayload: null,
-    corporateOciProfilePayload: null,
-    corporateQiiDocumentsPayload: payloads.corporateQiiDocumentsPayload,
-    corporateOciDocumentsPayload: payloads.corporateOciDocumentsPayload,
+    corporateQiiDocumentsPayload: payloads?.corporateQiiDocumentsPayload ?? null,
+    corporateOciDocumentsPayload: payloads?.corporateOciDocumentsPayload ?? null,
   });
 }
 
@@ -157,7 +147,6 @@ const onboardingService = {
   saveCorporateQiiProfile,
   saveCorporateOciProfile,
   saveKyc,
-  saveCorporateDocuments,
   submitOnboarding,
 };
 

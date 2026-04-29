@@ -99,12 +99,10 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
             setIsSavingKyc(true);
             try {
-                await onboardingService.saveKyc(mapToKycPayload(kycData));
-                if (isCorporate) {
-                    await onboardingService.saveCorporateDocuments(
-                        mapToCorporateDocsPayload(categoryId, kycData)
-                    );
-                }
+                await onboardingService.saveKyc(
+                    mapToKycPayload(kycData),
+                    isCorporate ? mapToCorporateDocsPayload(categoryId, kycData) : undefined
+                );
                 onNext();
             } catch (error) {
                 showApiErrorToast(error, "Unable to save KYC details.");

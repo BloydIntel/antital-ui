@@ -233,12 +233,13 @@ export function mapToKycPayload(kycData: KYCData): SaveKycPayload {
 }
 
 /**
- * Maps corporate questionnaire answers to the SaveInvestmentProfilePayload.
- * Corporate categories: "qii" (Qualified Institutional Investor) and
- * "oci" (Other Corporate Investor).
+ * Maps corporate questionnaire answers into the dedicated corporate profile
+ * payloads on SaveOnboardingRequest:
+ * - mapToCorporateQiiProfilePayload -> corporateQiiProfilePayload
+ * - mapToCorporateOciProfilePayload -> corporateOciProfilePayload
  *
- * NOTE: API enum values assumed as "QualifiedInstitutionalInvestor" / "OtherCorporateInvestor".
- * Adjust if the backend uses different casing.
+ * Returns null when selectedCategoryId does not match the mapper's target
+ * category ("qii" for QII, "oci" for OCI).
  */
 export function mapToCorporateQiiProfilePayload(
   selectedCategoryId: string,
@@ -370,12 +371,18 @@ export function mapToCorporateDocsPayload(
       corporateOciDocumentsPayload: null,
     };
   }
+  if (selectedCategoryId === "oci") {
+    return {
+      corporateQiiDocumentsPayload: null,
+      corporateOciDocumentsPayload: {
+        incorporationCertificateDocumentPathOrKey: kycData.incorporationCertificate?.name ?? null,
+        recentStatusReportDocumentPathOrKey: kycData.statusReport?.name ?? null,
+        boardResolutionDocumentPathOrKey: kycData.boardResolution?.name ?? null,
+      },
+    };
+  }
   return {
     corporateQiiDocumentsPayload: null,
-    corporateOciDocumentsPayload: {
-      incorporationCertificateDocumentPathOrKey: kycData.incorporationCertificate?.name ?? null,
-      recentStatusReportDocumentPathOrKey: kycData.statusReport?.name ?? null,
-      boardResolutionDocumentPathOrKey: kycData.boardResolution?.name ?? null,
-    },
+    corporateOciDocumentsPayload: null,
   };
 }
