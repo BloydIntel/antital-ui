@@ -64,6 +64,31 @@ export interface OnboardingKycDto {
   selfieVerificationPathOrKey?: string | null;
   incomeVerificationPathOrKey?: string | null;
   incomeVerificationDocumentTypesCommaSeparated?: string | null;
+  recentStatusReportDocumentPathOrKey?: string | null;
+  qiiLicenseEvidenceDocumentPathOrKey?: string | null;
+  boardResolutionDocumentPathOrKey?: string | null;
+  incorporationCertificateDocumentPathOrKey?: string | null;
+}
+
+export interface OnboardingCorporateQiiProfileDto {
+  institutionTypesCommaSeparated?: string | null;
+  otherInstitutionType?: string | null;
+  hasValidQiiRegistrationOrLicense?: boolean | null;
+  hasApprovedAlternativeInvestmentMandate?: boolean | null;
+  confirmsSecNigeriaQiiCriteria?: boolean | null;
+}
+
+export interface OnboardingCorporateOciProfileDto {
+  hasBoardResolutionOrInternalMandate?: boolean | null;
+  netAssetValueRange?: "Below10Million" | "Range10To50Million" | "Range50To100Million" | "Range100To500Million" | "Above500Million" | null;
+  hasFinancialCapacityToWithstandLoss?: boolean | null;
+  understandsCrowdfundingHighRiskLoss?: boolean | null;
+  hasQualifiedInvestmentProfessionalsAccess?: boolean | null;
+}
+
+export interface OnboardingCorporateProfileDto {
+  qiiProfile?: OnboardingCorporateQiiProfileDto | null;
+  ociProfile?: OnboardingCorporateOciProfileDto | null;
 }
 
 export interface OnboardingResponse {
@@ -74,6 +99,7 @@ export interface OnboardingResponse {
   locationInfo?: OnboardingLocationInfoDto | null;
   investorProfile?: OnboardingInvestorProfileDto | null;
   kyc?: OnboardingKycDto | null;
+  corporateProfile?: OnboardingCorporateProfileDto | null;
 }
 
 export interface SaveInvestorCategoryPayload {
@@ -144,4 +170,36 @@ export interface SaveOnboardingRequest {
   investorCategoryPayload: SaveInvestorCategoryPayload | null;
   investmentProfilePayload: SaveInvestmentProfilePayload | null;
   kycPayload: SaveKycPayload | null;
+  corporateQiiProfilePayload?: {
+    institutionTypes: (
+      | "Bank"
+      | "AssetManagementCompany"
+      | "PensionFundAdministrator"
+      | "InsuranceCompany"
+      | "VentureCapitalOrPrivateEquityFund"
+      | "CorporateFinanceInstitution"
+      | "OtherRegulatedInstitution"
+    )[];
+    otherInstitutionType: string | null;
+    hasValidQiiRegistrationOrLicense: boolean | null;
+    hasApprovedAlternativeInvestmentMandate: boolean | null;
+    confirmsSecNigeriaQiiCriteria: boolean | null;
+  } | null;
+  corporateOciProfilePayload?: {
+    hasBoardResolutionOrInternalMandate: boolean | null;
+    netAssetValueRange: "Below10Million" | "Range10To50Million" | "Range50To100Million" | "Range100To500Million" | "Above500Million" | null;
+    hasFinancialCapacityToWithstandLoss: boolean | null;
+    understandsCrowdfundingHighRiskLoss: boolean | null;
+    hasQualifiedInvestmentProfessionalsAccess: boolean | null;
+  } | null;
+  corporateQiiDocumentsPayload?: {
+    recentStatusReportDocumentPathOrKey: string | null;
+    qiiLicenseEvidenceDocumentPathOrKey: string | null;
+    boardResolutionDocumentPathOrKey: string | null;
+  } | null;
+  corporateOciDocumentsPayload?: {
+    incorporationCertificateDocumentPathOrKey: string | null;
+    recentStatusReportDocumentPathOrKey: string | null;
+    boardResolutionDocumentPathOrKey: string | null;
+  } | null;
 }

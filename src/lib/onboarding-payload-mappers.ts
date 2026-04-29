@@ -1,6 +1,7 @@
 import type { QuestionValue } from "@/store/onboardingStore";
 import type { KYCData } from "@/store/onboardingStore";
 import type {
+  SaveOnboardingRequest,
   SaveInvestmentProfilePayload,
   SaveKycPayload,
   SaveKycIdType,
@@ -239,106 +240,142 @@ export function mapToKycPayload(kycData: KYCData): SaveKycPayload {
  * NOTE: API enum values assumed as "QualifiedInstitutionalInvestor" / "OtherCorporateInvestor".
  * Adjust if the backend uses different casing.
  */
-export function mapToCorporateInvestmentProfilePayload(
+export function mapToCorporateQiiProfilePayload(
   selectedCategoryId: string,
   answers: Record<string, QuestionValue>
-): SaveInvestmentProfilePayload {
-  const base: SaveInvestmentProfilePayload = {
-    investorCategory: "QualifiedInstitutionalInvestor",
-    highRiskAllocationPast12MonthsPercent: null,
-    highRiskAllocationNext12MonthsPercent: null,
-    annualIncomeRange: null,
-    netInvestmentAssetsValue: null,
-    canAffordToLoseWithoutAffectingStability: null,
-    understandsCrowdfundingIsHighRisk: null,
-    readRiskDisclosureAndSecRules: null,
-    understandsPastPerformanceNoGuarantee: null,
-    awareOfLimitedLiquidity: null,
-    yearsActivelyInvesting: null,
-    investmentTypesCommaSeparated: null,
-    investedInPrivateMarketsBefore: null,
-    awareOfLimitedLiquiditySophisticated: null,
-    confirmCrowdfundingAssessment: null,
-    sourceOfWealthCommaSeparated: null,
-    sourceOfWealthOther: null,
-    confirmSecSophisticatedCriteria: null,
-    netAssetsExceed100m: null,
-    netInvestmentAssetsRange: null,
-    adequateLiquidityForLosses: null,
-    awareOfLimitedLiquidityHni: null,
-    confirmSecHniCriteria: null,
-    // Corporate fields default to null
-    entityType: null,
-    entityTypeOther: null,
-    hasQiiLicense: null,
-    hasInvestmentMandate: null,
-    confirmSecQiiCriteria: null,
-    hasBoardResolutionForInvestment: null,
-    companyNetAssetValueRange: null,
-    canWithstandLoss: null,
-    corporateUnderstandsCrowdfundingRisk: null,
-    hasQualifiedInvestmentProfessionals: null,
+): SaveOnboardingRequest["corporateQiiProfilePayload"] {
+  if (selectedCategoryId !== "qii") return null;
+
+  const mapInstitutionType = (value: string):
+    | "Bank"
+    | "AssetManagementCompany"
+    | "PensionFundAdministrator"
+    | "InsuranceCompany"
+    | "VentureCapitalOrPrivateEquityFund"
+    | "CorporateFinanceInstitution"
+    | "OtherRegulatedInstitution"
+    | null => {
+    const v = value.toLowerCase();
+    if (v.includes("bank")) return "Bank";
+    if (v.includes("asset")) return "AssetManagementCompany";
+    if (v.includes("pension")) return "PensionFundAdministrator";
+    if (v.includes("insurance")) return "InsuranceCompany";
+    if (v.includes("venture") || v.includes("private equity")) return "VentureCapitalOrPrivateEquityFund";
+    if (v.includes("corporate finance")) return "CorporateFinanceInstitution";
+    if (v.includes("other")) return "OtherRegulatedInstitution";
+    return null;
   };
 
-  if (selectedCategoryId === "qii") {
-    base.investorCategory = "QualifiedInstitutionalInvestor";
+  const entityTypeVal = answers["What type of institutional entity do you represent?"];
+  let institutionTypes: NonNullable<SaveOnboardingRequest["corporateQiiProfilePayload"]>["institutionTypes"] = [];
+  let otherInstitutionType: string | null = null;
 
-    const entityTypeVal = answers["What type of institutional entity do you represent?"];
-    if (typeof entityTypeVal === "object" && !Array.isArray(entityTypeVal) && entityTypeVal) {
-      base.entityType =
-        Array.isArray(entityTypeVal.selections) && entityTypeVal.selections.length > 0
-          ? entityTypeVal.selections[0]
-          : null;
-      base.entityTypeOther =
-        typeof entityTypeVal.amount === "string" && entityTypeVal.amount.trim() !== ""
-          ? entityTypeVal.amount
-          : null;
-    } else if (typeof entityTypeVal === "string") {
-      base.entityType = entityTypeVal || null;
-    }
+  if (typeof entityTypeVal === "object" && !Array.isArray(entityTypeVal) && entityTypeVal) {
+    const selections = Array.isArray(entityTypeVal.selections) ? entityTypeVal.selections : [];
+    institutionTypes = selections
+      .map(mapInstitutionType)
+      .filter((v): v is NonNullable<typeof v> => v !== null);
+    otherInstitutionType =
+      typeof entityTypeVal.amount === "string" && entityTypeVal.amount.trim() !== ""
+        ? entityTypeVal.amount
+        : null;
+  } else if (typeof entityTypeVal === "string") {
+    const mapped = mapInstitutionType(entityTypeVal);
+    institutionTypes = mapped ? [mapped] : [];
+  }
 
-    base.hasQiiLicense = toBooleanYesNo(
+  return {
+    institutionTypes,
+    otherInstitutionType,
+    hasValidQiiRegistrationOrLicense: toBooleanYesNo(
       answers[
         "Does your institution have a valid registration or license as Qualified Institutional Investor?"
       ]
-    );
-    base.hasInvestmentMandate = toBooleanYesNo(
+    ),
+    hasApprovedAlternativeInvestmentMandate: toBooleanYesNo(
       answers[
         "Does your institution have an approved investment mandate that allows participation in alternative or high-risk investments such as crowdfunding?"
       ]
-    );
-    base.confirmSecQiiCriteria = toBooleanYesNo(
+    ),
+    confirmsSecNigeriaQiiCriteria: toBooleanYesNo(
       answers[
         "Do you confirm that your institution meets the SEC Nigeria criteria for a Qualified Institutional Investor and consent to be categorized as such on Antital?"
       ]
-    );
-    return base;
-  }
+    ),
+  };
+}
 
-  // OCI – Other Corporate Investor
-  base.investorCategory = "OtherCorporateInvestor";
-  base.hasBoardResolutionForInvestment = toBooleanYesNo(
+export function mapToCorporateOciProfilePayload(
+  selectedCategoryId: string,
+  answers: Record<string, QuestionValue>
+): SaveOnboardingRequest["corporateOciProfilePayload"] {
+  if (selectedCategoryId !== "oci") return null;
+
+  const rangeVal = answers["What is the company\u2019s approximate net asset value?"];
+  const mapRange = (value: QuestionValue):
+    | "Below10Million"
+    | "Range10To50Million"
+    | "Range50To100Million"
+    | "Range100To500Million"
+    | "Above500Million"
+    | null => {
+    if (typeof value !== "string") return null;
+    if (value.includes("Below")) return "Below10Million";
+    if (value.includes("₦10 million") && value.includes("₦50 million")) return "Range10To50Million";
+    if (value.includes("₦50 million") && value.includes("₦100 million")) return "Range50To100Million";
+    if (value.includes("₦100 million") && value.includes("₦500 million")) return "Range100To500Million";
+    if (value.includes("Above")) return "Above500Million";
+    return null;
+  };
+
+  return {
+    hasBoardResolutionOrInternalMandate: toBooleanYesNo(
     answers[
       "Does the company have a Board resolution or internal approval mandate permitting investment in private, alternative, or high-risk opportunities?"
     ]
-  );
-  const rangeVal = answers["What is the company\u2019s approximate net asset value?"];
-  base.companyNetAssetValueRange =
-    typeof rangeVal === "string" && rangeVal.trim() !== "" ? rangeVal : null;
-  base.canWithstandLoss = toBooleanYesNo(
+    ),
+    netAssetValueRange: mapRange(rangeVal),
+    hasFinancialCapacityToWithstandLoss: toBooleanYesNo(
     answers[
       "Does the company have the financial capacity to withstand loss of invested funds without impairing operations or liquidity?"
     ]
-  );
-  base.corporateUnderstandsCrowdfundingRisk = toBooleanYesNo(
+    ),
+    understandsCrowdfundingHighRiskLoss: toBooleanYesNo(
     answers[
       "Does the company understand that crowdfunding investments are high-risk and may result in partial or total loss of capital?"
     ]
-  );
-  base.hasQualifiedInvestmentProfessionals = toBooleanYesNo(
+    ),
+    hasQualifiedInvestmentProfessionalsAccess: toBooleanYesNo(
     answers[
       "Does your institution employ or have access to qualified investment professionals who can evaluate high-risk or complex offerings?"
     ]
-  );
-  return base;
+    ),
+  };
+}
+
+export function mapToCorporateDocsPayload(
+  selectedCategoryId: string | null,
+  kycData: KYCData
+): Pick<
+  SaveOnboardingRequest,
+  "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
+> {
+  if (selectedCategoryId === "qii") {
+    return {
+      corporateQiiDocumentsPayload: {
+        recentStatusReportDocumentPathOrKey: kycData.statusReport?.name ?? null,
+        qiiLicenseEvidenceDocumentPathOrKey: kycData.qiiLicense?.name ?? null,
+        boardResolutionDocumentPathOrKey: kycData.boardResolution?.name ?? null,
+      },
+      corporateOciDocumentsPayload: null,
+    };
+  }
+  return {
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: {
+      incorporationCertificateDocumentPathOrKey: kycData.incorporationCertificate?.name ?? null,
+      recentStatusReportDocumentPathOrKey: kycData.statusReport?.name ?? null,
+      boardResolutionDocumentPathOrKey: kycData.boardResolution?.name ?? null,
+    },
+  };
 }

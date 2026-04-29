@@ -54,6 +54,10 @@ async function saveInvestorCategory(
     investorCategoryPayload: { investorCategory },
     investmentProfilePayload: null,
     kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
   });
 }
 
@@ -65,6 +69,40 @@ async function saveInvestmentProfile(
     investorCategoryPayload: null,
     investmentProfilePayload,
     kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateQiiProfile(
+  corporateQiiProfilePayload: NonNullable<SaveOnboardingRequest["corporateQiiProfilePayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateOciProfile(
+  corporateOciProfilePayload: NonNullable<SaveOnboardingRequest["corporateOciProfilePayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
   });
 }
 
@@ -74,6 +112,26 @@ async function saveKyc(kycPayload: SaveKycPayload): Promise<void> {
     investorCategoryPayload: null,
     investmentProfilePayload: null,
     kycPayload,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateDocuments(payloads: Pick<
+  SaveOnboardingRequest,
+  "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
+>): Promise<void> {
+  await saveOnboarding({
+    step: "Kyc",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: payloads.corporateQiiDocumentsPayload,
+    corporateOciDocumentsPayload: payloads.corporateOciDocumentsPayload,
   });
 }
 
@@ -96,7 +154,10 @@ const onboardingService = {
   getOnboarding,
   saveInvestorCategory,
   saveInvestmentProfile,
+  saveCorporateQiiProfile,
+  saveCorporateOciProfile,
   saveKyc,
+  saveCorporateDocuments,
   submitOnboarding,
 };
 

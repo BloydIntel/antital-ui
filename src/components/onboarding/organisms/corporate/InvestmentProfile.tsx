@@ -6,7 +6,10 @@ import { InvestorQuestionnaireView } from '@/components/onboarding/organisms/ind
 import { CORPORATE_CATEGORIES } from '@/constants/investorCategories';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import onboardingService from '@/services/onboardingService';
-import { mapToCorporateInvestmentProfilePayload } from '@/lib/onboarding-payload-mappers';
+import {
+  mapToCorporateOciProfilePayload,
+  mapToCorporateQiiProfilePayload,
+} from '@/lib/onboarding-payload-mappers';
 import { showApiErrorToast } from '@/lib/error-feedback';
 
 export function InvestmentProfile({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
@@ -15,7 +18,6 @@ export function InvestmentProfile({ onNext, onBack }: { onNext: () => void; onBa
   const [showErrors, setShowErrors] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Retrieve the ID saved in the previous step
   const selectedId = formData.selectedCategoryId;
   const activeCategory = CORPORATE_CATEGORIES.find(c => c.id === selectedId);
 
@@ -32,11 +34,22 @@ export function InvestmentProfile({ onNext, onBack }: { onNext: () => void; onBa
 
     setIsSaving(true);
     try {
-      const payload = mapToCorporateInvestmentProfilePayload(
-        selectedId,
-        formData.questionnaireAnswers
-      );
-      await onboardingService.saveInvestmentProfile(payload);
+      if (selectedId === "qii") {
+        const payload = mapToCorporateQiiProfilePayload(
+          selectedId,
+          formData.questionnaireAnswers
+        );
+        if (!payload) throw new Error("Invalid QII profile payload");
+        await onboardingService.saveCorporateQiiProfile(payload);
+      } else {
+        const payload = mapToCorporateOciProfilePayload(
+          selectedId,
+          formData.questionnaireAnswers
+        );
+        if (!payload) throw new Error("Invalid OCI profile payload");
+        await onboardingService.saveCorporateOciProfile(payload);
+      }
+
       onNext();
     } catch (error) {
       showApiErrorToast(error, "Unable to save investment profile.");
