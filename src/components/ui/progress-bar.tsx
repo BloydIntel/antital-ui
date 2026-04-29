@@ -5,9 +5,10 @@ import React from 'react'
 interface ProgressBarProps {
   value: number // 0-100
   className?: string
+  fillColor?: string
 }
 
-export function ProgressBar({ value, className = '' }: ProgressBarProps) {
+export function ProgressBar({ value, className = '', fillColor = '#377E36' }: ProgressBarProps) {
   // Clamp value between 0 and 100
   const clampedValue = Math.min(Math.max(value, 0), 100)
 
@@ -25,7 +26,7 @@ export function ProgressBar({ value, className = '' }: ProgressBarProps) {
         className="absolute left-0 top-0 h-full transition-all duration-300 ease-in-out"
         style={{
           width: `${clampedValue}%`,
-          backgroundColor: '#377E36', // Dark green fill from Figma
+          backgroundColor: fillColor,
           borderRadius: '4px',
         }}
       />
