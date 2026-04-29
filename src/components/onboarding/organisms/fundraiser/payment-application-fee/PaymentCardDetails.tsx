@@ -6,14 +6,16 @@ import { TYPOGRAPHY } from "@/constants/styles"
 interface PaymentCardDetailsProps {
     cardData: CardFormData
     setCardData: (data: CardFormData) => void
+    isFundraiserPaymentPage: boolean
+    totalAmount?: number
 }
 
 const fee: ApplicationFee = {
     amount: 25750,
-    currency: "NGN"
+    currency: "₦"
 }
 
-export function PaymentCardDetails({ cardData, setCardData }: PaymentCardDetailsProps) {
+export function PaymentCardDetails({ cardData, setCardData, isFundraiserPaymentPage, totalAmount }: PaymentCardDetailsProps) {
 
     const handleInputChange = (field: keyof CardFormData, value: string) => {
         let formattedValue = value
@@ -37,13 +39,21 @@ export function PaymentCardDetails({ cardData, setCardData }: PaymentCardDetails
 
     return (
         <div>
-            <div className="border border-[#EAEAEA] rounded-xl py-4 px-6 space-y-4 mb-8" style={TYPOGRAPHY.body}>
+            <div className={`${isFundraiserPaymentPage ? "bg-[#F9F9F9]" : "bg-[#FFFFFF]"} border border-[#EAEAEA] rounded-xl py-4 px-6 space-y-4 mb-8`} style={TYPOGRAPHY.body}>
                 <h3 className="text-[16px] font-medium text-[#1A1A1A] border-b border-[#EAEAEA] pb-4">Application Fee</h3>
 
-                <div className="flex justify-between text-[#2C2C2C] text-[16px]">
-                    <span>Total Amount:</span>
-                    <span>{fee.currency}{fee.amount}</span>
-                </div>
+                {isFundraiserPaymentPage ?
+
+                    <div className="flex justify-between text-[#2C2C2C] text-[16px]">
+                        <span>Total Amount:</span>
+                        <span>{fee.currency}{fee.amount.toLocaleString()}.00</span>
+                    </div>
+                    :
+                    <div className="flex justify-between text-[#2C2C2C] text-[16px]">
+                        <span>Investment Total:</span>
+                        <span>{fee.currency}{(totalAmount!).toLocaleString()}.00</span>
+                    </div>
+                }
             </div>
 
             <div className="border border-[#E5E7EB] rounded-xl p-6 space-y-6 bg-white transition-all">

@@ -1,10 +1,10 @@
-export type PaymentSubStep = "summary" | "method" | "details";
+export type PaymentSubStep = "summary" | "investment-summary" | "method" | "details";
 
 export type PaymentMethod = "card" | "transfer" | "opay";
 
 export interface ApplicationFee {
     amount: number
-    currency: "NGN"
+    currency: string
 }
 
 export interface UserPaymentInfo {

@@ -12,9 +12,14 @@ import { PaymentCardDetails } from "@/components/onboarding/organisms/fundraiser
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
 import { useUserStore } from "@/store/userStore"
+import { InvestmentPaymentSummary } from "@/app/(dashboard)/marketplace/invest/InvestmentPaymentSummary"
 
 const companyDetails = {
     name: "Green Tech Solution"
+}
+
+const investmentDetails = {
+    unitPrice: 5000
 }
 
 export function PaymentApplicationFee() {
@@ -23,6 +28,8 @@ export function PaymentApplicationFee() {
     const { formData, updateFormData } = useOnboardingStore();
 
     const userId = useUserStore((state) => state.userId);
+
+    const [unitCount, setUnitCount] = useState(1);
 
     const [subStepIndex, setSubStepIndex] = useState(0);
     const [method, setMethod] = useState<PaymentMethod | null>(formData.paymentMethod);
@@ -36,6 +43,13 @@ export function PaymentApplicationFee() {
     const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
 
     const currentSubStep = PAYMENT_SUBSTEPS[subStepIndex];
+
+
+    const formattedDate = new Date().toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
 
     useEffect(() => {
         updateFormData({ paymentMethod: method });
@@ -76,6 +90,10 @@ export function PaymentApplicationFee() {
             router.back();
         }
     };
+
+    const subtotal = unitCount * investmentDetails.unitPrice;
+    const platformFee = subtotal * 0.025; // 2.5%
+    const total = subtotal + platformFee;
 
     const isNextDisabled = useMemo(() => {
         switch (currentSubStep) {
@@ -126,15 +144,31 @@ export function PaymentApplicationFee() {
             {/* Sub-step content */}
             <main>
                 {currentSubStep === "summary" && (
-                    isFundraiserPaymentPage
-                        ? <PaymentSummary email={formData.loginEmail} isFundraiserPaymentPage />
-                        : <PaymentSummary userId={userId!} isFundraiserPaymentPage />
+                    <PaymentSummary
+                        email={formData.loginEmail}
+                        userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
+                        isFundraiserPaymentPage={isFundraiserPaymentPage}
+                        unitCount={unitCount}
+                        setUnitCount={setUnitCount}
+                        unitPrice={investmentDetails.unitPrice}
+                        formattedDate={formattedDate}
+                    />
+                )}
+                {currentSubStep === "investment-summary" && (
+                    <InvestmentPaymentSummary
+                        unitCount={unitCount}
+                        unitPrice={investmentDetails.unitPrice}
+                        userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
+                        formattedDate={formattedDate}
+                        platformFee={platformFee}
+                        totalAmount={total}
+                    />
                 )}
                 {currentSubStep === "method" && (
                     <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />
                 )}
                 {currentSubStep === "details" && (
-                    <PaymentCardDetails cardData={cardData} setCardData={setCardData} />
+                    <PaymentCardDetails cardData={cardData} setCardData={setCardData} isFundraiserPaymentPage={isFundraiserPaymentPage} totalAmount={total} />
                 )}
             </main>
 

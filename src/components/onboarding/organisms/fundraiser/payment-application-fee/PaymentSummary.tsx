@@ -2,12 +2,15 @@ import { TYPOGRAPHY } from "@/constants/styles"
 import { ApplicationFee } from "@/types/payment"
 import { Minus, Plus } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
 
 interface PaymentSummary {
     email?: string
     userId?: string
     isFundraiserPaymentPage: boolean
+    unitCount: number
+    setUnitCount: (count: number) => void
+    unitPrice: number
+    formattedDate: string
 }
 
 const fee: ApplicationFee = {
@@ -16,15 +19,9 @@ const fee: ApplicationFee = {
 }
 
 
-export function PaymentSummary({ email, userId, isFundraiserPaymentPage }: PaymentSummary) {
-    const [unitCount, setUnitCount] = useState(1);
-    const UNIT_PRICE = 5000;
+export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCount, setUnitCount, unitPrice, formattedDate }: PaymentSummary) {
 
-    const formattedDate = new Date().toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    });
+
 
     return (
         <div className="space-y-6">
@@ -57,7 +54,15 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage }: Payme
                             <span>Application Fee</span>
                             <span>{fee.currency}{fee.amount}</span>
                         </div>
-                        <div className="border-t-2 border-dashed border-[#1011114D] my-2" />
+                        <div className="my-2"
+                            style={{
+                                ...TYPOGRAPHY.body,
+                                backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
+                                backgroundPosition: 'top',
+                                backgroundSize: '12px 1px', // Increase 12px to make dashes longer
+                                backgroundRepeat: 'repeat-x',
+                            }}
+                        />
                         <div className="flex justify-between font-medium text-[#2C2C2C] text-[16px]">
                             <span>Total Amount:</span>
                             <span>{fee.currency}{fee.amount}</span>
@@ -70,14 +75,14 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage }: Payme
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setUnitCount(Math.max(1, unitCount - 1))}
-                                    className="w-8 h-8 flex items-center justify-center bg-[#062F24] text-white rounded"
+                                    className="w-8 h-8 flex items-center justify-center bg-[#062F24] text-white rounded cursor-pointer"
                                 >
                                     <Minus size={16} />
                                 </button>
                                 <span className="text-[16px] w-8 h-8 text-center border border-[#A8A8A8] rounded py-1">{unitCount}</span>
                                 <button
                                     onClick={() => setUnitCount(unitCount + 1)}
-                                    className="w-8 h-8 flex items-center justify-center bg-[#062F24] text-white rounded"
+                                    className="w-8 h-8 flex items-center justify-center bg-[#062F24] text-white rounded cursor-pointer"
                                 >
                                     <Plus size={16} />
                                 </button>
@@ -86,11 +91,19 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage }: Payme
 
                         <div className="flex justify-between items-center mb-4">
                             <p className="text-[#666666]">Unit Price:</p>
-                            <p style={TYPOGRAPHY.body}>₦{UNIT_PRICE.toLocaleString()}.00</p>
+                            <p style={TYPOGRAPHY.body}>₦{unitPrice.toLocaleString()}.00</p>
                         </div>
-                        <div className="text-[16px] border-t-2 border-dashed border-[#1011114D] pt-4 flex justify-between items-center" style={TYPOGRAPHY.body}>
+                        <div className="text-[16px] pt-4 flex justify-between items-center"
+                            style={{
+                                ...TYPOGRAPHY.body,
+                                backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
+                                backgroundPosition: 'top',
+                                backgroundSize: '12px 1px', // Increase 12px to make dashes longer
+                                backgroundRepeat: 'repeat-x',
+                            }}
+                        >
                             <p className="font-medium">Total Investment:</p>
-                            <p className="font-medium text-lg">₦{(unitCount * UNIT_PRICE).toLocaleString()}.00</p>
+                            <p className="font-medium text-lg">₦{(unitCount * unitPrice).toLocaleString()}.00</p>
                         </div>
                     </>
                 )}
