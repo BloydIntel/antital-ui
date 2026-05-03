@@ -1,4 +1,4 @@
-export type PaymentSubStep = "summary" | "investment-summary" | "method" | "details";
+export type PaymentSubStep = "summary" | "investment-summary" | "method" | "details" | "success";
 
 export type PaymentMethod = "card" | "transfer" | "opay";
 

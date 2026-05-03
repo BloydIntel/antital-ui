@@ -26,23 +26,25 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCou
     return (
         <div className="space-y-6">
             <div className={`grid grid-cols-10 ${isFundraiserPaymentPage ? "bg-[#F9F9F9]" : "bg-[#FFFFFF]"} rounded-lg py-2 px-2 lg:py-4 border border-[#F0F0F0]`}>
+
                 <div className="flex justify-center items-center col-span-2 lg:col-span-1">
                     <Image src="/icons/antital-single.png" alt="antital icon" width={20} height={20} />
                 </div>
-                {isFundraiserPaymentPage ? (
-                    <div className="col-span-7 flex flex-col">
-                        <span className="text-[14px] text-[#858585] mb-1">User email</span>
-                        <span className="text-[18px] text-[#1A1A1A] break-all">{email || "Not provided"}</span>
-                    </div>
-                ) : (
-                    <div className="col-span-7 flex flex-col">
-                        <span className="text-[14px] text-[#858585] mb-1">User ID</span>
-                        <span className="text-[18px] text-[#1A1A1A] break-all">{userId || "No ID"}</span>
-                    </div>
-                )
-                }
-                <div className="col-span-2 flex justify-center items-center ">
-                    <span className="text-[#1A1A1A] text-sm hidden md:block">{formattedDate}</span>
+
+                <div className="col-span-5 lg:col-span-7 flex flex-col min-w-0">
+                    <span className="text-[14px] text-[#858585] mb-1">
+                        {isFundraiserPaymentPage ? "User email" : "User ID"}
+                    </span>
+                    <span
+                        className="text-[16px] lg:text-[18px] text-[#1A1A1A] truncate"
+                        title={isFundraiserPaymentPage ? email : userId}
+                    >
+                        {isFundraiserPaymentPage ? (email || "Not provided") : (userId || "No ID")}
+                    </span>
+                </div>
+
+                <div className="col-span-3 lg:col-span-2 flex justify-end lg:justify-center items-center pr-1 lg:pr-0">
+                    <span className="text-[#1A1A1A] text-sm whitespace-nowrap">{formattedDate}</span>
                 </div>
             </div>
 

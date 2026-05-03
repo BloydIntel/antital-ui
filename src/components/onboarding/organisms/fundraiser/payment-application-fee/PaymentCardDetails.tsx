@@ -61,42 +61,47 @@ export function PaymentCardDetails({ cardData, setCardData, isFundraiserPaymentP
                     <h3 className="text-[16px] font-medium text-[#1A1A1A]">Card Details</h3>
                 </div>
 
-                <div className="grid grid-cols-12 gap-x-4">
-                    <div className="col-span-12 lg:col-span-8">
-                        <OnboardingInput
-                            label="Name on card"
-                            placeholder="John Doe"
-                            value={cardData.nameOnCard}
-                            onChange={(e) => handleInputChange("nameOnCard", e.target.value)}
-                        />
+                <div className="flex flex-col lg:flex-row gap-x-4">
+                    <div className="flex flex-col lg:min-w-[360px]">
+                        <div>
+                            <OnboardingInput
+                                label="Name on card"
+                                placeholder="John Doe"
+                                value={cardData.nameOnCard}
+                                onChange={(e) => handleInputChange("nameOnCard", e.target.value)}
+                            />
+                        </div>
+
+                        <div>
+                            <OnboardingInput
+                                label="Card Number"
+                                placeholder="0000 0000 0000 0000"
+                                value={cardData.cardNumber}
+                                onChange={(e) => handleInputChange("cardNumber", e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-span-12 lg:col-span-4">
-                        <OnboardingInput
-                            label="Expiry"
-                            placeholder="mm/yyyy"
-                            value={cardData.expiry}
-                            onChange={(e) => handleInputChange("expiry", e.target.value)}
-                        />
-                    </div>
+                    <div className="flex flex-row lg:flex-col gap-x-4">
+                        <div className="col-span-12 lg:col-span-4">
+                            <OnboardingInput
+                                label="Expiry"
+                                placeholder="mm/yyyy"
+                                value={cardData.expiry}
+                                onChange={(e) => handleInputChange("expiry", e.target.value)}
+                            />
+                        </div>
 
-                    <div className="col-span-12 lg:col-span-8">
-                        <OnboardingInput
-                            label="Card Number"
-                            placeholder="0000 0000 0000 0000"
-                            value={cardData.cardNumber}
-                            onChange={(e) => handleInputChange("cardNumber", e.target.value)}
-                        />
-                    </div>
+                        <div className="col-span-12 lg:col-span-4">
+                            <OnboardingInput
+                                label="CVV"
+                                placeholder="000"
+                                type="password"
+                                value={cardData.cvv}
+                                onChange={(e) => handleInputChange("cvv", e.target.value)}
+                            />
+                        </div>
 
-                    <div className="col-span-12 lg:col-span-4">
-                        <OnboardingInput
-                            label="CVV"
-                            placeholder="000"
-                            type="password"
-                            value={cardData.cvv}
-                            onChange={(e) => handleInputChange("cvv", e.target.value)}
-                        />
                     </div>
                 </div>
             </div>

@@ -19,12 +19,12 @@ export function InvestmentPaymentSummary({ unitCount, unitPrice, userId, formatt
                     <Image src="/icons/antital-single.png" alt="antital icon" width={20} height={20} />
                 </div>
 
-                <div className="col-span-7 flex flex-col">
+                <div className="col-span-5 lg:col-span-7 flex flex-col min-w-0">
                     <span className="text-[14px] text-[#858585] mb-1">User ID</span>
-                    <span className="text-[18px] text-[#1A1A1A] break-all">{userId || "No ID"}</span>
+                    <span className="text-[16px] lg:text-[18px] text-[#1A1A1A] truncate">{userId || "No ID"}</span>
                 </div>
-                <div className="col-span-2 flex justify-center items-center ">
-                    <span className="text-[#1A1A1A] text-sm hidden md:block">{formattedDate}</span>
+                <div className="col-span-3 lg:col-span-2 flex justify-end lg:justify-center items-center pr-1 lg:pr-0">
+                    <span className="text-[#1A1A1A] text-sm whitespace-nowrap">{formattedDate}</span>
                 </div>
             </div>
 

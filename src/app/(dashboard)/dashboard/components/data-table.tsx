@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { TYPOGRAPHY } from "@/constants/styles"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { RISK_COLORS } from "@/types/dashboard"
 
 interface DashboardInvestment {
@@ -74,6 +74,7 @@ const marketplaceData: MarketplaceInvestment[] = [
 export function DataTable({ state = false }: { state: boolean }) {
 
   const pathname = usePathname();
+  const router = useRouter()
   const isDashboardPage = pathname === "/dashboard";
   const isPortfolioPage = pathname === "/portfolio";
   const isMarketplacePage = pathname === "/marketplace";
@@ -235,8 +236,8 @@ export function DataTable({ state = false }: { state: boolean }) {
                       <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.minInvestment}</TableCell>
                       <TableCell className="py-4 align-middle">
                         <div className="flex items-center justify-center h-full">
-                          <span 
-                            className="px-3 py-1 rounded-md text-white text-[12px] capitalize inline-block" 
+                          <span
+                            className="px-3 py-1 rounded-md text-white text-[12px] capitalize inline-block"
                             style={{ backgroundColor: RISK_COLORS[row.riskScore] }}
                           >
                             {row.riskScore === 'moderate' ? 'Medium' : row.riskScore} Risk
@@ -244,7 +245,10 @@ export function DataTable({ state = false }: { state: boolean }) {
                         </div>
                       </TableCell>
                       <TableCell className="py-4 align-middle text-center">
-                        <button className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
+                        <button
+                          className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap cursor-pointer"
+                          onClick={() => router.push('/marketplace/invest')}
+                        >
                           Invest Now
                         </button>
                       </TableCell>

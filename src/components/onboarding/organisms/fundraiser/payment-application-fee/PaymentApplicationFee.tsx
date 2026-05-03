@@ -13,6 +13,7 @@ import { useOnboardingStore } from "@/store/onboardingStore"
 import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
 import { useUserStore } from "@/store/userStore"
 import { InvestmentPaymentSummary } from "@/app/(dashboard)/marketplace/invest/InvestmentPaymentSummary"
+import { PaymentSuccessPage } from "@/components/marketplace/organisms/PaymentSuccessPage"
 
 const companyDetails = {
     name: "Green Tech Solution"
@@ -44,6 +45,28 @@ export function PaymentApplicationFee() {
 
     const currentSubStep = PAYMENT_SUBSTEPS[subStepIndex];
 
+    const { currentStage, totalStages } = useMemo(() => {
+        if (isFundraiserPaymentPage) {
+            // Fundraiser Flow: 1. Summary, 2. Method, 3. Details (Linear 1-2-3)
+            const fundraiserMap: Record<string, number> = {
+                "summary": 1,
+                "method": 2,
+                "details": 3,
+            };
+            return { currentStage: fundraiserMap[currentSubStep] || 1, totalStages: 3 };
+        } else {
+            // Investment Flow: 1. Summary, 2. Invest Summary, 3. Method/Details, 4. Success
+            const investmentMap: Record<string, number> = {
+                "summary": 1,
+                "investment-summary": 2,
+                "method": 3,
+                "details": 3,
+                "success": 4
+            };
+            return { currentStage: investmentMap[currentSubStep] || 1, totalStages: 4 };
+        }
+    }, [isFundraiserPaymentPage, currentSubStep]);
+
 
     const formattedDate = new Date().toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -60,11 +83,20 @@ export function PaymentApplicationFee() {
 
         if (currentSubStep === "method") {
             if (!method) return;
-
             if (method !== "card") {
                 finalizePayment();
                 return;
             }
+        }
+
+        // Handle logical split after card details
+        if (currentSubStep === "details") {
+            if (isFundraiserPaymentPage) {
+                finalizePayment(); // Fundraiser redirects
+            } else {
+                setSubStepIndex(prev => prev + 1); // Investment shows success
+            }
+            return;
         }
 
         if (isLastSubStep) {
@@ -84,6 +116,12 @@ export function PaymentApplicationFee() {
     };
 
     const handleBack = () => {
+        // If Investment Flow and on first step, go back to marketplace
+        if (!isFundraiserPaymentPage && subStepIndex === 0) {
+            router.push('/marketplace');
+            return;
+        }
+
         if (subStepIndex > 0) {
             setSubStepIndex(prev => prev - 1);
         } else {
@@ -108,89 +146,103 @@ export function PaymentApplicationFee() {
 
     const nextLabel = currentSubStep === "details" ? "Pay" : "Next";
 
+    const backLabel = (!isFundraiserPaymentPage && subStepIndex === 0) ? "Cancel" : "Go back";
+
     return (
-        <div className="w-full lg:w-[568px] mx-auto">
+        <div className="flex flex-col justify-between lg:justify-start xl:justify-center w-full h-screen lg:w-[568px] mx-auto">
 
-            {isFundraiserPaymentPage ? (
-                <header className="mb-8">
-                    <h2 className="text-[28px] text-[#1B1B1B] font-bold" style={TYPOGRAPHY.heading}>
-                        Payment of Application Fee
-                    </h2>
-                    <p className="text-[16px] text-[#2C2C2C] mt-2" style={TYPOGRAPHY.body}>
-                        Confirm application by paying application fee
-                    </p>
-                </header>
-            ) : (
-                <header className="mb-8">
-                    <div className="flex justify-between">
-                        <h2 className="text-[24px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
-                            Stage 1: Invest in {companyDetails.name}
+            <div>
+                {isFundraiserPaymentPage ? (
+                    <header className="mb-8">
+                        <h2 className="text-[28px] text-[#1B1B1B] font-bold" style={TYPOGRAPHY.heading}>
+                            Payment of Application Fee
                         </h2>
+                        <p className="text-[16px] text-[#2C2C2C] mt-2" style={TYPOGRAPHY.body}>
+                            Confirm application by paying application fee
+                        </p>
+                    </header>
+                ) : (
+                    <header className="mb-8">
+                        <div className="flex justify-between">
+                            <h2 className="text-[18px] lg:text-[24px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
+                                Stage {currentStage}: Invest in {companyDetails.name}
+                            </h2>
 
-                        {/* To be made dymanic later */}
-                        <p className="text-[#505050]">1/4</p>
+                            <p className="text-[#505050] tabular-nums">
+                                {currentStage}/{totalStages}
+                            </p>
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                            {Array.from({ length: totalStages }).map((_, index) => {
+                                const stageNumber = index + 1;
+                                return (
+                                    <div
+                                        key={stageNumber}
+                                        className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${stageNumber <= currentStage ? 'bg-[#042E27]' : 'bg-[#CAD484]'
+                                            }`}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </header>
+                )}
+
+                {/* Sub-step content */}
+                <main>
+                    {currentSubStep === "summary" && (
+                        <PaymentSummary
+                            email={formData.loginEmail}
+                            userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
+                            isFundraiserPaymentPage={isFundraiserPaymentPage}
+                            unitCount={unitCount}
+                            setUnitCount={setUnitCount}
+                            unitPrice={investmentDetails.unitPrice}
+                            formattedDate={formattedDate}
+                        />
+                    )}
+                    {currentSubStep === "investment-summary" && (
+                        <InvestmentPaymentSummary
+                            unitCount={unitCount}
+                            unitPrice={investmentDetails.unitPrice}
+                            userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
+                            formattedDate={formattedDate}
+                            platformFee={platformFee}
+                            totalAmount={total}
+                        />
+                    )}
+                    {currentSubStep === "method" && (
+                        <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />
+                    )}
+                    {currentSubStep === "details" && (
+                        <PaymentCardDetails cardData={cardData} setCardData={setCardData} isFundraiserPaymentPage={isFundraiserPaymentPage} totalAmount={total} />
+                    )}
+                    {currentSubStep === "success" && (
+                        <PaymentSuccessPage totalAmount={total} companyName={companyDetails.name} />
+                    )}
+                </main>
+            </div>
+
+            {currentSubStep !== "success" && (
+                <footer className="flex gap-4 mt-10">
+                    <div className="flex-1">
+                        <OnboardingButton
+                            label={backLabel}
+                            variant="plain"
+                            onClick={handleBack}
+                            className="mt-0"
+                        />
                     </div>
-                    <div className="flex gap-2 mt-4">
-                        {[1, 2, 3, 4].map((step) => (
-                            <div
-                                key={step}
-                                className={`h-1.5 flex-1 rounded-full ${step === 1 ? 'bg-[#062F24]' : 'bg-[#D9E3C8]'}`}
-                            />
-                        ))}
+                    <div className="flex-1">
+                        <OnboardingButton
+                            label={nextLabel}
+                            variant="solid"
+                            onClick={handleNext}
+                            disabled={isNextDisabled}
+                            className="mt-0"
+                        />
                     </div>
-                </header>
+                </footer>
             )}
-
-            {/* Sub-step content */}
-            <main>
-                {currentSubStep === "summary" && (
-                    <PaymentSummary
-                        email={formData.loginEmail}
-                        userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
-                        isFundraiserPaymentPage={isFundraiserPaymentPage}
-                        unitCount={unitCount}
-                        setUnitCount={setUnitCount}
-                        unitPrice={investmentDetails.unitPrice}
-                        formattedDate={formattedDate}
-                    />
-                )}
-                {currentSubStep === "investment-summary" && (
-                    <InvestmentPaymentSummary
-                        unitCount={unitCount}
-                        unitPrice={investmentDetails.unitPrice}
-                        userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
-                        formattedDate={formattedDate}
-                        platformFee={platformFee}
-                        totalAmount={total}
-                    />
-                )}
-                {currentSubStep === "method" && (
-                    <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />
-                )}
-                {currentSubStep === "details" && (
-                    <PaymentCardDetails cardData={cardData} setCardData={setCardData} isFundraiserPaymentPage={isFundraiserPaymentPage} totalAmount={total} />
-                )}
-            </main>
-
-            <footer className="flex gap-4 mt-10">
-                <div className="flex-1">
-                    <OnboardingButton
-                        label="Go back"
-                        variant="plain"
-                        onClick={handleBack}
-                        className="mt-0"
-                    />
-                </div>
-                <div className="flex-1">
-                    <OnboardingButton
-                        label={nextLabel}
-                        variant="solid"
-                        onClick={handleNext}
-                        disabled={isNextDisabled}
-                        className="mt-0"
-                    />
-                </div>
-            </footer>
         </div>
     )
 }
