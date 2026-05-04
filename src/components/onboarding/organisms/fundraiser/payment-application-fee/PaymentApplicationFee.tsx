@@ -43,7 +43,15 @@ export function PaymentApplicationFee() {
 
     const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
 
-    const currentSubStep = PAYMENT_SUBSTEPS[subStepIndex];
+    const paymentSubSteps = useMemo(() => {
+        if (isFundraiserPaymentPage) {
+            return PAYMENT_SUBSTEPS.filter((step) => step !== "investment-summary" && step !== "success");
+        }
+
+        return PAYMENT_SUBSTEPS;
+    }, [isFundraiserPaymentPage]);
+
+    const currentSubStep = paymentSubSteps[subStepIndex];
 
     const { currentStage, totalStages } = useMemo(() => {
         if (isFundraiserPaymentPage) {
