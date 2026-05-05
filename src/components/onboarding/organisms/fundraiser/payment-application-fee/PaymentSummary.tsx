@@ -10,7 +10,10 @@ interface PaymentSummary {
     unitCount: number
     setUnitCount: (count: number) => void
     unitPrice: number
+    minInvestment?: number
+    isBelowMinimum?: boolean
     formattedDate: string
+    showError?: boolean
 }
 
 const fee: ApplicationFee = {
@@ -19,9 +22,10 @@ const fee: ApplicationFee = {
 }
 
 
-export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCount, setUnitCount, unitPrice, formattedDate }: PaymentSummary) {
+export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCount, setUnitCount, unitPrice = 0, minInvestment = 0, isBelowMinimum, formattedDate, showError }: PaymentSummary) {
 
-
+    const safeUnitPrice = unitPrice ?? 0;
+    const safeMinInvestment = minInvestment ?? 0;
 
     return (
         <div className="space-y-6">
@@ -78,6 +82,7 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCou
                                 <button
                                     onClick={() => setUnitCount(Math.max(1, unitCount - 1))}
                                     className="w-8 h-8 flex items-center justify-center bg-[#062F24] text-white rounded cursor-pointer"
+                                    aria-label="Minus"
                                 >
                                     <Minus size={16} />
                                 </button>
@@ -85,6 +90,7 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCou
                                 <button
                                     onClick={() => setUnitCount(unitCount + 1)}
                                     className="w-8 h-8 flex items-center justify-center bg-[#062F24] text-white rounded cursor-pointer"
+                                    aria-label="Plus"
                                 >
                                     <Plus size={16} />
                                 </button>
@@ -93,7 +99,7 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCou
 
                         <div className="flex justify-between items-center mb-4">
                             <p className="text-[#666666]">Unit Price:</p>
-                            <p style={TYPOGRAPHY.body}>₦{unitPrice.toLocaleString()}.00</p>
+                            <p style={TYPOGRAPHY.body}>₦{safeUnitPrice.toLocaleString()}.00</p>
                         </div>
                         <div className="text-[16px] pt-4 flex justify-between items-center"
                             style={{
@@ -105,8 +111,18 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCou
                             }}
                         >
                             <p className="font-medium">Total Investment:</p>
-                            <p className="font-medium text-lg">₦{(unitCount * unitPrice).toLocaleString()}.00</p>
+                            <p className="font-medium text-lg">₦{(unitCount * safeUnitPrice).toLocaleString()}.00</p>
                         </div>
+
+                        {/* Error Message Section */}
+                        {isBelowMinimum && showError && (
+                            <div className="bg-red-50 border border-red-200 p-3 rounded-lg mt-2">
+                                <p className="text-red-600 text-sm font-medium">
+                                    Minimum investment for this project is ₦{safeMinInvestment.toLocaleString()}.
+                                    Please increase your units to proceed.
+                                </p>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

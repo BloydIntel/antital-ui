@@ -40,7 +40,7 @@ export function PaymentCardDetails({ cardData, setCardData, isFundraiserPaymentP
     return (
         <div>
             <div className={`${isFundraiserPaymentPage ? "bg-[#F9F9F9]" : "bg-[#FFFFFF]"} border border-[#EAEAEA] rounded-xl py-4 px-6 space-y-4 mb-8`} style={TYPOGRAPHY.body}>
-                <h3 className="text-[16px] font-medium text-[#1A1A1A] border-b border-[#EAEAEA] pb-4">Application Fee</h3>
+                <h3 className="text-[16px] font-medium text-[#1A1A1A] border-b border-[#EAEAEA] pb-4">{isFundraiserPaymentPage ? "Application Fee" : "Investment Total"}</h3>
 
                 {isFundraiserPaymentPage ?
 

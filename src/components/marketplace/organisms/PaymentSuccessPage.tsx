@@ -1,3 +1,5 @@
+"use client"
+
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import { TYPOGRAPHY } from '@/constants/styles'
 import Image from 'next/image'

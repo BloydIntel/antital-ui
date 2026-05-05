@@ -1,15 +1,17 @@
 "use client"
 
 import { PaymentApplicationFee } from '@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentApplicationFee'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react'
 
-const companyDetails = {
-    name: "Green Tech Solution"
-}
 
 export function MarketPlacePayment() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const companyName = searchParams.get('company');
+    const unitPrice = Number(searchParams.get("price")) || 0;
+    const minInvestment = Number(searchParams.get("minInvestment"))
 
     return (
         <div className='px-4 lg:px-8 min-h-screen'>
@@ -26,11 +28,11 @@ export function MarketPlacePayment() {
 
                 <p className='text-[#858585] text-[18px]'>Trade & Market &gt;</p>
                 <p className='text-[#858585] text-[18px]'>Invest &gt;</p>
-                <p className='text-[18px]'>{companyDetails.name}</p>
+                <p className='text-[18px]'>{companyName}</p>
             </div>
 
             <div className='lg:pt-14'>
-                <PaymentApplicationFee />
+                <PaymentApplicationFee companyName={companyName!} unitPrice={unitPrice} minInvestment={minInvestment} />
             </div>
         </div>
     )

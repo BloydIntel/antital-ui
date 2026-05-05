@@ -15,61 +15,8 @@ import { TYPOGRAPHY } from "@/constants/styles"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { RISK_COLORS } from "@/types/dashboard"
-
-interface DashboardInvestment {
-  company: string;
-  sector: string;
-  invested: string;
-  unitHolding: number;
-  currentValue: number;
-  returns: string;
-  date: string;
-}
-
-interface PortfolioInvestment {
-  company: string;
-  sector: string;
-  goal: string;
-  raised: string;
-  invested: string;
-}
-
-interface MarketplaceInvestment {
-  name: string;
-  sector: string;
-  fundingGoal: string;
-  amountRaised: string;
-  minInvestment: string;
-  riskScore: 'low' | 'moderate' | 'high';
-}
-
-const investmentData: DashboardInvestment[] = [
-  { company: "Green Tech Solution", sector: "Technology", invested: "₦25,400,000.00", unitHolding: 1234, currentValue: 1250, returns: "₦432,650.00", date: "16/02/2026" },
-  { company: "MedTech Innovation", sector: "Energy", invested: "₦25,400,000.00", unitHolding: 1245, currentValue: 959, returns: "₦50,567.00", date: "14/02/2026" },
-  { company: "SeedSync Technologies", sector: "Technology", invested: "₦125,400,000.00", unitHolding: 6789, currentValue: 856, returns: "₦2,200,000.00", date: "12/02/2026" },
-  { company: "Lockstone Finance", sector: "Finance", invested: "₦5,400,000.00", unitHolding: 567, currentValue: 1750, returns: "₦60,760.00", date: "08/02/2026" },
-  { company: "HarvestIQ Solutions Inc.", sector: "Healthcare", invested: "₦5,400,000.00", unitHolding: 975, currentValue: 1550, returns: "₦22,500.00", date: "01/02/2026" },
-  { company: "YieldTrack Global Limited", sector: "Consumer Goods", invested: "₦400,000.00", unitHolding: 345, currentValue: 2000, returns: "₦15,456.00", date: "26/01/2026" }
-];
-
-const portfolioData: PortfolioInvestment[] = [
-  { company: "SeedSync Technologies", sector: "Technology", goal: "₦125,400,000.00", raised: "₦30,750,000.00", invested: "₦250,000.00" },
-  { company: "Green Tech Solution", sector: "Technology", goal: "₦325,400,000.00", raised: "₦25,000,000.00", invested: "₦100,000.00" },
-  { company: "MedTech Innovation", sector: "Energy", goal: "₦25,400,000.00", raised: "₦5,760,000.00", invested: "₦5,035.00" },
-  { company: "Lockstone Finance", sector: "Finance", goal: "₦1,325,400,000.00", raised: "₦934,450,000.00", invested: "₦103,270.00" },
-  { company: "HarvestIQ Solutions Inc.", sector: "Healthcare", goal: "₦75,400,000.00", raised: "₦15,423,000.00", invested: "₦50,400.00" },
-  { company: "YieldTrack Global Limited", sector: "Consumer Goods", goal: "₦525,400,000.00", raised: "₦205,320,000.00", invested: "₦57,200.00" }
-];
-
-const marketplaceData: MarketplaceInvestment[] = [
-  { name: "Green Tech Solution", sector: "Technology", fundingGoal: "₦325,400,000.00", amountRaised: "₦25,000,000.00", minInvestment: "₦5,000,000.00", riskScore: 'high' },
-  { name: "MedTech Innovation", sector: "Energy", fundingGoal: "₦25,400,000.00", amountRaised: "₦5,760,000.00", minInvestment: "₦5,000,000.00", riskScore: 'low' },
-  { name: "SeedSync Technologies", sector: "Technology", fundingGoal: "₦125,400,000.00", amountRaised: "₦30,750,000.00", minInvestment: "₦25,000,000.00", riskScore: 'low' },
-  { name: "Lockstone Finance", sector: "Finance", fundingGoal: "₦1,325,400,000.00", amountRaised: "₦934,450,000.00", minInvestment: "₦100,000,000.00", riskScore: 'high' },
-  { name: "HarvestIQ Solutions Inc.", sector: "Healthcare", fundingGoal: "₦75,400,000.00", amountRaised: "₦15,423,000.00", minInvestment: "₦50,000,000.00", riskScore: 'low' },
-  { name: "YieldTrack Global Limited", sector: "Consumer Goods", fundingGoal: "₦525,400,000.00", amountRaised: "₦205,320,000.00", minInvestment: "₦50,000,000.00", riskScore: 'moderate' }
-];
+import allInvestmentsRaw from "@/data/dashboardInvestmentData.json";
+import { InvestmentData, RISK_COLORS } from "@/types/dashboard"
 
 export function DataTable({ state = false }: { state: boolean }) {
 
@@ -79,14 +26,29 @@ export function DataTable({ state = false }: { state: boolean }) {
   const isPortfolioPage = pathname === "/portfolio";
   const isMarketplacePage = pathname === "/marketplace";
 
+  const allInvestments = allInvestmentsRaw as InvestmentData[];
+
   const getActiveContent = () => {
-    if (isPortfolioPage) return { data: portfolioData };
-    if (isMarketplacePage) return { data: marketplaceData };
-    return { data: investmentData };
+    if (isPortfolioPage) {
+      return allInvestments.filter(item => item.invested! > 0);
+    }
+    if (isMarketplacePage) {
+      return allInvestments; // Or filter by market type
+    }
+    return allInvestments.filter(item => item.invested! > 0);
   };
 
-  const { data: activeData } = getActiveContent();
+  const activeData = getActiveContent();
   const isEmpty = !state || activeData.length === 0;
+
+  const formatCurrency = (amount: number | undefined | null) => {
+    if (amount === undefined || amount === null) return "₦0.00";
+
+    return `₦${amount.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
 
   return (
     <div className="px-4 lg:px-6 space-y-6">
@@ -204,56 +166,64 @@ export function DataTable({ state = false }: { state: boolean }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isDashboardPage ? (
-                  (investmentData as DashboardInvestment[]).map((row, index) => (
-                    <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#E6EAE9]">
-                      <TableCell className="py-4 font-medium text-[#595959]">{row.company}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.invested}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.unitHolding}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.currentValue}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.returns}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.date}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (isPortfolioPage ? (
-                  (portfolioData as PortfolioInvestment[]).map((row, index) => (
-                    <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#E6EAE9]">
-                      <TableCell className="py-4 font-medium text-[#595959]">{row.company}</TableCell>
-                      <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.goal}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.raised}</TableCell>
-                      <TableCell className="py-4 text-[#858585] text-center">{row.invested}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  (activeData as MarketplaceInvestment[]).map((row, index) => (
-                    <TableRow key={index} className="border-b border-[#EAEAEA] transition-colors hover:bg-[#F4F7F6]">
-                      <TableCell className="py-4 align-middle font-medium text-[#595959]">{row.name}</TableCell>
-                      <TableCell className="py-4 align-middle text-[#858585]">{row.sector}</TableCell>
-                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.fundingGoal}</TableCell>
-                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.amountRaised}</TableCell>
-                      <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{row.minInvestment}</TableCell>
-                      <TableCell className="py-4 align-middle">
-                        <div className="flex items-center justify-center h-full">
-                          <span
-                            className="px-3 py-1 rounded-md text-white text-[12px] capitalize inline-block"
-                            style={{ backgroundColor: RISK_COLORS[row.riskScore] }}
+                {activeData.map((row: InvestmentData, index: number) => (
+                  <TableRow
+                    key={row.id || index}
+                    className={`border-b border-[#EAEAEA] transition-colors ${isMarketplacePage ? "hover:bg-[#F4F7F6]" : "hover:bg-[#E6EAE9]"
+                      }`}
+                  >
+                    {/* Name and Sector are common to all views */}
+                    <TableCell className="py-4 font-medium text-[#595959]">{row.name}</TableCell>
+                    <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
+
+                    {isDashboardPage && (
+                      <>
+                        <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.invested)}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">{row.unitHolding}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">{row.currentValue}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.returns)}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">{row.date}</TableCell>
+                      </>
+                    )}
+
+                    {isPortfolioPage && (
+                      <>
+                        <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.goal)}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.raised)}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.invested)}</TableCell>
+                      </>
+                    )}
+
+                    {isMarketplacePage && (
+                      <>
+                        <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{formatCurrency(row.goal)}</TableCell>
+                        <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{formatCurrency(row.raised)}</TableCell>
+                        <TableCell className="py-4 align-middle text-[#858585] text-right pr-8">{formatCurrency(row.minInvestment)}</TableCell>
+                        <TableCell className="py-4 align-middle">
+                          <div className="flex items-center justify-center h-full">
+                            <span
+                              className="px-3 py-1 rounded-md text-white text-[12px] capitalize inline-block"
+                              style={{ backgroundColor: RISK_COLORS[row.risk!] }}
+                            >
+                              {row.risk === 'moderate' ? 'Medium' : row.risk} Risk
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 align-middle text-center">
+                          <button
+                            className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap cursor-pointer"
+                            onClick={() =>
+                              router.push(
+                                `/marketplace/invest?company=${encodeURIComponent(row.name)}&minInvestment=${row.minInvestment}&price=${row.price}`
+                              )
+                            }
                           >
-                            {row.riskScore === 'moderate' ? 'Medium' : row.riskScore} Risk
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-4 align-middle text-center">
-                        <button
-                          className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap cursor-pointer"
-                          onClick={() => router.push('/marketplace/invest')}
-                        >
-                          Invest Now
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                            Invest Now
+                          </button>
+                        </TableCell>
+                      </>
+                    )}
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>

@@ -15,15 +15,14 @@ import { useUserStore } from "@/store/userStore"
 import { InvestmentPaymentSummary } from "@/app/(dashboard)/marketplace/invest/InvestmentPaymentSummary"
 import { PaymentSuccessPage } from "@/components/marketplace/organisms/PaymentSuccessPage"
 
-const companyDetails = {
-    name: "Green Tech Solution"
+interface PaymentApplicationFeeProps {
+    companyName?: string //for primary payment page
+    unitPrice?: number //for primary payment page
+    minInvestment?: number //for primary payment page
 }
 
-const investmentDetails = {
-    unitPrice: 5000
-}
+export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }: PaymentApplicationFeeProps) {
 
-export function PaymentApplicationFee() {
     const pathName = usePathname()
     const router = useRouter();
     const { formData, updateFormData } = useOnboardingStore();
@@ -31,6 +30,7 @@ export function PaymentApplicationFee() {
     const userId = useUserStore((state) => state.userId);
 
     const [unitCount, setUnitCount] = useState(1);
+    const [showError, setShowError] = useState(false);
 
     const [subStepIndex, setSubStepIndex] = useState(0);
     const [method, setMethod] = useState<PaymentMethod | null>(formData.paymentMethod);
@@ -40,6 +40,10 @@ export function PaymentApplicationFee() {
         expiry: "",
         cvv: ""
     });
+
+    useEffect(() => {
+        setShowError(false);
+    }, [unitCount]);
 
     const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
 
@@ -79,12 +83,21 @@ export function PaymentApplicationFee() {
     }, [method, updateFormData]);
 
     const handleNext = () => {
+        if (currentSubStep === "summary" && isBelowMinimum) {
+            setShowError(true);
+            return; // Prevent moving to the next step
+        }
+
         const isLastSubStep = subStepIndex === PAYMENT_SUBSTEPS.length - 1;
 
         if (currentSubStep === "method") {
             if (!method) return;
             if (method !== "card") {
-                finalizePayment();
+                if (isFundraiserPaymentPage) {
+                    finalizePayment();
+                } else {
+                    setSubStepIndex(prev => prev + 1);
+                }
                 return;
             }
         }
@@ -92,9 +105,9 @@ export function PaymentApplicationFee() {
         // Handle logical split after card details
         if (currentSubStep === "details") {
             if (isFundraiserPaymentPage) {
-                finalizePayment(); // Fundraiser redirects
+                finalizePayment();
             } else {
-                setSubStepIndex(prev => prev + 1); // Investment shows success
+                setSubStepIndex(prev => prev + 1);
             }
             return;
         }
@@ -129,9 +142,13 @@ export function PaymentApplicationFee() {
         }
     };
 
-    const subtotal = unitCount * investmentDetails.unitPrice;
-    const platformFee = subtotal * 0.025; // 2.5%
+    const unitPriceValue = unitPrice ?? 0;
+    const minInvestmentValue = minInvestment ?? 0;
+
+    const subtotal = unitCount * unitPriceValue;
+    const platformFee = subtotal * 0.025;
     const total = subtotal + platformFee;
+    const isBelowMinimum = !isFundraiserPaymentPage && subtotal < minInvestmentValue;
 
     const isNextDisabled = useMemo(() => {
         switch (currentSubStep) {
@@ -165,7 +182,7 @@ export function PaymentApplicationFee() {
                     <header className="mb-8">
                         <div className="flex justify-between">
                             <h2 className="text-[18px] lg:text-[24px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
-                                Stage {currentStage}: Invest in {companyDetails.name}
+                                Stage {currentStage}: Invest in {companyName}
                             </h2>
 
                             <p className="text-[#505050] tabular-nums">
@@ -192,19 +209,22 @@ export function PaymentApplicationFee() {
                     {currentSubStep === "summary" && (
                         <PaymentSummary
                             email={formData.loginEmail}
-                            userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
+                            userId={userId || "No user found"}
                             isFundraiserPaymentPage={isFundraiserPaymentPage}
                             unitCount={unitCount}
                             setUnitCount={setUnitCount}
-                            unitPrice={investmentDetails.unitPrice}
+                            unitPrice={unitPriceValue}
+                            minInvestment={minInvestmentValue}
+                            isBelowMinimum={isBelowMinimum}
                             formattedDate={formattedDate}
+                            showError={showError}
                         />
                     )}
                     {currentSubStep === "investment-summary" && (
                         <InvestmentPaymentSummary
                             unitCount={unitCount}
-                            unitPrice={investmentDetails.unitPrice}
-                            userId={userId || "h3u4viwj3bu4viwbwhb3hv4"}
+                            unitPrice={unitPrice!}
+                            userId={userId || "No user found"}
                             formattedDate={formattedDate}
                             platformFee={platformFee}
                             totalAmount={total}
@@ -217,7 +237,7 @@ export function PaymentApplicationFee() {
                         <PaymentCardDetails cardData={cardData} setCardData={setCardData} isFundraiserPaymentPage={isFundraiserPaymentPage} totalAmount={total} />
                     )}
                     {currentSubStep === "success" && (
-                        <PaymentSuccessPage totalAmount={total} companyName={companyDetails.name} />
+                        <PaymentSuccessPage totalAmount={total} companyName={companyName!} />
                     )}
                 </main>
             </div>
