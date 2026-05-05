@@ -1,6 +1,5 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -19,6 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 
 export function NavMain({
   label,
@@ -28,7 +28,8 @@ export function NavMain({
   items: {
     title: string
     url: string
-    icon?: LucideIcon
+    icon?: React.ComponentType<React.ComponentProps<"svg">>
+    iconClassName?: string
     isActive?: boolean
     items?: {
       title: string
@@ -60,10 +61,22 @@ export function NavMain({
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} className="cursor-pointer">
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className="cursor-pointer"
+                      isActive={shouldBeOpen(item)}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && (
+                          <item.icon
+                            className={cn(
+                              "size-5 transition-all",
+                              item.iconClassName // Apply the specific focus style here
+                            )}
+                          />
+                        )}
+                        <span className="text-[16px]">{item.title}</span>
+                      </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -92,7 +105,9 @@ export function NavMain({
                   isActive={pathname === item.url}
                 >
                   <Link href={item.url}>
-                    {item.icon && <item.icon />}
+                    {item.icon && (
+                      <item.icon className={cn("transition-all", item.iconClassName)} />
+                    )}
                     <span className="text-[16px]">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>

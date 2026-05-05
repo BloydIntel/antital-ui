@@ -15,7 +15,7 @@ export function PaymentSuccessPage({ totalAmount, companyName }: PaymentSuccessP
     const router = useRouter()
 
     return (
-        <div className="flex flex-col justify-between lg:justify-start xl:justify-center w-full h-screen lg:w-[568px] mx-auto">
+        <div className="flex flex-col justify-between lg:justify-start w-full h-screen lg:w-[568px] mx-auto">
             <div className='flex flex-col items-center py-4 px-6 space-y-4 mb-8' style={TYPOGRAPHY.body}>
                 <Image src="/trade&market/payment-success-icon.png" alt='success' width={80} height={95} className='pt-[122px]' />
 

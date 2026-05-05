@@ -24,7 +24,7 @@ export function DashboardHeader() {
     const isAuthPaymentPage = pathname === "/marketplace/invest"
 
     return (
-        <header className="flex flex-col md:flex-row md:h-[52px] items-center justify-between px-4 md:px-8 md:pt-10 pt-6 pb-4 md:pb-8 gap-4">
+        <header className="sticky top-0 z-50 bg-[#F8F8F8F8] flex flex-col md:flex-row md:h-[52px] items-center justify-between px-4 md:px-8 md:pt-10 pt-6 pb-4 md:pb-8 gap-4 border-b border-gray-100">
 
             <div className="flex items-center justify-between w-full md:w-auto md:flex-1 md:gap-8">
 

@@ -483,18 +483,25 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent [&>svg]:size-5 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "py-6 text-[#6A7682] [&>svg]:text-[#6A7682] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-[#A7B832] data-[active=true]:text-white data-[active=true]:[&>svg]:text-white data-[active=true]:[&>svg]:fill-white",
-        outline:
-          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+        default: [
+          "py-6 text-[#6A7682]",
+          "hover:bg-sidebar-accent hover:text-[#6A7682]",
+
+          // ACTIVE STATE
+          "data-[active=true]:bg-[#A7B832] data-[active=true]:text-white",
+          "data-[active=true]:hover:bg-[#A7B832] data-[active=true]:hover:text-white",
+
+        ].join(" "),
+        outline: "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))]",
       },
       size: {
-        default: "h-12 font-['DM_Sans',_sans-serif] text-[16px] font-normal leading-[20.8px] tracking-[0.01em]",
+        default: "h-12 font-['DM_Sans'] text-[16px]",
         sm: "h-7 text-xs",
-        lg: "h-12 text-sm group-data-[collapsible=icon]:p-0!",
+        lg: "h-12 text-sm",
       },
     },
     defaultVariants: {

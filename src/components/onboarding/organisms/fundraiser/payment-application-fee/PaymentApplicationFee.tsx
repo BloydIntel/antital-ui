@@ -174,7 +174,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
     const backLabel = (!isFundraiserPaymentPage && subStepIndex === 0) ? "Cancel" : "Go back";
 
     return (
-        <div className="flex flex-col justify-between lg:justify-start xl:justify-center w-full h-screen lg:w-[568px] mx-auto">
+        <div className="flex flex-col justify-between lg:justify-start w-full h-screen lg:w-[568px] mx-auto">
 
             <div>
                 {isFundraiserPaymentPage ? (
