@@ -50,7 +50,7 @@ export function PaymentCardDetails({ cardData, setCardData, isFundraiserPaymentP
                     </div>
                     :
                     <div className="flex justify-between text-[#2C2C2C] text-[16px]">
-                        <span>Investment Total:</span>
+                        <span>Total Amount:</span>
                         <span>{fee.currency}{(totalAmount!).toLocaleString()}.00</span>
                     </div>
                 }
