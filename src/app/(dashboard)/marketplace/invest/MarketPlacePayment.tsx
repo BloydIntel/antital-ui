@@ -15,7 +15,7 @@ export function MarketPlacePayment() {
 
     return (
         <div className='px-4 lg:px-8 min-h-screen'>
-            <div className='hidden lg:flex gap-1 items-center'>
+            <div className='sticky top-20 z-50 bg-[#F8F8F8F8] hidden lg:flex gap-1 items-center'>
                 <button
                     onClick={() => router.back()}
                     className="hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
