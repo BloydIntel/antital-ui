@@ -95,12 +95,22 @@ export function PrimaryMarketCard({ data }: { data: InvestmentData }) {
                 </div>
             </div>
 
-            <button className="w-full mt-4 bg-[#00332C] text-white py-3 rounded-lg font-medium cursor-pointer
+            <button
+                className="w-full mt-4 bg-[#00332C] text-white py-3 rounded-lg font-medium cursor-pointer
   transition-all duration-300 ease-in-out
   /* Mobile: Always visible */
   opacity-100 translate-y-0 
   /* Desktop (Large screens): Hidden by default, shown on group hover */
-  xl:opacity-0 xl:translate-y-2 xl:group-hover:opacity-100 xl:group-hover:translate-y-0">
+  xl:opacity-0 xl:translate-y-2 xl:group-hover:opacity-100 xl:group-hover:translate-y-0"
+                onClick={(e) => {
+                    // This prevents the parent div's onClick from firing
+                    e.stopPropagation();
+
+                    router.push(
+                        `/marketplace/invest?company=${encodeURIComponent(data.name)}&minInvestment=${data.minInvestment}&price=${data.price}`
+                    );
+                }}
+            >
                 Invest Now
             </button>
         </div>

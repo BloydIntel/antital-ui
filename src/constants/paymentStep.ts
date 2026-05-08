@@ -2,6 +2,8 @@ import { PaymentSubStep } from "@/types/payment"
 
 export const PAYMENT_SUBSTEPS: readonly PaymentSubStep[] = [
     "summary",
+    "investment-summary",
     "method",
-    "details"
+    "details",
+    "success"
 ] as const;

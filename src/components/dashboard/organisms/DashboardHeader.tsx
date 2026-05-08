@@ -1,74 +1,116 @@
+"use client"
+
 import { Input } from '@/components/ui/input'
 import { Search, HelpCircle, Bell, MessageSquare } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { TYPOGRAPHY } from '@/constants/styles'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { usePathname, useRouter } from 'next/navigation'
 
 const dashboardHeaderData = {
     notificationBadge: 4,
     userAvatarURL: "/dashboard/User-Avatar.png",
     userAvatarFallback: "JD"
-
 }
 
 export function DashboardHeader() {
+    const pathname = usePathname()
+    const router = useRouter();
+
     const onHelpIconClick = () => { }
     const onNotificationIconClick = () => { }
 
+    const isAuthPaymentPage = pathname === "/marketplace/invest"
+
     return (
-        <header className="flex flex-col-reverse gap-2 md:gap-0 md:flex-row md:h-[52px] items-center justify-between md:px-8 md:pt-10 pt-2 pb-8">
+        <header className="sticky top-0 z-50 bg-[#F8F8F8F8] flex flex-col md:flex-row md:h-[52px] items-center justify-between px-4 md:px-8 md:pt-10 pt-6 pb-4 md:pb-8 gap-4 border-b border-gray-100">
 
-            <div className="absolute left-1 top-4">
-                <SidebarTrigger className="-ml-1 md:hidden" />
-            </div>
+            <div className="flex items-center justify-between w-full md:w-auto md:flex-1 md:gap-8">
 
-            <div className="xl:flex-1 lg:w-2/5 xl:max-w-[523px]">
-                <div className="relative w-full">
-                    <Input
-                        type="search"
-                        placeholder="Search for anything..."
-                        className="h-[48px] px-4 pr-12 bg-white border-[#EAEAEA] rounded-md text-[16px] text-foreground placeholder:text-[#A2A3A1]"
-                        style={TYPOGRAPHY.body}
-                    />
-                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#A2A3A1]" />
-                </div>
-            </div>
+                {isAuthPaymentPage ? (
+                    <div className='lg:hidden flex gap-2 items-center'>
 
-            {/* Actions Section */}
-            <div className="flex items-center gap-6">
-                <div className='flex gap-2'>
-                    {/* Help Icon */}
-                    <div className='flex items-center justify-center cursor-pointer' onClick={onHelpIconClick}>
-                        <HelpCircle />
+                        <button
+                            onClick={() => router.back()}
+                            className="hover:bg-gray-100 rounded-full transition-colors"
+                            aria-label="Go back"
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 12H3M10 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+
+                        <p className='text-[18px]' style={TYPOGRAPHY.body}>
+                            Invest
+                        </p>
                     </div>
+                ) : (
+                    <div className="md:hidden">
+                        <SidebarTrigger className="-ml-1 scale-125" />
+                    </div>
+                )
 
-                    {/* Notifications Icon with Badge */}
-                    <div className="relative inline-flex">
-                        <div className='flex items-center justify-center cursor-pointer' onClick={onNotificationIconClick}>
-                            <Bell size={24} className="text-[#1A1C1E]" />
+                }
+
+                <div className={`hidden md:block xl:flex-1 lg:w-2/5 xl:max-w-[523px] w-full`}>
+                    <div className="relative w-full">
+                        <Input
+                            type="search"
+                            placeholder="Search for anything..."
+                            className="h-[48px] px-4 pr-12 bg-white border-[#EAEAEA] rounded-md text-[16px] text-foreground placeholder:text-[#A2A3A1]"
+                            style={TYPOGRAPHY.body}
+                        />
+                        <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#A2A3A1]" />
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4 md:gap-6">
+                    <div className='flex gap-4 md:gap-2'>
+                        {/* Help Icon */}
+                        <div className='flex items-center justify-center cursor-pointer' onClick={onHelpIconClick}>
+                            <HelpCircle size={24} className="text-[#1A1C1E]" />
                         </div>
 
-                        <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 -mr-1 -mt-1 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white">
-                            {dashboardHeaderData.notificationBadge}
-                        </span>
+                        {/* Notifications */}
+                        <div className="relative inline-flex">
+                            <div className='flex items-center justify-center cursor-pointer' onClick={onNotificationIconClick}>
+                                <Bell size={24} className="text-[#1A1C1E]" />
+                            </div>
+                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white font-bold">
+                                {dashboardHeaderData.notificationBadge}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Chat (Desktop only) */}
+                    <Button
+                        className="hidden lg:flex bg-[#4379B7] hover:bg-[#366295] h-12 px-6 rounded-md gap-2 text-white font-medium cursor-pointer"
+                    >
+                        <span style={TYPOGRAPHY.body}>Chat</span>
+                        <MessageSquare className="h-4 w-4" />
+                    </Button>
+
+                    {/* User Profile */}
+                    <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
+                        <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
+                        <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
+                    </Avatar>
+                </div>
+            </div>
+
+            {!isAuthPaymentPage && (
+                <div className="w-full md:hidden">
+                    <div className="relative w-full">
+                        <Input
+                            type="search"
+                            placeholder="Search for anything..."
+                            className="h-[44px] px-4 pr-12 bg-white border-[#EAEAEA] rounded-md text-[14px]"
+                        />
+                        <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A2A3A1]" />
                     </div>
                 </div>
-
-                {/* Chat Button */}
-                <Button
-                    className="bg-[#4379B7] hover:bg-[#366295] h-12 px-6 rounded-md gap-2 text-white font-medium cursor-pointer"
-                >
-                    <span style={TYPOGRAPHY.body}>Chat</span>
-                    <MessageSquare className="h-4 w-4" />
-                </Button>
-
-                {/* User Profile */}
-                <Avatar className="h-13 w-13 border border-[#EAEAEA] cursor-pointer">
-                    <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
-                    <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
-                </Avatar>
-            </div>
+            )}
         </header>
     )
 }
