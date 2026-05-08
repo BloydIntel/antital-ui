@@ -6,14 +6,16 @@ import { TYPOGRAPHY } from "@/constants/styles"
 interface PaymentCardDetailsProps {
     cardData: CardFormData
     setCardData: (data: CardFormData) => void
+    isFundraiserPaymentPage: boolean
+    totalAmount?: number
 }
 
 const fee: ApplicationFee = {
     amount: 25750,
-    currency: "NGN"
+    currency: "₦"
 }
 
-export function PaymentCardDetails({ cardData, setCardData }: PaymentCardDetailsProps) {
+export function PaymentCardDetails({ cardData, setCardData, isFundraiserPaymentPage, totalAmount }: PaymentCardDetailsProps) {
 
     const handleInputChange = (field: keyof CardFormData, value: string) => {
         let formattedValue = value
@@ -37,13 +39,21 @@ export function PaymentCardDetails({ cardData, setCardData }: PaymentCardDetails
 
     return (
         <div>
-            <div className="border border-[#EAEAEA] rounded-xl py-4 px-6 space-y-4 mb-8" style={TYPOGRAPHY.body}>
-                <h3 className="text-[16px] font-medium text-[#1A1A1A] border-b border-[#EAEAEA] pb-4">Application Fee</h3>
+            <div className={`${isFundraiserPaymentPage ? "bg-[#F9F9F9]" : "bg-[#FFFFFF]"} border border-[#EAEAEA] rounded-xl py-4 px-6 space-y-4 mb-8`} style={TYPOGRAPHY.body}>
+                <h3 className="text-[16px] font-medium text-[#1A1A1A] border-b border-[#EAEAEA] pb-4">{isFundraiserPaymentPage ? "Application Fee" : "Investment Total"}</h3>
 
-                <div className="flex justify-between text-[#2C2C2C] text-[16px]">
-                    <span>Total Amount:</span>
-                    <span>{fee.currency}{fee.amount}</span>
-                </div>
+                {isFundraiserPaymentPage ?
+
+                    <div className="flex justify-between text-[#2C2C2C] text-[16px]">
+                        <span>Total Amount:</span>
+                        <span>{fee.currency}{fee.amount.toLocaleString()}.00</span>
+                    </div>
+                    :
+                    <div className="flex justify-between text-[#2C2C2C] text-[16px]">
+                        <span>Total Amount:</span>
+                        <span>{fee.currency}{(totalAmount!).toLocaleString()}.00</span>
+                    </div>
+                }
             </div>
 
             <div className="border border-[#E5E7EB] rounded-xl p-6 space-y-6 bg-white transition-all">
@@ -51,42 +61,47 @@ export function PaymentCardDetails({ cardData, setCardData }: PaymentCardDetails
                     <h3 className="text-[16px] font-medium text-[#1A1A1A]">Card Details</h3>
                 </div>
 
-                <div className="grid grid-cols-12 gap-x-4">
-                    <div className="col-span-12 lg:col-span-8">
-                        <OnboardingInput
-                            label="Name on card"
-                            placeholder="John Doe"
-                            value={cardData.nameOnCard}
-                            onChange={(e) => handleInputChange("nameOnCard", e.target.value)}
-                        />
+                <div className="flex flex-col lg:flex-row gap-x-4">
+                    <div className="flex flex-col lg:min-w-[360px]">
+                        <div>
+                            <OnboardingInput
+                                label="Name on card"
+                                placeholder="John Doe"
+                                value={cardData.nameOnCard}
+                                onChange={(e) => handleInputChange("nameOnCard", e.target.value)}
+                            />
+                        </div>
+
+                        <div>
+                            <OnboardingInput
+                                label="Card Number"
+                                placeholder="0000 0000 0000 0000"
+                                value={cardData.cardNumber}
+                                onChange={(e) => handleInputChange("cardNumber", e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-span-12 lg:col-span-4">
-                        <OnboardingInput
-                            label="Expiry"
-                            placeholder="mm/yyyy"
-                            value={cardData.expiry}
-                            onChange={(e) => handleInputChange("expiry", e.target.value)}
-                        />
-                    </div>
+                    <div className="flex flex-row lg:flex-col gap-x-4">
+                        <div className="col-span-12 lg:col-span-4">
+                            <OnboardingInput
+                                label="Expiry"
+                                placeholder="mm/yyyy"
+                                value={cardData.expiry}
+                                onChange={(e) => handleInputChange("expiry", e.target.value)}
+                            />
+                        </div>
 
-                    <div className="col-span-12 lg:col-span-8">
-                        <OnboardingInput
-                            label="Card Number"
-                            placeholder="0000 0000 0000 0000"
-                            value={cardData.cardNumber}
-                            onChange={(e) => handleInputChange("cardNumber", e.target.value)}
-                        />
-                    </div>
+                        <div className="col-span-12 lg:col-span-4">
+                            <OnboardingInput
+                                label="CVV"
+                                placeholder="000"
+                                type="password"
+                                value={cardData.cvv}
+                                onChange={(e) => handleInputChange("cvv", e.target.value)}
+                            />
+                        </div>
 
-                    <div className="col-span-12 lg:col-span-4">
-                        <OnboardingInput
-                            label="CVV"
-                            placeholder="000"
-                            type="password"
-                            value={cardData.cvv}
-                            onChange={(e) => handleInputChange("cvv", e.target.value)}
-                        />
                     </div>
                 </div>
             </div>

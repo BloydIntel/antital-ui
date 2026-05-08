@@ -2,7 +2,16 @@
 
 import * as React from "react"
 import {
+  BriefcaseBusiness,
+  ChartLine,
+  Eye,
+  History,
   LayoutDashboard,
+  MessageCircle,
+  MessageCircleQuestionMark,
+  PiggyBank,
+  Settings,
+  Wallet,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -31,27 +40,33 @@ const data = {
         {
           title: "Portfolio",
           url: "/portfolio",
-          icon: LayoutDashboard,
+          icon: BriefcaseBusiness,
         },
         {
-          title: "Marketplace",
+          title: "Trade & Market",
           url: "/marketplace",
-          icon: LayoutDashboard,
+          icon: ChartLine,
+          iconClassName: "group-data-[active=true]/menu-item:stroke-white group-data-[active=true]/menu-item:stroke-[2.5px]"
         },
         {
           title: "Fixed Savings",
           url: "/fixed-savings",
-          icon: LayoutDashboard,
+          icon: PiggyBank,
         },
         {
           title: "Balance & Funding",
           url: "/balance-Funding",
-          icon: LayoutDashboard,
+          icon: Wallet,
         },
         {
           title: "Watchlist",
           url: "/watchlist",
-          icon: LayoutDashboard,
+          icon: Eye,
+        },
+        {
+          title: "Transaction History",
+          url: "/transaction-history",
+          icon: History,
         },
       ],
     },
@@ -61,17 +76,17 @@ const data = {
         {
           title: "Access Chat",
           url: "/access-chat",
-          icon: LayoutDashboard,
+          icon: MessageCircle,
         },
         {
           title: "Help Center",
           url: "/help-center",
-          icon: LayoutDashboard,
+          icon: MessageCircleQuestionMark,
         },
         {
           title: "Settings",
           url: "/settings",
-          icon: LayoutDashboard,
+          icon: Settings,
         },
         {
           title: "Log Out",
@@ -105,3 +120,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
+
+
