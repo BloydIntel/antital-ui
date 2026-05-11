@@ -93,24 +93,27 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
     const handleNext = () => {
         if (currentSubStep === "summary" && isBelowMinimum) {
             setShowError(true);
-            return; // Prevent moving to the next step
+            return;
         }
-
-        const isLastSubStep = subStepIndex === PAYMENT_SUBSTEPS.length - 1;
 
         if (currentSubStep === "method") {
             if (!method) return;
+
             if (method !== "card") {
                 if (isFundraiserPaymentPage) {
                     finalizePayment();
                 } else {
-                    setSubStepIndex(prev => prev + 1);
+                    const successIndex = paymentSubSteps.indexOf("success");
+                    if (successIndex !== -1) {
+                        setSubStepIndex(successIndex);
+                    } else {
+                        setSubStepIndex(prev => prev + 1);
+                    }
                 }
                 return;
             }
         }
 
-        // Handle logical split after card details
         if (currentSubStep === "details") {
             if (isFundraiserPaymentPage) {
                 finalizePayment();
@@ -120,6 +123,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
             return;
         }
 
+        const isLastSubStep = subStepIndex === paymentSubSteps.length - 1;
         if (isLastSubStep) {
             finalizePayment();
         } else {
