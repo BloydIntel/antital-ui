@@ -2,12 +2,13 @@
 
 import { TYPOGRAPHY } from '@/constants/styles'
 import { InvestmentData, MarketType, RiskLevel, Sector } from '@/types/dashboard'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import investmentDataRaw from '@/data/dashboardInvestmentData.json'
 import { MarketFilterBar } from '@/components/marketplace/organisms/MarketplaceFilterBar'
 import { PrimaryMarketCard } from '@/components/marketplace/organisms/PrimaryMarketCard'
 import { SecondaryMarketCard } from '@/components/marketplace/organisms/SecondaryMarketCard'
 import { DataTable } from '../../dashboard/components/data-table'
+import { useSearchParams } from 'next/navigation'
 
 type MarketFilters = {
     sector: Sector;
@@ -24,7 +25,12 @@ const INVESTMENTS = investmentDataRaw as InvestmentData[]
 
 
 export function Marketplace() {
-    const [activeMarket, setActiveMarket] = useState<MarketType>("primary")
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
+
+    const [activeMarket, setActiveMarket] = useState<MarketType>(
+        tabParam === "secondary" ? "secondary" : "primary"
+    )
 
     // Independent states for Primary Market
     const [primaryFilters, setPrimaryFilters] = useState({
@@ -42,6 +48,14 @@ export function Marketplace() {
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isAtBottom, setIsAtBottom] = useState(false);
+
+    useEffect(() => {
+        if (tabParam === "secondary") {
+            setActiveMarket("secondary");
+        } else if (tabParam === "primary") {
+            setActiveMarket("primary");
+        }
+    }, [tabParam]);
 
     const currentFilters = activeMarket === "primary" ? primaryFilters : secondaryFilters;
 

@@ -55,7 +55,7 @@ const data = {
         },
         {
           title: "Balance & Funding",
-          url: "/balance-Funding",
+          url: "/balance-funding",
           icon: Wallet,
         },
         {
