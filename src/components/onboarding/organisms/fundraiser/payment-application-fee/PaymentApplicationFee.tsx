@@ -14,12 +14,16 @@ import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
 import { useUserStore } from "@/store/userStore"
 import { InvestmentPaymentSummary } from "@/app/(dashboard)/marketplace/invest/InvestmentPaymentSummary"
 import { PaymentSuccessPage } from "@/components/marketplace/organisms/PaymentSuccessPage"
+import onboardingService from "@/services/onboardingService"
+import { showApiErrorToast } from "@/lib/error-feedback"
 
 interface PaymentApplicationFeeProps {
     companyName?: string //for primary payment page
     unitPrice?: number //for primary payment page
     minInvestment?: number //for primary payment page
 }
+
+const FUNDRAISER_PAYMENT_STATE_KEY = "fundraiser_application_fee_state";
 
 export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }: PaymentApplicationFeeProps) {
 
@@ -41,11 +45,28 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
         cvv: ""
     });
 
+    const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
+
+    useEffect(() => {
+        if (!isFundraiserPaymentPage || typeof window === "undefined") return;
+
+        try {
+            const raw = window.sessionStorage.getItem(FUNDRAISER_PAYMENT_STATE_KEY);
+            if (!raw) return;
+            const persisted = JSON.parse(raw) as { paymentMethod: PaymentMethod | null; applicationFeePaid: boolean };
+            updateFormData({
+                paymentMethod: persisted.paymentMethod ?? null,
+                applicationFeePaid: !!persisted.applicationFeePaid,
+            });
+            if (persisted.paymentMethod) setMethod(persisted.paymentMethod);
+        } catch {
+            // Ignore malformed session cache.
+        }
+    }, [isFundraiserPaymentPage, updateFormData]);
+
     useEffect(() => {
         setShowError(false);
     }, [unitCount]);
-
-    const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
 
     const paymentSubSteps = useMemo(() => {
         if (isFundraiserPaymentPage) {
@@ -90,7 +111,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
         updateFormData({ paymentMethod: method });
     }, [method, updateFormData]);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (currentSubStep === "summary" && isBelowMinimum) {
             setShowError(true);
             return;
@@ -101,7 +122,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
 
             if (method !== "card") {
                 if (isFundraiserPaymentPage) {
-                    finalizePayment();
+                    await finalizePayment();
                 } else {
                     const successIndex = paymentSubSteps.indexOf("success");
                     if (successIndex !== -1) {
@@ -116,7 +137,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
 
         if (currentSubStep === "details") {
             if (isFundraiserPaymentPage) {
-                finalizePayment();
+                await finalizePayment();
             } else {
                 setSubStepIndex(prev => prev + 1);
             }
@@ -125,18 +146,45 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
 
         const isLastSubStep = subStepIndex === paymentSubSteps.length - 1;
         if (isLastSubStep) {
-            finalizePayment();
+            await finalizePayment();
         } else {
             setSubStepIndex(prev => prev + 1);
         }
     };
 
-    const finalizePayment = () => {
-
-        updateFormData({
+    const finalizePayment = async () => {
+        const paymentReference = formData.paymentReference || `FR-${Date.now()}`;
+        const nextPaymentState = {
             paymentMethod: method,
+            paymentReference,
+            paymentStatus: "success" as const,
             applicationFeePaid: true,
-        });
+        };
+        updateFormData(nextPaymentState);
+
+        if (isFundraiserPaymentPage) {
+            if (!method) {
+                setShowError(true);
+                return;
+            }
+
+            try {
+                await onboardingService.saveFundraiserPayment({
+                    paymentMethod: method,
+                    paymentReference,
+                    paymentStatus: "success",
+                    applicationFeePaid: true,
+                });
+            } catch (error) {
+                showApiErrorToast(error, "Unable to save payment details.");
+                return;
+            }
+        }
+
+        if (isFundraiserPaymentPage && typeof window !== "undefined") {
+            window.sessionStorage.setItem(FUNDRAISER_PAYMENT_STATE_KEY, JSON.stringify(nextPaymentState));
+        }
+
         router.push('/onboarding/fundraiser/review');
     };
 

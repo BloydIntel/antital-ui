@@ -58,6 +58,21 @@ const API_STEP_TO_UI_STEP_CORPORATE: Record<string, StepKey> = {
   "4": "activation",
 };
 
+const API_STEP_TO_UI_STEP_FUNDRAISER: Record<string, StepKey> = {
+  InvestorCategory: "company-documentation",
+  InvestmentProfile: "representative-kyc",
+  Kyc: "representative-kyc",
+  Review: "application-fee",
+  Submitted: "application-submitted",
+  "0": "company-documentation",
+  "1": "representative-kyc",
+  "2": "representative-kyc",
+  "3": "application-fee",
+  "4": "application-submitted",
+};
+
+const FUNDRAISER_PAYMENT_STATE_KEY = "fundraiser_application_fee_state";
+
 /** @deprecated use the overload that accepts investorType for correctness */
 const API_STEP_TO_UI_STEP = API_STEP_TO_UI_STEP_INDIVIDUAL;
 
@@ -78,8 +93,15 @@ export function mapOnboardingStepToUiStep(
   const map =
     investorType === "corporate"
       ? API_STEP_TO_UI_STEP_CORPORATE
+      : investorType === "fundraiser"
+        ? API_STEP_TO_UI_STEP_FUNDRAISER
       : API_STEP_TO_UI_STEP;
-  return map[String(step)] ?? (investorType === "corporate" ? "categorization" : "investor");
+  return map[String(step)] ??
+    (investorType === "corporate"
+      ? "categorization"
+      : investorType === "fundraiser"
+        ? "company-documentation"
+        : "investor");
 }
 
 export function buildFormPatchFromOnboarding(
@@ -161,6 +183,81 @@ export function buildFormPatchFromOnboarding(
     patch.repNationality = response.corporateProfile.representative.representativeNationality ?? "";
     patch.repResidence = response.corporateProfile.representative.representativeCountryOfResidence ?? "";
     patch.repAddress = response.corporateProfile.representative.representativeAddress ?? "";
+  }
+
+  if (response.fundRaiserProfile?.company) {
+    patch.companyName = response.fundRaiserProfile.company.companyLegalName ?? "";
+    patch.brandName = response.fundRaiserProfile.company.tradingBrandName ?? "";
+    patch.registrationType = response.fundRaiserProfile.company.registrationType ?? "";
+    patch.registrationNumber = response.fundRaiserProfile.company.registrationNumber ?? "";
+    patch.loginEmail = response.fundRaiserProfile.company.companyLoginEmail ?? "";
+    patch.registrationDate = response.fundRaiserProfile.company.dateOfRegistration
+      ? response.fundRaiserProfile.company.dateOfRegistration.slice(0, 10)
+      : "";
+    patch.companyWebsite = response.fundRaiserProfile.company.companyWebsite ?? "";
+    patch.businessAddress = response.fundRaiserProfile.company.businessAddress ?? "";
+    patch.registeredAddress = response.fundRaiserProfile.company.registeredAddress ?? "";
+    patch.companyEmail = response.fundRaiserProfile.company.companyEmail ?? "";
+    patch.companyPhone = response.fundRaiserProfile.company.companyPhone ?? "";
+  }
+
+  if (response.fundRaiserProfile?.representative) {
+    patch.repFullName = response.fundRaiserProfile.representative.representativeFullName ?? "";
+    patch.repJobTitle = response.fundRaiserProfile.representative.representativeJobTitle ?? "";
+    patch.repPhoneNumber = response.fundRaiserProfile.representative.representativePhoneNumber ?? "";
+    patch.repDob = response.fundRaiserProfile.representative.representativeDateOfBirth
+      ? response.fundRaiserProfile.representative.representativeDateOfBirth.slice(0, 10)
+      : "";
+    patch.repEmail = response.fundRaiserProfile.representative.representativeEmail ?? "";
+    patch.repNationality = response.fundRaiserProfile.representative.representativeNationality ?? "";
+    patch.repResidence = response.fundRaiserProfile.representative.representativeCountryOfResidence ?? "";
+    patch.repAddress = response.fundRaiserProfile.representative.representativeAddress ?? "";
+  }
+
+  if (response.fundRaiserProfile?.businessDocuments) {
+    patch.businessDescription = response.fundRaiserProfile.businessDocuments.businessDescription ?? "";
+    patch.businessSector = response.fundRaiserProfile.businessDocuments.businessSector ?? "";
+    patch.instrumentType = response.fundRaiserProfile.businessDocuments.instrumentType ?? "";
+    patch.businessSize = response.fundRaiserProfile.businessDocuments.businessSize ?? "";
+    patch.fundingTarget = response.fundRaiserProfile.businessDocuments.fundingTarget != null
+      ? String(response.fundRaiserProfile.businessDocuments.fundingTarget)
+      : "";
+    patch.investmentRound = response.fundRaiserProfile.businessDocuments.investmentRound ?? "";
+  }
+
+  if (response.fundRaiserProfile?.payment) {
+    patch.paymentReference = response.fundRaiserProfile.payment.paymentReference ?? null;
+    patch.paymentStatus =
+      response.fundRaiserProfile.payment.paymentStatus === "success"
+        || response.fundRaiserProfile.payment.paymentStatus === "failed"
+        ? response.fundRaiserProfile.payment.paymentStatus
+        : "pending";
+    patch.applicationFeePaid = response.fundRaiserProfile.payment.applicationFeePaid === true;
+  }
+
+  // Temporary fallback while backend payment persistence is being finalized:
+  // keep fundraiser payment completion from session state so review/submit can continue.
+  if (typeof window !== "undefined") {
+    try {
+      const raw = window.sessionStorage.getItem(FUNDRAISER_PAYMENT_STATE_KEY);
+      if (raw) {
+        const persisted = JSON.parse(raw) as {
+          paymentMethod?: string | null;
+          applicationFeePaid?: boolean;
+        };
+
+        if (persisted.paymentMethod && !patch.paymentReference) {
+          patch.paymentReference = patch.paymentReference ?? null;
+        }
+
+        if (persisted.applicationFeePaid === true) {
+          patch.applicationFeePaid = true;
+          patch.paymentStatus = "success";
+        }
+      }
+    } catch {
+      // Ignore malformed session cache.
+    }
   }
 
   const questionnairePatch: Record<string, string | string[] | { selections: string[]; amount: string }> = {};
