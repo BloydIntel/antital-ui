@@ -31,7 +31,7 @@ export type ApiInvestorCategory =
 export type ApiKycIdType =
   | "NationalIdCard"
   | "InternationalPassport"
-  | "VotersCard"
+  | "DriversLicence"
   | number
   | null
   | undefined;
@@ -87,6 +87,31 @@ export interface OnboardingCorporateOciProfileDto {
 }
 
 export interface OnboardingCorporateProfileDto {
+  company?: {
+    companyLegalName?: string | null;
+    tradingBrandName?: string | null;
+    registrationType?: string | null;
+    registrationNumber?: string | null;
+    companyLoginEmail?: string | null;
+  } | null;
+  address?: {
+    dateOfRegistration?: string | null;
+    companyWebsite?: string | null;
+    businessAddress?: string | null;
+    registeredAddress?: string | null;
+    companyEmail?: string | null;
+    companyPhone?: string | null;
+  } | null;
+  representative?: {
+    representativeFullName?: string | null;
+    representativeJobTitle?: string | null;
+    representativePhoneNumber?: string | null;
+    representativeDateOfBirth?: string | null;
+    representativeEmail?: string | null;
+    representativeNationality?: string | null;
+    representativeCountryOfResidence?: string | null;
+    representativeAddress?: string | null;
+  } | null;
   qiiProfile?: OnboardingCorporateQiiProfileDto | null;
   ociProfile?: OnboardingCorporateOciProfileDto | null;
 }
@@ -152,7 +177,7 @@ export interface SaveInvestmentProfilePayload {
   hasQualifiedInvestmentProfessionals?: boolean | null;
 }
 
-export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "VotersCard";
+export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "DriversLicence";
 
 export interface SaveKycPayload {
   idType: SaveKycIdType;
@@ -184,6 +209,31 @@ export interface SaveOnboardingRequest {
     hasValidQiiRegistrationOrLicense: boolean | null;
     hasApprovedAlternativeInvestmentMandate: boolean | null;
     confirmsSecNigeriaQiiCriteria: boolean | null;
+  } | null;
+  corporateCompanyPayload?: {
+    companyLegalName: string;
+    tradingBrandName: string;
+    registrationType: string;
+    registrationNumber: string;
+    companyLoginEmail: string;
+  } | null;
+  corporateAddressPayload?: {
+    dateOfRegistration: string | null;
+    companyWebsite: string | null;
+    businessAddress: string | null;
+    registeredAddress: string | null;
+    companyEmail: string | null;
+    companyPhone: string | null;
+  } | null;
+  corporateRepresentativePayload?: {
+    representativeFullName: string;
+    representativeJobTitle: string;
+    representativePhoneNumber: string;
+    representativeDateOfBirth: string | null;
+    representativeEmail: string;
+    representativeNationality: string;
+    representativeCountryOfResidence: string;
+    representativeAddress: string;
   } | null;
   corporateOciProfilePayload?: {
     hasBoardResolutionOrInternalMandate: boolean | null;

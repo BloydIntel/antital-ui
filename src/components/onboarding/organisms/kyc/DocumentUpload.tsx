@@ -21,6 +21,12 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
         });
     };
 
+    const toElevenDigits = (value: string) => value.replace(/\D/g, "").slice(0, 11);
+    const normalizeIdNumber = (value: string, idType: string) => {
+        if (idType === "national_id") return toElevenDigits(value);
+        return value;
+    };
+
     // UI state for toggles
     const [showGovId, setShowGovId] = useState(true);
     const [showAddress, setShowAddress] = useState(true);
@@ -28,7 +34,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
     const idOptions = [
         { label: 'National ID Card', value: 'national_id' },
         { label: 'International Passport', value: 'passport' },
-        { label: "Voter's Card", value: 'voters_card' },
+        { label: "Driver's Licence", value: 'drivers_licence' },
     ];
 
     // Determine the label for the ID Number input based on store value
@@ -74,7 +80,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         placeholder="Enter ID Number"
                         className="pb-0"
                         value={data.idNumber}
-                        onChange={(e) => handleDataChange('idNumber', e.target.value)}
+                        onChange={(e) => handleDataChange('idNumber', normalizeIdNumber(e.target.value, data.idType))}
                         error={showErrors && !data.idNumber ? "ID number is required" : ""}
                     />
 
@@ -91,7 +97,7 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         placeholder="1234567890"
                         className="pb-0"
                         value={data.bvn}
-                        onChange={(e) => handleDataChange('bvn', e.target.value)}
+                        onChange={(e) => handleDataChange('bvn', toElevenDigits(e.target.value))}
                         error={showErrors && !data.bvn ? "BVN is required" : ""}
                     />
                 </div>

@@ -196,7 +196,7 @@ export function mapToInvestmentProfilePayload(
 
 function mapKycIdType(idType: string): SaveKycIdType {
   if (idType === "passport") return "InternationalPassport";
-  if (idType === "voters_card") return "VotersCard";
+  if (idType === "drivers_licence" || idType === "voters_card") return "DriversLicence";
   return "NationalIdCard";
 }
 
@@ -356,17 +356,19 @@ export function mapToCorporateOciProfilePayload(
 
 export function mapToCorporateDocsPayload(
   selectedCategoryId: string | null,
-  kycData: KYCData
+  _kycData: KYCData
 ): Pick<
   SaveOnboardingRequest,
   "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
 > {
+  void _kycData;
+
   if (selectedCategoryId === "qii") {
     return {
       corporateQiiDocumentsPayload: {
-        recentStatusReportDocumentPathOrKey: kycData.statusReport?.name ?? null,
-        qiiLicenseEvidenceDocumentPathOrKey: kycData.qiiLicense?.name ?? null,
-        boardResolutionDocumentPathOrKey: kycData.boardResolution?.name ?? null,
+        recentStatusReportDocumentPathOrKey: null,
+        qiiLicenseEvidenceDocumentPathOrKey: null,
+        boardResolutionDocumentPathOrKey: null,
       },
       corporateOciDocumentsPayload: null,
     };
@@ -375,9 +377,9 @@ export function mapToCorporateDocsPayload(
     return {
       corporateQiiDocumentsPayload: null,
       corporateOciDocumentsPayload: {
-        incorporationCertificateDocumentPathOrKey: kycData.incorporationCertificate?.name ?? null,
-        recentStatusReportDocumentPathOrKey: kycData.statusReport?.name ?? null,
-        boardResolutionDocumentPathOrKey: kycData.boardResolution?.name ?? null,
+        incorporationCertificateDocumentPathOrKey: null,
+        recentStatusReportDocumentPathOrKey: null,
+        boardResolutionDocumentPathOrKey: null,
       },
     };
   }
