@@ -237,7 +237,7 @@ export interface SaveKycPayload {
 }
 
 export interface SaveOnboardingRequest {
-  step: "InvestorCategory" | "InvestmentProfile" | "Kyc";
+  step: "InvestorCategory" | "InvestmentProfile" | "Kyc" | "Review";
   investorCategoryPayload: SaveInvestorCategoryPayload | null;
   investmentProfilePayload: SaveInvestmentProfilePayload | null;
   kycPayload: SaveKycPayload | null;
@@ -333,5 +333,11 @@ export interface SaveOnboardingRequest {
     businessSize: string | null;
     fundingTarget: number | null;
     investmentRound: string | null;
+  } | null;
+  fundRaiserPaymentPayload?: {
+    paymentMethod: string;
+    paymentReference: string;
+    paymentStatus: string;
+    applicationFeePaid: boolean;
   } | null;
 }
