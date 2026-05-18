@@ -26,10 +26,10 @@ const INVESTOR_CATEGORY_TO_UI: Record<string, OnboardingFormData["selectedCatego
 const KYC_ID_TYPE_TO_UI: Record<string, KYCData["idType"]> = {
   NationalIdCard: "national_id",
   InternationalPassport: "passport",
-  DriversLicence: "voters_card",
+  DriversLicence: "drivers_licence",
   "0": "national_id",
   "1": "passport",
-  "2": "voters_card",
+  "2": "drivers_licence",
 };
 
 const API_STEP_TO_UI_STEP_INDIVIDUAL: Record<string, StepKey> = {
