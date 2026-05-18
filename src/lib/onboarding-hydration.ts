@@ -1,4 +1,5 @@
 import type { StepKey, InvestorUserType } from "@/constants/steps";
+import type { PaymentMethod } from "@/types/payment";
 import type {
   KYCData,
   OnboardingFormData,
@@ -72,6 +73,15 @@ const API_STEP_TO_UI_STEP_FUNDRAISER: Record<string, StepKey> = {
 };
 
 const FUNDRAISER_PAYMENT_STATE_KEY = "fundraiser_application_fee_state";
+
+function normalizePaymentMethod(value: string | null | undefined): PaymentMethod | null {
+  if (!value) return null;
+  const normalized = value.toLowerCase();
+  if (normalized === "card" || normalized === "transfer" || normalized === "opay") {
+    return normalized;
+  }
+  return null;
+}
 
 /** @deprecated use the overload that accepts investorType for correctness */
 const API_STEP_TO_UI_STEP = API_STEP_TO_UI_STEP_INDIVIDUAL;
@@ -226,6 +236,7 @@ export function buildFormPatchFromOnboarding(
   }
 
   if (response.fundRaiserProfile?.payment) {
+    patch.paymentMethod = normalizePaymentMethod(response.fundRaiserProfile.payment.paymentMethod);
     patch.paymentReference = response.fundRaiserProfile.payment.paymentReference ?? null;
     patch.paymentStatus =
       response.fundRaiserProfile.payment.paymentStatus === "success"
@@ -246,8 +257,8 @@ export function buildFormPatchFromOnboarding(
           applicationFeePaid?: boolean;
         };
 
-        if (persisted.paymentMethod && !patch.paymentReference) {
-          patch.paymentReference = patch.paymentReference ?? null;
+        if (!patch.paymentMethod && persisted.paymentMethod) {
+          patch.paymentMethod = normalizePaymentMethod(persisted.paymentMethod);
         }
 
         if (persisted.applicationFeePaid === true) {

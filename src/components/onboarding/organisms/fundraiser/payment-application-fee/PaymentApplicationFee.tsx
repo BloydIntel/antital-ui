@@ -53,10 +53,20 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
         try {
             const raw = window.sessionStorage.getItem(FUNDRAISER_PAYMENT_STATE_KEY);
             if (!raw) return;
-            const persisted = JSON.parse(raw) as { paymentMethod: PaymentMethod | null; applicationFeePaid: boolean };
+            const persisted = JSON.parse(raw) as {
+                paymentMethod: PaymentMethod | null;
+                applicationFeePaid: boolean;
+                paymentReference?: string | null;
+                paymentStatus?: "pending" | "success" | "failed";
+            };
             updateFormData({
                 paymentMethod: persisted.paymentMethod ?? null,
                 applicationFeePaid: !!persisted.applicationFeePaid,
+                paymentReference: persisted.paymentReference ?? null,
+                paymentStatus:
+                    persisted.paymentStatus === "success" || persisted.paymentStatus === "failed"
+                        ? persisted.paymentStatus
+                        : "pending",
             });
             if (persisted.paymentMethod) setMethod(persisted.paymentMethod);
         } catch {
