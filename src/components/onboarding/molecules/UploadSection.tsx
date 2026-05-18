@@ -33,6 +33,18 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const droppedFile = e.dataTransfer.files?.[0];
+        if (droppedFile) {
+            onUpload?.(droppedFile);
+        }
+    };
+
     // Safely detect if we have a file and it has a name property
     const hasFile = value instanceof File || (value && typeof value === 'object' && 'name' in value);
 
@@ -60,6 +72,8 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
 
             <div
                 onClick={handleContainerClick}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
                 className={`
                     border-2 border-dashed rounded-xl px-10 py-[72px] flex flex-col items-center justify-center 
                     transition-all cursor-pointer bg-white text-center

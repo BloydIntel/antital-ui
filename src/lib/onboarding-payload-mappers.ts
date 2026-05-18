@@ -200,7 +200,7 @@ function mapKycIdType(idType: string): SaveKycIdType {
   return "NationalIdCard";
 }
 
-function toElevenDigitsOrNull(value: string): string | null {
+export function toElevenDigitsOrNull(value: string): string | null {
   const cleaned = value.trim();
   return /^\d{11}$/.test(cleaned) ? cleaned : null;
 }

@@ -95,8 +95,8 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         const hydrateOnboarding = async () => {
             if (!isAuthResolved) return;
 
-            // Only individual and corporate onboarding have this backend contract.
-            if ((type !== "individual" && type !== "corporate") || !emailVerified) {
+            // Hydration contract now supports individual, corporate and fundraiser.
+            if ((type !== "individual" && type !== "corporate" && type !== "fundraiser") || !emailVerified) {
                 if (!cancelled) setIsHydrationResolved(true);
                 return;
             }

@@ -10,12 +10,12 @@ export interface SignupRequest {
   email: string;
   userType?: "IndividualInvestor" | "CorporateInvestor" | "Fundraiser";
   preferredName?: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  nationality: string;
-  countryOfResidence: string;
-  stateOfResidence: string;
-  residentialAddress: string;
+  phoneNumber?: string | null;
+  dateOfBirth?: string | null;
+  nationality?: string | null;
+  countryOfResidence?: string | null;
+  stateOfResidence?: string | null;
+  residentialAddress?: string | null;
   password: string;
   confirmPassword: string;
   hasAgreedToTerms: boolean;
