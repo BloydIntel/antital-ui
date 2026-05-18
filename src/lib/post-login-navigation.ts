@@ -46,7 +46,7 @@ export async function resolvePostLoginPath(login: LoginResponse): Promise<string
     if (isOnboardingCompleteStatus(onboarding.status)) {
       return "/dashboard";
     }
-    const stepKey = mapOnboardingStepToUiStep(onboarding.currentStep);
+    const stepKey = mapOnboardingStepToUiStep(onboarding.currentStep, type);
     return `/onboarding/${type}/${stepKey}`;
   } catch {
     return `/onboarding/${type}/${firstStepKeyForType(type)}`;

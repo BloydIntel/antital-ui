@@ -58,6 +58,7 @@ async function saveInvestorCategory(
     corporateOciProfilePayload: null,
     corporateQiiDocumentsPayload: null,
     corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
   });
 }
 
@@ -73,6 +74,7 @@ async function saveInvestmentProfile(
     corporateOciProfilePayload: null,
     corporateQiiDocumentsPayload: null,
     corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
   });
 }
 
@@ -88,6 +90,7 @@ async function saveCorporateQiiProfile(
     corporateOciProfilePayload: null,
     corporateQiiDocumentsPayload: null,
     corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
   });
 }
 
@@ -103,6 +106,7 @@ async function saveCorporateOciProfile(
     corporateOciProfilePayload,
     corporateQiiDocumentsPayload: null,
     corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
   });
 }
 
@@ -122,6 +126,154 @@ async function saveKyc(
     corporateOciProfilePayload: null,
     corporateQiiDocumentsPayload: payloads?.corporateQiiDocumentsPayload ?? null,
     corporateOciDocumentsPayload: payloads?.corporateOciDocumentsPayload ?? null,
+    fundraiserBusinessDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateCompany(
+  corporateCompanyPayload: NonNullable<SaveOnboardingRequest["corporateCompanyPayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload,
+    corporateAddressPayload: null,
+    corporateRepresentativePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateAddress(
+  corporateAddressPayload: NonNullable<SaveOnboardingRequest["corporateAddressPayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload: null,
+    corporateAddressPayload,
+    corporateRepresentativePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
+  });
+}
+
+async function saveCorporateRepresentative(
+  corporateRepresentativePayload: NonNullable<
+    SaveOnboardingRequest["corporateRepresentativePayload"]
+  >
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestmentProfile",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload: null,
+    corporateAddressPayload: null,
+    corporateRepresentativePayload,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
+  });
+}
+
+async function saveFundraiserBusinessDocuments(
+  fundraiserBusinessDocumentsPayload: NonNullable<
+    SaveOnboardingRequest["fundraiserBusinessDocumentsPayload"]
+  >
+): Promise<void> {
+  await saveOnboarding({
+    step: "Kyc",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload: null,
+    corporateAddressPayload: null,
+    corporateRepresentativePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload,
+  });
+}
+
+async function saveFundraiserCompany(
+  fundRaiserCompanyPayload: NonNullable<SaveOnboardingRequest["fundRaiserCompanyPayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "InvestorCategory",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload: null,
+    corporateAddressPayload: null,
+    corporateRepresentativePayload: null,
+    fundRaiserCompanyPayload,
+    fundRaiserRepresentativePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
+  });
+}
+
+async function saveFundraiserKycBundle(
+  kycPayload: NonNullable<SaveOnboardingRequest["kycPayload"]>,
+  fundRaiserRepresentativePayload: NonNullable<
+    SaveOnboardingRequest["fundRaiserRepresentativePayload"]
+  >,
+  fundraiserBusinessDocumentsPayload: SaveOnboardingRequest["fundraiserBusinessDocumentsPayload"]
+): Promise<void> {
+  await saveOnboarding({
+    step: "Kyc",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload: null,
+    corporateAddressPayload: null,
+    corporateRepresentativePayload: null,
+    fundRaiserRepresentativePayload,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: fundraiserBusinessDocumentsPayload ?? null,
+  });
+}
+
+async function saveFundraiserPayment(
+  fundRaiserPaymentPayload: NonNullable<SaveOnboardingRequest["fundRaiserPaymentPayload"]>
+): Promise<void> {
+  await saveOnboarding({
+    step: "Review",
+    investorCategoryPayload: null,
+    investmentProfilePayload: null,
+    kycPayload: null,
+    corporateQiiProfilePayload: null,
+    corporateCompanyPayload: null,
+    corporateAddressPayload: null,
+    corporateRepresentativePayload: null,
+    fundRaiserCompanyPayload: null,
+    fundRaiserRepresentativePayload: null,
+    corporateOciProfilePayload: null,
+    corporateQiiDocumentsPayload: null,
+    corporateOciDocumentsPayload: null,
+    fundraiserBusinessDocumentsPayload: null,
+    fundRaiserPaymentPayload,
   });
 }
 
@@ -146,6 +298,13 @@ const onboardingService = {
   saveInvestmentProfile,
   saveCorporateQiiProfile,
   saveCorporateOciProfile,
+  saveCorporateCompany,
+  saveCorporateAddress,
+  saveCorporateRepresentative,
+  saveFundraiserCompany,
+  saveFundraiserBusinessDocuments,
+  saveFundraiserKycBundle,
+  saveFundraiserPayment,
   saveKyc,
   submitOnboarding,
 };

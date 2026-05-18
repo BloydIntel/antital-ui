@@ -31,7 +31,7 @@ export type ApiInvestorCategory =
 export type ApiKycIdType =
   | "NationalIdCard"
   | "InternationalPassport"
-  | "VotersCard"
+  | "DriversLicence"
   | number
   | null
   | undefined;
@@ -87,8 +87,78 @@ export interface OnboardingCorporateOciProfileDto {
 }
 
 export interface OnboardingCorporateProfileDto {
+  company?: {
+    companyLegalName?: string | null;
+    tradingBrandName?: string | null;
+    registrationType?: string | null;
+    registrationNumber?: string | null;
+    companyLoginEmail?: string | null;
+  } | null;
+  address?: {
+    dateOfRegistration?: string | null;
+    companyWebsite?: string | null;
+    businessAddress?: string | null;
+    registeredAddress?: string | null;
+    companyEmail?: string | null;
+    companyPhone?: string | null;
+  } | null;
+  representative?: {
+    representativeFullName?: string | null;
+    representativeJobTitle?: string | null;
+    representativePhoneNumber?: string | null;
+    representativeDateOfBirth?: string | null;
+    representativeEmail?: string | null;
+    representativeNationality?: string | null;
+    representativeCountryOfResidence?: string | null;
+    representativeAddress?: string | null;
+  } | null;
   qiiProfile?: OnboardingCorporateQiiProfileDto | null;
   ociProfile?: OnboardingCorporateOciProfileDto | null;
+}
+
+export interface OnboardingFundRaiserProfileDto {
+  company?: {
+    companyLegalName?: string | null;
+    tradingBrandName?: string | null;
+    registrationType?: string | null;
+    registrationNumber?: string | null;
+    companyLoginEmail?: string | null;
+    dateOfRegistration?: string | null;
+    companyWebsite?: string | null;
+    businessAddress?: string | null;
+    registeredAddress?: string | null;
+    companyEmail?: string | null;
+    companyPhone?: string | null;
+  } | null;
+  representative?: {
+    representativeFullName?: string | null;
+    representativeJobTitle?: string | null;
+    representativePhoneNumber?: string | null;
+    representativeDateOfBirth?: string | null;
+    representativeEmail?: string | null;
+    representativeNationality?: string | null;
+    representativeCountryOfResidence?: string | null;
+    representativeAddress?: string | null;
+  } | null;
+  businessDocuments?: {
+    founderAndTeamIntroductionDocumentPathOrKey?: string | null;
+    fundraisingDeckDocumentPathOrKey?: string | null;
+    investmentMemoDocumentPathOrKey?: string | null;
+    termsOfOfferingDocumentPathOrKey?: string | null;
+    productDemoDocumentPathOrKey?: string | null;
+    businessDescription?: string | null;
+    businessSector?: string | null;
+    instrumentType?: string | null;
+    businessSize?: string | null;
+    fundingTarget?: number | null;
+    investmentRound?: string | null;
+  } | null;
+  payment?: {
+    paymentMethod?: string | null;
+    paymentReference?: string | null;
+    paymentStatus?: string | null;
+    applicationFeePaid?: boolean | null;
+  } | null;
 }
 
 export interface OnboardingResponse {
@@ -100,6 +170,7 @@ export interface OnboardingResponse {
   investorProfile?: OnboardingInvestorProfileDto | null;
   kyc?: OnboardingKycDto | null;
   corporateProfile?: OnboardingCorporateProfileDto | null;
+  fundRaiserProfile?: OnboardingFundRaiserProfileDto | null;
 }
 
 export interface SaveInvestorCategoryPayload {
@@ -152,7 +223,7 @@ export interface SaveInvestmentProfilePayload {
   hasQualifiedInvestmentProfessionals?: boolean | null;
 }
 
-export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "VotersCard";
+export type SaveKycIdType = "NationalIdCard" | "InternationalPassport" | "DriversLicence";
 
 export interface SaveKycPayload {
   idType: SaveKycIdType;
@@ -166,7 +237,7 @@ export interface SaveKycPayload {
 }
 
 export interface SaveOnboardingRequest {
-  step: "InvestorCategory" | "InvestmentProfile" | "Kyc";
+  step: "InvestorCategory" | "InvestmentProfile" | "Kyc" | "Review";
   investorCategoryPayload: SaveInvestorCategoryPayload | null;
   investmentProfilePayload: SaveInvestmentProfilePayload | null;
   kycPayload: SaveKycPayload | null;
@@ -185,6 +256,54 @@ export interface SaveOnboardingRequest {
     hasApprovedAlternativeInvestmentMandate: boolean | null;
     confirmsSecNigeriaQiiCriteria: boolean | null;
   } | null;
+  corporateCompanyPayload?: {
+    companyLegalName: string;
+    tradingBrandName: string;
+    registrationType: string;
+    registrationNumber: string;
+    companyLoginEmail: string;
+  } | null;
+  corporateAddressPayload?: {
+    dateOfRegistration: string | null;
+    companyWebsite: string | null;
+    businessAddress: string | null;
+    registeredAddress: string | null;
+    companyEmail: string | null;
+    companyPhone: string | null;
+  } | null;
+  corporateRepresentativePayload?: {
+    representativeFullName: string;
+    representativeJobTitle: string;
+    representativePhoneNumber: string;
+    representativeDateOfBirth: string | null;
+    representativeEmail: string;
+    representativeNationality: string;
+    representativeCountryOfResidence: string;
+    representativeAddress: string;
+  } | null;
+  fundRaiserCompanyPayload?: {
+    companyLegalName: string;
+    tradingBrandName: string | null;
+    registrationType: string;
+    registrationNumber: string;
+    companyLoginEmail: string;
+    dateOfRegistration: string | null;
+    companyWebsite: string | null;
+    businessAddress: string;
+    registeredAddress: string;
+    companyEmail: string;
+    companyPhone: string;
+  } | null;
+  fundRaiserRepresentativePayload?: {
+    representativeFullName: string;
+    representativeJobTitle: string;
+    representativePhoneNumber: string;
+    representativeDateOfBirth: string | null;
+    representativeEmail: string;
+    representativeNationality: string;
+    representativeCountryOfResidence: string;
+    representativeAddress: string;
+  } | null;
   corporateOciProfilePayload?: {
     hasBoardResolutionOrInternalMandate: boolean | null;
     netAssetValueRange: "Below10Million" | "Range10To50Million" | "Range50To100Million" | "Range100To500Million" | "Above500Million" | null;
@@ -201,5 +320,24 @@ export interface SaveOnboardingRequest {
     incorporationCertificateDocumentPathOrKey: string | null;
     recentStatusReportDocumentPathOrKey: string | null;
     boardResolutionDocumentPathOrKey: string | null;
+  } | null;
+  fundraiserBusinessDocumentsPayload?: {
+    founderAndTeamIntroductionDocumentPathOrKey: string | null;
+    fundraisingDeckDocumentPathOrKey: string | null;
+    investmentMemoDocumentPathOrKey: string | null;
+    termsOfOfferingDocumentPathOrKey: string | null;
+    productDemoDocumentPathOrKey: string | null;
+    businessDescription: string | null;
+    businessSector: string | null;
+    instrumentType: string | null;
+    businessSize: string | null;
+    fundingTarget: number | null;
+    investmentRound: string | null;
+  } | null;
+  fundRaiserPaymentPayload?: {
+    paymentMethod: string;
+    paymentReference: string;
+    paymentStatus: string;
+    applicationFeePaid: boolean;
   } | null;
 }
