@@ -3,11 +3,37 @@ import { TYPOGRAPHY } from "@/constants/styles";
 import { ShieldAlert } from "lucide-react";
 import { RecentActivitySection } from "@/components/balance-funding/RecentActivitySection";
 
+const userData = {
+    availableBalance: 5325400,
+    recentActivity: [
+        {
+            type: "Deposit",
+            description: "Bank transfer received",
+            amount: 100000,
+            date: "2026-05-14",
+            timeStamp: "10:00 AM"
+        },
+        {
+            type: "Investment",
+            description: "Investment in GreenTech Solutions",
+            amount: 75000,
+            date: "2026-05-14",
+            timeStamp: "10:00 AM"
+        },
+        {
+            type: "Fee",
+            description: "Investment processing fee",
+            amount: 1850,
+            date: "2026-05-14",
+            timeStamp: "10:00 AM"
+        }
+    ]
+}
 
 export function Overview() {
     return (
         <div>
-            <BalanceSection />
+            <BalanceSection userData={userData} />
 
             <div className="mt-12 pt-4 pl-4 border border-[#EAEAEA]">
                 <div className="flex text-[#1F1F1F] gap-2 items-center">
@@ -19,7 +45,7 @@ export function Overview() {
                 </p>
             </div>
 
-            <RecentActivitySection />
+            <RecentActivitySection userRecentActivityData={userData.recentActivity} />
         </div>
     )
 }

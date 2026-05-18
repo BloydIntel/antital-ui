@@ -1,36 +1,20 @@
 "use client"
 
 import { TYPOGRAPHY } from "@/constants/styles";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowDownRight, PiggyBank, Plus, RotateCw, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const userData = {
-    availableBalance: 5325400,
-    recentActivity: [
-        {
-            type: "Deposit",
-            description: "Bank transfer received",
-            amount: 100000,
-            date: "2026-05-14",
-            timeStamp: "10:00 AM"
-        },
-        {
-            type: "Investment",
-            description: "Investment in GreenTech Solutions",
-            amount: 75000,
-            date: "2026-05-14",
-            timeStamp: "10:00 AM"
-        },
-        {
-            type: "Charges",
-            description: "Investment processing fee",
-            amount: 1850,
-            date: "2026-05-14",
-            timeStamp: "10:00 AM"
-        }
-    ]
+interface UserData {
+    availableBalance: number;
+    recentActivity: {
+        type: string;
+        description: string;
+        amount: number;
+        date: string;
+        timeStamp: string;
+    }[];
 }
 
 const actionCards = [
@@ -54,7 +38,7 @@ const actionCards = [
     },
 ];
 
-export function BalanceSection() {
+export function BalanceSection({ userData }: { userData: UserData }) {
 
     const router = useRouter()
 
@@ -112,17 +96,17 @@ export function BalanceSection() {
                 {actionCards.map((card, index) => (
                     <div
                         key={index}
-                        className="flex flex-col items-center justify-center p-8 bg-[#E6EAE9] rounded-xl cursor-pointer hover:bg-[#DEE3E1] transition-colors border border-transparent active:border-[#042E27]"
+                        className="group flex flex-col items-center justify-center p-8 bg-[#E6EAE9] rounded-xl cursor-pointer hover:bg-transparent transition-colors border border-transparent active:border-[#042E27]"
                         onClick={() => router.push(card.path)}
                     >
                         {/* Icon Container */}
-                        <div className="mb-6">
+                        <div className="mb-6 bg-[#E6EAE9] p-1">
                             {card.icon}
                         </div>
 
                         {/* Text Content */}
                         <h4
-                            className="text-[20px] text-[#021310] mb-1"
+                            className="text-[20px] text-[#021310] mb-1 group-hover:text-[#E6EAE9]"
                             style={TYPOGRAPHY.body}
                         >
                             {card.title}

@@ -1,16 +1,48 @@
 'use client' // Required for useState in Next.js App Router
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { cn } from '@/lib/utils'
 import { Settings } from 'lucide-react'
 import { Overview } from '@/components/balance-funding/Overview'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { TransactionRecordsTable } from '@/components/balance-funding/TransactionRecordsTable'
+import { userData } from '@/data/transactionsMockData';
 
 const sections = ["Overview", "Transactions", "Payment Methods"];
 
 export default function BalanceFunding() {
-  const [activeSection, setActiveSection] = useState("Overview");
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+
+  const [activeSection, setActiveSection] = useState(
+    tabParam === "Transactions" ? "Transactions" : "Overview"
+  );
+
+  useEffect(() => {
+    if (tabParam === "Transactions") {
+      setActiveSection("Transactions");
+    } else {
+
+      setActiveSection(prev => prev === "Transactions" ? "Overview" : prev);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (section: string) => {
+    setActiveSection(section);
+
+    if (section === "Transactions") {
+      // Keep the query string for deep linking
+      router.push(`${pathname}?tab=Transactions`);
+    } else {
+      // Wipe the query parameter cleanly when moving to Overview or Payment Methods
+      router.push(pathname);
+    }
+  };
 
   return (
     <div className='px-8 space-y-8'>
@@ -46,7 +78,7 @@ export default function BalanceFunding() {
         {sections.map((section) => (
           <button
             key={section}
-            onClick={() => setActiveSection(section)}
+            onClick={() => handleTabChange(section)}
             className={cn(
               "px-3 lg:px-6 py-2 text-[12px] lg:text-[16px] rounded-md cursor-pointer transition-all whitespace-nowrap w-full",
               activeSection === section
@@ -63,7 +95,7 @@ export default function BalanceFunding() {
       {/* Conditional Content Rendering */}
       <div className="mt-6">
         {activeSection === "Overview" && <Overview />}
-        {activeSection === "Transactions" && <div>Transactions List goes here...</div>}
+        {activeSection === "Transactions" && <TransactionRecordsTable data={userData.recentActivity} />}
         {activeSection === "Payment Methods" && <div>Payment Methods goes here...</div>}
       </div>
     </div>
