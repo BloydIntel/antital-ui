@@ -196,7 +196,7 @@ export function mapToInvestmentProfilePayload(
 
 function mapKycIdType(idType: string): SaveKycIdType {
   if (idType === "passport") return "InternationalPassport";
-  if (idType === "voters_card") return "VotersCard";
+  if (idType === "voters_card") return "DriversLicence";
   return "NationalIdCard";
 }
 
@@ -221,10 +221,10 @@ export function mapToKycPayload(kycData: KYCData): SaveKycPayload {
     idType: mapKycIdType(kycData.idType),
     nin: toElevenDigitsOrNull(kycData.idNumber),
     bvn: toElevenDigitsOrNull(kycData.bvn),
-    governmentIdDocumentPathOrKey: null,
-    proofOfAddressDocumentPathOrKey: null,
-    selfieVerificationPathOrKey: null,
-    incomeVerificationPathOrKey: null,
+    governmentIdDocumentPathOrKey: kycData.idFile?.name ?? null,
+    proofOfAddressDocumentPathOrKey: kycData.addressFile?.name ?? null,
+    selfieVerificationPathOrKey: kycData.selfie?.name ?? null,
+    incomeVerificationPathOrKey: kycData.incomeFile?.name ?? null,
     incomeVerificationDocumentTypesCommaSeparated:
       encodedIncomeTypes.length > 0
         ? encodedIncomeTypes.join(",")

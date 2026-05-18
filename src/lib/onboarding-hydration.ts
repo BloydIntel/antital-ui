@@ -26,7 +26,7 @@ const INVESTOR_CATEGORY_TO_UI: Record<string, OnboardingFormData["selectedCatego
 const KYC_ID_TYPE_TO_UI: Record<string, KYCData["idType"]> = {
   NationalIdCard: "national_id",
   InternationalPassport: "passport",
-  VotersCard: "voters_card",
+  DriversLicence: "voters_card",
   "0": "national_id",
   "1": "passport",
   "2": "voters_card",
@@ -130,6 +130,98 @@ export function buildFormPatchFromOnboarding(
   }
 
   if (selectedCategoryId) patch.selectedCategoryId = selectedCategoryId;
+
+  if (response.corporateProfile?.company) {
+    patch.companyName = response.corporateProfile.company.companyLegalName ?? "";
+    patch.brandName = response.corporateProfile.company.tradingBrandName ?? "";
+    patch.registrationType = response.corporateProfile.company.registrationType ?? "";
+    patch.registrationNumber = response.corporateProfile.company.registrationNumber ?? "";
+    patch.loginEmail = response.corporateProfile.company.companyLoginEmail ?? "";
+  }
+
+  if (response.corporateProfile?.address) {
+    patch.registrationDate = response.corporateProfile.address.dateOfRegistration
+      ? response.corporateProfile.address.dateOfRegistration.slice(0, 10)
+      : "";
+    patch.companyWebsite = response.corporateProfile.address.companyWebsite ?? "";
+    patch.businessAddress = response.corporateProfile.address.businessAddress ?? "";
+    patch.registeredAddress = response.corporateProfile.address.registeredAddress ?? "";
+    patch.companyEmail = response.corporateProfile.address.companyEmail ?? "";
+    patch.companyPhone = response.corporateProfile.address.companyPhone ?? "";
+  }
+
+  if (response.corporateProfile?.representative) {
+    patch.repFullName = response.corporateProfile.representative.representativeFullName ?? "";
+    patch.repJobTitle = response.corporateProfile.representative.representativeJobTitle ?? "";
+    patch.repPhoneNumber = response.corporateProfile.representative.representativePhoneNumber ?? "";
+    patch.repDob = response.corporateProfile.representative.representativeDateOfBirth
+      ? response.corporateProfile.representative.representativeDateOfBirth.slice(0, 10)
+      : "";
+    patch.repEmail = response.corporateProfile.representative.representativeEmail ?? "";
+    patch.repNationality = response.corporateProfile.representative.representativeNationality ?? "";
+    patch.repResidence = response.corporateProfile.representative.representativeCountryOfResidence ?? "";
+    patch.repAddress = response.corporateProfile.representative.representativeAddress ?? "";
+  }
+
+  const questionnairePatch: Record<string, string | string[] | { selections: string[]; amount: string }> = {};
+  if (response.corporateProfile?.qiiProfile) {
+    const enumToLabel: Record<string, string> = {
+      Bank: "Bank",
+      AssetManagementCompany: "Asset management company",
+      PensionFundAdministrator: "Pension fund administrator",
+      InsuranceCompany: "Insurance company",
+      VentureCapitalOrPrivateEquityFund: "Venture capital/private equity fund",
+      CorporateFinanceInstitution: "Corporate finance institution",
+      OtherRegulatedInstitution: "Other regulated institution (specify)",
+    };
+
+    const institutionLabels = (response.corporateProfile.qiiProfile.institutionTypesCommaSeparated ?? "")
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean)
+      .map((v) => enumToLabel[v] ?? v);
+
+    questionnairePatch["What type of institutional entity do you represent?"] = {
+      selections: institutionLabels,
+      amount: response.corporateProfile.qiiProfile.otherInstitutionType ?? "",
+    };
+    questionnairePatch["Does your institution have a valid registration or license as Qualified Institutional Investor?"] =
+      response.corporateProfile.qiiProfile.hasValidQiiRegistrationOrLicense === true ? "Yes" :
+      response.corporateProfile.qiiProfile.hasValidQiiRegistrationOrLicense === false ? "No" : "";
+    questionnairePatch["Does your institution have an approved investment mandate that allows participation in alternative or high-risk investments such as crowdfunding?"] =
+      response.corporateProfile.qiiProfile.hasApprovedAlternativeInvestmentMandate === true ? "Yes" :
+      response.corporateProfile.qiiProfile.hasApprovedAlternativeInvestmentMandate === false ? "No" : "";
+    questionnairePatch["Do you confirm that your institution meets the SEC Nigeria criteria for a Qualified Institutional Investor and consent to be categorized as such on Antital?"] =
+      response.corporateProfile.qiiProfile.confirmsSecNigeriaQiiCriteria === true ? "Yes" :
+      response.corporateProfile.qiiProfile.confirmsSecNigeriaQiiCriteria === false ? "No" : "";
+  }
+
+  if (response.corporateProfile?.ociProfile) {
+    const rangeToLabel: Record<string, string> = {
+      Below10Million: "Below ₦10 million",
+      Range10To50Million: "₦10 million - ₦50 million",
+      Range50To100Million: "₦50 million - ₦100 million",
+      Range100To500Million: "₦100 million - ₦500 million",
+      Above500Million: "Above ₦500 million",
+    };
+    questionnairePatch["Does the company have a Board resolution or internal approval mandate permitting investment in private, alternative, or high-risk opportunities?"] =
+      response.corporateProfile.ociProfile.hasBoardResolutionOrInternalMandate === true ? "Yes" :
+      response.corporateProfile.ociProfile.hasBoardResolutionOrInternalMandate === false ? "No" : "";
+    questionnairePatch["What is the company’s approximate net asset value?"] =
+      response.corporateProfile.ociProfile.netAssetValueRange
+        ? (rangeToLabel[String(response.corporateProfile.ociProfile.netAssetValueRange)] ?? "")
+        : "";
+    questionnairePatch["Does the company have the financial capacity to withstand loss of invested funds without impairing operations or liquidity?"] =
+      response.corporateProfile.ociProfile.hasFinancialCapacityToWithstandLoss === true ? "Yes" :
+      response.corporateProfile.ociProfile.hasFinancialCapacityToWithstandLoss === false ? "No" : "";
+    questionnairePatch["Does the company understand that crowdfunding investments are high-risk and may result in partial or total loss of capital?"] =
+      response.corporateProfile.ociProfile.understandsCrowdfundingHighRiskLoss === true ? "Yes" :
+      response.corporateProfile.ociProfile.understandsCrowdfundingHighRiskLoss === false ? "No" : "";
+    questionnairePatch["Does your institution employ or have access to qualified investment professionals who can evaluate high-risk or complex offerings?"] =
+      response.corporateProfile.ociProfile.hasQualifiedInvestmentProfessionalsAccess === true ? "Yes" :
+      response.corporateProfile.ociProfile.hasQualifiedInvestmentProfessionalsAccess === false ? "No" : "";
+  }
+  if (Object.keys(questionnairePatch).length > 0) patch.questionnaireAnswers = questionnairePatch;
 
   const kycPatch: Partial<KYCData> = {};
   if (response.kyc?.idType !== null && response.kyc?.idType !== undefined) {
