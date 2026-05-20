@@ -14,6 +14,7 @@ interface UserData {
         amount: number;
         date: string;
         timeStamp: string;
+        status: "Completed" | "Pending" | "Failed"
     }[];
 }
 

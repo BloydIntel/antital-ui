@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { cn } from '@/lib/utils'
-import { Settings } from 'lucide-react'
-import { Overview } from '@/components/balance-funding/Overview'
+import { Download, FileText, Settings } from 'lucide-react'
+import { Overview } from '@/components/balance-funding/molecules/Overview'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { TransactionRecordsTable } from '@/components/balance-funding/TransactionRecordsTable'
+import { TransactionHistory } from '@/components/balance-funding/molecules/TransactionHistory'
 import { userData } from '@/data/transactionsMockData';
+import PaymentMethodsSettings from '@/components/balance-funding/molecules/PaymentMethodsSettings'
 
 const sections = ["Overview", "Transactions", "Payment Methods"];
 
@@ -47,6 +48,7 @@ export default function BalanceFunding() {
   return (
     <div className='px-8 space-y-8'>
       {/* Header Section */}
+      {/* Dynamic Header Section */}
       <div className='flex justify-between items-center'>
         <div>
           <h2
@@ -56,21 +58,47 @@ export default function BalanceFunding() {
               fontWeight: 500
             }}
           >
-            Balance & Funding
+            {activeSection === "Transactions" ? "Transaction History" : "Balance & Funding"}
           </h2>
           <p className='text-[16px] text-[#505050]' style={TYPOGRAPHY.body}>
-            Manage your funds and payment methods
+            {activeSection === "Transactions"
+              ? "Complete record of all your financial activities"
+              : "Manage your funds and payment methods"}
           </p>
         </div>
 
-        <Button
-          variant="outline"
-          className='text-[16px] h-11 px-4 flex items-center gap-2 border-[#EAEAEA] text-[#1A1C1E] bg-white hover:bg-gray-50 rounded-md cursor-pointer'
-          style={TYPOGRAPHY.heading}
-        >
-          <Settings className='w-5 h-5' />
-          Settings
-        </Button>
+        {/* Dynamic Header Actions Column */}
+        {activeSection === "Transactions" ? (
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => console.log("Exporting CSV payload...")}
+              className='text-[14px] h-11 px-4 flex items-center gap-2 border-[#EAEAEA] text-[#1A1C1E] bg-white hover:bg-gray-50 rounded-lg cursor-pointer'
+              style={TYPOGRAPHY.heading}
+            >
+              <Download className="w-4 h-4" />
+              Export CSV
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => console.log("Exporting PDF report payload...")}
+              className='text-[14px] h-11 px-4 flex items-center gap-2 border-[#EAEAEA] text-[#1A1C1E] bg-white hover:bg-gray-50 rounded-lg cursor-pointer'
+              style={TYPOGRAPHY.heading}
+            >
+              <FileText className="w-4 h-4" />
+              Export PDF
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            className='text-[16px] h-11 px-4 flex items-center gap-2 border-[#EAEAEA] text-[#1A1C1E] bg-white hover:bg-gray-50 rounded-md cursor-pointer'
+            style={TYPOGRAPHY.heading}
+          >
+            <Settings className='w-5 h-5' />
+            Settings
+          </Button>
+        )}
       </div>
 
       {/* Tab Navigation */}
@@ -95,8 +123,8 @@ export default function BalanceFunding() {
       {/* Conditional Content Rendering */}
       <div className="mt-6">
         {activeSection === "Overview" && <Overview />}
-        {activeSection === "Transactions" && <TransactionRecordsTable data={userData.recentActivity} />}
-        {activeSection === "Payment Methods" && <div>Payment Methods goes here...</div>}
+        {activeSection === "Transactions" && <TransactionHistory data={userData.recentActivity} />}
+        {activeSection === "Payment Methods" && <PaymentMethodsSettings />}
       </div>
     </div>
   )

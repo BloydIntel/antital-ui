@@ -5,6 +5,8 @@ import { TYPOGRAPHY } from '@/constants/styles'
 import { ArrowLeft, FileText, Printer, Download } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
 import { invoiceData, InvoiceData } from '@/data/transactionsMockData'
+import Image from 'next/image'
+import { StatusButton } from '@/components/balance-funding/atoms/StatusButton'
 
 interface SummaryRow {
     label: string;
@@ -87,77 +89,114 @@ export default function TransactionInvoice() {
                 </div>
 
                 {/* Brand Header Line Block */}
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6 border-b border-[#F0F0F0] pb-8 mb-8">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6 border-b border-[#EAEAEA] pb-6 mb-8">
                     <div>
-                        <h1 className="text-[32px] font-bold text-[#042E27] tracking-tight leading-none">antital</h1>
-                        <p className="text-[14px] text-[#505050] mt-2 font-medium">Investment Platform</p>
-                        <p className="text-[14px] text-[#717171] mt-0.5">Lagos, Nigeria</p>
+                        <Image
+                            src="/icons/antital.svg"
+                            alt="Antital Logo"
+                            width={153}
+                            height={44}
+                        />
+                        <p className="text-[16px] text-[#858585] mt-2" style={TYPOGRAPHY.body}>Investment Platform</p>
+                        <p className="text-[16px] text-[#858585] mt-0.5" style={TYPOGRAPHY.body}>Lagos, Nigeria</p>
                     </div>
-                    <div className="space-y-1.5 text-left sm:text-right text-[14px]">
-                        <p className="text-[#717171]">Invoice Date: <span className="text-black font-semibold">{invoiceDate}</span></p>
-                        <p className="text-[#717171]">Payment Date: <span className="text-black font-semibold">{paymentDate}</span></p>
-                        <p className="text-[#717171]">Payment Method: <span className="text-black font-semibold">{paymentMethod}</span></p>
+                    <div className="space-y-1.5 text-left sm:text-right text-[16px]" style={TYPOGRAPHY.body}>
+                        <p className="text-[#858585]">Invoice Date: <span className="text-[#1F1F1F] font-medium">{invoiceDate}</span></p>
+                        <p className="text-[#858585]">Payment Date: <span className="text-[#1F1F1F] font-medium">{paymentDate}</span></p>
+                        <p className="text-[#858585]">Payment Method: <span className="text-[#1F1F1F] font-medium">{paymentMethod}</span></p>
                     </div>
                 </div>
 
                 {/* Client & Metadata Grid Summary */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                     <div>
-                        <h4 className="text-[14px] font-semibold text-black mb-3" style={TYPOGRAPHY.heading}>Bill To:</h4>
-                        <div className="space-y-1 text-[14px] text-[#505050]">
-                            <p className="font-semibold text-black">{billTo.name}</p>
+                        <h4 className="text-[18px] font-medium text-[#1F1F1F] mb-4" style={TYPOGRAPHY.body}>Bill To:</h4>
+                        <div className="space-y-1 text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
+                            <p className="text-[#1F1F1F]">{billTo.name}</p>
                             <p>{billTo.email}</p>
                             <p>{billTo.phone}</p>
                         </div>
                     </div>
+
                     <div className="sm:text-right">
-                        <h4 className="text-[14px] font-semibold text-black mb-3" style={TYPOGRAPHY.heading}>Transaction Details:</h4>
-                        <div className="space-y-1.5 text-[14px] text-[#505050] flex flex-col sm:items-end">
-                            <p className="text-[#717171]">Type: <span className="text-black font-medium">{transactionDetails.type}</span></p>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[#717171]">Status:</span>
-                                <span className="px-2 py-0.5 text-[12px] font-semibold text-white bg-[#22C55E] rounded-md">
-                                    {transactionDetails.status}
-                                </span>
+                        <h4 className="text-[18px] font-medium text-[#1F1F1F] mb-4" style={TYPOGRAPHY.body}>Transaction Details:</h4>
+                        <div className="space-y-1.5 text-[16px] text-[#505050] inline-flex flex-col sm:items-start text-left">
+
+                            <div className="grid grid-cols-[65px_1fr] items-center">
+                                <span className="text-[#858585]">Type:</span>
+                                <span className="text-[#858585]">{transactionDetails.type}</span>
                             </div>
+
+                            <div className="grid grid-cols-[65px_1fr] items-center">
+                                <span className="text-[#858585]">Status:</span>
+                                <div>
+                                    <StatusButton status={transactionDetails.status} />
+                                </div>
+                            </div>
+
                         </div>
                     </div>
+
                 </div>
 
                 {/* Dynamic DRY Gray Breakdown Panel */}
-                <div className="bg-[#F4F5F7] rounded-xl p-6 mb-8 text-[14px]">
-                    <h3 className="font-semibold text-black mb-4 border-b border-[#E6EAE9] pb-3" style={TYPOGRAPHY.heading}>Transaction Breakdown</h3>
+                <div className="bg-[#EAEAEA] rounded-xl p-4 mb-4 text-[16px]">
+                    <h3 className=" text-[#1F1F1F] mb-4 font-medium" style={TYPOGRAPHY.body}>Transaction Breakdown</h3>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4" style={TYPOGRAPHY.body}>
                         {summaryRows.map((row, index) => (
-                            <div key={index} className={`flex justify-between ${row.border ? 'border-b border-[#E6EAE9] pb-4' : ''}`}>
-                                <span className="text-[#505050]">{row.label}</span>
-                                <span className="text-black font-medium">{row.value}</span>
+                            <div
+                                key={index}
+                                className={`flex justify-between ${row.border ? 'pb-4 mb-4' : ''}`}
+                                style={
+                                    row.border
+                                        ? {
+                                            ...TYPOGRAPHY.body,
+                                            backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
+                                            backgroundPosition: 'bottom', // Shifted to bottom to act as a bottom divider
+                                            backgroundSize: '12px 1px',   // 12px controls the dash lengths beautifully
+                                            backgroundRepeat: 'repeat-x',
+                                        }
+                                        : TYPOGRAPHY.body
+                                }
+                            >
+                                <span className="text-[#505050] font-medium">{row.label}</span>
+                                <span className="text-[#1F1F1F] font-medium">{row.value}</span>
                             </div>
                         ))}
 
                         {/* Calculations Blocks */}
-                        <div className="flex justify-between pt-1">
-                            <span className="text-black font-semibold">Subtotal</span>
-                            <span className="text-black font-semibold">₦{breakdown.subtotal.toLocaleString()}.00</span>
+                        <div className="flex justify-between pt-1" style={TYPOGRAPHY.body}>
+                            <span className="text-[#1F1F1F] font-medium" >Subtotal</span>
+                            <span className="text-[#1F1F1F] font-medium">₦{breakdown.subtotal.toLocaleString()}.00</span>
                         </div>
 
-                        <div className="flex justify-between border-b border-[#E6EAE9] pb-4">
-                            <span className="text-[#505050]">Fees: ({breakdown.feePercentage}%)</span>
-                            <span className="text-black font-medium">₦{breakdown.fees.toLocaleString()}.00</span>
+                        <div
+                            className="flex justify-between pb-4"
+                            style={{
+                                ...TYPOGRAPHY.body,
+                                backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
+                                backgroundPosition: 'bottom', // Shifted to bottom to act as a bottom divider
+                                backgroundSize: '12px 1px',   // 12px controls the dash lengths beautifully
+                                backgroundRepeat: 'repeat-x',
+                            }}>
+                            <span className="text-[#1F1F1F] font-medium">Fees:</span>
+                            <span className="text-[#1F1F1F]">
+                                <span className="mr-4">({breakdown.feePercentage}%)</span>
+                                ₦{breakdown.fees.toLocaleString()}.00</span>
                         </div>
 
-                        <div className="flex justify-between pt-2 items-center">
-                            <span className="text-black font-bold text-[15px]">Total Amount:</span>
-                            <span className="text-black font-bold text-[16px]">NGN{breakdown.totalAmount.toLocaleString()}.00</span>
+                        <div className="flex justify-between pt-2 items-center" style={TYPOGRAPHY.body}>
+                            <span className="text-[#1F1F1F] font-medium">Total Amount:</span>
+                            <span className="text-[#1F1F1F] font-medium">NGN{breakdown.totalAmount.toLocaleString()}.00</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer legal disclaimer */}
-                <div className="text-center text-[12px] text-[#8C8C8C] space-y-1 mt-12 border-t border-[#F0F0F0] pt-6">
+                <div className="text-center text-[16px] text-[#858585] space-y-1 mt-8">
                     <p>This is a computer-generated invoice and requires no signature.</p>
-                    <p>For questions about this invoice, contact <span className="text-black font-medium">support@antital.com</span></p>
+                    <p>For questions about this invoice, contact support@antital.com</p>
                 </div>
             </div>
 

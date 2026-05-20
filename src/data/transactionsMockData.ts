@@ -18,7 +18,7 @@ export interface BillToType {
 
 export interface TransactionDetailsType {
     type: string;
-    status: string;
+    status: "Completed" | "Pending" | "Failed";
 }
 
 export interface BreakdownType {

@@ -1,6 +1,7 @@
 import { MoveDownRight, Settings, TrendingUp } from "lucide-react";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { useRouter } from "next/navigation";
+import { StatusButton } from '@/components/balance-funding/atoms/StatusButton';
 
 interface ActivityItem {
     type: string;
@@ -8,6 +9,7 @@ interface ActivityItem {
     amount: number;
     date: string;
     timeStamp: string;
+    status: "Completed" | "Pending" | "Failed";
 }
 
 // Helper function to render the correct icon based on activity type
@@ -89,12 +91,7 @@ export function RecentActivitySection({ userRecentActivityData }: { userRecentAc
                             >
                                 {getAmountString(activity.type, activity.amount)}
                             </span>
-                            <span
-                                className="px-1 py-0.5 text-[12px] text-white bg-[#45B424] rounded-md"
-                                style={TYPOGRAPHY.body}
-                            >
-                                Completed
-                            </span>
+                            <StatusButton status={activity.status} />
                         </div>
                     </div>
                 ))}

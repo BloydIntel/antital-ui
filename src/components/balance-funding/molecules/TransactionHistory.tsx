@@ -10,8 +10,9 @@ import {
     ArrowDownRight
 } from "lucide-react";
 import { TransactionItem } from '@/data/transactionsMockData';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { useRouter } from 'next/navigation';
+import { StatusButton } from '@/components/balance-funding/atoms/StatusButton';
 
 // Helper for type column visuals
 const getTypeBadge = (type: TransactionItem['type']) => {
@@ -74,7 +75,7 @@ const filterConfigs = [
     }
 ] as const;
 
-export function TransactionRecordsTable({ data }: { data: TransactionItem[] }) {
+export function TransactionHistory({ data }: { data: TransactionItem[] }) {
 
     const router = useRouter()
 
@@ -222,9 +223,7 @@ export function TransactionRecordsTable({ data }: { data: TransactionItem[] }) {
                                         {tx.fees ? `₦${tx.fees.toLocaleString()}` : ""}
                                     </td>
                                     <td className="py-4 text-center">
-                                        <span className="px-1 py-0.5 text-[14px] text-white bg-[#22C55E] rounded-sm">
-                                            {tx.status}
-                                        </span>
+                                        <StatusButton status={tx.status} />
                                     </td>
                                     <td className="py-4">
                                         <div className="flex items-center justify-center gap-3 text-[#505050]">
