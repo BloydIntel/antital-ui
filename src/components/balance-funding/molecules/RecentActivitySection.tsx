@@ -62,20 +62,20 @@ export function RecentActivitySection({ userRecentActivityData }: { userRecentAc
                 {userRecentActivityData.map((activity, index) => (
                     <div
                         key={index}
-                        className="flex items-center justify-between px-4 py-6 bg-white rounded-lg border border-[#EAEAEA]"
+                        className="flex items-center justify-between px-2 lg:px-4 py-3 lg:py-6 bg-white rounded-lg border border-[#EAEAEA]"
                     >
                         {/* Left Side: Icon & Details */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 lg:gap-4">
                             {getActivityIcon(activity.type)}
                             <div>
                                 <p
-                                    className="text-[18px] text-[#1F1F1F] font-medium"
+                                    className="text-[15px] lg:text-[18px] text-[#1F1F1F] font-medium"
                                     style={TYPOGRAPHY.body}
                                 >
                                     {activity.description}
                                 </p>
                                 <p
-                                    className="text-[14px] text-[#858585] mt-0.5"
+                                    className="text-[12px] lg:text-[14px] text-[#858585] mt-0.5"
                                     style={TYPOGRAPHY.body}
                                 >
                                     {activity.date}, {activity.timeStamp}
@@ -86,7 +86,7 @@ export function RecentActivitySection({ userRecentActivityData }: { userRecentAc
                         {/* Right Side: Amount & Status Badge */}
                         <div className="flex flex-col items-end gap-1.5">
                             <span
-                                className="text-[20px] text-[#2C2C2C]"
+                                className="text-[16px] lg:text-[20px] text-[#2C2C2C]"
                                 style={TYPOGRAPHY.body}
                             >
                                 {getAmountString(activity.type, activity.amount)}

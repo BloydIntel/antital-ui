@@ -124,7 +124,7 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
             {/* Header Controls Block */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h3 className="text-[20px] font-semibold text-[#1A1C1E]" style={TYPOGRAPHY.heading}>Transaction Records</h3>
+                    <h3 className="text-[18px] lg:text-[20px] font-semibold text-[#1A1C1E]" style={TYPOGRAPHY.heading}>Transaction Records</h3>
                     <p className="text-[14px] text-[#717171]" style={TYPOGRAPHY.body}>Track your investments, orders, and fees.</p>
                 </div>
 
@@ -138,12 +138,14 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
                             onValueChange={(value) => handleFilterChange(config.key, value)}
                         >
                             <SelectTrigger
-                                className="w-fit py-1.5 px-3 border-[#EAEAEA] rounded-md bg-white cursor-pointer gap-2 h-9 text-[#1A1C1E] text-[16px]"
+                                className="w-fit py-1.5 px-3 border-[#EAEAEA] rounded-md bg-white cursor-pointer gap-2 h-9 text-[#1A1C1E] text-[14px] lg:text-[16px]"
                                 style={TYPOGRAPHY.heading}
                             >
                                 <SelectValue placeholder={config.placeholder} />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent
+                                className='text-[14px] lg:text-[16px]'
+                            >
                                 {config.data.map((opt) => (
                                     <SelectItem key={opt} value={opt}>{opt}</SelectItem>
                                 ))}
@@ -154,7 +156,7 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
                     {/* Select All Button */}
                     <button
                         onClick={() => setIsAllSelected(prev => !prev)}
-                        className={`px-3 py-1.5 text-[16px] border rounded-md flex items-center gap-2 h-9 transition-colors cursor-pointer ${isAllSelected
+                        className={`px-3 py-1.5 text-[14px] lg:text-[16px] border rounded-md flex items-center gap-2 h-9 transition-colors cursor-pointer ${isAllSelected
                             ? "bg-[#042E27] text-white border-[#042E27]"
                             : "border-[#EAEAEA] text-[#1A1C1E] bg-white hover:bg-gray-50"
                             }`}
@@ -199,7 +201,7 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
                             const isPositive = tx.type === "Sell" || tx.type === "Deposit";
                             return (
                                 <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="py-4 pl-2">
+                                    <td className="py-2 lg:py-4 pl-2">
                                         <input
                                             type="checkbox"
                                             className="rounded border-gray-300 cursor-pointer"
@@ -207,25 +209,25 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
                                             readOnly
                                         />
                                     </td>
-                                    <td className="py-4">{getTypeBadge(tx.type)}</td>
-                                    <td className="py-4 max-w-xs">
-                                        <p className="font-medium text-[#1F1F1F] text-[16px] pb-2" style={TYPOGRAPHY.body}>{tx.description}</p>
+                                    <td className="py-2 lg:py-4">{getTypeBadge(tx.type)}</td>
+                                    <td className="py-2 lg:py-4 max-w-xs">
+                                        <p className="w-[200px] lg:w-auto font-medium text-[#1F1F1F] text-[14px] lg:text-[16px] pb-1 lg:pb-2" style={TYPOGRAPHY.body}>{tx.description}</p>
                                         <p className="text-[12px] text-[#858585]" style={TYPOGRAPHY.body}>{tx.subDescription}</p>
                                     </td>
-                                    <td className="py-4">
-                                        <p className="text-[#1A1C1E] font-medium text-[16px] pb-2">{tx.date}</p>
+                                    <td className="flex flex-col py-2 lg:py-4 ml-2 ">
+                                        <p className="w-[100px] lg:w-auto text-[#1A1C1E] font-medium text-[14px] lg:text-[16px] pb-1 lg:pb-2">{tx.date}</p>
                                         <p className="text-[12px] text-[#858585]">{tx.timeStamp}</p>
                                     </td>
-                                    <td className={`py-4 text-right text-[16px] ${isPositive ? 'text-[#45B424]' : 'text-[#D4001A]'}`} style={TYPOGRAPHY.body}>
-                                        {isPositive ? `+₦${tx.amount.toLocaleString()}` : `-₦${tx.amount.toLocaleString()}`}
+                                    <td className={`py-2 lg:py-4 text-right text-[14px] lg:text-[16px] ${isPositive ? 'text-[#45B424]' : 'text-[#D4001A]'}`} style={TYPOGRAPHY.body}>
+                                        <p className='w-[100px] lg:w-auto'>{isPositive ? `+₦${tx.amount.toLocaleString()}` : `-₦${tx.amount.toLocaleString()}`}</p>
                                     </td>
-                                    <td className="py-4 text-right text-[#1F1F1F]" style={TYPOGRAPHY.body}>
-                                        {tx.fees ? `₦${tx.fees.toLocaleString()}` : ""}
+                                    <td className="py-2 lg:py-4 text-right text-[#1F1F1F] text-[14px] lg:text-[16px]" style={TYPOGRAPHY.body}>
+                                        <p className='w-[70px] lg:w-auto mr-2'>{tx.fees ? `₦${tx.fees.toLocaleString()}` : ""}</p>
                                     </td>
-                                    <td className="py-4 text-center">
+                                    <td className="py-2 lg:py-4 text-center">
                                         <StatusButton status={tx.status} />
                                     </td>
-                                    <td className="py-4">
+                                    <td className="py-2 lg:py-4">
                                         <div className="flex items-center justify-center gap-3 text-[#505050]">
                                             {tx.type !== "Deposit" && tx.type !== "Withdrawal" && (
                                                 <button

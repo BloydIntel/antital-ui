@@ -49,12 +49,12 @@ export default function BalanceFunding() {
     <div className='px-8 space-y-8'>
       {/* Header Section */}
       {/* Dynamic Header Section */}
-      <div className='flex justify-between items-center'>
+      <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center gap-2 lg:gap-0'>
         <div>
           <h2
+            className='text-[22px] lg:text-[28px]'
             style={{
               fontFamily: 'var(--font-clash), sans-serif',
-              fontSize: '28px',
               fontWeight: 500
             }}
           >

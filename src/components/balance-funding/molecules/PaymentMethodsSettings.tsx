@@ -66,10 +66,10 @@ export default function PaymentMethodsSettings() {
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-8">
                     <div>
                         <div className="flex items-center gap-2 mb-1 text-[#1F1F1F]">
-                            <CreditCardIcon className="w-6 h-6 text-black" />
-                            <h2 className="text-[20px]" style={TYPOGRAPHY.body}>Payment Methods</h2>
+                            <CreditCardIcon className="w-5 lg:w-6 h-5 lg:h-6 text-black" />
+                            <h2 className="text-[18px] lg:text-[20px]" style={TYPOGRAPHY.body}>Payment Methods</h2>
                         </div>
-                        <p className="text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
+                        <p className="text-[14px] lg:text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
                             Manage your bank accounts, cards, and crypto wallets
                         </p>
                     </div>
@@ -78,7 +78,7 @@ export default function PaymentMethodsSettings() {
                         icon={<PlusIcon className="w-4 h-4 text-white" />}
                         label='Add Payment Method'
                         onClick={() => setIsModalOpen(true)}
-                        className="w-fit my-0" />
+                        className="w-fit my-0 text-[14px] lg:[16px] px-2 lg:px-4 py-1 lg:py-2" />
 
                 </div>
 
