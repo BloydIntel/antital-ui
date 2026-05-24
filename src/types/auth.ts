@@ -10,15 +10,34 @@ export interface SignupRequest {
   email: string;
   userType?: "IndividualInvestor" | "CorporateInvestor" | "Fundraiser";
   preferredName?: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  nationality: string;
-  countryOfResidence: string;
-  stateOfResidence: string;
-  residentialAddress: string;
+  phoneNumber?: string | null;
+  dateOfBirth?: string | null;
+  nationality?: string | null;
+  countryOfResidence?: string | null;
+  stateOfResidence?: string | null;
+  residentialAddress?: string | null;
   password: string;
   confirmPassword: string;
   hasAgreedToTerms: boolean;
+  companyLegalName?: string;
+  tradingBrandName?: string;
+  registrationType?: string;
+  registrationNumber?: string;
+  companyLoginEmail?: string;
+  dateOfRegistration?: string;
+  companyWebsite?: string;
+  businessAddress?: string;
+  registeredAddress?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  representativeFullName?: string;
+  representativeJobTitle?: string;
+  representativePhoneNumber?: string;
+  representativeDateOfBirth?: string;
+  representativeEmail?: string;
+  representativeNationality?: string;
+  representativeCountryOfResidence?: string;
+  representativeAddress?: string;
 }
 
 export interface LoginResponse {

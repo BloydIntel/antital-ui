@@ -13,6 +13,7 @@ import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/
 import onboardingService from '@/services/onboardingService'
 import { mapToCorporateDocsPayload, mapToKycPayload } from '@/lib/onboarding-payload-mappers'
 import { showApiErrorToast } from '@/lib/error-feedback'
+import { useFundraiserOnboardingApi } from '@/hooks/onboarding/useFundraiserOnboardingApi'
 
 interface IdentityVerificationProps {
     onNext: () => void
@@ -29,6 +30,7 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
     const categoryId = useOnboardingStore((s) => s.formData.selectedCategoryId);
     const [showErrors, setShowErrors] = useState(false);
     const [isSavingKyc, setIsSavingKyc] = useState(false);
+    const { saveCombinedKycBundle } = useFundraiserOnboardingApi();
 
     const isCorporate = userType === 'corporate';
     const isFundraiser = userType === 'fundraiser';
@@ -86,6 +88,15 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
     const handleNext = async () => {
         const maxSubStep = currentSteps.length - 1;
         if (subStep < maxSubStep) {
+            if (isFundraiser && currentHeader?.id === 'representative') {
+                if (!isStep0Valid) {
+                    setShowErrors(true);
+                    return;
+                }
+                setSubStep(subStep + 1);
+                return;
+            }
+
             setSubStep(subStep + 1);
         } else {
             const isCurrentFlowValid = isFundraiser
@@ -99,10 +110,14 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
             setIsSavingKyc(true);
             try {
-                await onboardingService.saveKyc(
-                    mapToKycPayload(kycData),
-                    isCorporate ? mapToCorporateDocsPayload(categoryId, kycData) : undefined
-                );
+                if (isFundraiser) {
+                    await saveCombinedKycBundle();
+                } else {
+                    await onboardingService.saveKyc(
+                        mapToKycPayload(kycData),
+                        isCorporate ? mapToCorporateDocsPayload(categoryId, kycData) : undefined
+                    );
+                }
                 onNext();
             } catch (error) {
                 showApiErrorToast(error, "Unable to save KYC details.");
