@@ -1,13 +1,16 @@
+export type TransactionType = "Investment" | "Buy" | "Sell" | "Fee" | "Deposit" | "Withdrawal";
+export type TransactionStatus = "Completed" | "Pending" | "Failed";
+
 export interface TransactionItem {
     id: string;
-    type: "Investment" | "Buy" | "Sell" | "Fee" | "Deposit" | "Withdrawal";
+    type: TransactionType;
     description: string;
     subDescription: string;
     amount: number;
     fees?: number;
     date: string;
     timeStamp: string;
-    status: "Completed" | "Pending" | "Failed";
+    status: TransactionStatus;
 }
 
 export interface BillToType {
@@ -17,8 +20,8 @@ export interface BillToType {
 }
 
 export interface TransactionDetailsType {
-    type: string;
-    status: "Completed" | "Pending" | "Failed";
+    type: TransactionType;
+    status: TransactionStatus;
 }
 
 export interface BreakdownType {
@@ -83,7 +86,7 @@ export const userData = {
             fees: 675,
             date: "Aug 5, 2025",
             timeStamp: "05:45 PM",
-            status: "Completed"
+            status: "Pending"
         },
         {
             id: "INV-004",
@@ -114,7 +117,7 @@ export const userData = {
             amount: 250000,
             date: "Jun 28, 2025",
             timeStamp: "02:30 PM",
-            status: "Completed"
+            status: "Failed"
         },
         {
             id: "INV-007",

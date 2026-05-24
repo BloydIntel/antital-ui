@@ -78,7 +78,7 @@ export default function PaymentMethodsSettings() {
                         icon={<PlusIcon className="w-4 h-4 text-white" />}
                         label='Add Payment Method'
                         onClick={() => setIsModalOpen(true)}
-                        className="w-fit my-0 text-[14px] lg:[16px] px-2 lg:px-4 py-1 lg:py-2" />
+                        className="w-fit my-0 text-[14px] lg:text-[16px] px-2 lg:px-4 py-1 lg:py-2" />
 
                 </div>
 

@@ -3,48 +3,8 @@ import { TYPOGRAPHY } from "@/constants/styles";
 import { ShieldAlert } from "lucide-react";
 import { RecentActivitySection } from "@/components/balance-funding/molecules/RecentActivitySection";
 // Import the type definitions here
-import { TransactionItem } from "@/data/transactionsMockData";
+import { userData } from "@/data/transactionsMockData";
 
-interface UserData {
-    availableBalance: number;
-    recentActivity: TransactionItem[];
-}
-
-const userData: UserData = {
-    availableBalance: 5325400,
-    recentActivity: [
-        {
-            id: "INV-009",
-            type: "Deposit",
-            description: "Bank transfer received",
-            subDescription: "Antital Wallet",
-            amount: 100000,
-            date: "2026-05-14",
-            timeStamp: "10:00 AM",
-            status: "Completed"
-        },
-        {
-            id: "INV-010",
-            type: "Investment",
-            description: "Investment in GreenTech Solutions",
-            subDescription: "GreenTech Solutions 50 units",
-            amount: 75000,
-            date: "2026-05-14",
-            timeStamp: "10:00 AM",
-            status: "Completed"
-        },
-        {
-            id: "INV-011",
-            type: "Fee",
-            description: "Investment processing fee",
-            subDescription: "Platform Fee",
-            amount: 1850,
-            date: "2026-05-14",
-            timeStamp: "10:00 AM",
-            status: "Completed"
-        }
-    ]
-}
 
 export function Overview() {
     return (
@@ -61,7 +21,7 @@ export function Overview() {
                 </p>
             </div>
 
-            <RecentActivitySection userRecentActivityData={userData.recentActivity} />
+            <RecentActivitySection userRecentActivityData={userData.recentActivity.slice(0, 3)} />
         </div>
     )
 }

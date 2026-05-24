@@ -71,7 +71,7 @@ const filterConfigs = [
         label: "Status",
         placeholder: "Status",
         allLabel: "All Statuses",
-        data: ["Completed", "Processing", "Failed"]
+        data: ["Completed", "Pending", "Failed"]
     }
 ] as const;
 
@@ -86,7 +86,8 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
     };
 
     const [filters, setFilters] = useState(initialFilters);
-    const [isAllSelected, setIsAllSelected] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
 
     // Helper to update a specific filter key
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
@@ -112,12 +113,33 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
         });
     }, [data, filters]);
 
-    const handleClearFilters = () => {
-        setFilters(initialFilters); // Resets all select dropdowns back to "all"
-        setIsAllSelected(false);    // Unchecks master checkbox state
+    const isAllSelected = filteredTransactions.length > 0 && filteredTransactions.every(item => selectedIds.includes(item.id));
+
+    const handleSelectAllToggle = () => {
+        if (isAllSelected) {
+            const filteredIds = filteredTransactions.map(tx => tx.id);
+            setSelectedIds(prev => prev.filter(id => !filteredIds.includes(id)));
+        } else {
+            const newSelections = filteredTransactions.map(tx => tx.id);
+            setSelectedIds(prev => Array.from(new Set([...prev, ...newSelections])));
+        }
     };
 
-    const hasActiveFilters = filters.date !== "" || filters.type !== "" || filters.status !== "" || isAllSelected;
+    const handleSelectRow = (id: string) => {
+        setSelectedIds(prev =>
+            prev.includes(id)
+                ? prev.filter(selectedId => selectedId !== id)
+                : [...prev, id]
+        );
+    };
+
+    const handleClearFilters = () => {
+        setFilters(initialFilters);
+        setSelectedIds([]);
+    };
+
+    const hasActiveFilters = filters.date !== "" || filters.type !== "" || filters.status !== "" || selectedIds.length > 0;
+
 
     return (
         <div className="w-full bg-white border border-[#EAEAEA] rounded-xl p-6 shadow-sm">
@@ -155,7 +177,7 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
 
                     {/* Select All Button */}
                     <button
-                        onClick={() => setIsAllSelected(prev => !prev)}
+                        onClick={handleSelectAllToggle}
                         className={`px-3 py-1.5 text-[14px] lg:text-[16px] border rounded-md flex items-center gap-2 h-9 transition-colors cursor-pointer ${isAllSelected
                             ? "bg-[#042E27] text-white border-[#042E27]"
                             : "border-[#EAEAEA] text-[#1A1C1E] bg-white hover:bg-gray-50"
@@ -199,14 +221,17 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
 
                         {filteredTransactions.map((tx) => {
                             const isPositive = tx.type === "Sell" || tx.type === "Deposit";
+                            const isRowSelected = selectedIds.includes(tx.id);
+
                             return (
                                 <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
                                     <td className="py-2 lg:py-4 pl-2">
                                         <input
                                             type="checkbox"
                                             className="rounded border-gray-300 cursor-pointer"
-                                            checked={isAllSelected}
-                                            readOnly
+                                            aria-label={`Checkbox: ${tx.description}`}
+                                            checked={isRowSelected}
+                                            onChange={() => handleSelectRow(tx.id)}
                                         />
                                     </td>
                                     <td className="py-2 lg:py-4">{getTypeBadge(tx.type)}</td>

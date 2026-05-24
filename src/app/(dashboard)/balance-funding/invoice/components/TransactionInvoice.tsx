@@ -188,7 +188,7 @@ export default function TransactionInvoice() {
 
                         <div className="flex justify-between pt-2 items-center" style={TYPOGRAPHY.body}>
                             <span className="text-[#1F1F1F] font-medium">Total Amount:</span>
-                            <span className="text-[#1F1F1F] font-medium">NGN{breakdown.totalAmount.toLocaleString()}.00</span>
+                            <span className="text-[#1F1F1F] font-medium">₦{breakdown.totalAmount.toLocaleString()}.00</span>
                         </div>
                     </div>
                 </div>
