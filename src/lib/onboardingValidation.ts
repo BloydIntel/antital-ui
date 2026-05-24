@@ -101,6 +101,10 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             return !!paymentMethod;
 
         case "review":
+            if (investorUserType === "fundraiser") {
+                return formData.applicationFeePaid;
+            }
+            return true;
         case "activation":
         case "application-submitted":
             return true;

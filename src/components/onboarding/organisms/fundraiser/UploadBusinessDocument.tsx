@@ -8,6 +8,8 @@ import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInp
 import { ArrowLeft, ArrowRight, Info } from 'lucide-react';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 import { cn } from '@/lib/utils';
+import { showApiErrorToast } from '@/lib/error-feedback';
+import { useFundraiserOnboardingApi } from '@/hooks/onboarding/useFundraiserOnboardingApi';
 
 interface OfferingField {
     id: string;
@@ -19,7 +21,7 @@ interface OfferingField {
 }
 
 const businessDocuments = [
-    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamItroduction', title: 'Founder and Team Introduction', required: true },
+    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction', title: 'Founder and Team Introduction', required: true },
     { id: 'fundraisingDeck', field: 'fundraisingDeck', title: 'Fundraising deck (high-level pitch)', required: true },
     { id: 'investmentMemo', field: 'investmentMemo', title: 'Investment memo/prospectus (thorough analysis)', required: true },
     { id: 'termsOfOffering', field: 'termsOfOffering', title: 'Terms of offering', required: true },
@@ -89,10 +91,12 @@ const OFFERING_FIELDS: readonly OfferingField[] = [
 export function UploadBusinessDocument() {
     const router = useRouter()
     const { formData, updateFormData, investorUserType } = useOnboardingStore();
+    const { saveBusinessDocuments } = useFundraiserOnboardingApi();
     const [showErrors, setShowErrors] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-        founderAndTeamItroduction: true,
+        founderAndTeamIntroduction: true,
         fundraisingDeck: true,
         investmentMemo: true,
         termsOfOffering: true,
@@ -165,14 +169,23 @@ export function UploadBusinessDocument() {
         return areDocsValid && areFieldsFilled && isFundingRangeValid;
     }, [formData]);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (!isStepValid) {
             setShowErrors(true);
             return;
         }
 
-        const safeType = investorUserType || 'fundraiser';
-        router.push(`/onboarding/${safeType}/representative-kyc`);
+        try {
+            setIsSubmitting(true);
+            await saveBusinessDocuments();
+            const safeType = investorUserType || 'fundraiser';
+            router.push(`/onboarding/${safeType}/representative-kyc`);
+        } catch (error) {
+            showApiErrorToast(error, "Unable to proceed to representative KYC.");
+            setShowErrors(true);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleBack = () => {
@@ -328,10 +341,11 @@ export function UploadBusinessDocument() {
                 />
 
                 <OnboardingButton
-                    label="Next"
+                    label={isSubmitting ? "Saving…" : "Next"}
                     onClick={handleNext}
                     icon={<ArrowRight size={20} />}
                     className="flex-row-reverse w-fit"
+                    loading={isSubmitting}
                 />
 
             </div>

@@ -9,10 +9,12 @@ import { CorporateInvestorReview } from '@/components/onboarding/organisms/corpo
 import { FundraiserReview } from '@/components/onboarding/organisms/fundraiser/FundraiserReview'
 import onboardingService from '@/services/onboardingService'
 import { showApiErrorToast } from '@/lib/error-feedback'
+import { toast } from 'sonner'
 
 export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => void }) {
-    const { investorUserType } = useOnboardingStore();
+    const { investorUserType, formData } = useOnboardingStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isFundraiserPaymentIncomplete = investorUserType === "fundraiser" && !formData.applicationFeePaid;
 
     const ReviewComponents = {
         individual: <IndividualInvestorReview />,
@@ -21,8 +23,21 @@ export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => v
     };
 
     const handleSubmit = async () => {
+        if (investorUserType === "fundraiser" && !formData.applicationFeePaid) {
+            toast.error("Complete application fee payment before submitting.");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
+            if (investorUserType === "fundraiser" && formData.applicationFeePaid) {
+                await onboardingService.saveFundraiserPayment({
+                    paymentMethod: formData.paymentMethod ?? "card",
+                    paymentReference: formData.paymentReference ?? `FR-${Date.now()}`,
+                    paymentStatus: formData.paymentStatus === "failed" ? "failed" : "success",
+                    applicationFeePaid: true,
+                });
+            }
             await onboardingService.submitOnboarding();
             onNext();
         } catch (error) {
@@ -78,6 +93,7 @@ export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => v
                     onClick={handleSubmit}
                     className="w-[230px]"
                     loading={isSubmitting}
+                    disabled={isSubmitting || isFundraiserPaymentIncomplete}
                 />
             </div>
         </div>

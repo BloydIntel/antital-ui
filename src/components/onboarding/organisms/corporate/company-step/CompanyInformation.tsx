@@ -71,7 +71,52 @@ export function CompanyInformation() {
             }
 
             if (isFundraiser) {
-                router.push(`/onboarding/${investorUserType}/email`);
+                setIsSubmitting(true);
+                try {
+                    const [companyFirstName = "Fundraiser", ...companyRest] =
+                        (store.formData.companyName || "").trim().split(/\s+/);
+                    const companyLastName = companyRest.join(" ").trim() || store.formData.brandName || "Business";
+
+                    const data = await authService.signup({
+                        firstName: companyFirstName,
+                        lastName: companyLastName,
+                        email: store.formData.loginEmail,
+                        userType: "Fundraiser",
+                        preferredName: store.formData.brandName || undefined,
+                        phoneNumber: null,
+                        dateOfBirth: null,
+                        nationality: null,
+                        countryOfResidence: null,
+                        stateOfResidence: null,
+                        residentialAddress: null,
+                        password: store.formData.password,
+                        confirmPassword: store.formData.confirmPassword,
+                        hasAgreedToTerms: true,
+                        companyLegalName: store.formData.companyName,
+                        tradingBrandName: store.formData.brandName || undefined,
+                        registrationType: store.formData.registrationType,
+                        registrationNumber: store.formData.registrationNumber,
+                        companyLoginEmail: store.formData.loginEmail,
+                        dateOfRegistration: store.formData.registrationDate || undefined,
+                        companyWebsite: store.formData.companyWebsite || undefined,
+                        businessAddress: store.formData.businessAddress || undefined,
+                        registeredAddress: store.formData.registeredAddress || undefined,
+                        companyEmail: store.formData.companyEmail || undefined,
+                        companyPhone: store.formData.companyPhone || undefined,
+                    });
+
+                    tokenStorage.setAccessToken(data.token);
+                    if (data.refreshToken) {
+                        tokenStorage.setRefreshToken(data.refreshToken);
+                    }
+                    store.setEmailVerified(data.isEmailVerified);
+                    router.push(`/onboarding/${investorUserType}/email`);
+                } catch (error) {
+                    showApiErrorToast(error, "Unable to create fundraiser account.");
+                    setShowErrors(true);
+                } finally {
+                    setIsSubmitting(false);
+                }
                 return;
             }
 
@@ -95,6 +140,25 @@ export function CompanyInformation() {
                     password: store.formData.password,
                     confirmPassword: store.formData.confirmPassword,
                     hasAgreedToTerms: true,
+                    companyLegalName: store.formData.companyName,
+                    tradingBrandName: store.formData.brandName,
+                    registrationType: store.formData.registrationType,
+                    registrationNumber: store.formData.registrationNumber,
+                    companyLoginEmail: store.formData.loginEmail,
+                    dateOfRegistration: store.formData.registrationDate || undefined,
+                    companyWebsite: store.formData.companyWebsite || undefined,
+                    businessAddress: store.formData.businessAddress || undefined,
+                    registeredAddress: store.formData.registeredAddress || undefined,
+                    companyEmail: store.formData.companyEmail || undefined,
+                    companyPhone: store.formData.companyPhone || undefined,
+                    representativeFullName: store.formData.repFullName || undefined,
+                    representativeJobTitle: store.formData.repJobTitle || undefined,
+                    representativePhoneNumber: store.formData.repPhoneNumber || undefined,
+                    representativeDateOfBirth: store.formData.repDob || undefined,
+                    representativeEmail: store.formData.repEmail || undefined,
+                    representativeNationality: store.formData.repNationality || undefined,
+                    representativeCountryOfResidence: store.formData.repResidence || undefined,
+                    representativeAddress: store.formData.repAddress || undefined,
                 });
 
                 tokenStorage.setAccessToken(data.token);
@@ -109,6 +173,12 @@ export function CompanyInformation() {
             } finally {
                 setIsSubmitting(false);
             }
+            return;
+        }
+
+        if (isFundraiser) {
+            setShowErrors(false);
+            setSubStep(subStep + 1);
             return;
         }
 
@@ -161,7 +231,9 @@ export function CompanyInformation() {
                             ? isSubmitting
                                 ? "Creating account…"
                                 : "Create Account"
-                            : "Proceed"
+                            : isSubmitting
+                                ? "Saving…"
+                                : "Proceed"
                     }
                     variant="solid"
                     onClick={nextSubStep}
