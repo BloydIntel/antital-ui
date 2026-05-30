@@ -14,6 +14,11 @@ const dashboardHeaderData = {
     userAvatarFallback: "JD"
 }
 
+const CUSTOM_MOBILE_HEADERS: Record<string, string> = {
+    "/marketplace/invest": "Invest",
+    "/balance-funding/invoice": "Transaction History",
+};
+
 export function DashboardHeader() {
     const pathname = usePathname()
     const router = useRouter();
@@ -21,19 +26,21 @@ export function DashboardHeader() {
     const onHelpIconClick = () => { }
     const onNotificationIconClick = () => { }
 
-    const isAuthPaymentPage = pathname === "/marketplace/invest"
+    const customHeaderPath = Object.keys(CUSTOM_MOBILE_HEADERS).find(route => pathname.startsWith(route));
+    const isCustomPage = !!customHeaderPath;
+    const pageTitle = customHeaderPath ? CUSTOM_MOBILE_HEADERS[customHeaderPath] : "";
 
     return (
         <header className="sticky top-0 z-50 bg-[#F8F8F8F8] flex flex-col md:flex-row md:h-[52px] items-center justify-between px-4 md:px-8 md:pt-10 pt-6 pb-4 md:pb-8 gap-4 border-b border-gray-100">
 
             <div className="flex items-center justify-between w-full md:w-auto md:flex-1 md:gap-8">
 
-                {isAuthPaymentPage ? (
-                    <div className='lg:hidden flex gap-2 items-center'>
+                {isCustomPage ? (
 
+                    <div className='lg:hidden flex gap-2 items-center'>
                         <button
                             onClick={() => router.back()}
-                            className="hover:bg-gray-100 rounded-full transition-colors"
+                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                             aria-label="Go back"
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -41,17 +48,16 @@ export function DashboardHeader() {
                             </svg>
                         </button>
 
-                        <p className='text-[18px]' style={TYPOGRAPHY.body}>
-                            Invest
+                        <p className='text-[18px] font-medium text-[#1F1F1F]' style={TYPOGRAPHY.body}>
+                            {pageTitle}
                         </p>
                     </div>
                 ) : (
+
                     <div className="md:hidden">
                         <SidebarTrigger className="-ml-1 scale-125" />
                     </div>
-                )
-
-                }
+                )}
 
                 <div className={`hidden md:block xl:flex-1 lg:w-2/5 xl:max-w-[523px] w-full`}>
                     <div className="relative w-full">
@@ -99,7 +105,7 @@ export function DashboardHeader() {
                 </div>
             </div>
 
-            {!isAuthPaymentPage && (
+            {!isCustomPage && (
                 <div className="w-full md:hidden">
                     <div className="relative w-full">
                         <Input
