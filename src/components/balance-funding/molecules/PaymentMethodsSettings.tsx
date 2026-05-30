@@ -78,7 +78,8 @@ export default function PaymentMethodsSettings() {
                         icon={<PlusIcon className="w-4 h-4 text-white" />}
                         label='Add Payment Method'
                         onClick={() => setIsModalOpen(true)}
-                        className="w-fit my-0 text-[14px] lg:text-[16px] px-2 lg:px-4 py-1 lg:py-2" />
+                        className="w-full lg:w-fit my-0 text-[14px] lg:text-[16px] px-2 lg:px-4 py-1 lg:py-2"
+                    />
 
                 </div>
 
@@ -86,10 +87,10 @@ export default function PaymentMethodsSettings() {
                     {paymentMethods.map((method) => (
                         <div
                             key={method.id}
-                            className="w-full bg-white border border-[#EAEAEA] rounded-xl p-5 flex items-center justify-between transition-all hover:shadow-sm"
+                            className="w-full bg-white border border-[#EAEAEA] rounded-xl p-2 lg:p-5 flex items-center justify-between transition-all hover:shadow-sm"
                         >
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-[#E6EAE9] text-[#E6EAE9] rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="flex items-center gap-1 lg:gap-4">
+                                <div className="w-8 lg:w-12 h-8 lg:h-12 bg-[#E6EAE9] text-[#E6EAE9] rounded-full flex items-center justify-center flex-shrink-0">
                                     {method.type === 'crypto' ? (
                                         <span className="text-[18px] font-medium text-[#505050]">$</span>
                                     ) : (
@@ -100,7 +101,7 @@ export default function PaymentMethodsSettings() {
                                 {/* Summary Strings block */}
                                 <div className="space-y-0.5">
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <h4 className="text-[16px] font-medium text-[#1F1F1F]" style={TYPOGRAPHY.body}>
+                                        <h4 className="text-[14px] lg:text-[16px] font-medium text-[#1F1F1F]" style={TYPOGRAPHY.body}>
                                             {method.title}
                                         </h4>
                                         {method.isDefault && (
@@ -109,12 +110,13 @@ export default function PaymentMethodsSettings() {
                                             </span>
                                         )}
                                         {method.isVerified && (
-                                            <span className="border border-[#45B424] text-[#45B424] text-[12px] px-2 py-1 rounded flex items-center gap-1 bg-[#4CAF50]/05" style={TYPOGRAPHY.body}>
-                                                <span className="bg-[#45B424] text-white px-1 text-[12px] font-extrabold rounded-full h-4 w-4">✓</span> Verified
+                                            <span className="lg:border lg:border-[#45B424] text-[#45B424] text-[12px] lg:px-2 lg:py-1 rounded flex items-center gap-1 lg:bg-[#4CAF50]/05" style={TYPOGRAPHY.body}>
+                                                <span className="bg-[#45B424] text-white px-1 text-[12px] font-extrabold rounded-full h-4 w-4">✓</span>
+                                                <span className='hidden lg:block'>Verified </span>
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-[14px] text-[#858585]" style={TYPOGRAPHY.body}>{method.subtitle}</p>
+                                    <p className="text-[12px] lg:text-[14px] text-[#858585]" style={TYPOGRAPHY.body}>{method.subtitle}</p>
                                     <p className="text-[12px] text-[#858585]" style={TYPOGRAPHY.body}>{method.metaText}</p>
                                 </div>
                             </div>
@@ -124,7 +126,7 @@ export default function PaymentMethodsSettings() {
                                 {!method.isDefault && (
                                     <button
                                         onClick={() => handleSetDefault(method.id)}
-                                        className="text-[14px] text-[#505050] font-medium hover:text-black transition-colors cursor-pointer"
+                                        className="text-[12px] lg:text-[16px] text-[#505050] font-medium hover:text-black transition-colors cursor-pointer"
                                         style={TYPOGRAPHY.body}
                                     >
                                         Set Default

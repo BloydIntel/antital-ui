@@ -57,7 +57,7 @@ export default function TransactionInvoice() {
         <div className="min-h-screen bg-[#F8F9FA] p-4 md:p-8">
             {/* Breadcrumb Header Navigation */}
             <div
-                className="mx-auto flex items-center gap-2 mb-12 text-[18px] text-[#717171]"
+                className="hidden mx-auto lg:flex items-center gap-2 mb-12 text-[18px] text-[#717171]"
                 style={TYPOGRAPHY.body}
             >
                 <button
@@ -140,7 +140,7 @@ export default function TransactionInvoice() {
                 </div>
 
                 {/* Dynamic DRY Gray Breakdown Panel */}
-                <div className="bg-[#EAEAEA] rounded-xl p-4 mb-4 text-[16px]">
+                <div className="bg-[#EAEAEA] rounded-xl p-4 mb-4 text-[14px] lg:text-[16px]">
                     <h3 className=" text-[#1F1F1F] mb-4 font-medium" style={TYPOGRAPHY.body}>Transaction Breakdown</h3>
 
                     <div className="space-y-4" style={TYPOGRAPHY.body}>
@@ -194,9 +194,8 @@ export default function TransactionInvoice() {
                 </div>
 
                 {/* Footer legal disclaimer */}
-                <div className="text-center text-[16px] text-[#858585] space-y-1 mt-8">
-                    <p>This is a computer-generated invoice and requires no signature.</p>
-                    <p>For questions about this invoice, contact support@antital.com</p>
+                <div className="text-center text-[12px] lg:text-[16px] max-w-[568px] text-[#858585] space-y-1 mt-8">
+                    <p>This is a computer-generated invoice and requires no signature. For questions about this invoice, contact support@antital.com</p>
                 </div>
             </div>
 
