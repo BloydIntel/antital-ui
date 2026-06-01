@@ -1,32 +1,20 @@
 import React from 'react'
-import { TeamMember } from '@/components/investment/molecules/team-member'
+import { TeamMember as TeamMemberCard } from '@/components/investment/molecules/team-member'
 
-export function TeamSection() {
-  // Hardcoded team data for now
-  const teamMembers = [
-    {
-      name: 'Dr. Eleanor Vance',
-      title: 'CEO & Co-founder',
-      bio: '20 years in global logistics and supply chain optimization. Former VP of Operations at TransGlobal Freight, where she managed a ₦750B annual budget and spearheaded the adoption of AI modeling. Ph.D. in Operations Research from MIT.',
-      imagePath: '/avatars/dr_eleanor.jpg',
-    },
-    {
-      name: 'Alex Chen',
-      title: 'CTO & Co-founder',
-      bio: '15 years in developing scalable machine learning platforms. Lead engineer at DataSolve Corp., where he built predictive models used by three Fortune 500 companies. Architect of the Quantum-Sync Engine. M.S. in Computer Science.',
-      imagePath: '/avatars/alex_chen.jpg',
-    },
-  ]
+export interface TeamMemberData {
+  name: string
+  title: string
+  bio: string
+  imagePath?: string | null
+}
 
+interface TeamSectionProps {
+  members: TeamMemberData[]
+}
+
+export function TeamSection({ members }: TeamSectionProps) {
   return (
-    <div
-      className="flex flex-col items-start w-full"
-      style={{
-        maxWidth: '816px',
-        gap: '48px',
-      }}
-    >
-      {/* Section Heading */}
+    <div className="flex flex-col items-start w-full" style={{ maxWidth: '816px', gap: '48px' }}>
       <h2
         className="text-foreground"
         style={{
@@ -40,24 +28,17 @@ export function TeamSection() {
         Our Team
       </h2>
 
-      {/* Team Members List */}
-      <div
-        className="flex flex-col items-start w-full"
-        style={{
-          gap: '48px',
-        }}
-      >
-        {teamMembers.map((member, index) => (
-          <TeamMember
-            key={index}
+      <div className="flex flex-col items-start w-full" style={{ gap: '48px' }}>
+        {members.map((member, index) => (
+          <TeamMemberCard
+            key={`${member.name}-${index}`}
             name={member.name}
             title={member.title}
             bio={member.bio}
-            imagePath={member.imagePath}
+            imagePath={member.imagePath ?? '/avatars/adara.jpg'}
           />
         ))}
       </div>
     </div>
   )
 }
-
