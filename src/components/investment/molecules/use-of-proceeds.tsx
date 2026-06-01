@@ -1,38 +1,18 @@
 import React from 'react'
+import type { UseOfProceedsItem } from '@/types/investment'
 
-interface UseOfProceedsItem {
-  percentage: string
-  category: string
-  description: string
+interface UseOfProceedsProps {
+  items: UseOfProceedsItem[]
+  intro?: string | null
 }
 
-export function UseOfProceeds() {
-  const items: UseOfProceedsItem[] = [
-    {
-      percentage: '50%',
-      category: '(R&D)',
-      description: 'Scaling the Engineering Team and accelerating development of V4.0 (Autonomous Bidding Engine).',
-    },
-    {
-      percentage: '30%',
-      category: '(Sales & Marketing)',
-      description: 'Expanding into two new economic zones (Kenya, South Africa) with dedicated sales hires.',
-    },
-    {
-      percentage: '20%',
-      category: '(Operations & Working Capital)',
-      description: 'Securing key data feed licenses and general operational expenses.',
-    },
-  ]
+export function UseOfProceeds({ items, intro }: UseOfProceedsProps) {
+  if (items.length === 0) {
+    return null
+  }
 
   return (
-    <div
-      className="flex flex-col items-start w-full"
-      style={{
-        maxWidth: '816px',
-        gap: '16px',
-      }}
-    >
+    <div className="flex flex-col items-start w-full" style={{ maxWidth: '816px', gap: '16px' }}>
       <h3
         className="text-foreground"
         style={{
@@ -46,81 +26,23 @@ export function UseOfProceeds() {
         Use of Proceeds
       </h3>
 
-      <p
-        className="w-full text-muted-foreground"
-        style={{
-          fontFamily: 'var(--font-dm-sans)',
-          fontWeight: 400,
-          fontSize: '16px',
-          lineHeight: '21px',
-          letterSpacing: '0.01em',
-          marginBottom: '8px',
-        }}
-      >
-        This section details how the ₦3.75B being raised in the Seed Plus round will be strategically allocated to achieve product and market acceleration.
-      </p>
+      {intro && (
+        <p className="w-full text-muted-foreground font-dm-sans text-base mb-2">{intro}</p>
+      )}
 
-      <ul
-        className="flex flex-col items-start w-full"
-        style={{
-          gap: '12px',
-          listStyle: 'none',
-          padding: 0,
-        }}
-      >
-        {items.map((item, index) => (
-          <li
-            key={index}
-            className="w-full"
-            style={{
-              paddingLeft: '24px',
-              position: 'relative',
-            }}
-          >
-            {/* Bullet point */}
-            <span
-              className="text-foreground"
-              style={{
-                position: 'absolute',
-                left: '0',
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '16px',
-                lineHeight: '21px',
-                letterSpacing: '0.01em',
-              }}
-            >
-              •
+      <ul className="flex flex-col items-start w-full gap-3 list-none p-0">
+        {items.map((item) => (
+          <li key={item.id} className="w-full pl-6 relative">
+            <span className="absolute left-0 text-foreground font-dm-sans font-medium">•</span>
+            <span className="text-foreground font-dm-sans font-medium">
+              {item.allocationPercent != null
+                ? `${item.allocationPercent}% (${item.category}):`
+                : `${item.category}:`}
             </span>
-            {/* Content with label and description */}
-            <span
-              className="text-foreground"
-              style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '16px',
-                lineHeight: '21px',
-                letterSpacing: '0.01em',
-              }}
-            >
-              {item.percentage} {item.category}:
-            </span>
-            <span
-              className="text-muted-foreground"
-              style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '21px',
-                letterSpacing: '0.01em',
-              }}
-            >
-              {' '}{item.description}
-            </span>
+            <span className="text-muted-foreground font-dm-sans"> {item.description}</span>
           </li>
         ))}
       </ul>
     </div>
   )
 }
-

@@ -1,19 +1,12 @@
 import React from 'react'
 
-export function TLDRSection() {
-  // Hardcoded data for now
-  const heading = 'TL;DR'
-  const summary = 'NEXUS AI is dedicated to transforming supply chain operations for SMEs through advanced AI solutions, significantly improving efficiency and greatly minimizing waste across the board. Our cutting-edge technology offers unparalleled optimization, ensuring sustainable and cost-effective practices for businesses of all sizes, while also enhancing overall productivity and streamlining complex logistical challenges with ease.'
+interface TLDRSectionProps {
+  summary: string
+}
 
+export function TLDRSection({ summary }: TLDRSectionProps) {
   return (
-    <div
-      className="flex flex-col items-start w-full"
-      style={{
-        maxWidth: '816px',
-        gap: '24px',
-      }}
-    >
-      {/* Heading */}
+    <div className="flex flex-col items-start w-full" style={{ maxWidth: '816px', gap: '24px' }}>
       <h2
         className="text-foreground"
         style={{
@@ -24,10 +17,8 @@ export function TLDRSection() {
           letterSpacing: '-0.01em',
         }}
       >
-        {heading}
+        TL;DR
       </h2>
-
-      {/* Summary Paragraph */}
       <p
         className="w-full text-muted-foreground"
         style={{
@@ -44,4 +35,3 @@ export function TLDRSection() {
     </div>
   )
 }
-
