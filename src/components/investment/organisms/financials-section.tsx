@@ -1,17 +1,17 @@
 import React from 'react'
 import { FinancialMetricsTable } from '@/components/investment/molecules/financial-metrics-table'
 import { UseOfProceeds } from '@/components/investment/molecules/use-of-proceeds'
+import type { FinancialMetric, UseOfProceedsItem } from '@/types/investment'
 
-export function FinancialsSection() {
+interface FinancialsSectionProps {
+  metrics: FinancialMetric[]
+  useOfProceeds: UseOfProceedsItem[]
+  useOfProceedsIntro?: string | null
+}
+
+export function FinancialsSection({ metrics, useOfProceeds, useOfProceedsIntro }: FinancialsSectionProps) {
   return (
-    <div
-      className="flex flex-col items-start w-full"
-      style={{
-        maxWidth: '816px',
-        gap: '48px',
-      }}
-    >
-      {/* Section Heading */}
+    <div className="flex flex-col items-start w-full" style={{ maxWidth: '816px', gap: '48px' }}>
       <h2
         className="text-foreground"
         style={{
@@ -25,12 +25,9 @@ export function FinancialsSection() {
         Financials
       </h2>
 
-      {/* Financial Metrics Table */}
-      <FinancialMetricsTable />
+      <FinancialMetricsTable metrics={metrics} />
 
-      {/* Use of Proceeds */}
-      <UseOfProceeds />
+      <UseOfProceeds items={useOfProceeds} intro={useOfProceedsIntro} />
     </div>
   )
 }
-

@@ -1,32 +1,18 @@
 import React from 'react'
 import { FeaturePoint } from '@/components/investment/molecules/feature-point'
 
-export function ProprietaryEdgeSection() {
-  // Hardcoded data for now
-  const heading = 'Our Proprietary Edge: Technology & Scalability'
-  const mainDescription = 'At the core of NEXUS AI is the "Quantum-Sync Engine", a patent-pending algorithm that processes real-time data from disparate sources (weather, traffic, consumer sentiment) to create a single, unified supply chain forecast. This technology is 20x faster than competitors\' legacy systems.'
-  
-  const features = [
-    {
-      label: 'Scalability',
-      description: 'Our platform is built on a modular microservices architecture, allowing us to onboard new clients and expand into new sectors (e.g., e-commerce, healthcare logistics) with minimal friction and no performance degradation. We project a 300% increase in user capacity within the next 18 months.',
-    },
-    {
-      label: 'Defensible Moat',
-      description: 'Our proprietary dataset, accumulated over three years of beta testing with 50 pilot companies, gives us an insurmountable data advantage that improves the Quantum-Sync Engine\'s accuracy with every new transaction.',
-    },
-  ]
+interface NarrativeSectionProps {
+  title: string
+  summary: string
+  items: { label: string; description: string }[]
+}
 
+export function ProprietaryEdgeSection({ title, summary, items }: NarrativeSectionProps) {
   return (
     <div
       className="flex flex-col items-start w-full"
-      style={{
-        maxWidth: '816px',
-        gap: '24px',
-        marginTop: '64px',
-      }}
+      style={{ maxWidth: '816px', gap: '24px', marginTop: '64px' }}
     >
-      {/* Heading */}
       <h2
         className="text-foreground"
         style={{
@@ -37,10 +23,9 @@ export function ProprietaryEdgeSection() {
           letterSpacing: '-0.01em',
         }}
       >
-        {heading}
+        {title}
       </h2>
 
-      {/* Main Description */}
       <p
         className="w-full text-muted-foreground"
         style={{
@@ -52,22 +37,16 @@ export function ProprietaryEdgeSection() {
           maxWidth: '816px',
         }}
       >
-        {mainDescription}
+        {summary}
       </p>
 
-      {/* Feature Points */}
-      <div
-        className="flex flex-col items-start w-full"
-        style={{
-          maxWidth: '816px',
-          gap: '24px',
-        }}
-      >
-        {features.map((feature, index) => (
-          <FeaturePoint key={index} label={feature.label} description={feature.description} />
-        ))}
-      </div>
+      {items.length > 0 && (
+        <div className="flex flex-col items-start w-full" style={{ maxWidth: '816px', gap: '24px' }}>
+          {items.map((feature, index) => (
+            <FeaturePoint key={index} label={feature.label} description={feature.description} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
-

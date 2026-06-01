@@ -3,9 +3,14 @@ import { Gauge, Bookmark } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { ActionButton } from '@/components/investment/molecules/action-button'
 import { useRouter } from "next/navigation"
+import type { OfferingFunding } from '@/types/investment'
+import { formatNaira, formatNumber } from '@/lib/investment-mappers'
 
-export function InvestmentPanel() {
+interface InvestmentPanelProps {
+  funding: OfferingFunding
+}
 
+export function InvestmentPanel({ funding }: InvestmentPanelProps) {
   const router = useRouter()
 
   const handleStartTrading = () => {
@@ -14,7 +19,6 @@ export function InvestmentPanel() {
 
   return (
     <div className="w-full max-w-full lg:w-auto lg:max-w-[400px]">
-      {/* Investment Card */}
       <div
         className="flex flex-col items-start bg-white dark:bg-white border border-[#EAEAEA] dark:border-[#404040] rounded w-full max-w-full lg:w-[400px]"
         style={{
@@ -25,173 +29,54 @@ export function InvestmentPanel() {
           borderRadius: '4px',
         }}
       >
-        {/* Top Section - Invest */}
-        <div
-          className="flex flex-col items-start w-full"
-          style={{
-            gap: '24px',
-          }}
-        >
-          {/* Target Section */}
-          <div
-            className="flex flex-col items-start w-full border-b border-[#EAEAEA] dark:border-[#404040]"
-            style={{
-              gap: '24px',
-              paddingBottom: '16px',
-            }}
-          >
-            {/* Target Header */}
+        <div className="flex flex-col items-start w-full gap-6">
+          <div className="flex flex-col items-start w-full border-b border-[#EAEAEA] dark:border-[#404040] gap-6 pb-4">
             <div className="flex flex-row justify-between items-center w-full">
-              <span
-                className="text-[#2C2C2C]"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '20px',
-                  lineHeight: '24px',
-                  letterSpacing: '-0.01em',
-                }}
-              >
-                Target
-              </span>
+              <span className="text-[#2C2C2C] font-dm-sans text-xl">Target</span>
               <div className="flex flex-row items-center gap-2">
-                <Gauge className="w-6 h-6" style={{ color: '#A4D65E' }} />
-                <span
-                  className="text-[#000000]"
-                  style={{
-                    fontFamily: 'var(--font-dm-sans)',
-                    fontWeight: 400,
-                    fontSize: '20px',
-                    lineHeight: '24px',
-                    letterSpacing: '-0.01em',
-                  }}
-                >
-                  4.5
+                <Gauge className="w-6 h-6 text-[#A4D65E]" />
+                <span className="text-black font-dm-sans text-xl">
+                  {funding.targetRating ?? '—'}
                 </span>
               </div>
             </div>
 
-            {/* Progress Bar */}
             <div className="relative w-full h-1.5 bg-[#EDF7DF] rounded-lg overflow-hidden">
               <div
                 className="absolute left-0 top-0 h-full bg-[#A4D65E] rounded-lg"
-                style={{
-                  width: '48%', // Approximate based on CSS (176px / 368px)
-                }}
+                style={{ width: `${Math.min(100, funding.fundingProgressPercent)}%` }}
               />
             </div>
 
-            {/* Amount Raised */}
             <div className="flex flex-col items-start gap-2">
-              <span
-                className="text-[#2C2C2C]"
-                style={{
-                  fontFamily: 'var(--font-rethink-sans)',
-                  fontWeight: 500,
-                  fontSize: '24px',
-                  lineHeight: '29px',
-                  letterSpacing: '-0.01em',
-                }}
-              >
-                ₦7,381,254
+              <span className="text-[#2C2C2C] font-rethink-sans font-medium text-2xl">
+                {formatNaira(funding.raisedAmount)}
               </span>
-              <span
-                className="text-[#858585]"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '14px',
-                  lineHeight: '17px',
-                  letterSpacing: '-0.01em',
-                }}
-              >
-                raised from 341+ investors
+              <span className="text-[#858585] font-dm-sans text-sm">
+                raised from {formatNumber(funding.investorCount)}+ investors
               </span>
             </div>
           </div>
 
-          {/* Invest Section */}
-          <div
-            className="flex flex-row justify-between items-center w-full"
-            style={{
-              gap: '16px',
-              minHeight: '53px',
-            }}
-          >
-            {/* Invest Header */}
-            <div
-              className="flex flex-col items-start flex-shrink-0"
-              style={{
-                gap: '8px',
-                minWidth: '107px',
-              }}
-            >
-              <span
-                className="text-[#2C2C2C]"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '20px',
-                  lineHeight: '24px',
-                  letterSpacing: '-0.01em',
-                }}
-              >
-                Invest
-              </span>
-              <span
-                className="text-[#858585]"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  lineHeight: '21px',
-                  letterSpacing: '0.01em',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                1 share = ₦720
+          <div className="flex flex-row justify-between items-center w-full gap-4 min-h-[53px]">
+            <div className="flex flex-col items-start gap-2 min-w-[107px]">
+              <span className="text-[#2C2C2C] font-dm-sans text-xl">Invest</span>
+              <span className="text-[#858585] font-dm-sans text-base whitespace-nowrap">
+                1 share = {formatNaira(funding.sharePrice)}
               </span>
             </div>
 
-            {/* Input Field */}
-            <div className="relative flex-1 lg:max-w-[176px]" style={{ height: '44px' }}>
-              <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                <span
-                  className="text-[#858585]"
-                  style={{
-                    fontFamily: 'var(--font-dm-sans)',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '21px',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  ₦
-                </span>
-              </div>
+            <div className="relative flex-1 lg:max-w-[176px] h-11">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#858585] font-dm-sans">₦</div>
               <Input
                 type="number"
                 placeholder="0"
-                className="w-full h-11 border border-[#B9CCFF] rounded pl-8 pr-3 text-[#2A2A2A] bg-white dark:bg-white"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '20px',
-                  lineHeight: '24px',
-                  letterSpacing: '-0.01em',
-                }}
+                className="w-full h-11 border border-[#B9CCFF] rounded pl-8 pr-3 text-[#2A2A2A] bg-white dark:bg-white font-dm-sans text-xl"
               />
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div
-            className="flex flex-col w-full"
-            style={{
-              gap: '8px',
-              marginBottom: '24px',
-            }}
-          >
+          <div className="flex flex-col w-full gap-2 mb-6">
             <ActionButton
               text="Start trading"
               variant="primary"
@@ -213,4 +98,3 @@ export function InvestmentPanel() {
     </div>
   )
 }
-
