@@ -211,7 +211,7 @@ export function InvestmentDetailPageContent({ detail }: InvestmentDetailPageCont
             <div className="flex flex-col w-full lg:w-auto lg:flex-1" style={{ maxWidth: '816px' }}>
               <VideoSection videoUrl={videoUrl} coverImageUrl={offering.coverImageUrl} />
 
-              {(thumbnails.length > 0 || media.length > 0) && (
+              {(thumbnails.length > 0 || offering.coverImageUrl) && (
                 <div className="w-full mt-4">
                   <MediaThumbnails
                     thumbnails={

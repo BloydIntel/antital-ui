@@ -35,7 +35,7 @@ export function TeamSection({ members }: TeamSectionProps) {
             name={member.name}
             title={member.title}
             bio={member.bio}
-            imagePath={member.imagePath ?? '/avatars/default.jpg'}
+            imagePath={member.imagePath ?? '/avatars/adara.jpg'}
           />
         ))}
       </div>

@@ -7,7 +7,7 @@ interface VideoSectionProps {
   coverImageUrl?: string
 }
 
-export function VideoSection({ videoUrl, coverImageUrl }: VideoSectionProps) {
+export function VideoSection({ coverImageUrl }: VideoSectionProps) {
   return (
     <div className="w-full" style={{ maxWidth: '816px' }}>
       <div
@@ -17,7 +17,7 @@ export function VideoSection({ videoUrl, coverImageUrl }: VideoSectionProps) {
           minHeight: '200px',
         }}
       >
-        {coverImageUrl && !videoUrl && (
+        {coverImageUrl && (
           <Image
             src={coverImageUrl}
             alt=""

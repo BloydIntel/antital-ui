@@ -10,9 +10,9 @@ function formatUpdateDate(isoDate: string): string {
   const date = new Date(isoDate)
   const now = new Date()
   const isToday =
-    date.getUTCFullYear() === now.getUTCFullYear() &&
-    date.getUTCMonth() === now.getUTCMonth() &&
-    date.getUTCDate() === now.getUTCDate()
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
 
   if (isToday) {
     return 'Today'

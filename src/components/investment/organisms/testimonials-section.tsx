@@ -23,7 +23,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
             key={testimonial.id}
             quote={testimonial.quote}
             author={`${testimonial.authorName}${testimonial.authorTitle ? `, ${testimonial.authorTitle}` : ''}`}
-            avatar={testimonial.imageUrl ?? '/avatars/default.jpg'}
+            avatar={testimonial.imageUrl ?? '/avatars/adara.jpg'}
             initialLikes={0}
             initialLiked={false}
           />

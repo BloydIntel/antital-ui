@@ -35,7 +35,9 @@ export function UseOfProceeds({ items, intro }: UseOfProceedsProps) {
           <li key={item.id} className="w-full pl-6 relative">
             <span className="absolute left-0 text-foreground font-dm-sans font-medium">•</span>
             <span className="text-foreground font-dm-sans font-medium">
-              {item.allocationPercent != null ? `${item.allocationPercent}%` : ''} ({item.category}):
+              {item.allocationPercent != null
+                ? `${item.allocationPercent}% (${item.category}):`
+                : `${item.category}:`}
             </span>
             <span className="text-muted-foreground font-dm-sans"> {item.description}</span>
           </li>

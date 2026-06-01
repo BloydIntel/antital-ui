@@ -67,10 +67,11 @@ export function getVideoUrl(
 }
 
 export function splitHighlights(highlights: Highlight[]) {
-  const stats = highlights
+  const sorted = [...highlights].sort((a, b) => a.sortOrder - b.sortOrder);
+  const stats = sorted
     .filter((h) => h.kind === "stat")
     .map((h) => ({ amount: h.headline ?? "", description: h.body }));
-  const bullets = highlights
+  const bullets = sorted
     .filter((h) => h.kind === "bullet")
     .map((h, index) => ({ number: index + 1, text: h.body }));
   return { stats, bullets };
