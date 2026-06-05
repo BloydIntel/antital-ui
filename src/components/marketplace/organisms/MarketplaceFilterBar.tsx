@@ -25,13 +25,13 @@ export function MarketFilterBar({ marketType, activeSector, onSectorChange, acti
     return (
         <div className="flex flex-col items-center xl:flex-row xl:justify-between gap-4 w-full pt-4 pb-8">
             {isPrimary ? (
-                <div className="flex items-center bg-[#E6EAE9] p-1 rounded-lg w-auto">
+                <div className="flex items-center bg-[#E6EAE9] p-1 rounded-lg w-full lg:w-auto">
                     {sectors.map((sector) => (
                         <button
                             key={sector}
                             onClick={() => onSectorChange(sector)}
                             className={cn(
-                                "px-2 lg:px-4 py-2 text-[11px] lg:text-[14px] rounded-md cursor-pointer transition-all whitespace-nowrap",
+                                "px-2 lg:px-4 py-2 text-[13px] lg:text-[14px] rounded-md cursor-pointer transition-all whitespace-nowrap",
                                 activeSector === sector
                                     ? "bg-[#052119] text-white shadow-sm"
                                     : "text-[#505050] hover:text-black"

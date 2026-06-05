@@ -26,7 +26,7 @@ export function Dashboard() {
                 onButtonClick={() => console.log("Button Clicked")}
             />
 
-            <div className="@container/main px-4 lg:px-6 space-y-6">
+            <div className="@container/main space-y-6">
                 <SectionCards state={uiState} />
                 <PortfolioStatChart state={uiState} />
             </div>
