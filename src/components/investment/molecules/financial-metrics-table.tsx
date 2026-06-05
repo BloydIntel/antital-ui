@@ -1,172 +1,45 @@
 import React from 'react'
+import type { FinancialMetric } from '@/types/investment'
+import { buildFinancialTable } from '@/lib/investment-mappers'
 
-interface FinancialMetric {
-  metric: string
-  fy2024: string
-  fy2025: string
-  fy2027: string
+interface FinancialMetricsTableProps {
+  metrics: FinancialMetric[]
 }
 
-export function FinancialMetricsTable() {
-  const metrics: FinancialMetric[] = [
-    {
-      metric: 'Annual Recurring Revenue (ARR)',
-      fy2024: '₦675,000,000',
-      fy2025: '₦2,250,000,000',
-      fy2027: '₦15,750,000,000',
-    },
-    {
-      metric: 'Gross Margin (%)',
-      fy2024: '78%',
-      fy2025: '82%',
-      fy2027: '86%',
-    },
-    {
-      metric: 'Customer Acquisition Cost (CAC)',
-      fy2024: '₦4,500,000',
-      fy2025: '₦3,750,000',
-      fy2027: '₦2,250,000',
-    },
-    {
-      metric: 'Customer Lifetime Value (LTV)',
-      fy2024: '₦36,000,000',
-      fy2025: '₦42,000,000',
-      fy2027: '₦52,500,000',
-    },
-    {
-      metric: 'LTV:CAC Ratio',
-      fy2024: '8:1',
-      fy2025: '11.2:1',
-      fy2027: '17.5:1',
-    },
-    {
-      metric: 'Cash-Flow Positive Target',
-      fy2024: 'N/A',
-      fy2025: 'N/A',
-      fy2027: 'N/A',
-    },
-  ]
+export function FinancialMetricsTable({ metrics }: FinancialMetricsTableProps) {
+  const { periods, rows } = buildFinancialTable(metrics)
+
+  if (periods.length === 0) {
+    return null
+  }
 
   return (
     <div className="w-full overflow-x-auto" style={{ maxWidth: '816px' }}>
-      <table
-        className="w-full"
-        style={{
-          borderCollapse: 'collapse',
-        }}
-      >
+      <table className="w-full" style={{ borderCollapse: 'collapse' }}>
         <thead>
-          <tr
-            style={{
-              borderBottom: '1px solid #EAEAEA',
-            }}
-          >
-            <th
-              className="text-left py-3 px-4 text-muted-foreground"
-              style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '17px',
-                letterSpacing: '-0.01em',
-              }}
-            >
+          <tr style={{ borderBottom: '1px solid #EAEAEA' }}>
+            <th className="text-left py-3 px-4 text-muted-foreground font-dm-sans text-sm font-medium">
               Key financial metrics
             </th>
-            <th
-              className="text-left py-3 px-4 text-muted-foreground"
-              style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '17px',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              FY 2024 (Actual)
-            </th>
-            <th
-              className="text-left py-3 px-4 text-muted-foreground"
-              style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '17px',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              FY 2025 (Projected)
-            </th>
-            <th
-              className="text-left py-3 px-4 text-muted-foreground"
-              style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '17px',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              FY 2027 (Projected)
-            </th>
+            {periods.map((period) => (
+              <th key={period} className="text-left py-3 px-4 text-muted-foreground font-dm-sans text-sm font-medium">
+                {period}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {metrics.map((metric, index) => (
+          {rows.map((row, index) => (
             <tr
-              key={index}
-              style={{
-                borderBottom: index < metrics.length - 1 ? '1px solid #EAEAEA' : 'none',
-              }}
+              key={row.metric}
+              style={{ borderBottom: index < rows.length - 1 ? '1px solid #EAEAEA' : 'none' }}
             >
-              <td
-                className="py-3 px-4 text-foreground"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  lineHeight: '21px',
-                  letterSpacing: '0.01em',
-                }}
-              >
-                {metric.metric}
-              </td>
-              <td
-                className="py-3 px-4 text-foreground"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  lineHeight: '21px',
-                  letterSpacing: '0.01em',
-                }}
-              >
-                {metric.fy2024}
-              </td>
-              <td
-                className="py-3 px-4 text-foreground"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  lineHeight: '21px',
-                  letterSpacing: '0.01em',
-                }}
-              >
-                {metric.fy2025}
-              </td>
-              <td
-                className="py-3 px-4 text-foreground"
-                style={{
-                  fontFamily: 'var(--font-dm-sans)',
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  lineHeight: '21px',
-                  letterSpacing: '0.01em',
-                }}
-              >
-                {metric.fy2027}
-              </td>
+              <td className="py-3 px-4 text-foreground font-dm-sans text-base">{row.metric}</td>
+              {row.values.map((value, valueIndex) => (
+                <td key={valueIndex} className="py-3 px-4 text-foreground font-dm-sans text-base">
+                  {value}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
@@ -174,4 +47,3 @@ export function FinancialMetricsTable() {
     </div>
   )
 }
-
