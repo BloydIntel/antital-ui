@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react";
-import { WatchlistFilter, WatchlistCategory } from "@/components/watchlist/WatchlistFilter";
+import { WatchlistFilter, WatchlistCategory } from "@/components/watchlist/organisms/WatchlistFilter";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { InvestmentData, RiskLevel } from "@/types/dashboard";
-import { WatchlistTable } from "@/components/watchlist/WatchlistTable";
+import { WatchlistTable } from "@/components/watchlist/organisms/WatchlistTable";
 import investmentData from "@/data/dashboardInvestmentData.json"
 
 export function Watchlist() {
@@ -16,16 +16,22 @@ export function Watchlist() {
     const totalCount = investmentData.length;
 
     const endingSoonCount = investmentData.filter(
-        item => item.daysLeft < 3
+        item => item.daysLeft !== undefined && item.daysLeft < 3
     ).length;
 
     const nearTargetCount = investmentData.filter(
-        item => item.percentage ? item.percentage > 80 : false
+        item => item.percentage !== undefined && item.percentage > 80
     ).length;
 
     const filteredData = investmentData.filter(item => {
-        if (activeCategory === "ending_soon" && item.daysLeft >= 3) return false;
-        if (activeCategory === "near_target" && (!item.percentage || item.percentage <= 80)) return false;
+
+        if (activeCategory === "ending_soon" && (item.daysLeft === undefined || item.daysLeft >= 3)) {
+            return false;
+        }
+
+        if (activeCategory === "near_target" && (item.percentage === undefined || item.percentage <= 80)) {
+            return false;
+        }
 
         if (activeRisk !== "all" && item.risk !== activeRisk) return false;
 
@@ -70,10 +76,7 @@ export function Watchlist() {
                 counts={watchlistCounts}
             />
 
-            {/* 💡 Your Main Watchlist Items Card Grid Display will go here beneath the filters */}
-            {/* <WatchlistGrid category={activeCategory} risk={activeRisk} search={searchQuery} /> */}
             <WatchlistTable data={filteredData as InvestmentData[]} filterType={activeCategory} />
-
         </div>
     );
 }

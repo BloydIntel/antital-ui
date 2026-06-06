@@ -4,7 +4,7 @@ import React from 'react';
 import { AlarmClock } from 'lucide-react';
 import Image from 'next/image'
 import { TYPOGRAPHY } from '@/constants/styles';
-import { OnboardingButton } from '../onboarding/molecules/OnboardingButton';
+import { OnboardingButton } from '../../onboarding/molecules/OnboardingButton';
 
 interface ReminderSuccessModalProps {
     isOpen: boolean;

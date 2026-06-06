@@ -9,7 +9,7 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"; // Adjust this path based on where your Radix wrappers live
-import { OnboardingButton } from '../onboarding/molecules/OnboardingButton';
+import { OnboardingButton } from '../../onboarding/molecules/OnboardingButton';
 import { TYPOGRAPHY } from '@/constants/styles';
 
 interface SetReminderModalProps {

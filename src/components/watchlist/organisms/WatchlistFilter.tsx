@@ -67,7 +67,7 @@ export function WatchlistFilter({
             <div className="flex flex-row xl:flex-row-reverse items-center gap-2.5 w-full md:w-auto">
 
                 {/* Text Search Bar Input */}
-                <div className="relative md:min-w-[280px] lg:min-w-[320px]">
+                <div className="relative flex-1 md:min-w-[280px] lg:min-w-[320px]">
                     <Input
                         type="search"
                         value={searchQuery}
@@ -80,7 +80,7 @@ export function WatchlistFilter({
                 </div>
 
                 {/* Risk Filter Dropdown Select */}
-                <div className="">
+                <div>
                     <Select value={activeRisk} onValueChange={(value) => onRiskChange(value as RiskLevel | "all")}>
                         <SelectTrigger className="w-full px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#1A1C1E] focus:ring-1 focus:ring-[#042E27]">
                             <div className="flex items-center gap-2 justify-between w-full">
