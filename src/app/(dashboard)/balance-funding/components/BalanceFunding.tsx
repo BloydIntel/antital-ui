@@ -46,7 +46,7 @@ export default function BalanceFunding() {
   };
 
   return (
-    <div className='px-4 lg:px-8 space-y-8'>
+    <div className='space-y-8'>
       {/* Header Section */}
       {/* Dynamic Header Section */}
       <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center gap-2 lg:gap-0'>
