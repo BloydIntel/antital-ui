@@ -22,6 +22,7 @@ import { TYPOGRAPHY } from "@/constants/styles"
 import { useMemo, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import type { DashboardActiveDeal, DashboardPerformancePoint } from "@/types/dashboard-api"
 
 const portfolioData = [
   { month: "Jan", year: "2019", units: 10 },
@@ -33,17 +34,18 @@ const portfolioData = [
   { month: "Jul", year: "2025", units: 65 },
 ]
 
-const activeDeals = [
-  { iconSrc: "/dashboard/starforge.png", name: "StarForge Labs Ltd.", nameShorthand: "SLL", price: "₦22,400.00", diff: "+4.22" },
-  { iconSrc: "/dashboard/plantIQ.png", name: "PlantIQ Global Limited.", nameShorthand: "PGL", price: "₦22,400.00", diff: "+4.13" },
-  { iconSrc: "/dashboard/cropPause.png", name: "CropPulse Analytics Ltd.", nameShorthand: "CAL", price: "₦422,400.00", diff: "+6.20" },
-  { iconSrc: "/dashboard/elevate.png", name: "Elevate Solutions Inc.", nameShorthand: "ESI", price: "₦22,400.00", diff: "-3.00" },
-  { iconSrc: "/dashboard/lumina.png", name: "LuminaTech Group Ltd.", nameShorthand: "LGL", price: "₦22,400.00", diff: "+0.95" },
-  { iconSrc: "/dashboard/pixel.png", name: "PixelRise Limited.", nameShorthand: "SLL", price: "₦22,400.00", diff: "+7.02" },
-  { iconSrc: "/dashboard/dream.png", name: "Dreamline Systems Ltd.", nameShorthand: "DSL", price: "₦22,400.00", diff: "+3.0" },
-  { iconSrc: "/dashboard/starforge.png", name: "StarForge Labs Ltd", nameShorthand: "SLL", price: "₦22,400.00", diff: "+4.22" },
-  { iconSrc: "/dashboard/plantIQ.png", name: "PlantIQ Global Limited", nameShorthand: "PGL", price: "₦22,400.00", diff: "+4.13" },
-]
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount).replace("NGN", "₦")
+
+const formatDiff = (changePercent: number) => {
+  const prefix = changePercent >= 0 ? "+" : ""
+  return `${prefix}${changePercent.toFixed(2)}%`
+}
 
 const activeDealTextStyle = {
   fontFamily: 'var(--font-inter), sans-serif',
@@ -52,29 +54,68 @@ const activeDealTextStyle = {
   color: "#1F1F1F"
 };
 
-export function PortfolioStatChart({ state = false }: { state: boolean }) {
+interface PortfolioStatChartProps {
+  portfolioPerformance?: DashboardPerformancePoint[]
+  activeDeals?: DashboardActiveDeal[]
+  isLoading?: boolean
+  state?: boolean
+}
+
+export function PortfolioStatChart({
+  portfolioPerformance,
+  activeDeals,
+  isLoading = false,
+  state = false,
+}: PortfolioStatChartProps) {
 
   const pathname = usePathname();
   const isPortfolioPage = pathname === "/portfolio";
+  const isDashboardPage = pathname === "/dashboard";
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
 
-  const portfolioHasData = useMemo(() =>
-    portfolioData.some(d => d.units !== undefined),
-    []);
+  const chartData = useMemo(() => {
+    if (isDashboardPage && portfolioPerformance && portfolioPerformance.length > 0) {
+      return portfolioPerformance.map((point) => {
+        const [monthLabel, yearLabel] = point.periodLabel.split(" ")
+        return {
+          month: monthLabel,
+          year: yearLabel ?? "",
+          units: point.value,
+        }
+      })
+    }
 
-  const hasActiveDeals = state && activeDeals.length > 0;
-  const hasActivePortfolio = state && portfolioHasData;
+    return portfolioData
+  }, [isDashboardPage, portfolioPerformance])
+
+  const portfolioHasData = useMemo(() =>
+    chartData.some(d => d.units !== undefined && d.units > 0),
+    [chartData]);
+
+  const deals = useMemo(() => {
+    if (isDashboardPage) {
+      return activeDeals ?? []
+    }
+
+    return []
+  }, [activeDeals, isDashboardPage])
+
+  const hasActiveDeals = isDashboardPage
+    ? !isLoading && deals.length > 0
+    : state && deals.length > 0;
+
+  const hasActivePortfolio = isDashboardPage
+    ? !isLoading && portfolioHasData
+    : state && portfolioHasData;
 
   const handleScrollAction = () => {
     if (scrollRef.current) {
 
       if (isAtBottom) {
-        // Scroll back to top
         scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        // Scroll down
         scrollRef.current.scrollBy({ top: 150, behavior: 'smooth' });
       }
     }
@@ -83,26 +124,22 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
   const onScroll = () => {
     if (scrollRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-      // If we are within 20px of the bottom, flip the arrow
       setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 20);
     }
   }
 
   return (
     <div className="flex flex-col xl:grid lg:grid-cols-3 gap-5 mb-12">
-      {/* --- Portfolio Chart Card --- */}
       <Card className={cn(
         "border-[#EAEAEA] shadow-none rounded-xl bg-white h-full w-full",
         !isPortfolioPage ? "xl:col-span-2" : "xl:col-span-3"
       )}>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           {isPortfolioPage ? (
-            // Portfolio Page Header (Simple Text)
             <h3 className="text-[16px] text-[#042E27]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
               Portfolio Stats
             </h3>
           ) : (
-            // Dashboard Header (Select Dropdown)
             <Select>
               <SelectTrigger
                 className="h-auto py-6 px-4 border-[#A8A8A8] rounded-md bg-white cursor-pointer focus:ring-0 font-bold text-black"
@@ -116,7 +153,6 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
               </SelectTrigger>
 
               <SelectContent>
-                {/* Grouping and Labels belong here */}
                 <SelectGroup>
                   <SelectItem value="investment-dist">Investment dist</SelectItem>
                 </SelectGroup>
@@ -128,7 +164,7 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
 
         <CardContent className={hasActivePortfolio ? "pt-4" : "flex flex-col items-center justify-center min-h-[350px]"}>
           <ChartContainer config={{}} className={isPortfolioPage ? "h-[350px] w-full" : "h-[300px] w-full"}>
-            <AreaChart data={portfolioData} margin={{ left: -20, right: 10 }}>
+            <AreaChart data={chartData} margin={{ left: -20, right: 10 }}>
               <defs>
                 <linearGradient id="colorUnits" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#7CC755" stopOpacity={0.8} />
@@ -144,7 +180,7 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
               <YAxis
                 axisLine={false} tickLine={false}
                 tick={{ fill: '#A2A3A1', fontSize: 12 }}
-                domain={[0, 80]} ticks={[10, 20, 30, 40, 50, 60, 70, 80]}
+                domain={[0, 'auto']}
               />
               <ChartTooltip content={({ active, payload }) => (
                 active && payload?.length ? (
@@ -165,7 +201,6 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
         </CardContent>
       </Card>
 
-      {/* --- Deals Card --- */}
       {!isPortfolioPage && (
         <Card className="bg-white">
           <CardHeader className="flex justify-between items-center">
@@ -183,26 +218,33 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
                     className="flex flex-col h-[350px] overflow-y-auto px-6 pt-2 scrollbar-hide mask-gradient"
                     style={{ isolation: 'isolate' }}
                   >
-                    {activeDeals.map((deal, i) => {
-                      const isPos = deal.diff.startsWith('+');
+                    {deals.map((deal) => {
+                      const isPos = deal.changePercent >= 0;
+                      const shorthand = deal.name
+                        .split(" ")
+                        .map((part) => part[0])
+                        .join("")
+                        .slice(0, 3)
+                        .toUpperCase();
+
                       return (
                         <div
-                          key={i}
+                          key={deal.offeringId}
                           className="py-2 flex items-center justify-between border-b border-[#E6EDFF] last:border-0"
                         >
                           <div className="flex items-center gap-2">
-                            <Image src={deal.iconSrc} alt="icon" width={24} height={24} />
+                            <Image src={deal.logoUrl} alt={deal.name} width={24} height={24} />
                             <div className="flex flex-col">
                               <p style={activeDealTextStyle}>{deal.name}</p>
                               <p style={{ ...activeDealTextStyle, color: "#505050", fontSize: "12px" }}>
-                                {deal.nameShorthand}
+                                {shorthand}
                               </p>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
-                            <p style={activeDealTextStyle}>{deal.price}</p>
+                            <p style={activeDealTextStyle}>{formatCurrency(deal.price)}</p>
                             <p style={{ ...activeDealTextStyle, color: isPos ? "#55B32B" : "#D11313", fontSize: "12px" }}>
-                              {deal.diff}
+                              {formatDiff(deal.changePercent)}
                             </p>
                           </div>
                         </div>
@@ -212,7 +254,6 @@ export function PortfolioStatChart({ state = false }: { state: boolean }) {
                     <div className="h-20 shrink-0" />
                   </div>
 
-                  {/* Floating Scroll Button */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
                     <button
                       onClick={handleScrollAction}
