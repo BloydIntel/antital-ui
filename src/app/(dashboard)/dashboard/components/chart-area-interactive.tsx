@@ -76,7 +76,7 @@ export function PortfolioStatChart({
   const [isAtBottom, setIsAtBottom] = useState(false);
 
   const chartData = useMemo(() => {
-    if (isDashboardPage && portfolioPerformance && portfolioPerformance.length > 0) {
+    if ((isDashboardPage || isPortfolioPage) && portfolioPerformance && portfolioPerformance.length > 0) {
       return portfolioPerformance.map((point) => {
         const [monthLabel, yearLabel] = point.periodLabel.split(" ")
         return {
@@ -88,7 +88,7 @@ export function PortfolioStatChart({
     }
 
     return portfolioData
-  }, [isDashboardPage, portfolioPerformance])
+  }, [isDashboardPage, isPortfolioPage, portfolioPerformance])
 
   const portfolioHasData = useMemo(() =>
     chartData.some(d => d.units !== undefined && d.units > 0),
@@ -106,7 +106,7 @@ export function PortfolioStatChart({
     ? !isLoading && deals.length > 0
     : state && deals.length > 0;
 
-  const hasActivePortfolio = isDashboardPage
+  const hasActivePortfolio = isDashboardPage || isPortfolioPage
     ? !isLoading && portfolioHasData
     : state && portfolioHasData;
 

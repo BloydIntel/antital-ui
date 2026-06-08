@@ -46,6 +46,8 @@ const mapHoldingsToRows = (holdings: DashboardHolding[]): InvestmentData[] =>
     returns: holding.returns,
     date: formatDashboardDate(holding.date),
     risk: holding.risk as InvestmentData["risk"],
+    goal: holding.fundingGoal,
+    raised: holding.raisedAmount,
   }))
 
 export function DataTable({ state = false, holdings, isLoading = false }: DataTableProps) {
@@ -59,11 +61,8 @@ export function DataTable({ state = false, holdings, isLoading = false }: DataTa
   const allInvestments = allInvestmentsRaw as InvestmentData[];
 
   const getActiveContent = () => {
-    if (isDashboardPage) {
+    if (isDashboardPage || isPortfolioPage) {
       return holdings ? mapHoldingsToRows(holdings) : []
-    }
-    if (isPortfolioPage) {
-      return allInvestments.filter(item => item.invested! > 0);
     }
     if (isMarketplacePage) {
       return allInvestments;
@@ -72,7 +71,7 @@ export function DataTable({ state = false, holdings, isLoading = false }: DataTa
   };
 
   const activeData = getActiveContent();
-  const isEmpty = isDashboardPage
+  const isEmpty = isDashboardPage || isPortfolioPage
     ? !isLoading && activeData.length === 0
     : !state || activeData.length === 0;
 

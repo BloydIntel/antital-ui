@@ -30,6 +30,8 @@ export interface DashboardHolding {
   returns: number;
   unitHolding: number;
   date: string;
+  fundingGoal: number;
+  raisedAmount: number;
 }
 
 export interface DashboardResponse {
