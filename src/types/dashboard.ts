@@ -31,6 +31,13 @@ export interface InvestmentData {
     volume?: number;
     marketCap?: number;
     offersCount?: number;
+
+    // Watchlist
+    watchlistAddedDate?: string;
+    recentUpdate?: string;
+    updateTimeAgo?: string;
+    remindersCount?: number;
+    isWatched?: boolean;
 }
 
 export type MarketType = "primary" | "secondary";

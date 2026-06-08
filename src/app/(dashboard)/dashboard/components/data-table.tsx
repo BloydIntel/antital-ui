@@ -86,7 +86,7 @@ export function DataTable({ state = false, holdings, isLoading = false }: DataTa
   };
 
   return (
-    <div className="px-4 lg:px-6 space-y-6">
+    <div className="space-y-6">
       <Card className="shadow-none min-h-[518px] bg-white border-[#EAEAEA]">
         <CardHeader className="flex flex-col xl:flex-row items-center justify-between pb-2">
           <div>

@@ -105,7 +105,7 @@ export function SectionCards({ summary, isLoading = false, state = false }: Sect
   ]
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {cardData.map((card, index) => (
         <SummaryCard key={index} {...card} isLoading={isLoading} />
       ))}
