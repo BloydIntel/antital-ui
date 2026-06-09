@@ -30,7 +30,7 @@ export function DashboardSubHeader({
     onButtonClick
 }: DashboardSubHeaderProps) {
     return (
-        <div className="px-8 flex flex-col lg:flex-row justify-between pb-[24px] gap-2">
+        <div className="flex flex-col lg:flex-row justify-between pb-[24px] gap-2">
             <div className="flex flex-col gap-1">
                 <h3
                     className="text-[28px] text-[#1B1B1B] tracking-tight"

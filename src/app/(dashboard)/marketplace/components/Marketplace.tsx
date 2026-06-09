@@ -103,7 +103,7 @@ export function Marketplace() {
 
     return (
         <main>
-            <div className="px-4 lg:px-8 lg:pt-6">
+            <div>
                 <h3 className="text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
                     Marketplace (Invest & Trade)
                 </h3>
