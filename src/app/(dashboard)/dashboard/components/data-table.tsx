@@ -17,8 +17,40 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import allInvestmentsRaw from "@/data/dashboardInvestmentData.json";
 import { InvestmentData, RISK_COLORS } from "@/types/dashboard"
+import type { DashboardHolding } from "@/types/dashboard-api"
 
-export function DataTable({ state = false }: { state: boolean }) {
+interface DataTableProps {
+  state?: boolean
+  holdings?: DashboardHolding[]
+  isLoading?: boolean
+}
+
+const formatDashboardDate = (value: string) => {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return value
+  }
+
+  return date.toLocaleDateString("en-GB")
+}
+
+const mapHoldingsToRows = (holdings: DashboardHolding[]): InvestmentData[] =>
+  holdings.map((holding) => ({
+    id: String(holding.offeringId),
+    name: holding.name,
+    category: holding.sector,
+    sector: holding.sector,
+    invested: holding.invested,
+    unitHolding: holding.unitHolding,
+    currentValue: holding.currentValue,
+    returns: holding.returns,
+    date: formatDashboardDate(holding.date),
+    risk: holding.risk as InvestmentData["risk"],
+    goal: holding.fundingGoal,
+    raised: holding.raisedAmount,
+  }))
+
+export function DataTable({ state = false, holdings, isLoading = false }: DataTableProps) {
 
   const pathname = usePathname();
   const router = useRouter()
@@ -29,17 +61,19 @@ export function DataTable({ state = false }: { state: boolean }) {
   const allInvestments = allInvestmentsRaw as InvestmentData[];
 
   const getActiveContent = () => {
-    if (isPortfolioPage) {
-      return allInvestments.filter(item => item.invested! > 0);
+    if (isDashboardPage || isPortfolioPage) {
+      return holdings ? mapHoldingsToRows(holdings) : []
     }
     if (isMarketplacePage) {
-      return allInvestments; // Or filter by market type
+      return allInvestments;
     }
     return allInvestments.filter(item => item.invested! > 0);
   };
 
   const activeData = getActiveContent();
-  const isEmpty = !state || activeData.length === 0;
+  const isEmpty = isDashboardPage || isPortfolioPage
+    ? !isLoading && activeData.length === 0
+    : !state || activeData.length === 0;
 
   const formatCurrency = (amount: number | undefined | null) => {
     if (amount === undefined || amount === null) return "₦0.00";
@@ -180,7 +214,9 @@ export function DataTable({ state = false }: { state: boolean }) {
                       <>
                         <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.invested)}</TableCell>
                         <TableCell className="py-4 text-[#858585] text-center">{row.unitHolding}</TableCell>
-                        <TableCell className="py-4 text-[#858585] text-center">{row.currentValue}</TableCell>
+                        <TableCell className="py-4 text-[#858585] text-center">
+                          {typeof row.currentValue === "number" ? formatCurrency(row.currentValue) : row.currentValue}
+                        </TableCell>
                         <TableCell className="py-4 text-[#858585] text-center">{formatCurrency(row.returns)}</TableCell>
                         <TableCell className="py-4 text-[#858585] text-center">{row.date}</TableCell>
                       </>

@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TYPOGRAPHY } from "@/constants/styles";
 import {
-    ArrowUpRight, ShoppingCart, FileText, Download, ChevronLeft, ChevronRight, CheckCircle2,
+    ArrowUpRight, ShoppingCart, FileText, Download, CheckCircle2,
     Trash,
     Upload,
     CreditCard,
@@ -13,6 +13,7 @@ import { TransactionItem } from '@/data/transactionsMockData';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { useRouter } from 'next/navigation';
 import { StatusButton } from '@/components/balance-funding/atoms/StatusButton';
+import { TablePagination } from '@/components/watchlist/molecules/TablePagination';
 
 // Helper for type column visuals
 const getTypeBadge = (type: TransactionItem['type']) => {
@@ -75,7 +76,12 @@ const filterConfigs = [
     }
 ] as const;
 
-export function TransactionHistory({ data }: { data: TransactionItem[] }) {
+interface TransactionHistoryProps {
+    data: TransactionItem[];
+    itemsPerPage?: number;
+}
+
+export function TransactionHistory({ data, itemsPerPage = 10 }: TransactionHistoryProps) {
 
     const router = useRouter()
 
@@ -87,6 +93,7 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
 
     const [filters, setFilters] = useState(initialFilters);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
 
     // Helper to update a specific filter key
@@ -113,14 +120,29 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
         });
     }, [data, filters]);
 
-    const isAllSelected = filteredTransactions.length > 0 && filteredTransactions.every(item => selectedIds.includes(item.id));
+    // Calculate Pagination Boundaries based on filtered results
+    const totalItems = filteredTransactions.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    const paginatedTransactions = useMemo(() => {
+        return filteredTransactions.slice(startIndex, endIndex);
+    }, [filteredTransactions, startIndex, endIndex]);
+
+    // Snap view back to page 1 whenever filters adjust
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters]);
+
+    const isAllSelected = paginatedTransactions.length > 0 && paginatedTransactions.every(item => selectedIds.includes(item.id));
 
     const handleSelectAllToggle = () => {
         if (isAllSelected) {
-            const filteredIds = filteredTransactions.map(tx => tx.id);
-            setSelectedIds(prev => prev.filter(id => !filteredIds.includes(id)));
+            const paginatedIds = paginatedTransactions.map(tx => tx.id);
+            setSelectedIds(prev => prev.filter(id => !paginatedIds.includes(id)));
         } else {
-            const newSelections = filteredTransactions.map(tx => tx.id);
+            const newSelections = paginatedTransactions.map(tx => tx.id);
             setSelectedIds(prev => Array.from(new Set([...prev, ...newSelections])));
         }
     };
@@ -219,66 +241,74 @@ export function TransactionHistory({ data }: { data: TransactionItem[] }) {
                     </thead>
                     <tbody className="divide-y divide-[#F9F9F9] text-[15px]">
 
-                        {filteredTransactions.map((tx) => {
-                            const isPositive = tx.type === "Sell" || tx.type === "Deposit";
-                            const isRowSelected = selectedIds.includes(tx.id);
+                        {paginatedTransactions.length === 0 ? (
+                            <tr>
+                                <td colSpan={8} className="text-center py-10 text-[#717171]" style={TYPOGRAPHY.body}>
+                                    No transaction records found matching the chosen criteria.
+                                </td>
+                            </tr>
+                        ) : (
+                            paginatedTransactions.map((tx) => {
+                                const isPositive = tx.type === "Sell" || tx.type === "Deposit";
+                                const isRowSelected = selectedIds.includes(tx.id);
 
-                            return (
-                                <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="py-2 lg:py-4 pl-2">
-                                        <input
-                                            type="checkbox"
-                                            className="rounded border-gray-300 cursor-pointer"
-                                            aria-label={`Checkbox: ${tx.description}`}
-                                            checked={isRowSelected}
-                                            onChange={() => handleSelectRow(tx.id)}
-                                        />
-                                    </td>
-                                    <td className="py-2 lg:py-4">{getTypeBadge(tx.type)}</td>
-                                    <td className="py-2 lg:py-4 max-w-xs">
-                                        <p className="w-[200px] lg:w-auto font-medium text-[#1F1F1F] text-[14px] lg:text-[16px] pb-1 lg:pb-2" style={TYPOGRAPHY.body}>{tx.description}</p>
-                                        <p className="text-[12px] text-[#858585]" style={TYPOGRAPHY.body}>{tx.subDescription}</p>
-                                    </td>
-                                    <td className="flex flex-col py-2 lg:py-4 ml-2 ">
-                                        <p className="w-[100px] lg:w-auto text-[#1A1C1E] font-medium text-[14px] lg:text-[16px] pb-1 lg:pb-2">{tx.date}</p>
-                                        <p className="text-[12px] text-[#858585]">{tx.timeStamp}</p>
-                                    </td>
-                                    <td className={`py-2 lg:py-4 text-right text-[14px] lg:text-[16px] ${isPositive ? 'text-[#45B424]' : 'text-[#D4001A]'}`} style={TYPOGRAPHY.body}>
-                                        <p className='w-[100px] lg:w-auto'>{isPositive ? `+₦${tx.amount.toLocaleString()}` : `-₦${tx.amount.toLocaleString()}`}</p>
-                                    </td>
-                                    <td className="py-2 lg:py-4 text-right text-[#1F1F1F] text-[14px] lg:text-[16px]" style={TYPOGRAPHY.body}>
-                                        <p className='w-[70px] lg:w-auto mr-2'>{tx.fees ? `₦${tx.fees.toLocaleString()}` : ""}</p>
-                                    </td>
-                                    <td className="py-2 lg:py-4 text-center">
-                                        <StatusButton status={tx.status} />
-                                    </td>
-                                    <td className="py-2 lg:py-4">
-                                        <div className="flex items-center justify-center gap-3 text-[#505050]">
-                                            {tx.type !== "Deposit" && tx.type !== "Withdrawal" && (
-                                                <button
-                                                    className="hover:text-black transition-colors cursor-pointer"
-                                                    onClick={() => router.push(`/balance-funding/invoice/${tx.id}`)}
-                                                >
-                                                    <FileText className="w-4 h-4" />
+                                return (
+                                    <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
+                                        <td className="py-2 lg:py-4 pl-2">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-gray-300 cursor-pointer"
+                                                aria-label={`Checkbox: ${tx.description}`}
+                                                checked={isRowSelected}
+                                                onChange={() => handleSelectRow(tx.id)}
+                                            />
+                                        </td>
+                                        <td className="py-2 lg:py-4">{getTypeBadge(tx.type)}</td>
+                                        <td className="py-2 lg:py-4 max-w-xs">
+                                            <p className="w-[200px] lg:w-auto font-medium text-[#1F1F1F] text-[14px] lg:text-[16px] pb-1 lg:pb-2" style={TYPOGRAPHY.body}>{tx.description}</p>
+                                            <p className="text-[12px] text-[#858585]" style={TYPOGRAPHY.body}>{tx.subDescription}</p>
+                                        </td>
+                                        <td className="flex flex-col py-2 lg:py-4 ml-2 ">
+                                            <p className="w-[100px] lg:w-auto text-[#1A1C1E] font-medium text-[14px] lg:text-[16px] pb-1 lg:pb-2">{tx.date}</p>
+                                            <p className="text-[12px] text-[#858585]">{tx.timeStamp}</p>
+                                        </td>
+                                        <td className={`py-2 lg:py-4 text-right text-[14px] lg:text-[16px] ${isPositive ? 'text-[#45B424]' : 'text-[#D4001A]'}`} style={TYPOGRAPHY.body}>
+                                            <p className='w-[100px] lg:w-auto'>{isPositive ? `+₦${tx.amount.toLocaleString()}` : `-₦${tx.amount.toLocaleString()}`}</p>
+                                        </td>
+                                        <td className="py-2 lg:py-4 text-right text-[#1F1F1F] text-[14px] lg:text-[16px]" style={TYPOGRAPHY.body}>
+                                            <p className='w-[70px] lg:w-auto mr-2'>{tx.fees ? `₦${tx.fees.toLocaleString()}` : ""}</p>
+                                        </td>
+                                        <td className="py-2 lg:py-4 text-center">
+                                            <StatusButton status={tx.status} />
+                                        </td>
+                                        <td className="py-2 lg:py-4">
+                                            <div className="flex items-center justify-center gap-3 text-[#505050]">
+                                                {tx.type !== "Deposit" && tx.type !== "Withdrawal" && (
+                                                    <button
+                                                        className="hover:text-black transition-colors cursor-pointer"
+                                                        onClick={() => router.push(`/balance-funding/invoice/${tx.id}`)}
+                                                    >
+                                                        <FileText className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                                <button className="hover:text-black transition-colors cursor-pointer">
+                                                    <Download className="w-4 h-4" />
                                                 </button>
-                                            )}
-                                            <button className="hover:text-black transition-colors cursor-pointer">
-                                                <Download className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            }))}
                     </tbody>
                 </table>
             </div>
 
-            {/* Pagination Controls Footer */}
-            <div className="flex items-center justify-end gap-2 mt-6">
-                <button className="p-2 border border-[#EAEAEA] rounded-lg hover:bg-gray-50"><ChevronLeft className="w-4 h-4 text-[#505050]" /></button>
-                <span className="px-4 py-1.5 border border-[#EAEAEA] bg-white rounded-lg text-[14px] font-medium text-[#1A1C1E]">1</span>
-                <button className="p-2 border border-[#EAEAEA] rounded-lg hover:bg-gray-50"><ChevronRight className="w-4 h-4 text-[#505050]" /></button>
+            <div className="flex items-center justify-end mt-4">
+                <TablePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
             </div>
         </div>
     );

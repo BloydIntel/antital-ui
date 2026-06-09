@@ -2,9 +2,9 @@ import { ArrowRight, Wallet, HandCoins, ChartBarIncreasing } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY } from "@/constants/styles"
+import type { DashboardSummary } from "@/types/dashboard-api"
 
 const formatCurrency = (val: string | number) => {
-  // Extract numbers if a string like "₦1000" is passed, otherwise use number
   const numericValue = typeof val === "string"
     ? parseFloat(val.replace(/[^0-9.-]+/g, ""))
     : val;
@@ -26,9 +26,10 @@ interface SummaryCardProps {
   icon: React.ElementType
   footerText: string
   isPrimary?: boolean
+  isLoading?: boolean
 }
 
-function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary }: SummaryCardProps) {
+function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary, isLoading = false }: SummaryCardProps) {
   return (
     <Card className="w-full xl:w-[380px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md"
     >
@@ -53,8 +54,8 @@ function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary
           </div>
         </div>
         <div className="mt-5">
-          <h3 className={cn("text-[24px] tracking-tight", isPrimary ? "text-[#F1F1F1]" : "text-[#1B1B1B]")} style={TYPOGRAPHY.heading}>
-            {formatCurrency(value)}
+          <h3 className={cn("text-[24px] tracking-tight", isPrimary ? "text-[#F1F1F1]" : "text-[#1B1B1B]", isLoading && "animate-pulse opacity-60")} style={TYPOGRAPHY.heading}>
+            {isLoading ? "₦0.00" : value}
           </h3>
         </div>
       </CardContent>
@@ -68,12 +69,21 @@ function SummaryCard({ title, subtitle, value, icon: Icon, footerText, isPrimary
   )
 }
 
-export function SectionCards({ state = false }: { state: boolean }) {
+interface SectionCardsProps {
+  summary?: DashboardSummary
+  isLoading?: boolean
+  /** @deprecated Portfolio mock toggle — dashboard uses API summary instead */
+  state?: boolean
+}
+
+export function SectionCards({ summary, isLoading = false, state = false }: SectionCardsProps) {
+  const useMock = summary === undefined && state
+
   const cardData = [
     {
       title: "Available balance",
       subtitle: "Overview",
-      value: state ? "5325400" : "0",
+      value: formatCurrency(useMock ? 5_325_400 : (summary?.availableBalance ?? 0)),
       icon: Wallet,
       footerText: "See details",
       isPrimary: true,
@@ -81,23 +91,23 @@ export function SectionCards({ state = false }: { state: boolean }) {
     {
       title: "Total Invested",
       subtitle: "Total funds committed",
-      value: state ? "2215200.00" : "0",
+      value: formatCurrency(useMock ? 2_215_200 : (summary?.totalInvested ?? 0)),
       icon: HandCoins,
       footerText: "View Summary",
     },
     {
       title: "Total returns",
       subtitle: "Overview",
-      value: state ? "1215200.00" : "0",
+      value: formatCurrency(useMock ? 1_215_200 : (summary?.totalReturns ?? 0)),
       icon: ChartBarIncreasing,
       footerText: "See details",
     },
   ]
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {cardData.map((card, index) => (
-        <SummaryCard key={index} {...card} />
+        <SummaryCard key={index} {...card} isLoading={isLoading} />
       ))}
     </div>
   )

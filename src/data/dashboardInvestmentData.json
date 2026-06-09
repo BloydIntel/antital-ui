@@ -25,7 +25,12 @@
         "priceChange": 8.5,
         "volume": 450,
         "marketCap": 1000000,
-        "offersCount": 3
+        "offersCount": 3,
+        "watchlistAddedDate": "12/05/2026",
+        "recentUpdate": "Production facility expansion fully cleared",
+        "updateTimeAgo": "4 hours ago",
+        "remindersCount": 2,
+        "isWatched": true
     },
     {
         "id": "2",
@@ -50,7 +55,12 @@
         "priceChange": -1.5,
         "volume": 500,
         "marketCap": 100000,
-        "offersCount": 5
+        "offersCount": 5,
+        "watchlistAddedDate": "18/05/2026",
+        "recentUpdate": "Secondary market trading volume surge",
+        "updateTimeAgo": "1 day ago",
+        "remindersCount": 0,
+        "isWatched": true
     },
     {
         "id": "3",
@@ -78,7 +88,12 @@
         "priceChange": 0.5,
         "volume": 150,
         "marketCap": 2500000,
-        "offersCount": 2
+        "offersCount": 2,
+        "watchlistAddedDate": "02/06/2026",
+        "recentUpdate": "Reached 65% funding milestone",
+        "updateTimeAgo": "45 minutes ago",
+        "remindersCount": 1,
+        "isWatched": true
     },
     {
         "id": "4",
@@ -103,7 +118,12 @@
         "priceChange": 8.5,
         "volume": 450,
         "marketCap": 1000000,
-        "offersCount": 3
+        "offersCount": 3,
+        "watchlistAddedDate": "22/04/2026",
+        "recentUpdate": "Regulatory approval paperwork submitted",
+        "updateTimeAgo": "1 week ago",
+        "remindersCount": 4,
+        "isWatched": false
     },
     {
         "id": "5",
@@ -128,7 +148,12 @@
         "priceChange": 6,
         "volume": 250,
         "marketCap": 2550000,
-        "offersCount": 4
+        "offersCount": 4,
+        "watchlistAddedDate": "29/05/2026",
+        "recentUpdate": "Quarterly presentation deck published",
+        "updateTimeAgo": "3 days ago",
+        "remindersCount": 0,
+        "isWatched": true
     },
     {
         "id": "6",
@@ -154,7 +179,12 @@
         "priceChange": 8.5,
         "volume": 450,
         "marketCap": 1000000,
-        "offersCount": 3
+        "offersCount": 3,
+        "watchlistAddedDate": "14/05/2026",
+        "recentUpdate": "V2 Firmware deployed to beta units",
+        "updateTimeAgo": "12 hours ago",
+        "remindersCount": 3,
+        "isWatched": true
     },
     {
         "id": "7",
@@ -179,7 +209,12 @@
         "priceChange": -8.5,
         "volume": 250,
         "marketCap": 255000,
-        "offersCount": 20
+        "offersCount": 20,
+        "watchlistAddedDate": "01/06/2026",
+        "recentUpdate": "Escrow security audit passed successfully",
+        "updateTimeAgo": "2 hours ago",
+        "remindersCount": 5,
+        "isWatched": false
     },
     {
         "id": "13",
@@ -207,7 +242,12 @@
         "priceChange": 15,
         "volume": 1000,
         "marketCap": 10000000,
-        "offersCount": 7
+        "offersCount": 7,
+        "watchlistAddedDate": "05/05/2026",
+        "recentUpdate": "Series A target timeline modified",
+        "updateTimeAgo": "5 days ago",
+        "remindersCount": 1,
+        "isWatched": true
     },
     {
         "id": "14",
@@ -235,7 +275,12 @@
         "priceChange": 4,
         "volume": 250,
         "marketCap": 125400000,
-        "offersCount": 10
+        "offersCount": 10,
+        "watchlistAddedDate": "11/05/2026",
+        "recentUpdate": "Pilots launched across 15 region fields",
+        "updateTimeAgo": "3 hours ago",
+        "remindersCount": 0,
+        "isWatched": true
     },
     {
         "id": "15",
@@ -263,7 +308,12 @@
         "priceChange": -2.5,
         "volume": 450,
         "marketCap": 3005000,
-        "offersCount": 15
+        "offersCount": 15,
+        "watchlistAddedDate": "20/05/2026",
+        "recentUpdate": "Asset tracking vault structural upgrades live",
+        "updateTimeAgo": "6 hours ago",
+        "remindersCount": 2,
+        "isWatched": true
     },
     {
         "id": "16",
@@ -289,6 +339,11 @@
         "priceChange": 10,
         "volume": 1500,
         "marketCap": 100000000,
-        "offersCount": 10
+        "offersCount": 10,
+        "watchlistAddedDate": "31/05/2026",
+        "recentUpdate": "Urban greenhouse deployment metrics hit target",
+        "updateTimeAgo": "1 day ago",
+        "remindersCount": 1,
+        "isWatched": false
     }
 ]

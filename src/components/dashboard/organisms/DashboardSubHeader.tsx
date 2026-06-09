@@ -30,7 +30,7 @@ export function DashboardSubHeader({
     onButtonClick
 }: DashboardSubHeaderProps) {
     return (
-        <div className="flex flex-col lg:flex-row justify-between pb-[24px] gap-2">
+        <div className=" flex flex-col lg:flex-row justify-between pb-[24px] gap-2">
             <div className="flex flex-col gap-1">
                 <h3
                     className="text-[28px] text-[#1B1B1B] tracking-tight"
@@ -58,7 +58,7 @@ export function DashboardSubHeader({
                             <ChevronDown className="h-4 w-4 text-[#6A7682]" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[180px] bg-white">
+                    <DropdownMenuContent align="end" className=" bg-white">
                         {months.map((month) => (
                             <DropdownMenuItem
                                 key={month}
@@ -75,7 +75,7 @@ export function DashboardSubHeader({
                     label={buttonLabel}
                     onClick={onButtonClick}
                     icon={<Plus className="h-5 w-5" />}
-                    className="text-[16px] mt-0 h-[42px] max-w-[182px] flex-row-reverse font-normal rounded-md"
+                    className="text-[16px] mt-0 h-[42px] w-fit flex-row-reverse font-normal rounded-md"
                 />
             </div>
         </div>

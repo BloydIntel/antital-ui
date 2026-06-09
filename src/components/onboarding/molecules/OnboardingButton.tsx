@@ -12,6 +12,8 @@ interface OnboardingButtonProps {
     type?: "button" | "submit" | "reset"
     icon?: React.ReactNode
     className?: string
+    fontFamily?: string
+    style?: React.CSSProperties
 }
 
 export function OnboardingButton({
@@ -22,7 +24,9 @@ export function OnboardingButton({
     variant = 'solid',
     type = "button",
     icon,
-    className = ""
+    className = "",
+    fontFamily,
+    style
 }: OnboardingButtonProps) {
 
     const baseStyles = "w-full h-12 px-4 py-2 flex items-center justify-center gap-2 mb-[6px] mt-4 rounded-lg font-medium text-[16px] leading-[21px] cursor-pointer shadow-none transition-all duration-300 border"
@@ -34,11 +38,16 @@ export function OnboardingButton({
 
     const isBusy = loading || disabled
 
+    const combinedStyles: React.CSSProperties = {
+        fontFamily: fontFamily || style?.fontFamily || "var(--font-rethink-sans)",
+        ...style,
+    }
+
     return (
         <Button
             type={type}
             className={cn(baseStyles, variants[variant], className, "disabled:opacity-50")}
-            style={{ fontFamily: "var(--font-rethink-sans)" }}
+            style={combinedStyles}
             onClick={onClick}
             disabled={isBusy}
             aria-busy={loading}
