@@ -9,6 +9,7 @@ export interface UserData {
     streetAddress: string | null
     city: string | null
     state: string | null
+    profilePictureUrl: string | null
 }
 
 interface UserState extends UserData {
@@ -27,6 +28,7 @@ export const useUserStore = create<UserState>()(
             streetAddress: null,
             city: null,
             state: null,
+            profilePictureUrl: null,
 
             setUserId: (id) => set(() => ({ userId: id })),
 
@@ -40,6 +42,7 @@ export const useUserStore = create<UserState>()(
                 streetAddress: null,
                 city: null,
                 state: null,
+                profilePictureUrl: null,
             })),
         }),
         {

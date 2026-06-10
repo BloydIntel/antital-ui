@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { User, MapPin, Edit3 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, MapPin, Save, Pencil, Camera } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput';
 import { useUserStore } from '@/store/userStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 
 export function Profile() {
     const store = useUserStore();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Local form state
     const [formData, setFormData] = useState({
@@ -19,6 +21,7 @@ export function Profile() {
         streetAddress: '15 Victoria Island Avenue',
         city: 'Lagos',
         state: 'Lagos State',
+        profilePictureUrl: '/dashboard/User-Avatar.png'
     });
 
     const [isEditing, setIsEditing] = useState(false);
@@ -33,8 +36,9 @@ export function Profile() {
             streetAddress: store.streetAddress || '15 Victoria Island Avenue',
             city: store.city || 'Lagos',
             state: store.state || 'Lagos State',
+            profilePictureUrl: store.profilePictureUrl || '/dashboard/User-Avatar.png'
         });
-    }, [store.firstName, store.lastName, store.userId, store.emailAddress, store.streetAddress, store.city, store.state]);
+    }, [store.firstName, store.lastName, store.userId, store.emailAddress, store.streetAddress, store.city, store.state, store.profilePictureUrl]);
 
     const handleInputChange = (name: keyof typeof formData, value: string) => {
         setFormData((prev) => ({
@@ -43,26 +47,52 @@ export function Profile() {
         }));
     };
 
-    const toggleEditMode = () => {
-        if (isEditing) {
-            // Commit changes to the Zustand store when saving
-            store.updateProfile({
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                emailAddress: formData.emailAddress,
-                streetAddress: formData.streetAddress,
-                city: formData.city,
-                state: formData.state,
-            });
-            console.log('Saved data to global store:', formData);
+    const handleSaveChanges = () => {
+
+        store.updateProfile({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            emailAddress: formData.emailAddress,
+            streetAddress: formData.streetAddress,
+            city: formData.city,
+            state: formData.state,
+            profilePictureUrl: formData.profilePictureUrl
+        });
+        console.log('Saved profile details & picture state to global store:', formData);
+        setIsEditing(false);
+    };
+
+    const handleCancel = () => {
+        setFormData({
+            firstName: store.firstName || 'John',
+            lastName: store.lastName || 'Doe',
+            userId: store.userId || 'h3u4viwj3bu4viwbwhb3hv4',
+            emailAddress: store.emailAddress || 'johnndoe@gmail.com',
+            streetAddress: store.streetAddress || '15 Victoria Island Avenue',
+            city: store.city || 'Lagos',
+            state: store.state || 'Lagos State',
+            profilePictureUrl: store.profilePictureUrl || '/dashboard/User-Avatar.png'
+        });
+        setIsEditing(false);
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert("File size looks too large! Please choose an image up to 5MB.");
+                return;
+            }
+            // Generate a local preview URL
+            const localUrl = URL.createObjectURL(file);
+            handleInputChange('profilePictureUrl', localUrl);
         }
-        setIsEditing(!isEditing);
     };
 
     return (
         <div className="w-full mx-auto rounded-xl">
             {/* Header Layout Control Block */}
-            <div className="flex flex-row items-start justify-between pb-6 mb-6">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between mb-8">
                 <div className="flex flex-col gap-1">
 
                     <div className="flex items-center gap-2">
@@ -71,30 +101,55 @@ export function Profile() {
                             Personal Information
                         </h2>
                     </div>
+
                     <p className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
                         Update your personal details and profile
                     </p>
 
                 </div>
 
-                <button
-                    onClick={toggleEditMode}
-                    className={`flex items-center gap-2 px-4 py-2 lg:h-[48px] border rounded-lg text-[14px] font-medium transition-colors cursor-pointer ${isEditing
-                        ? "bg-[#0F3D2E] text-white border-[#0F3D2E]"
-                        : "border-[#EAEAEA] text-[#1A1A1A] bg-white hover:bg-gray-50"
-                        }`}
-                    style={TYPOGRAPHY.heading}
-                >
-                    <Edit3 size={16} />
-                    <span>{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
-                </button>
+                <div className='flex justify-end'>
+                    <OnboardingButton
+                        label={isEditing ? 'Save Changes' : 'Edit Profile'}
+                        icon={isEditing ? <Save size={18} /> : <Pencil size={18} />}
+                        variant={isEditing ? 'solid' : 'plain'}
+                        onClick={isEditing ? handleSaveChanges : () => setIsEditing(true)}
+                        className={`mt-0 mb-0 border-none ${isEditing ? 'max-w-[167px]' : 'bg-white max-w-[139px]'}`}
+                    />
+                </div>
             </div>
 
             {/* Profile Avatar Frame Container */}
-            <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
-                <AvatarImage src="/dashboard/User-Avatar.png" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
+            <div className="flex items-center gap-4 mb-6">
+                <Avatar className="h-18 w-18 border border-[#EAEAEA]">
+                    <AvatarImage src={formData.profilePictureUrl} alt="User Profile" className="object-cover" />
+                    <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+
+                {isEditing && (
+                    <div className="flex flex-col gap-2 items-start">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/png, image/jpeg"
+                            className="hidden"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2 px-4 py-2 border border-[#EAEAEA] rounded-lg bg-white text-[#1A1A1A] text-[14px] font-medium shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                            style={TYPOGRAPHY.heading}
+                        >
+                            <Camera size={16} className="text-[#1A1A1A]" />
+                            <span>Change Photo</span>
+                        </button>
+                        <span className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
+                            JPG, PNG up to 5MB
+                        </span>
+                    </div>
+                )}
+            </div>
 
             {/* Personal Info Input Data Grid Structure */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
@@ -157,6 +212,21 @@ export function Profile() {
                     />
                 ))}
             </div>
+            {isEditing && <div className="flex flex-row gap-2 justify-end">
+                <OnboardingButton
+                    label='Save Changes'
+                    icon={<Save size={18} />}
+                    variant="solid"
+                    onClick={handleSaveChanges}
+                    className="max-w-[157px]"
+                />
+                <OnboardingButton
+                    label='Cancel'
+                    variant="plain"
+                    onClick={handleCancel}
+                    className="max-w-[115px]"
+                />
+            </div>}
         </div>
     );
 }

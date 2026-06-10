@@ -16,7 +16,7 @@ interface SettingsPillTabProps {
 }
 export function SettingsPillTab({ activeTab, onTabChange }: SettingsPillTabProps) {
     return (
-        <div className="flex items-center bg-[#EAEAEA]/60 p-1.5 rounded-lg w-fit overflow-x-auto gap-1">
+        <div className="flex items-center bg-[#EAEAEA]/60 p-1.5 rounded-lg w-full md:w-max overflow-x-auto flex-nowrap gap-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {settingsTabs.map((tab) => (
                 <button
                     key={tab.id}
