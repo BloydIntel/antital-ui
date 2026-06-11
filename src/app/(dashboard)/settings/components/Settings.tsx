@@ -5,6 +5,7 @@ import { Notification } from '@/components/settings/organisms/Notification';
 import { Payment } from '@/components/settings/organisms/Payment';
 import { Preferences } from '@/components/settings/organisms/Preferences';
 import { Profile } from '@/components/settings/organisms/Profile';
+import { Security } from '@/components/settings/organisms/Security';
 import { SettingsPillTab } from '@/components/settings/organisms/SettingsPillTab'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useState } from 'react'
@@ -18,6 +19,8 @@ export function Settings() {
                 return <Profile />
             case "notification":
                 return <Notification />
+            case "security":
+                return <Security />
             case "account":
                 return <Account />
             case "payment":

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 const settingsTabs = [
     { id: "profile", label: "Profile" },
     { id: "notification", label: "Notification" },
+    { id: "security", label: "Security" },
     { id: "account", label: "Account" },
     { id: "payment", label: "Payment" },
     { id: "preferences", label: "Preferences" },
