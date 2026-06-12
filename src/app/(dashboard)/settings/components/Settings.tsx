@@ -1,8 +1,8 @@
 'use client'
 
+import PaymentMethodsSettings from '@/components/balance-funding/molecules/PaymentMethodsSettings';
 import { Account } from '@/components/settings/organisms/Account';
 import { Notification } from '@/components/settings/organisms/Notification';
-import { Payment } from '@/components/settings/organisms/Payment';
 import { Preferences } from '@/components/settings/organisms/Preferences';
 import { Profile } from '@/components/settings/organisms/Profile';
 import { Security } from '@/components/settings/organisms/Security';
@@ -24,7 +24,7 @@ export function Settings() {
             case "account":
                 return <Account />
             case "payment":
-                return <Payment />
+                return <PaymentMethodsSettings />
             case "preferences":
                 return <Preferences />
             default:
@@ -47,7 +47,7 @@ export function Settings() {
                 </span>
             </div>
             <SettingsPillTab activeTab={activeTab} onTabChange={setActiveTab} />
-            <div className="mt-6">
+            <div className="mt-12">
                 {renderTabContent()}
             </div>
         </div>
