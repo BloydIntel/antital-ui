@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { User, CheckCircle2, FileText, RefreshCw } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
 
@@ -104,7 +104,7 @@ export function Account({
     };
 
     // Dynamic data representation map for rendering Section 1 loops cleanly
-    const informationGridItems = [
+    const informationGridItems = useMemo(() => [
         {
             label: "Account Type",
             value: profile.accountType,
@@ -135,7 +135,7 @@ export function Account({
             label: "Risk Rating",
             badge: profile.riskRating
         }
-    ];
+    ], [profile]);
 
     return (
         <div className="w-full">
@@ -253,19 +253,21 @@ export function Account({
                 <button
                     type="button"
                     onClick={onViewKYC}
+                    aria-label="View KYC Document"
                     className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 h-[44px] border border-[#EAEAEA] rounded-md bg-white text-[#1A1A1A] text-[14px] font-semibold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
                     style={TYPOGRAPHY.body}
                 >
-                    <FileText size={16} />
+                    <FileText size={16} aria-hidden="true" />
                     <span>View KYC Document</span>
                 </button>
                 <button
                     type="button"
                     onClick={onRequestUpgrade}
+                    aria-label="Request Account Upgrade"
                     className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 h-[44px] border border-[#EAEAEA] rounded-md bg-white text-[#1A1A1A] text-[14px] font-semibold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
                     style={TYPOGRAPHY.body}
                 >
-                    <RefreshCw size={16} />
+                    <RefreshCw size={16} aria-hidden="true" />
                     <span>Request Account Upgrade</span>
                 </button>
             </div>

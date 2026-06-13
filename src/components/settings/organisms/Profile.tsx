@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { User, MapPin, Save, Pencil, Camera } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput';
@@ -11,6 +11,7 @@ import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingBu
 export function Profile() {
     const store = useUserStore();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const objectUrlRef = useRef<string | null>(null);
 
     // Local form state
     const [formData, setFormData] = useState({
@@ -26,6 +27,15 @@ export function Profile() {
 
     const [isEditing, setIsEditing] = useState(false);
 
+    // Cleanup object URL on unmount to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (objectUrlRef.current) {
+                URL.revokeObjectURL(objectUrlRef.current);
+            }
+        };
+    }, []);
+
     // Sync store data with fallback values safely after hydration
     useEffect(() => {
         setFormData({
@@ -40,15 +50,14 @@ export function Profile() {
         });
     }, [store.firstName, store.lastName, store.userId, store.emailAddress, store.streetAddress, store.city, store.state, store.profilePictureUrl]);
 
-    const handleInputChange = (name: keyof typeof formData, value: string) => {
+    const handleInputChange = useCallback((name: keyof typeof formData, value: string) => {
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
-    };
+    }, []);
 
     const handleSaveChanges = () => {
-
         store.updateProfile({
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -58,7 +67,6 @@ export function Profile() {
             state: formData.state,
             profilePictureUrl: formData.profilePictureUrl
         });
-        console.log('Saved profile details & picture state to global store:', formData);
         setIsEditing(false);
     };
 
@@ -76,18 +84,23 @@ export function Profile() {
         setIsEditing(false);
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
                 alert("File size looks too large! Please choose an image up to 5MB.");
                 return;
             }
+            // Revoke previous object URL to prevent memory leaks
+            if (objectUrlRef.current) {
+                URL.revokeObjectURL(objectUrlRef.current);
+            }
             // Generate a local preview URL
             const localUrl = URL.createObjectURL(file);
+            objectUrlRef.current = localUrl;
             handleInputChange('profilePictureUrl', localUrl);
         }
-    };
+    }, [handleInputChange]);
 
     return (
         <div className="w-full mx-auto rounded-xl">

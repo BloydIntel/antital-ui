@@ -43,7 +43,8 @@ export function Security() {
     const handleUpdatePassword = (e: React.FormEvent) => {
         e.preventDefault();
         if (passwords.new !== passwords.confirm) return;
-        console.log('Password structural modification requested update package triggered.');
+        // TODO: Integrate with password update API
+        setPasswords({ current: '', new: '', confirm: '' });
     };
 
     const isPasswordMismatch = passwords.confirm.length > 0 && passwords.new !== passwords.confirm;
@@ -140,7 +141,7 @@ export function Security() {
                     <div className="flex items-center gap-3">
                         {mfaActive && (
                             <div className='flex justify-center items-center gap-1 py-1 px-2 rounded-sm bg-[#45B424]'>
-                                <Target className='w-4 h-4 text-white' />
+                                <Target className='w-4 h-4 text-white' aria-hidden="true" />
                                 <p className="text-[14px] text-white" >
                                     Active
                                 </p>
@@ -150,10 +151,11 @@ export function Security() {
                             type="button"
                             role="switch"
                             aria-checked={mfaActive}
+                            aria-label="Toggle multi-factor authentication"
                             onClick={() => setMfaActive(!mfaActive)}
-                            className={`relative inline-flex h-full w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${mfaActive ? 'bg-[#042E27]' : 'bg-[#E4E4E7]'}`}
+                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#042E27] focus-visible:ring-offset-2 ${mfaActive ? 'bg-[#042E27]' : 'bg-[#E4E4E7]'}`}
                         >
-                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${mfaActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                            <span aria-hidden="true" className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${mfaActive ? 'translate-x-5' : 'translate-x-0'}`} />
                         </button>
                     </div>
                 </div>
@@ -168,10 +170,11 @@ export function Security() {
                         type="button"
                         role="switch"
                         aria-checked={biometricActive}
+                        aria-label="Toggle biometric login"
                         onClick={() => setBiometricActive(!biometricActive)}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${biometricActive ? 'bg-[#042E27]' : 'bg-[#E4E4E7]'}`}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#042E27] focus-visible:ring-offset-2 ${biometricActive ? 'bg-[#042E27]' : 'bg-[#E4E4E7]'}`}
                     >
-                        <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${biometricActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                        <span aria-hidden="true" className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${biometricActive ? 'translate-x-5' : 'translate-x-0'}`} />
                     </button>
                 </div>
             </div>
