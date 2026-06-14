@@ -24,7 +24,9 @@ export function DashboardHeader() {
     const router = useRouter();
 
     const onHelpIconClick = () => { }
-    const onNotificationIconClick = () => { }
+    const onNotificationIconClick = () => {
+        router.push('/notifications')
+    }
 
     const customHeaderPath = Object.keys(CUSTOM_MOBILE_HEADERS).find(route => pathname.startsWith(route));
     const isCustomPage = !!customHeaderPath;
