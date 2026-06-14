@@ -5,6 +5,7 @@ import { CreditCard, Trash2 } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
 import { cn } from '@/lib/utils';
 import { SelectInput, type SelectOption } from '@/components/onboarding/molecules/SelectInput';
+import { DeleteAccountModal } from '@/components/settings/organisms/DeleteAccountModal';
 
 export interface GeneralPreferencesData {
     language: string;
@@ -18,7 +19,7 @@ export interface GeneralPreferencesData {
 interface PreferencesProps {
     initialSettings?: GeneralPreferencesData;
     onSaveSettings?: (settings: GeneralPreferencesData) => void;
-    onDeleteAccount?: () => void;
+    onDeleteAccount?: () => void | Promise<void>;
 }
 
 // ==================== DROPDOWN OPTIONS CONFIGURATIONS ====================
@@ -48,6 +49,20 @@ const THEME_OPTIONS: readonly SelectOption[] = [
     { label: "System", value: "System" }
 ];
 
+// Structural array mapping state keys to their specific layout properties
+interface DropdownConfig {
+    key: keyof Omit<GeneralPreferencesData, 'marketingCommunications' | 'dataProcessing'>;
+    label: string;
+    options: readonly SelectOption[];
+}
+
+const SELECT_FIELDS_MATRIX: readonly DropdownConfig[] = [
+    { key: 'language', label: 'Language', options: LANGUAGE_OPTIONS },
+    { key: 'timeZone', label: 'Time Zone', options: TIMEZONE_OPTIONS },
+    { key: 'currency', label: 'Currency', options: CURRENCY_OPTIONS },
+    { key: 'theme', label: 'Theme', options: THEME_OPTIONS },
+];
+
 const defaultPreferences: GeneralPreferencesData = {
     language: "English",
     timeZone: "West African Time (WAT)",
@@ -63,6 +78,7 @@ export function Preferences({
     onDeleteAccount
 }: PreferencesProps) {
     const [settings, setSettings] = useState<GeneralPreferencesData>(initialSettings);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     // Form Change Handlers
     const handleSelectChange = (key: keyof GeneralPreferencesData, value: string | boolean) => {
@@ -73,6 +89,13 @@ export function Preferences({
 
     const toggleState = (key: 'marketingCommunications' | 'dataProcessing') => {
         handleSelectChange(key, !settings[key]);
+    };
+
+    const handleConfirmDeletion = async () => {
+        if (onDeleteAccount) {
+            await onDeleteAccount();
+        }
+        setIsModalOpen(false);
     };
 
     return (
@@ -91,42 +114,16 @@ export function Preferences({
 
             {/* ==================== SECTION 2: SELECTION DROPDOWNS MATRIX ==================== */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 mb-8">
-
-                {/* Language Selection Dropdown */}
-                <SelectInput
-                    label="Language"
-                    options={LANGUAGE_OPTIONS}
-                    value={settings.language}
-                    onChange={(val) => handleSelectChange('language', val)}
-                    selectAreaStyle="bg-white border-[#EAEAEA]"
-                />
-
-                {/* Time Zone Selection Dropdown */}
-                <SelectInput
-                    label="Time Zone"
-                    options={TIMEZONE_OPTIONS}
-                    value={settings.timeZone}
-                    onChange={(val) => handleSelectChange('timeZone', val)}
-                    selectAreaStyle="bg-white border-[#EAEAEA]"
-                />
-
-                {/* Currency Selection Dropdown */}
-                <SelectInput
-                    label="Currency"
-                    options={CURRENCY_OPTIONS}
-                    value={settings.currency}
-                    onChange={(val) => handleSelectChange('currency', val)}
-                    selectAreaStyle="bg-white border-[#EAEAEA]"
-                />
-
-                {/* Theme Selection Dropdown */}
-                <SelectInput
-                    label="Theme"
-                    options={THEME_OPTIONS}
-                    value={settings.theme}
-                    onChange={(val) => handleSelectChange('theme', val)}
-                    selectAreaStyle="bg-white border-[#EAEAEA]"
-                />
+                {SELECT_FIELDS_MATRIX.map((field) => (
+                    <SelectInput
+                        key={field.key}
+                        label={field.label}
+                        options={field.options}
+                        value={settings[field.key]}
+                        onChange={(val) => handleSelectChange(field.key, val)}
+                        selectAreaStyle="bg-white border-[#EAEAEA]"
+                    />
+                ))}
             </div>
 
             {/* ==================== SECTION 3: PRIVACY & COMMUNICATIONS TOGGLES ==================== */}
@@ -207,8 +204,8 @@ export function Preferences({
                 </div>
                 <button
                     type="button"
-                    onClick={onDeleteAccount}
-                    aria-label="Delete Account - This action cannot be undone"
+                    onClick={() => setIsModalOpen(true)}
+                    aria-label="Open delete account verification modal"
                     className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 h-[40px] bg-[#D30A1A] text-white text-[14px] font-semibold rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
                     style={TYPOGRAPHY.body}
                 >
@@ -216,6 +213,13 @@ export function Preferences({
                     <span>Delete Account</span>
                 </button>
             </div>
+
+            {/* ==================== MODAL OVERLAYS RENDERING ==================== */}
+            <DeleteAccountModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmDeletion}
+            />
 
         </div>
     );
