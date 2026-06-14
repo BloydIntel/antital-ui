@@ -26,6 +26,7 @@ interface InputProps {
     onBlur?: () => void
     name?: string
     inputAreaStyle?: string
+    disabled?: boolean
 }
 
 type OnboardingChangeEvent =
@@ -49,7 +50,7 @@ const getDateObject = (val: unknown): Date | null => {
 };
 
 export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
-    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, ...props }, ref) => {
+    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, disabled, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false)
         const isPassword = type === "password"
         const isDate = type === "date"
@@ -94,6 +95,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                             scrollableYearDropdown
                             yearDropdownItemNumber={100}
                             className={inputStyles}
+                            disabled={disabled}
                         />
                     ) : isTextarea ? (
                         <textarea
@@ -105,6 +107,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                             className={inputStyles}
                             name={props.name}
                             rows={4}
+                            disabled={disabled}
                         />
                     ) : (
                         <input
@@ -115,6 +118,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                             onChange={onChange}
                             onBlur={onBlur}
                             className={inputStyles}
+                            disabled={disabled}
                             {...props}
                         />
                     )}

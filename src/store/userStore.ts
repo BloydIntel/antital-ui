@@ -3,10 +3,18 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 
 export interface UserData {
     userId: string | null
+    firstName: string | null
+    lastName: string | null
+    emailAddress: string | null
+    streetAddress: string | null
+    city: string | null
+    state: string | null
+    profilePictureUrl: string | null
 }
 
 interface UserState extends UserData {
     setUserId: (id: string) => void
+    updateProfile: (data: Partial<Omit<UserData, 'userId'>>) => void
     clearUser: () => void
 }
 
@@ -14,15 +22,31 @@ export const useUserStore = create<UserState>()(
     persist(
         (set) => ({
             userId: null,
+            firstName: null,
+            lastName: null,
+            emailAddress: null,
+            streetAddress: null,
+            city: null,
+            state: null,
+            profilePictureUrl: null,
 
             setUserId: (id) => set(() => ({ userId: id })),
 
-            clearUser: () => set(() => ({ userId: null })),
+            updateProfile: (data) => set(() => ({ ...data })),
+
+            clearUser: () => set(() => ({
+                userId: null,
+                firstName: null,
+                lastName: null,
+                emailAddress: null,
+                streetAddress: null,
+                city: null,
+                state: null,
+                profilePictureUrl: null,
+            })),
         }),
         {
-            // Unique name for the item in storage (required)
             name: 'user-auth-storage',
-            // Optional: defaults to localStorage
             storage: createJSONStorage(() => localStorage),
         }
     )
