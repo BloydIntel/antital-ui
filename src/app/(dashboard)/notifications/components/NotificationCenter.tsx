@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Trash2, Settings, CheckCircle2, Filter } from 'lucide-react';
+import { Trash2, Settings, CheckCircle2, Filter, Clock3, ArrowUpRight, TrendingUp, Smartphone, Mail, Wallet } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { cn } from '@/lib/utils';
 import { SearchInputBar } from '@/components/watchlist/organisms/SearchInputBar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export type NotificationCategory = 'Action Required' | 'Portfolio' | 'Market' | 'Account' | 'Marketing' | 'Finance';
+export type NotificationCategory = 'Urgent' | 'Portfolio' | 'Market' | 'Account' | 'Marketing' | 'Finance';
 
 export interface NotificationItem {
     id: string;
@@ -22,12 +22,21 @@ export interface NotificationItem {
 
 // Map categories to colors match the reference image mock design UI
 const CATEGORY_TAG_STYLING: Record<NotificationCategory, string> = {
-    'Action Required': 'bg-[#D30A1A] text-white font-medium text-[12px] px-2 py-0.5 rounded',
-    'Portfolio': 'bg-[#709611] text-white text-[12px] px-2 py-0.5 rounded',
-    'Market': 'bg-[#D30A1A] text-white text-[12px] px-2 py-0.5 rounded', // Reference markup used identical color space or separate as needed
-    'Account': 'bg-[#7C5CFC] text-white text-[12px] px-2 py-0.5 rounded',
+    'Urgent': 'bg-[#D4001A] text-white text-[12px] px-2 py-0.5 rounded',
+    'Portfolio': 'bg-[#7D8A26] text-white text-[12px] px-2 py-0.5 rounded',
+    'Market': 'bg-[#D4001A] text-white text-[12px] px-2 py-0.5 rounded', // Reference markup used identical color space or separate as needed
+    'Account': 'bg-[#7A6FF0] text-white text-[12px] px-2 py-0.5 rounded',
     'Marketing': 'bg-[#D30A1A] text-white text-[12px] px-2 py-0.5 rounded',
-    'Finance': 'bg-[#22C55E] text-white text-[12px] px-2 py-0.5 rounded'
+    'Finance': 'bg-[#45B424] text-white text-[12px] px-2 py-0.5 rounded'
+};
+
+const CATEGORY_ICONS: Record<NotificationCategory, React.ComponentType<{ className?: string }>> = {
+    'Urgent': Clock3,
+    'Portfolio': ArrowUpRight,
+    'Market': TrendingUp,
+    'Account': Smartphone,
+    'Marketing': Mail,
+    'Finance': Wallet
 };
 
 interface NotificationCenterProps {
@@ -44,7 +53,7 @@ const mockDefaultNotifications: NotificationItem[] = [
         title: 'GreenTech Solutions deadline approaching',
         description: 'Only 15 days left to invest. You set a reminder for 3 days before closing.',
         timestamp: '28/08/2025',
-        category: 'Action Required',
+        category: 'Urgent',
         isUnread: true,
         actionLabel: 'Invest Now'
     },
@@ -62,7 +71,7 @@ const mockDefaultNotifications: NotificationItem[] = [
         description: 'Your ₦75,000 investment in GreenTech Solutions has been processed successfully.',
         timestamp: '19/08/2025',
         category: 'Portfolio',
-        isUnread: false
+        isUnread: true
     },
     {
         id: '4',
@@ -70,7 +79,7 @@ const mockDefaultNotifications: NotificationItem[] = [
         description: 'Your sell order for 50 units of FoodTech Africa at ₦31/unit has been executed',
         timestamp: '05/08/2025',
         category: 'Market',
-        isUnread: false
+        isUnread: true
     },
     {
         id: '5',
@@ -158,7 +167,7 @@ export function NotificationCenter({
             {/* Top Toolbar Header Section */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 className="text-[24px] md:text-[28px] font-semibold text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
+                    <h1 className="text-[24px] md:text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
                         Notification Center
                     </h1>
                     <p className="text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
@@ -243,82 +252,90 @@ export function NotificationCenter({
                         No notifications found.
                     </div>
                 ) : (
-                    filteredNotifications.map((item) => (
-                        <div
-                            key={item.id}
-                            className={cn(
-                                "flex items-start bg-white border rounded-xl p-4 transition-all relative group shadow-sm",
-                                item.isUnread ? "border-l-4 border-l-[#042E27]" : "border-[#F0F0F0]"
-                            )}
-                        >
-                            {/* Checkbox selector */}
-                            <div className="pt-1 pr-3">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedIds.has(item.id)}
-                                    onChange={() => handleSelectRow(item.id)}
-                                    className="rounded border-gray-300 text-[#042E27] focus:ring-[#042E27] w-4 h-4 cursor-pointer"
-                                />
-                            </div>
-
-                            {/* Message Body Content Grid */}
-                            <div className="flex-1 min-w-0 pr-8">
-                                <div className="flex items-center gap-2 flex-wrap mb-1">
-                                    <h3 className="text-[15px] md:text-[16px] font-semibold text-[#1A1A1A]" style={TYPOGRAPHY.body}>
-                                        {item.title}
-                                    </h3>
-
-                                    {/* Action category tag configuration styling logic markup */}
-                                    <span className={CATEGORY_TAG_STYLING[item.category]}>
-                                        {item.category}
-                                    </span>
-
-                                    {item.category === 'Action Required' && (
-                                        <span className="text-[12px] text-[#A0A0A0] ml-1" style={TYPOGRAPHY.body}>
-                                            Action Required
-                                        </span>
-                                    )}
+                    filteredNotifications.map((item) => {
+                        const CategoryIcon = CATEGORY_ICONS[item.category] || ''
+                        return (
+                            <div
+                                key={item.id}
+                                className={cn(
+                                    "flex items-center bg-white border rounded-xl p-4 transition-all relative group",
+                                    item.isUnread ? "border-l-4 border-l-[#042E27]" : "border-[#F0F0F0]"
+                                )}
+                            >
+                                {/* Checkbox selector */}
+                                <div className="pt-1 pr-3">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedIds.has(item.id)}
+                                        onChange={() => handleSelectRow(item.id)}
+                                        className="rounded border-gray-300 text-[#042E27] focus:ring-[#042E27] w-3 h-3 cursor-pointer"
+                                    />
                                 </div>
 
-                                <p className="text-[14px] md:text-[15px] text-[#4A4A4A] leading-relaxed mb-3" style={TYPOGRAPHY.body}>
-                                    {item.description}
-                                </p>
+                                <div className='flex items-start'>
+                                    <div className="pt-1 pr-3 text-[#1F1F1F]">
+                                        <CategoryIcon className="w-4 h-4 md:w-5 md:h-5 text-[#1F1F1F] shrink-0" />
+                                    </div>
 
-                                <div className="flex items-center gap-4 text-[12px] text-[#858585]">
-                                    <span className="flex items-center gap-1.5" style={TYPOGRAPHY.body}>
-                                        {/* Optional custom operational logic clock icons go here */}
-                                        {item.timestamp}
-                                    </span>
-                                </div>
+                                    {/* Message Body Content Grid */}
+                                    <div className="flex-1 min-w-0 pr-8">
+                                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                                            <h3 className="text-[16px] md:text-[18px] font-medium text-[#1A1A1A]" style={TYPOGRAPHY.body}>
+                                                {item.title}
+                                            </h3>
 
-                                {/* Dynamic CTAs rendered inside notifications context area (e.g. "Invest Now") */}
-                                {item.actionLabel && (
-                                    <div className="mt-3">
+                                            {/* Action category tag configuration styling logic markup */}
+                                            <span className={CATEGORY_TAG_STYLING[item.category]}>
+                                                {item.category}
+                                            </span>
+
+                                            {item.category === 'Urgent' && (
+                                                <span className="text-[12px] text-[#A0A0A0] ml-1" style={TYPOGRAPHY.body}>
+                                                    Action Required
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <p className="text-[14px] md:text-[16px] text-[#858585] font-medium leading-relaxed mb-3" style={TYPOGRAPHY.body}>
+                                            {item.description}
+                                        </p>
+
+                                        <div className="flex items-center gap-4 text-[14px] text-[#858585]">
+                                            <span className="flex items-center gap-1.5" style={TYPOGRAPHY.body}>
+                                                <Clock3 size={13} />
+                                                {item.timestamp}
+                                            </span>
+                                        </div>
+
+                                        {item.actionLabel && (
+                                            <div className="mt-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => onActionClick && onActionClick(item)}
+                                                    className="px-4 py-1.5 bg-[#042E27] text-white text-[13px] font-medium rounded-md hover:bg-[#03201B] transition-colors"
+                                                    style={TYPOGRAPHY.body}
+                                                >
+                                                    {item.actionLabel}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Row Level Action Actions Overlay Controls */}
+                                    <div className="absolute right-4 top-4">
                                         <button
                                             type="button"
-                                            onClick={() => onActionClick && onActionClick(item)}
-                                            className="px-4 py-1.5 bg-[#042E27] text-white text-[13px] font-medium rounded-md hover:bg-[#03201B] transition-colors"
-                                            style={TYPOGRAPHY.body}
+                                            onClick={() => handleDeleteSingle(item.id)}
+                                            className="text-gray-400 hover:text-[#D30A1A] transition-colors p-1.5 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                            aria-label="Delete Notification item row data"
                                         >
-                                            {item.actionLabel}
+                                            <Trash2 size={16} />
                                         </button>
                                     </div>
-                                )}
+                                </div>
                             </div>
-
-                            {/* Row Level Action Actions Overlay Controls */}
-                            <div className="absolute right-4 top-4">
-                                <button
-                                    type="button"
-                                    onClick={() => handleDeleteSingle(item.id)}
-                                    className="text-gray-400 hover:text-[#D30A1A] transition-colors p-1.5 rounded-lg hover:bg-gray-50"
-                                    aria-label="Delete Notification item row data"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                        )
+                    })
                 )}
             </div>
         </div>
