@@ -170,16 +170,16 @@ export function NotificationCenter({
             {/* Top Toolbar Header Section */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 className="text-[24px] md:text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
+                    <h1 className="text-[24px] lg::text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
                         Notification Center
                     </h1>
-                    <p className="text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
+                    <p className="text-[14px] lg:text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
                         Stay informed about your investments and account activities
                     </p>
                 </div>
 
                 {/* Configuration Buttons Header */}
-                <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="hidden lg:flex items-center gap-3 w-full sm:w-auto">
                     <button
                         type="button"
                         onClick={() => router.push('/settings?tab=notification')}
@@ -283,7 +283,7 @@ export function NotificationCenter({
                                     {/* Message Body Content Grid */}
                                     <div className="flex-1 min-w-0 pr-8">
                                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                                            <h3 className="text-[16px] md:text-[18px] font-medium text-[#1A1A1A]" style={TYPOGRAPHY.body}>
+                                            <h3 className="text-[16px] md:text-[18px] font-medium text-[#1A1A1A] w-[200px] lg:w-auto truncate" style={TYPOGRAPHY.body}>
                                                 {item.title}
                                             </h3>
 
@@ -293,13 +293,13 @@ export function NotificationCenter({
                                             </span>
 
                                             {item.category === 'Urgent' && (
-                                                <span className="text-[12px] text-[#A0A0A0] ml-1" style={TYPOGRAPHY.body}>
+                                                <span className="hidden lg:block text-[12px] text-[#A0A0A0] ml-1" style={TYPOGRAPHY.body}>
                                                     Action Required
                                                 </span>
                                             )}
                                         </div>
 
-                                        <p className="text-[14px] md:text-[16px] text-[#858585] font-medium leading-relaxed mb-3" style={TYPOGRAPHY.body}>
+                                        <p className="text-[14px] md:text-[16px] text-[#858585] font-medium leading-relaxed mb-3 w-[270px] lg:w-auto truncate" style={TYPOGRAPHY.body}>
                                             {item.description}
                                         </p>
 
@@ -329,7 +329,7 @@ export function NotificationCenter({
                                         <button
                                             type="button"
                                             onClick={() => handleDeleteSingle(item.id)}
-                                            className="text-gray-400 hover:text-[#D30A1A] transition-colors p-1.5 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                            className="hidden lg:block text-gray-400 hover:text-[#D30A1A] transition-colors p-1.5 rounded-lg hover:bg-gray-50 cursor-pointer"
                                             aria-label="Delete Notification item row data"
                                         >
                                             <Trash2 size={16} />
