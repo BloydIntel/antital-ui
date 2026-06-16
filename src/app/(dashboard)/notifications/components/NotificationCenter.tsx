@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Trash2, Settings, CheckCircle2, Filter, Clock3, ArrowUpRight, TrendingUp, Smartphone, Mail, Wallet } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { cn } from '@/lib/utils';
 import { SearchInputBar } from '@/components/watchlist/organisms/SearchInputBar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useRouter } from 'next/navigation';
 
 export type NotificationCategory = 'Urgent' | 'Portfolio' | 'Market' | 'Account' | 'Marketing' | 'Finance';
 
@@ -112,8 +113,10 @@ export function NotificationCenter({
     onNotificationDelete,
     onMarkAllRead,
     onActionClick,
-    onSettingsClick
 }: NotificationCenterProps) {
+
+    const router = useRouter()
+
     const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -179,7 +182,7 @@ export function NotificationCenter({
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                     <button
                         type="button"
-                        onClick={onSettingsClick}
+                        onClick={() => router.push('/settings?tab=notification')}
                         className="flex items-center gap-2 px-4 py-2 border border-[#EAEAEA] bg-white rounded-lg text-[16px] text-[#1F1F1F] hover:bg-gray-50 transition-colors cursor-pointer"
                         style={TYPOGRAPHY.heading}
                     >
