@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Trash2, Settings, CheckCircle2, Filter, Clock3, ArrowUpRight, TrendingUp, Smartphone, Mail, Wallet } from 'lucide-react';
+import { Trash2, Settings, CheckCircle2, Filter, Clock3, ArrowUpRight, TrendingUp, Smartphone, Mail, Wallet, Bell } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { cn } from '@/lib/utils';
 import { SearchInputBar } from '@/components/watchlist/organisms/SearchInputBar';
@@ -120,20 +120,26 @@ export function NotificationCenter({
     const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
     // Compute unread runtime values
     const unreadCount = useMemo(() => {
         return notifications.filter(n => n.isUnread).length;
     }, [notifications]);
 
-    // Handle search query updates
+    // Handle search query and category filter updates
     const filteredNotifications = useMemo(() => {
-        return notifications.filter(item =>
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.category.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [notifications, searchQuery]);
+        return notifications.filter(item => {
+            const matchesSearch = searchQuery === '' ||
+                item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                item.category.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+            
+            return matchesSearch && matchesCategory;
+        });
+    }, [notifications, searchQuery, categoryFilter]);
 
     // Bulk action toggles
     const handleSelectAll = () => {
@@ -155,9 +161,16 @@ export function NotificationCenter({
     };
 
     const handleDeleteSingle = async (id: string) => {
-        // Optimistic State update
+        const previousNotifications = notifications;
         setNotifications(prev => prev.filter(n => n.id !== id));
-        if (onNotificationDelete) await onNotificationDelete(id);
+        
+        if (onNotificationDelete) {
+            try {
+                await onNotificationDelete(id);
+            } catch {
+                setNotifications(previousNotifications);
+            }
+        }
     };
 
     const handleMarkAllReadLocal = async () => {
@@ -165,12 +178,31 @@ export function NotificationCenter({
         if (onMarkAllRead) await onMarkAllRead();
     };
 
+    const handleBulkDelete = async () => {
+        if (selectedIds.size === 0) return;
+        
+        const previousNotifications = notifications;
+        const idsToDelete = Array.from(selectedIds);
+        
+        setNotifications(prev => prev.filter(n => !selectedIds.has(n.id)));
+        setSelectedIds(new Set());
+        
+        if (onNotificationDelete) {
+            try {
+                await Promise.all(idsToDelete.map(id => onNotificationDelete(id)));
+            } catch {
+                setNotifications(previousNotifications);
+                setSelectedIds(new Set(idsToDelete));
+            }
+        }
+    };
+
     return (
         <div className="w-full bg-[#FAFAFA] min-h-screen">
             {/* Top Toolbar Header Section */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 className="text-[24px] lg::text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
+                    <h1 className="text-[24px] lg:text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
                         Notification Center
                     </h1>
                     <p className="text-[14px] lg:text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
@@ -221,7 +253,7 @@ export function NotificationCenter({
                             onChange={setSearchQuery}
                         />
 
-                        <Select>
+                        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                             <SelectTrigger className="px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#2C2C2C] focus:ring-1 focus:ring-[#042E27]">
                                 <div className="flex items-center gap-2 justify-between">
                                     <div className="flex items-center gap-1.5 truncate">
@@ -231,7 +263,13 @@ export function NotificationCenter({
                                 </div>
                             </SelectTrigger>
                             <SelectContent className="bg-white border border-[#EAEAEA] rounded-md shadow-lg">
-                                <SelectItem value="all">All Risk</SelectItem>
+                                <SelectItem value="all">All Categories</SelectItem>
+                                <SelectItem value="Urgent">Urgent</SelectItem>
+                                <SelectItem value="Portfolio">Portfolio</SelectItem>
+                                <SelectItem value="Market">Market</SelectItem>
+                                <SelectItem value="Account">Account</SelectItem>
+                                <SelectItem value="Marketing">Marketing</SelectItem>
+                                <SelectItem value="Finance">Finance</SelectItem>
                             </SelectContent>
                         </Select>
 
@@ -244,6 +282,18 @@ export function NotificationCenter({
                             />
                             <span>Select All</span>
                         </label>
+
+                        {selectedIds.size > 0 && (
+                            <button
+                                type="button"
+                                onClick={handleBulkDelete}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D30A1A] text-white text-[14px] rounded-md hover:bg-red-700 transition-colors cursor-pointer"
+                                style={TYPOGRAPHY.body}
+                            >
+                                <Trash2 size={14} />
+                                <span>Delete ({selectedIds.size})</span>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -256,7 +306,7 @@ export function NotificationCenter({
                     </div>
                 ) : (
                     filteredNotifications.map((item) => {
-                        const CategoryIcon = CATEGORY_ICONS[item.category] || ''
+                        const CategoryIcon = CATEGORY_ICONS[item.category] || Bell;
                         return (
                             <div
                                 key={item.id}
