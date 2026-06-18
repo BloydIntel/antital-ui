@@ -8,10 +8,20 @@ import { Profile } from '@/components/settings/organisms/Profile';
 import { Security } from '@/components/settings/organisms/Security';
 import { SettingsPillTab } from '@/components/settings/organisms/SettingsPillTab'
 import { TYPOGRAPHY } from '@/constants/styles'
-import { useState } from 'react'
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react'
 
 export function Settings() {
-    const [activeTab, setActiveTab] = useState("profile");
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
+
+    const [activeTab, setActiveTab] = useState(() => tabParam || "profile");
+
+    useEffect(() => {
+        if (tabParam) {
+            setActiveTab(tabParam);
+        }
+    }, [tabParam]);
 
     const renderTabContent = () => {
         switch (activeTab) {
