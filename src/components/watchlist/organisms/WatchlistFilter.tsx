@@ -1,11 +1,11 @@
 "use client"
 
-import { Filter, Search } from "lucide-react";
+import { Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { RiskLevel } from "@/types/dashboard";
+import { SearchInputBar } from "@/components/watchlist/organisms/SearchInputBar";
 
 // Define strict status category tab types 
 export type WatchlistCategory = "all" | "ending_soon" | "near_target";
@@ -67,17 +67,11 @@ export function WatchlistFilter({
             <div className="flex flex-row xl:flex-row-reverse items-center gap-2.5 w-full md:w-auto">
 
                 {/* Text Search Bar Input */}
-                <div className="relative flex-1 md:min-w-[280px] lg:min-w-[320px]">
-                    <Input
-                        type="search"
-                        value={searchQuery}
-                        onChange={(e) => onSearchChange(e.target.value)}
-                        placeholder="Search for anything..."
-                        className="w-full h-[37px] pl-4 pr-10 bg-white border-[#EAEAEA] rounded-md text-[14px] placeholder:text-[#A2A3A1] focus-visible:ring-1 focus-visible:ring-[#042E27]"
-                        style={TYPOGRAPHY.body}
-                    />
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A2A3A1] pointer-events-none" />
-                </div>
+                <SearchInputBar
+                    placeholder="Search for anything..."
+                    value={searchQuery}
+                    onChange={onSearchChange}
+                />
 
                 {/* Risk Filter Dropdown Select */}
                 <div>
