@@ -40,8 +40,9 @@ export function LandingPageContent() {
       <Testimonials />
 
       {/* FAQ Section */}
-      <FAQ />
-
+      <div className="w-full min-h-[800px] bg-[#042E27] py-[107px] px-4 md:px-6 lg:px-12 xl:px-[104px]">
+        <FAQ />
+      </div>
       {/* Raise Capital Section */}
       <RaiseCapital />
     </>
