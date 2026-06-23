@@ -38,7 +38,7 @@ export function HelpCenter() {
     }, [searchQuery]);
 
     const handleCategoryNavigation = (slug: string) => {
-        router.push(`/help/${slug}`);
+       router.push(`/help-center/${slug}`);
     };
 
     return (
