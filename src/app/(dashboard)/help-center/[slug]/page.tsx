@@ -15,18 +15,9 @@ export default function HelpCategoryDetailPage() {
   // Fallback gracefully if an obscure slug string pattern is used
   const detail = HELP_DETAILS_MAP[slug] || HELP_DETAILS_MAP['account-setup'];
 
-  // Re-map the specific target sub-faqs into the generic matrix shape for the FAQ component structure
-  // const formattedCustomFaqData = {
-  //   general: detail.faqs
-  // };
-
-  // const alternativeCategories = [
-  //   { id: 'general', label: detail.title }
-  // ];
-
   const handleArticleClick = (articleId: string) => {
-    // Ready for future sub-article reading routes if needed: e.g., router.push(`/help-center/${slug}/${articleId}`)
-    console.log(`Navigating to article: ${articleId}`);
+    const urlSafeId = articleId.toLowerCase().replace(' ', '-');
+    router.push(`/help-center/${slug}/${urlSafeId}`);
   };
 
   return (

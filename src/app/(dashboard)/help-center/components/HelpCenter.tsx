@@ -38,11 +38,11 @@ export function HelpCenter() {
     }, [searchQuery]);
 
     const handleCategoryNavigation = (slug: string) => {
-       router.push(`/help-center/${slug}`);
+        router.push(`/help-center/${slug}`);
     };
 
     return (
-        <div className="w-full bg-[#FAFAFA] min-h-screen pt-[171px]">
+        <div className="w-full bg-[#FAFAFA] min-h-screen pt-[80px] lg:pt-[171px]">
             {/* Hero Text Banner Header */}
             <div className="text-center mx-auto mb-10">
                 <h1
