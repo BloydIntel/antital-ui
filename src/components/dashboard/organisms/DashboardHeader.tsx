@@ -23,14 +23,25 @@ export function DashboardHeader() {
     const pathname = usePathname()
     const router = useRouter();
 
-    const onHelpIconClick = () => { }
+    const onHelpIconClick = () => {
+        router.push('/help-center/')
+    }
     const onNotificationIconClick = () => {
         router.push('/notifications')
     }
+    const onProfileIconClick = () => {
+        router.push('/settings')
+    }
 
     const customHeaderPath = Object.keys(CUSTOM_MOBILE_HEADERS).find(route => pathname.startsWith(route));
-    const isCustomPage = !!customHeaderPath;
-    const pageTitle = customHeaderPath ? CUSTOM_MOBILE_HEADERS[customHeaderPath] : "";
+
+    // Check if path belongs to a dynamic sub-route within the help center
+    const isHelpCenterSubRoute = pathname.startsWith('/help-center/') && pathname !== '/help-center';
+
+    const isCustomPage = !!customHeaderPath || isHelpCenterSubRoute;
+    const pageTitle = customHeaderPath
+        ? CUSTOM_MOBILE_HEADERS[customHeaderPath]
+        : "";
 
     return (
         <header className="sticky top-0 z-50 bg-[#F8F8F8F8] flex flex-col md:flex-row md:h-[52px] items-center justify-between px-4 md:px-8 md:pt-10 pt-6 pb-4 md:pb-8 gap-4 border-b border-gray-100">
@@ -100,7 +111,7 @@ export function DashboardHeader() {
                     </Button>
 
                     {/* User Profile */}
-                    <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
+                    <Avatar onClick={onProfileIconClick} className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
                         <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
                         <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
                     </Avatar>
