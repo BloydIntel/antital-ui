@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { CategoryTab } from '@/components/faq/atoms/category-tab';
 import { FaqItem } from '@/components/faq/molecules/faq-item';
+import { TYPOGRAPHY } from '@/constants/styles';
+import { cn } from '@/lib/utils';
 
 // FAQ data organized by category
 const faqData = {
@@ -70,34 +72,41 @@ const faqData = {
   ],
 };
 
+interface FAQProps {
+  title?: string
+  title2?: string
+  titleStyle?: string
+  activeTabClassName?: string;
+  inactiveTabClassName?: string;
+  containerClassName?: string;
+  questionClassName?: string;
+  answerClassName?: string;
+  toggleButtonClassname?: string;
+}
+
 const categories = [
   { id: 'general', label: 'General' },
   { id: 'pricing', label: 'Plans & Pricing' },
   { id: 'security', label: 'Privacy & Security' },
 ];
 
-export function FAQ() {
+export function FAQ({ title, title2, titleStyle, activeTabClassName, inactiveTabClassName, containerClassName, questionClassName, answerClassName, toggleButtonClassname }: FAQProps) {
   const [activeCategory, setActiveCategory] = useState<'general' | 'pricing' | 'security'>('general');
 
   return (
-    <section className="w-full min-h-[800px] bg-[#042E27] py-[107px]">
+    <section >
       {/* Main Container */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 xl:px-[104px]">
+      <div className="w-full max-w-[1440px] mx-auto">
         <div className="flex flex-col items-start gap-20">
           {/* Header */}
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start max-w-[420px]">
             <h2
-              className="text-[#B9C65B]"
-              style={{
-                fontFamily: 'var(--font-rethink-sans)',
-                fontSize: '36px',
-                lineHeight: '43px',
-                fontWeight: 500,
-                letterSpacing: '-0.01em',
-              }}
+              className={cn("text-[#B9C65B] text-[36px]", titleStyle)}
+              style={TYPOGRAPHY.heading}
             >
-              Your Questions Answered
+              {title || "Your Questions Answered"}
             </h2>
+            {title2 && <h2 className={cn(titleStyle)} style={TYPOGRAPHY.heading}>{title2}</h2>}
           </div>
 
           {/* Content Container - Categories and FAQs */}
@@ -108,6 +117,8 @@ export function FAQ() {
                 <CategoryTab
                   key={category.id}
                   label={category.label}
+                  activeTabClassName={activeTabClassName}
+                  inactiveTabClassName={inactiveTabClassName}
                   isActive={activeCategory === category.id}
                   onClick={() => setActiveCategory(category.id as 'general' | 'pricing' | 'security')}
                 />
@@ -122,6 +133,10 @@ export function FAQ() {
                   question={faq.question}
                   answer={faq.answer}
                   defaultOpen={index === 0 && activeCategory === 'general'}
+                  containerClassName={containerClassName}
+                  questionClassName={questionClassName}
+                  answerClassName={answerClassName}
+                  toggleButtonClassname={toggleButtonClassname}
                 />
               ))}
             </div>

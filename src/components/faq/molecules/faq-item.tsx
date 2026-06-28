@@ -6,15 +6,28 @@ interface FaqItemProps {
   question: string;
   answer: string;
   defaultOpen?: boolean;
+  containerClassName?: string;
+  questionClassName?: string;
+  answerClassName?: string;
+  toggleButtonClassname?: string
 }
 
-export function FaqItem({ question, answer, defaultOpen = false }: FaqItemProps) {
+export function FaqItem({
+  question,
+  answer,
+  defaultOpen = false,
+  containerClassName,
+  questionClassName,
+  answerClassName,
+  toggleButtonClassname
+}: FaqItemProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
     <div
       className={cn(
-        'flex flex-col items-start border-b border-[#D3D3D3] rounded transition-all py-4 px-5 w-full'
+        'flex flex-col items-start border-b border-[#D3D3D3] rounded transition-all py-4 px-5 w-full',
+        containerClassName
       )}
     >
       {/* Question and Answer Container - Icons aligned from top */}
@@ -26,7 +39,7 @@ export function FaqItem({ question, answer, defaultOpen = false }: FaqItemProps)
         )}>
           {/* Question */}
           <h3
-            className="text-[#F5F5F5] cursor-pointer"
+            className={cn("text-[#F5F5F5] cursor-pointer", questionClassName)}
             onClick={() => setIsOpen(!isOpen)}
             style={{
               fontFamily: 'var(--font-rethink-sans)',
@@ -42,7 +55,7 @@ export function FaqItem({ question, answer, defaultOpen = false }: FaqItemProps)
           {/* Answer - Only show when open */}
           {isOpen && (
             <p
-              className="text-[#D3D3D3]"
+              className={cn("text-[#D3D3D3]", answerClassName)}
               style={{
                 fontFamily: 'var(--font-dm-sans)',
                 fontSize: '16px',
@@ -63,10 +76,9 @@ export function FaqItem({ question, answer, defaultOpen = false }: FaqItemProps)
           style={{ minWidth: '24px', minHeight: '24px' }}
           aria-label={isOpen ? 'Collapse' : 'Expand'}
         >
-          <ToggleIcon isOpen={isOpen} />
+          <ToggleIcon isOpen={isOpen} toggleButtonClassname={toggleButtonClassname} />
         </button>
       </div>
     </div>
   );
 }
-
