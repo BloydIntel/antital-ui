@@ -18,7 +18,11 @@ export default function SecondaryMarketLandingPageContent() {
             <ImportantRiskDisclosure />
             <TradeWithConfidence variant="with-images" />
             <Testimonials className="py-[150px]" />
-            <FAQ />
+
+            <div className="w-full min-h-[800px] bg-[#042E27] py-[107px] px-4 md:px-6 lg:px-12 xl:px-[104px]">
+                <FAQ />
+            </div>
+
             <TradeWithConfidence variant="plain" />
         </div>
     )
