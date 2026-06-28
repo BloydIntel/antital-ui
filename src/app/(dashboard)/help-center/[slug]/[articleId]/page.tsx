@@ -20,7 +20,7 @@ export default function HelpArticleDetailPage() {
 
     // Find current article by translating structural tag id ("Article 001" <-> "article-001")
     const currentArticle = categoryData.articles.find(
-        (a) => a.id.toLowerCase().replace(' ', '-') === articleIdParam
+        (a) => a.id.toLowerCase().replace(/\s+/g, '-') === articleIdParam
     ) || categoryData.articles[0];
 
     // Feedback State Nodes
@@ -134,7 +134,7 @@ export default function HelpArticleDetailPage() {
                             <ArticleGuideCard
                                 key={idx}
                                 article={article}
-                                onClick={() => router.push(`/help-center/${slug}/${article.id.toLowerCase().replace(' ', '-')}`)}
+                                onClick={() => router.push(`/help-center/${slug}/${article.id.toLowerCase().replace(/\s+/g, '-')}`)}
                             />
                         ))}
                     </div>

@@ -18,12 +18,12 @@ export interface HelpCategory {
 }
 
 const HELP_CATEGORIES: HelpCategory[] = [
-    { id: '1', slug: 'account-setup', title: 'Account setup', articleCount: 8, description: 'Creating your account and updating your details', icon: CircleUserRound },
-    { id: '2', slug: 'kyc-verification', title: 'KYC & Verification', articleCount: 8, description: 'Identity checks and compliance requirements', icon: ShieldCheck },
-    { id: '3', slug: 'investments', title: 'Investments', articleCount: 8, description: 'How to invest, manage watchlist, and track performance', icon: TrendingUp },
-    { id: '4', slug: 'payment-wallet', title: 'Payment & Wallet', articleCount: 8, description: 'Creating your account and updating your details', icon: Wallet },
-    { id: '5', slug: 'troubleshooting', title: 'Troubleshooting', articleCount: 8, description: 'Resolving errors, login issues, and notifications', icon: AlertTriangle },
-    { id: '6', slug: 'secondary-market', title: 'Secondary market', articleCount: 8, description: 'Trading shares with other investors', icon: RefreshCw }
+    { id: '1', slug: 'account-setup', title: 'Account setup', articleCount: 4, description: 'Creating your account and updating your details', icon: CircleUserRound },
+    { id: '2', slug: 'kyc-verification', title: 'KYC & Verification', articleCount: 4, description: 'Identity checks and compliance requirements', icon: ShieldCheck },
+    { id: '3', slug: 'investments', title: 'Investments', articleCount: 4, description: 'How to invest, manage watchlist, and track performance', icon: TrendingUp },
+    { id: '4', slug: 'payment-wallet', title: 'Payment & Wallet', articleCount: 4, description: 'Managing allocations, funding nodes, and withdrawal rules', icon: Wallet },
+    { id: '5', slug: 'troubleshooting', title: 'Troubleshooting', articleCount: 4, description: 'Resolving errors, login issues, and notifications', icon: AlertTriangle },
+    { id: '6', slug: 'secondary-market', title: 'Secondary market', articleCount: 4, description: 'Trading shares with other investors', icon: RefreshCw }
 ];
 
 export function HelpCenter() {
@@ -46,7 +46,7 @@ export function HelpCenter() {
             {/* Hero Text Banner Header */}
             <div className="text-center mx-auto mb-10">
                 <h1
-                    className="text-[24px] md:text-28px] text-[#1A1A1A] mb-3 tracking-tight"
+                    className="text-[24px] md:text-[28px] text-[#1A1A1A] mb-3 tracking-tight"
                     style={TYPOGRAPHY.heading}
                 >
                     Hello, how can we help

@@ -16,7 +16,7 @@ export default function HelpCategoryDetailPage() {
   const detail = HELP_DETAILS_MAP[slug] || HELP_DETAILS_MAP['account-setup'];
 
   const handleArticleClick = (articleId: string) => {
-    const urlSafeId = articleId.toLowerCase().replace(' ', '-');
+    const urlSafeId = articleId.toLowerCase().replace(/\s+/g, '-');
     router.push(`/help-center/${slug}/${urlSafeId}`);
   };
 

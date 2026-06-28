@@ -56,7 +56,7 @@ export function HelpCategoryCard({ category, onClick }: HelpCategoryCardProps) {
     return (
         <div
             onClick={() => onClick(category.slug)}
-            className="bg-white hover:border-b-4 border-[#042E27] rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group"
+            className="bg-white border-b-4 border-transparent hover:border-[#042E27] rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group"
         >
             <div>
                 {/* Icon wrapper matching container background with the icon color */}
