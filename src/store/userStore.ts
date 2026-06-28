@@ -10,6 +10,8 @@ export interface UserData {
     city: string | null
     state: string | null
     profilePictureUrl: string | null
+    userType: "individual" | "corporate" | "Fundraiser"
+    isKycCompleted: boolean
 }
 
 interface UserState extends UserData {
@@ -21,6 +23,7 @@ interface UserState extends UserData {
 export const useUserStore = create<UserState>()(
     persist(
         (set) => ({
+            // Initial States
             userId: null,
             firstName: null,
             lastName: null,
@@ -29,10 +32,12 @@ export const useUserStore = create<UserState>()(
             city: null,
             state: null,
             profilePictureUrl: null,
+            userType: "individual",
+            isKycCompleted: false,
 
             setUserId: (id) => set(() => ({ userId: id })),
 
-            updateProfile: (data) => set(() => ({ ...data })),
+            updateProfile: (data) => set((state) => ({ ...state, ...data })),
 
             clearUser: () => set(() => ({
                 userId: null,
@@ -43,6 +48,8 @@ export const useUserStore = create<UserState>()(
                 city: null,
                 state: null,
                 profilePictureUrl: null,
+                userType: "individual",
+                isKycCompleted: false,
             })),
         }),
         {
