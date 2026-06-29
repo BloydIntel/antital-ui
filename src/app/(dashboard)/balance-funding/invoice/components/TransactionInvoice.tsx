@@ -4,9 +4,10 @@ import React from 'react'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { ArrowLeft, FileText, Printer, Download } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
-import { invoiceData, InvoiceData } from '@/data/transactionsMockData'
 import Image from 'next/image'
-import { StatusButton } from '@/components/balance-funding/atoms/StatusButton'
+import { StatusButton, type TransactionStatus } from '@/components/balance-funding/atoms/StatusButton'
+import { useWalletTransaction } from '@/hooks/use-wallet-transaction'
+import axios from 'axios'
 
 interface SummaryRow {
     label: string;
@@ -14,21 +15,31 @@ interface SummaryRow {
     border?: boolean;
 }
 
+function formatInvoiceDate(isoDate: string): string {
+    return new Date(isoDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+    })
+}
+
 export default function TransactionInvoice() {
     const router = useRouter()
     const params = useParams()
+    const transactionId = Number(params?.id)
 
-    const currentInvoiceId = params?.id as string
-
-    const currentInvoice: InvoiceData | undefined = invoiceData.find(
-        (inv) => inv.invoiceId === currentInvoiceId
-    )
+    const {
+        data: invoice,
+        isLoading,
+        isError,
+        error,
+    } = useWalletTransaction(transactionId)
 
     const handlePrint = (): void => {
         window.print()
     }
 
-    if (!currentInvoice) {
+    if (!Number.isFinite(transactionId) || transactionId <= 0) {
         return (
             <div className="min-h-screen bg-[#F8F9FA] flex flex-col items-center justify-center p-4">
                 <h3 className="text-[18px] font-medium text-red-600 mb-2" style={TYPOGRAPHY.heading}>Invoice Not Found</h3>
@@ -43,7 +54,46 @@ export default function TransactionInvoice() {
         )
     }
 
-    const { invoiceId, invoiceDate, paymentDate, paymentMethod, billTo, transactionDetails, breakdown } = currentInvoice
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#F8F9FA] flex flex-col items-center justify-center p-4">
+                <p className="text-[14px] text-[#717171]" style={TYPOGRAPHY.body}>Loading invoice...</p>
+            </div>
+        )
+    }
+
+    if (isError || !invoice) {
+        const notFound = axios.isAxiosError(error) && error.response?.status === 404
+
+        return (
+            <div className="min-h-screen bg-[#F8F9FA] flex flex-col items-center justify-center p-4">
+                <h3 className="text-[18px] font-medium text-red-600 mb-2" style={TYPOGRAPHY.heading}>
+                    {notFound ? 'Invoice Not Found' : 'Unable to Load Invoice'}
+                </h3>
+                <p className="text-[14px] text-[#717171] mb-4">
+                    {notFound
+                        ? 'The invoice sequence reference ID does not exist.'
+                        : 'Something went wrong while loading this invoice. Please try again.'}
+                </p>
+                <button
+                    onClick={() => router.back()}
+                    className="px-4 py-2 bg-[#042E27] text-white rounded-lg text-[14px]"
+                >
+                    Go Back
+                </button>
+            </div>
+        )
+    }
+
+    const {
+        invoiceId,
+        invoiceDate,
+        paymentDate,
+        paymentMethod,
+        billTo,
+        transactionDetails,
+        breakdown,
+    } = invoice
 
     const summaryRows: SummaryRow[] = [
         { label: "Description:", value: breakdown.description },
@@ -101,8 +151,8 @@ export default function TransactionInvoice() {
                         <p className="text-[16px] text-[#858585] mt-0.5" style={TYPOGRAPHY.body}>Lagos, Nigeria</p>
                     </div>
                     <div className="space-y-1.5 text-left sm:text-right text-[16px]" style={TYPOGRAPHY.body}>
-                        <p className="text-[#858585]">Invoice Date: <span className="text-[#1F1F1F] font-medium">{invoiceDate}</span></p>
-                        <p className="text-[#858585]">Payment Date: <span className="text-[#1F1F1F] font-medium">{paymentDate}</span></p>
+                        <p className="text-[#858585]">Invoice Date: <span className="text-[#1F1F1F] font-medium">{formatInvoiceDate(invoiceDate)}</span></p>
+                        <p className="text-[#858585]">Payment Date: <span className="text-[#1F1F1F] font-medium">{formatInvoiceDate(paymentDate)}</span></p>
                         <p className="text-[#858585]">Payment Method: <span className="text-[#1F1F1F] font-medium">{paymentMethod}</span></p>
                     </div>
                 </div>
@@ -114,7 +164,7 @@ export default function TransactionInvoice() {
                         <div className="space-y-1 text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
                             <p className="text-[#1F1F1F]">{billTo.name}</p>
                             <p>{billTo.email}</p>
-                            <p>{billTo.phone}</p>
+                            {billTo.phone ? <p>{billTo.phone}</p> : null}
                         </div>
                     </div>
 
@@ -130,7 +180,7 @@ export default function TransactionInvoice() {
                             <div className="grid grid-cols-[65px_1fr] items-center">
                                 <span className="text-[#858585]">Status:</span>
                                 <div>
-                                    <StatusButton status={transactionDetails.status} />
+                                    <StatusButton status={transactionDetails.status as TransactionStatus} />
                                 </div>
                             </div>
 
@@ -153,8 +203,8 @@ export default function TransactionInvoice() {
                                         ? {
                                             ...TYPOGRAPHY.body,
                                             backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
-                                            backgroundPosition: 'bottom', // Shifted to bottom to act as a bottom divider
-                                            backgroundSize: '12px 1px',   // 12px controls the dash lengths beautifully
+                                            backgroundPosition: 'bottom',
+                                            backgroundSize: '12px 1px',
                                             backgroundRepeat: 'repeat-x',
                                         }
                                         : TYPOGRAPHY.body
@@ -176,8 +226,8 @@ export default function TransactionInvoice() {
                             style={{
                                 ...TYPOGRAPHY.body,
                                 backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
-                                backgroundPosition: 'bottom', // Shifted to bottom to act as a bottom divider
-                                backgroundSize: '12px 1px',   // 12px controls the dash lengths beautifully
+                                backgroundPosition: 'bottom',
+                                backgroundSize: '12px 1px',
                                 backgroundRepeat: 'repeat-x',
                             }}>
                             <span className="text-[#1F1F1F] font-medium">Fees:</span>

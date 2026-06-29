@@ -65,7 +65,7 @@ const filterConfigs = [
         label: "Type",
         placeholder: "Type",
         allLabel: "All Types",
-        data: ["Investment", "Buy", "Sell", "Fee", "Deposit", "Withdrawal"]
+        data: ["Investment", "Fee", "Deposit", "Withdrawal"]
     },
     {
         key: "status",
