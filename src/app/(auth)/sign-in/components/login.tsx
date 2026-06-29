@@ -37,10 +37,11 @@ export function Login({
 }: React.ComponentProps<"div">) {
   const [showPassword, setShowPassword] = useState(false)
   const searchParams = useSearchParams()
-  const loginMutation = useLogin()
 
   const from = searchParams.get("from")
   const isTrading = from === "trading"
+
+  const loginMutation = useLogin({ fromTrading: isTrading })
 
   const title = isTrading
     ? "Create an Account to Invest In NEXUS AI"
@@ -214,7 +215,7 @@ export function Login({
         }}
       >
         Don&apos;t have an account yet?{" "}
-        <Link href="/create-account" className="text-[#7BA147]">
+        <Link href={isTrading ? "/create-account?from=trading" : "/create-account"} className="text-[#7BA147]">
           Sign up
         </Link>
       </div>

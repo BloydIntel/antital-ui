@@ -4,6 +4,7 @@ import { ProgressBar } from '@/components/ui/progress-bar'
 import Image from 'next/image'
 import { Clock4 } from 'lucide-react'
 import { useRouter } from "next/navigation";
+import { buildCheckoutPath } from "@/lib/investment-checkout";
 
 const getInitials = (name: string) => {
     return name
@@ -107,7 +108,10 @@ export function PrimaryMarketCard({ data }: { data: InvestmentData }) {
                     e.stopPropagation();
 
                     router.push(
-                        `/marketplace/invest?company=${encodeURIComponent(data.name)}&minInvestment=${data.minInvestment}&price=${data.price}`
+                        buildCheckoutPath({
+                            offeringId: Number.parseInt(data.id, 10) || 0,
+                            slug: data.id,
+                        })
                     );
                 }}
             >

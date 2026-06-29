@@ -9,6 +9,8 @@ import type {
 export function toInvestmentCardData(item: InvestmentListItem): InvestmentCardData {
   return {
     id: item.slug,
+    offeringId: item.id,
+    slug: item.slug,
     name: item.name,
     category: item.category,
     description: item.tagline,
