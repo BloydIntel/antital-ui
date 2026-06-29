@@ -40,7 +40,13 @@ const getActivityIcon = (type: string) => {
 };
 
 
-export function RecentActivitySection({ userRecentActivityData }: { userRecentActivityData: TransactionItem[] }) {
+export function RecentActivitySection({
+    userRecentActivityData,
+    emptyMessage = "No recent activity.",
+}: {
+    userRecentActivityData: TransactionItem[];
+    emptyMessage?: string;
+}) {
 
     const router = useRouter()
 
@@ -56,7 +62,11 @@ export function RecentActivitySection({ userRecentActivityData }: { userRecentAc
 
             {/* Activity List Container */}
             <div className="space-y-3 mb-6">
-                {userRecentActivityData.map((activity) => {
+                {userRecentActivityData.length === 0 ? (
+                    <p className="text-[14px] text-[#858585] px-2" style={TYPOGRAPHY.body}>
+                        {emptyMessage}
+                    </p>
+                ) : userRecentActivityData.map((activity) => {
                     const isPositive = activity.type === "Deposit" || activity.type === "Sell";
                     const formattedAmount = `₦${activity.amount.toLocaleString()}`;
 

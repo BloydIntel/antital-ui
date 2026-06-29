@@ -1,15 +1,44 @@
+"use client";
+
+import { useEffect } from "react";
 import { BalanceSection } from "@/components/balance-funding/molecules/BalanceSection";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { ShieldAlert } from "lucide-react";
 import { RecentActivitySection } from "@/components/balance-funding/molecules/RecentActivitySection";
-// Import the type definitions here
-import { userData } from "@/data/transactionsMockData";
-
+import { useDashboard } from "@/hooks/use-dashboard";
+import { useWalletTransactions } from "@/hooks/use-wallet-transactions";
+import { showApiErrorToast } from "@/lib/error-feedback";
 
 export function Overview() {
+    const { data, isLoading, isError, error, refetch, isFetching } = useDashboard("this-month");
+    const {
+        data: transactions,
+        isLoading: isTransactionsLoading,
+        isError: isTransactionsError,
+        error: transactionsError,
+    } = useWalletTransactions({ page: 1, pageSize: 3 });
+
+    useEffect(() => {
+        if (isError) {
+            showApiErrorToast(error, "Unable to load wallet balance.");
+        }
+    }, [isError, error]);
+
+    useEffect(() => {
+        if (isTransactionsError) {
+            showApiErrorToast(transactionsError, "Unable to load recent activity.");
+        }
+    }, [isTransactionsError, transactionsError]);
+
     return (
         <div>
-            <BalanceSection userData={userData} />
+            <BalanceSection
+                availableBalance={data?.summary.availableBalance ?? 0}
+                currency={data?.summary.currency}
+                isLoading={isLoading}
+                isRefreshing={isFetching && !isLoading}
+                onRefresh={() => void refetch()}
+            />
 
             <div className="mt-12 pt-4 pl-4 border border-[#EAEAEA]">
                 <div className="flex text-[#1F1F1F] gap-2 items-center">
@@ -21,7 +50,16 @@ export function Overview() {
                 </p>
             </div>
 
-            <RecentActivitySection userRecentActivityData={userData.recentActivity.slice(0, 3)} />
+            {isTransactionsLoading ? (
+                <p className="mt-8 text-[14px] text-[#858585]" style={TYPOGRAPHY.body}>
+                    Loading recent activity...
+                </p>
+            ) : (
+                <RecentActivitySection
+                    userRecentActivityData={transactions?.items ?? []}
+                    emptyMessage="No investment activity yet."
+                />
+            )}
         </div>
-    )
+    );
 }

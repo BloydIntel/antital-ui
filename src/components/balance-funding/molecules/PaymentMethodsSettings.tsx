@@ -5,57 +5,30 @@ import { TYPOGRAPHY } from '@/constants/styles'
 import { AddPaymentMethodModal } from './AddPaymentModal';
 import { CreditCardIcon, PlusIcon, TrashIcon } from 'lucide-react';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
+import {
+    useDeletePaymentMethod,
+    usePaymentMethods,
+    useSetDefaultPaymentMethod,
+} from '@/hooks/use-payment-methods';
 
-interface PaymentMethodItem {
-    id: string;
-    type: 'bank' | 'card' | 'crypto';
-    title: string;
-    subtitle: string;
-    metaText: string;
-    isDefault?: boolean;
-    isVerified?: boolean;
+function formatAddedAt(isoDate: string): string {
+    return `Added ${new Date(isoDate).toLocaleDateString('en-US')}`;
 }
 
 export default function PaymentMethodsSettings() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const { data, isLoading, isError } = usePaymentMethods()
+    const setDefaultMutation = useSetDefaultPaymentMethod()
+    const deleteMutation = useDeletePaymentMethod()
 
-    const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>([
-        {
-            id: 'pm-1',
-            type: 'bank',
-            title: 'GTBank Savings Account',
-            subtitle: 'Guaranty Trust Bank • ********5678',
-            metaText: 'Added 9/20/2024',
-            isDefault: true,
-            isVerified: true,
-        },
-        {
-            id: 'pm-2',
-            type: 'card',
-            title: 'Visa Debit Card',
-            subtitle: 'Visa ending in 4532',
-            metaText: 'Added 10/5/2024',
-            isVerified: true,
-        },
-        {
-            id: 'pm-3',
-            type: 'crypto',
-            title: 'USDT Wallet',
-            subtitle: 'TRON • ****xyz789',
-            metaText: 'Added 11/10/2024',
-            isVerified: true,
-        }
-    ])
+    const paymentMethods = data?.items ?? []
 
-    const handleDelete = (id: string): void => {
-        setPaymentMethods(prev => prev.filter(item => item.id !== id))
+    const handleDelete = (id: number): void => {
+        deleteMutation.mutate(id)
     }
 
-    const handleSetDefault = (id: string): void => {
-        setPaymentMethods(prev => prev.map(item => ({
-            ...item,
-            isDefault: item.id === id
-        })))
+    const handleSetDefault = (id: number): void => {
+        setDefaultMutation.mutate(id)
     }
 
     return (
@@ -70,7 +43,7 @@ export default function PaymentMethodsSettings() {
                             <h2 className="text-[18px] lg:text-[20px]" style={TYPOGRAPHY.body}>Payment Methods</h2>
                         </div>
                         <p className="text-[14px] lg:text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>
-                            Manage your bank accounts, cards, and crypto wallets
+                            Manage your bank accounts and cards
                         </p>
                     </div>
 
@@ -83,6 +56,19 @@ export default function PaymentMethodsSettings() {
 
                 </div>
 
+                {isLoading && (
+                    <div className="w-full bg-white border border-[#EAEAEA] rounded-xl p-8 text-center text-[#858585]">
+                        Loading payment methods...
+                    </div>
+                )}
+
+                {isError && (
+                    <div className="w-full bg-white border border-[#EAEAEA] rounded-xl p-8 text-center text-red-600">
+                        Unable to load payment methods. Please try again.
+                    </div>
+                )}
+
+                {!isLoading && !isError && (
                 <div className="space-y-4">
                     {paymentMethods.map((method) => (
                         <div
@@ -91,11 +77,7 @@ export default function PaymentMethodsSettings() {
                         >
                             <div className="flex items-center gap-1 lg:gap-4">
                                 <div className="w-8 lg:w-12 h-8 lg:h-12 bg-[#E6EAE9] text-[#E6EAE9] rounded-full flex items-center justify-center flex-shrink-0">
-                                    {method.type === 'crypto' ? (
-                                        <span className="text-[18px] font-medium text-[#505050]">$</span>
-                                    ) : (
-                                        <CreditCardIcon className="w-5 h-5 text-[#505050]" />
-                                    )}
+                                    <CreditCardIcon className="w-5 h-5 text-[#505050]" />
                                 </div>
 
                                 {/* Summary Strings block */}
@@ -117,7 +99,7 @@ export default function PaymentMethodsSettings() {
                                         )}
                                     </div>
                                     <p className="text-[12px] lg:text-[14px] text-[#858585]" style={TYPOGRAPHY.body}>{method.subtitle}</p>
-                                    <p className="text-[12px] text-[#858585]" style={TYPOGRAPHY.body}>{method.metaText}</p>
+                                    <p className="text-[12px] text-[#858585]" style={TYPOGRAPHY.body}>{formatAddedAt(method.addedAt)}</p>
                                 </div>
                             </div>
 
@@ -126,7 +108,8 @@ export default function PaymentMethodsSettings() {
                                 {!method.isDefault && (
                                     <button
                                         onClick={() => handleSetDefault(method.id)}
-                                        className="text-[12px] lg:text-[16px] text-[#505050] font-medium hover:text-black transition-colors cursor-pointer"
+                                        disabled={setDefaultMutation.isPending}
+                                        className="text-[12px] lg:text-[16px] text-[#505050] font-medium hover:text-black transition-colors cursor-pointer disabled:opacity-50"
                                         style={TYPOGRAPHY.body}
                                     >
                                         Set Default
@@ -134,7 +117,8 @@ export default function PaymentMethodsSettings() {
                                 )}
                                 <button
                                     onClick={() => handleDelete(method.id)}
-                                    className="text-[#717171] hover:text-red-600 transition-colors cursor-pointer p-1"
+                                    disabled={deleteMutation.isPending}
+                                    className="text-[#717171] hover:text-red-600 transition-colors cursor-pointer p-1 disabled:opacity-50"
                                     aria-label="Delete payment method"
                                 >
                                     <TrashIcon className="w-5 h-5" />
@@ -145,10 +129,11 @@ export default function PaymentMethodsSettings() {
 
                     {paymentMethods.length === 0 && (
                         <div className="w-full bg-white border border-dashed border-[#EAEAEA] rounded-xl p-12 text-center text-[#858585]">
-                            No configured payment options available. Click above to append data profiles.
+                            No payment methods yet. Add a bank account or card to get started.
                         </div>
                     )}
                 </div>
+                )}
             </div>
 
             {/* Overlay Container Execution Core */}
