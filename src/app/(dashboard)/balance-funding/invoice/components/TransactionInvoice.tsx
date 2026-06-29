@@ -5,7 +5,7 @@ import { TYPOGRAPHY } from '@/constants/styles'
 import { ArrowLeft, FileText, Printer, Download } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
-import { StatusButton } from '@/components/balance-funding/atoms/StatusButton'
+import { StatusButton, type TransactionStatus } from '@/components/balance-funding/atoms/StatusButton'
 import { useWalletTransaction } from '@/hooks/use-wallet-transaction'
 import axios from 'axios'
 
@@ -180,7 +180,7 @@ export default function TransactionInvoice() {
                             <div className="grid grid-cols-[65px_1fr] items-center">
                                 <span className="text-[#858585]">Status:</span>
                                 <div>
-                                    <StatusButton status={transactionDetails.status} />
+                                    <StatusButton status={transactionDetails.status as TransactionStatus} />
                                 </div>
                             </div>
 
