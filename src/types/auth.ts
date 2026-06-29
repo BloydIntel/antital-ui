@@ -70,3 +70,9 @@ export interface DeleteUnverifiedRequest {
   email: string;
   otp: string;
 }
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
