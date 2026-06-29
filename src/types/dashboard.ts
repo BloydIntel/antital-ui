@@ -1,6 +1,7 @@
 export interface InvestmentData {
     // --- Identity & Meta ---
     id: string;
+    slug?: string;
     name: string;
     category: string;
     sector: string;

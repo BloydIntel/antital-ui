@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { TYPOGRAPHY } from "@/constants/styles";
 import {
     AlertTriangle,
@@ -15,6 +17,8 @@ import { SetReminderModal } from '@/components/watchlist/organisms/SetReminderMo
 import { ReminderSuccessModal } from '@/components/watchlist/organisms/ReminderSuccessModal';
 import { WatchlistEmptyState, WatchlistFilterType } from '@/components/watchlist/organisms/WatchlistEmptyState';
 import { TablePagination } from '@/components/watchlist/molecules/TablePagination';
+import { useRemoveFromWatchlist } from '@/hooks/use-watchlist';
+import { showApiErrorToast } from '@/lib/error-feedback';
 
 interface WatchlistTableProps {
     data: InvestmentData[];
@@ -23,6 +27,8 @@ interface WatchlistTableProps {
 }
 
 export function WatchlistTable({ data, filterType, itemsPerPage = 10 }: WatchlistTableProps) {
+    const router = useRouter();
+    const removeFromWatchlist = useRemoveFromWatchlist();
     const [currentPage, setCurrentPage] = useState(1);
 
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -75,6 +81,28 @@ export function WatchlistTable({ data, filterType, itemsPerPage = 10 }: Watchlis
         setIsFormOpen(false);
         setIsSuccessOpen(false);
         setActiveItem(null);
+    };
+
+    const handleViewProject = (item: InvestmentData) => {
+        const target = item.slug ?? item.id;
+        router.push(`/explore/${target}`);
+    };
+
+    const handleRemoveFromWatchlist = (item: InvestmentData) => {
+        const offeringId = Number(item.id);
+        if (!Number.isFinite(offeringId)) {
+            return;
+        }
+
+        removeFromWatchlist.mutate(offeringId, {
+            onSuccess: () => {
+                toast.success(`${item.name} removed from watchlist`);
+                setSelectedIds((prev) => prev.filter((id) => id !== item.id));
+            },
+            onError: (error) => {
+                showApiErrorToast(error, "Unable to remove from watchlist.");
+            },
+        });
     };
 
     return (
@@ -170,7 +198,9 @@ export function WatchlistTable({ data, filterType, itemsPerPage = 10 }: Watchlis
                                             <td className="py-1">
                                                 <div className="flex items-center gap-2 text-[#1A1C1E] text-[14px]">
                                                     <Clock className="w-4 h-4 text-[#1A1C1E]" />
-                                                    <span style={TYPOGRAPHY.body}>{item.daysLeft} days</span>
+                                                    <span style={TYPOGRAPHY.body}>
+                                                        {item.daysLeft !== undefined ? `${item.daysLeft} days` : '—'}
+                                                    </span>
                                                 </div>
                                             </td>
 
@@ -201,10 +231,21 @@ export function WatchlistTable({ data, filterType, itemsPerPage = 10 }: Watchlis
                                                     >
                                                         <AlarmClock className="w-4 h-4" />
                                                     </button>
-                                                    <button className="hover:text-black transition-colors cursor-pointer">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleViewProject(item)}
+                                                        className="hover:text-black transition-colors cursor-pointer"
+                                                        aria-label={`View ${item.name}`}
+                                                    >
                                                         <Eye className="w-4 h-4" />
                                                     </button>
-                                                    <button className="hover:text-black transition-colors cursor-pointer">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveFromWatchlist(item)}
+                                                        disabled={removeFromWatchlist.isPending}
+                                                        className="hover:text-black transition-colors cursor-pointer disabled:opacity-50"
+                                                        aria-label={`Remove ${item.name} from watchlist`}
+                                                    >
                                                         <Bookmark className="w-4 h-4 text-[#1A1C1E]" />
                                                     </button>
                                                 </div>
