@@ -11,6 +11,8 @@ import { useDashboard } from "@/hooks/use-dashboard"
 import { buildDashboardMonthOptions, toDashboardPeriod } from "@/lib/dashboard-period"
 import { showApiErrorToast } from "@/lib/error-feedback"
 import { resolveUserDisplayName } from "@/lib/user-display-name"
+import { useUserStore } from "@/store/userStore"
+import { FundingProgress } from "@/app/(dashboard)/dashboard/components/funding-progress"
 
 export function Dashboard() {
     const router = useRouter()
@@ -19,6 +21,14 @@ export function Dashboard() {
     const period = toDashboardPeriod(selectedMonth)
     const { data: user, isError: isUserError, error: userError } = useCurrentUser()
     const { data, isLoading, isError, error } = useDashboard(period)
+
+    // Select the userType from your Zustand store
+    const userType = useUserStore((state) => state.userType)
+    const [hasHydrated, setHasHydrated] = useState(false)
+
+    useEffect(() => {
+        setHasHydrated(true)
+    }, [])
 
     useEffect(() => {
         if (isUserError) {
@@ -38,23 +48,44 @@ export function Dashboard() {
         <main>
             <DashboardSubHeader
                 title={`Welcome back, ${displayName}`}
-                desc="Here is a summary of overall data"
+                desc={
+                    hasHydrated && userType === "fundraiser"
+                        ? "Here is a real-time summary of your current fundraising campaign."
+                        : "Here is a summary of overall data"
+                }
                 selectedMonth={selectedMonth}
                 months={months}
                 onMonthChange={setSelectedMonth}
                 onButtonClick={() => router.push("/marketplace")}
             />
 
-            <div className="@container/main px-4 lg:px-6 space-y-6">
-                <SectionCards summary={data?.summary} isLoading={isLoading} />
-                <PortfolioStatChart
-                    portfolioPerformance={data?.portfolioPerformance}
-                    activeDeals={data?.activeDeals}
+            <div className="@container/main space-y-6">
+                <SectionCards
+                    summary={data?.summary}
                     isLoading={isLoading}
+                    userType={hasHydrated ? userType : "individual"}
                 />
+                {userType !== "fundraiser" ?
+                    <PortfolioStatChart
+                        portfolioPerformance={data?.portfolioPerformance}
+                        activeDeals={data?.activeDeals}
+                        isLoading={isLoading}
+                    />
+                    : <div className="grid grid-cols-10">
+                        <div className="col-span-7">
+                            <FundingProgress />
+                        </div>
+                    </div>
+                }
             </div>
 
-            <DataTable holdings={data?.holdings} isLoading={isLoading} />
+            {/* Passes the dynamic userType safely down once state is hydrated */}
+            <DataTable
+                holdings={data?.holdings}
+                isLoading={isLoading}
+                // userType={hasHydrated ? userType : "corporate"}
+                userType={"fundraiser"}
+            />
         </main>
     )
 }

@@ -10,7 +10,7 @@ export interface UserData {
     city: string | null
     state: string | null
     profilePictureUrl: string | null
-    userType: "individual" | "corporate" | "Fundraiser"
+    userType: "individual" | "corporate" | "fundraiser"
     isKycCompleted: boolean
 }
 
@@ -32,7 +32,7 @@ export const useUserStore = create<UserState>()(
             city: null,
             state: null,
             profilePictureUrl: null,
-            userType: "individual",
+            userType: "fundraiser",
             isKycCompleted: false,
 
             setUserId: (id) => set(() => ({ userId: id })),
@@ -48,7 +48,7 @@ export const useUserStore = create<UserState>()(
                 city: null,
                 state: null,
                 profilePictureUrl: null,
-                userType: "individual",
+                userType: "fundraiser",
                 isKycCompleted: false,
             })),
         }),
