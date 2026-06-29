@@ -1,10 +1,19 @@
+'use client'
+
 import React from 'react'
-import { Gauge, Bookmark } from 'lucide-react'
+import { Gauge, Bookmark, BookmarkCheck } from 'lucide-react'
+import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { ActionButton } from '@/components/investment/molecules/action-button'
 import type { OfferingFunding } from '@/types/investment'
 import { formatNaira, formatNumber } from '@/lib/investment-mappers'
 import { useStartInvestmentCheckout } from '@/hooks/use-start-investment-checkout'
+import {
+  useAddToWatchlist,
+  useWatchlistStatus,
+} from '@/hooks/use-watchlist'
+import { isApiErrorStatus } from '@/lib/api-error'
+import { showApiErrorToast } from '@/lib/error-feedback'
 
 interface InvestmentPanelProps {
   offeringId: number
@@ -14,10 +23,41 @@ interface InvestmentPanelProps {
 
 export function InvestmentPanel({ offeringId, slug, funding }: InvestmentPanelProps) {
   const startCheckout = useStartInvestmentCheckout()
+  const { data: status, isLoading: isStatusLoading } = useWatchlistStatus(offeringId)
+  const addToWatchlist = useAddToWatchlist()
+
+  const isWatchlisted = status?.isWatchlisted ?? false
 
   const handleStartTrading = () => {
     startCheckout({ offeringId, slug })
   }
+
+  const handleAddToWatchlist = () => {
+    if (isWatchlisted || addToWatchlist.isPending) {
+      return
+    }
+
+    addToWatchlist.mutate(offeringId, {
+      onSuccess: () => {
+        toast.success('Added to watchlist')
+      },
+      onError: (error) => {
+        if (isApiErrorStatus(error, 409)) {
+          toast.error('Already on your watchlist')
+          return
+        }
+        showApiErrorToast(error, 'Unable to add to watchlist.')
+      },
+    })
+  }
+
+  const watchlistLabel = isStatusLoading
+    ? 'Checking watchlist...'
+    : isWatchlisted
+      ? 'On watchlist'
+      : addToWatchlist.isPending
+        ? 'Adding...'
+        : 'Add to watchlist'
 
   return (
     <div className="w-full max-w-full lg:w-auto lg:max-w-[400px]">
@@ -87,12 +127,13 @@ export function InvestmentPanel({ offeringId, slug, funding }: InvestmentPanelPr
               onClick={handleStartTrading}
             />
             <ActionButton
-              text="Add to watchlist"
+              text={watchlistLabel}
               variant="outline"
-              icon={Bookmark}
+              icon={isWatchlisted ? BookmarkCheck : Bookmark}
               iconPosition="left"
               width="100%"
               height="48px"
+              onClick={isWatchlisted || isStatusLoading ? undefined : handleAddToWatchlist}
             />
           </div>
         </div>
