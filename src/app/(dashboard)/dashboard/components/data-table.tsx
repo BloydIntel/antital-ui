@@ -17,6 +17,7 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import allInvestmentsRaw from "@/data/dashboardInvestmentData.json";
 import { InvestmentData, RISK_COLORS } from "@/types/dashboard"
+import { buildCheckoutPath } from "@/lib/investment-checkout";
 import type { DashboardHolding } from "@/types/dashboard-api"
 
 interface DataTableProps {
@@ -250,7 +251,10 @@ export function DataTable({ state = false, holdings, isLoading = false }: DataTa
                             className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap cursor-pointer"
                             onClick={() =>
                               router.push(
-                                `/marketplace/invest?company=${encodeURIComponent(row.name)}&minInvestment=${row.minInvestment}&price=${row.price}`
+                                buildCheckoutPath({
+                                  offeringId: Number.parseInt(row.id, 10) || 0,
+                                  slug: row.id,
+                                })
                               )
                             }
                           >

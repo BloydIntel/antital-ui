@@ -3,13 +3,17 @@ import { DealTermItem } from '@/components/investment/molecules/deal-term-item'
 import { ActionButton } from '@/components/investment/molecules/action-button'
 import type { DealTerms } from '@/types/investment'
 import { formatNaira, formatNumber } from '@/lib/investment-mappers'
+import { useStartInvestmentCheckout } from '@/hooks/use-start-investment-checkout'
 
 interface DealTermsSectionProps {
   dealTerms: DealTerms
   companyName: string
+  offeringId: number
+  slug: string
 }
 
-export function DealTermsSection({ dealTerms, companyName }: DealTermsSectionProps) {
+export function DealTermsSection({ dealTerms, companyName, offeringId, slug }: DealTermsSectionProps) {
+  const startCheckout = useStartInvestmentCheckout()
   const deadline = new Date(dealTerms.deadline).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -71,7 +75,13 @@ export function DealTermsSection({ dealTerms, companyName }: DealTermsSectionPro
           />
         </div>
 
-        <ActionButton text="Start trading" variant="primary" width="100%" height="48px" />
+        <ActionButton
+          text="Start trading"
+          variant="primary"
+          width="100%"
+          height="48px"
+          onClick={() => startCheckout({ offeringId, slug })}
+        />
       </div>
     </div>
   )
