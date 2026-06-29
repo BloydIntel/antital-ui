@@ -7,18 +7,31 @@ import { MarketType, RiskLevel, Sector } from "@/types/dashboard";
 
 interface MarketFilterBarProps {
     marketType: MarketType;
-    activeSector: Sector; // Updated from string
+    activeSector: Sector;
     onSectorChange: (sector: Sector) => void;
     activeRisk: RiskLevel | "all";
     onRiskChange: (risk: RiskLevel | "all") => void;
     tradeType?: "buy" | "sell";
     onTradeTypeChange?: (type: "buy" | "sell") => void;
     onRefresh?: () => void;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
 }
 
 const sectors: Sector[] = ["All Sector", "Technology", "Health", "Energy", "Agriculture"];
 
-export function MarketFilterBar({ marketType, activeSector, onSectorChange, activeRisk, onRiskChange, tradeType, onTradeTypeChange, onRefresh }: MarketFilterBarProps) {
+export function MarketFilterBar({
+    marketType,
+    activeSector,
+    onSectorChange,
+    activeRisk,
+    onRiskChange,
+    tradeType,
+    onTradeTypeChange,
+    onRefresh,
+    searchValue = "",
+    onSearchChange,
+}: MarketFilterBarProps) {
 
     const isPrimary = marketType === "primary";
 
@@ -87,6 +100,8 @@ export function MarketFilterBar({ marketType, activeSector, onSectorChange, acti
                         <Input
                             type="search"
                             placeholder="Search"
+                            value={searchValue}
+                            onChange={(event) => onSearchChange?.(event.target.value)}
                             className="h-[40px] px-4 pr-12 bg-[#EAEAEA] border-[#EAEAEA] rounded-xs text-[16px]"
                             style={TYPOGRAPHY.body}
                         />

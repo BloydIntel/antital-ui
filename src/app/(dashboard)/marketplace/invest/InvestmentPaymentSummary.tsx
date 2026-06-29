@@ -7,10 +7,20 @@ interface InvestmentPaymentSummaryProps {
     userId: string;
     formattedDate: string;
     platformFee: number;
-    totalAmount: number
+    totalAmount: number;
+    subtotal?: number;
 }
 
-export function InvestmentPaymentSummary({ unitCount, unitPrice, userId, formattedDate, platformFee, totalAmount }: InvestmentPaymentSummaryProps) {
+export function InvestmentPaymentSummary({
+    unitCount,
+    unitPrice,
+    userId,
+    formattedDate,
+    platformFee,
+    totalAmount,
+    subtotal,
+}: InvestmentPaymentSummaryProps) {
+    const resolvedSubtotal = subtotal ?? unitCount * unitPrice;
     return (
         <div className="space-y-6">
             {/* User ID Card */}
@@ -48,7 +58,7 @@ export function InvestmentPaymentSummary({ unitCount, unitPrice, userId, formatt
 
                     <div className="flex justify-between text-[#505050] text-[16px]" style={TYPOGRAPHY.body}>
                         <p>Subtotal:</p>
-                        <p className="text-[#1B1B1B]">₦{(unitCount * unitPrice).toLocaleString()}.00</p>
+                        <p className="text-[#1B1B1B]">₦{resolvedSubtotal.toLocaleString()}.00</p>
                     </div>
 
                     <div className="flex justify-between text-[#505050] text-[16px]" style={TYPOGRAPHY.body}>

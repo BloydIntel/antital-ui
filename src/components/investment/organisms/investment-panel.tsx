@@ -2,19 +2,21 @@ import React from 'react'
 import { Gauge, Bookmark } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { ActionButton } from '@/components/investment/molecules/action-button'
-import { useRouter } from "next/navigation"
 import type { OfferingFunding } from '@/types/investment'
 import { formatNaira, formatNumber } from '@/lib/investment-mappers'
+import { useStartInvestmentCheckout } from '@/hooks/use-start-investment-checkout'
 
 interface InvestmentPanelProps {
+  offeringId: number
+  slug: string
   funding: OfferingFunding
 }
 
-export function InvestmentPanel({ funding }: InvestmentPanelProps) {
-  const router = useRouter()
+export function InvestmentPanel({ offeringId, slug, funding }: InvestmentPanelProps) {
+  const startCheckout = useStartInvestmentCheckout()
 
   const handleStartTrading = () => {
-    router.push("/sign-in?from=trading")
+    startCheckout({ offeringId, slug })
   }
 
   return (

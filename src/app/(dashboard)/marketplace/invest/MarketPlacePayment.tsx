@@ -1,17 +1,64 @@
 "use client"
 
 import { PaymentApplicationFee } from '@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentApplicationFee'
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useInvestmentCheckoutOffering } from '@/hooks/use-investment-checkout-offering'
+import { parseCheckoutSearchParams } from '@/lib/investment-checkout'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
-
 export function MarketPlacePayment() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const checkoutContext = parseCheckoutSearchParams(searchParams)
+    const { data: shell, isLoading, isError } = useInvestmentCheckoutOffering(
+        checkoutContext?.slug ?? null
+    )
 
-    const companyName = searchParams.get('company');
-    const unitPrice = Number(searchParams.get("price")) || 0;
-    const minInvestment = Number(searchParams.get("minInvestment"))
+    const companyName = shell?.offering.name
+    const unitPrice = shell?.funding.sharePrice
+    const minInvestment = shell?.funding.minInvestment
+
+    if (!checkoutContext) {
+        return (
+            <div className="px-4 lg:px-8 min-h-screen flex items-center justify-center">
+                <div className="max-w-md text-center space-y-4">
+                    <p className="text-[#2C2C2C] text-lg">This checkout link is missing offering details.</p>
+                    <button
+                        type="button"
+                        className="text-[#7BA147] underline"
+                        onClick={() => router.push('/marketplace')}
+                    >
+                        Back to marketplace
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <div className="px-4 lg:px-8 min-h-screen flex items-center justify-center">
+                <p className="text-[#505050]">Loading offering details…</p>
+            </div>
+        )
+    }
+
+    if (isError || !shell || !companyName || unitPrice == null || minInvestment == null) {
+        return (
+            <div className="px-4 lg:px-8 min-h-screen flex items-center justify-center">
+                <div className="max-w-md text-center space-y-4">
+                    <p className="text-[#2C2C2C] text-lg">Unable to load this investment offering.</p>
+                    <button
+                        type="button"
+                        className="text-[#7BA147] underline"
+                        onClick={() => router.push('/marketplace')}
+                    >
+                        Back to marketplace
+                    </button>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className='px-4 lg:px-8 min-h-screen'>
@@ -32,7 +79,13 @@ export function MarketPlacePayment() {
             </div>
 
             <div className='lg:pt-14'>
-                <PaymentApplicationFee companyName={companyName!} unitPrice={unitPrice} minInvestment={minInvestment} />
+                <PaymentApplicationFee
+                    companyName={companyName}
+                    unitPrice={unitPrice}
+                    minInvestment={minInvestment}
+                    offeringId={checkoutContext.offeringId}
+                    offeringSlug={checkoutContext.slug}
+                />
             </div>
         </div>
     )

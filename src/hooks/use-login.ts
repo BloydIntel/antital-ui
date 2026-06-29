@@ -10,7 +10,11 @@ import { resolvePostLoginPath } from "@/lib/post-login-navigation";
 
 export type { LoginRequest, LoginResponse };
 
-const useLogin = () => {
+export interface UseLoginOptions {
+  fromTrading?: boolean;
+}
+
+const useLogin = (options?: UseLoginOptions) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -24,7 +28,9 @@ const useLogin = () => {
         tokenStorage.setRefreshToken(data.refreshToken, persistent);
       queryClient.invalidateQueries({ queryKey: CACHE_KEY_USER });
 
-      const path = await resolvePostLoginPath(data);
+      const path = await resolvePostLoginPath(data, {
+        fromTrading: options?.fromTrading,
+      });
       requestAnimationFrame(() => {
         router.replace(path);
       });
