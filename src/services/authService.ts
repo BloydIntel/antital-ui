@@ -12,6 +12,7 @@ import type {
   ResendVerificationRequest,
   SignupRequest,
   VerifyEmailRequest,
+  ChangePasswordRequest,
 } from "@/types/auth";
 import type { ApiResponse } from "@/types/api";
 
@@ -24,6 +25,7 @@ export type {
   ResendVerificationRequest,
   SignupRequest,
   VerifyEmailRequest,
+  ChangePasswordRequest,
 };
 
 const loginApi = new ApiClient<LoginRequest, LoginResponse>("/api/auth/login");
@@ -81,6 +83,17 @@ const authService = {
     }
   },
   deleteAccount: (userId: number) => usersApi.delete(String(userId)),
+  changePassword: async (payload: ChangePasswordRequest): Promise<void> => {
+    try {
+      const response = await request.post<ApiResponse<void>>(
+        "/api/auth/change-password",
+        payload
+      );
+      unwrap(response.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   logout,
 };
 
