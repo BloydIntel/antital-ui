@@ -6,6 +6,7 @@ import {
   ChartLine,
   Eye,
   LayoutDashboard,
+  LogOut,
   MessageCircle,
   MessageCircleQuestionMark,
   PiggyBank,
@@ -85,7 +86,7 @@ const data = {
         {
           title: "Log Out",
           url: "/log-out",
-          icon: LayoutDashboard,
+          icon: LogOut,
         },
 
       ],

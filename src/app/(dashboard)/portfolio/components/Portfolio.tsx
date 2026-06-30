@@ -9,6 +9,7 @@ import { SectionCards } from "@/app/(dashboard)/dashboard/components/section-car
 import { useDashboard } from "@/hooks/use-dashboard"
 import { buildDashboardMonthOptions, toDashboardPeriod } from "@/lib/dashboard-period"
 import { showApiErrorToast } from "@/lib/error-feedback"
+import { useUserStore } from "@/store/userStore"
 
 export function Portfolio() {
     const router = useRouter()
@@ -17,11 +18,20 @@ export function Portfolio() {
     const period = toDashboardPeriod(selectedMonth)
     const { data, isLoading, isError, error } = useDashboard(period)
 
+    const userType = useUserStore((state) => state.userType)
+    const [hasHydrated, setHasHydrated] = useState(false)
+
+    useEffect(() => {
+        setHasHydrated(true)
+    }, [])
+
     useEffect(() => {
         if (isError) {
             showApiErrorToast(error, "Unable to load portfolio.")
         }
     }, [isError, error])
+
+    const currentUserType = hasHydrated ? userType : "individual"
 
     return (
         <main>
@@ -32,6 +42,7 @@ export function Portfolio() {
                 months={months}
                 onMonthChange={setSelectedMonth}
                 onButtonClick={() => router.push("/marketplace")}
+                userType={currentUserType}
             />
 
             <div className="@container/main px-4 lg:px-6 space-y-6">
