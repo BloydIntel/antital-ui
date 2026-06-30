@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY } from "@/constants/styles"
 import type { DashboardSummary } from "@/types/dashboard-api"
+import { UserType } from "@/store/userStore"
 
 const formatCurrency = (val: string | number) => {
   const numericValue = typeof val === "string"
@@ -142,7 +143,7 @@ interface SectionCardsProps {
   summary?: DashboardSummary
   isLoading?: boolean
   state?: boolean
-  userType?: "individual" | "corporate" | "fundraiser"
+  userType?: UserType
 }
 
 export function SectionCards({ summary, isLoading = false, state = false, userType = "individual" }: SectionCardsProps) {

@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+export type UserType = "individual" | "corporate" | "fundraiser"
+
 export interface UserData {
     userId: string | null
     firstName: string | null
@@ -10,7 +12,7 @@ export interface UserData {
     city: string | null
     state: string | null
     profilePictureUrl: string | null
-    userType: "individual" | "corporate" | "fundraiser"
+    userType: UserType
     isKycCompleted: boolean
 }
 

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
 import { DashboardSubHeader } from "@/components/dashboard/organisms/DashboardSubHeader"
 import { PortfolioStatChart } from "@/app/(dashboard)/dashboard/components/chart-area-interactive"
 import { DataTable } from "@/app/(dashboard)/dashboard/components/data-table"
@@ -17,7 +16,6 @@ import { InvestorBreakdownChart } from "@/app/(dashboard)/dashboard/components/i
 import { FundraisingMilestones } from "@/app/(dashboard)/dashboard/components/fundraising-milestones"
 
 export function Dashboard() {
-    const router = useRouter()
     const months = useMemo(() => buildDashboardMonthOptions(), [])
     const [selectedMonth, setSelectedMonth] = useState("This month")
     const period = toDashboardPeriod(selectedMonth)
@@ -46,6 +44,8 @@ export function Dashboard() {
 
     const displayName = resolveUserDisplayName(user)
 
+    const currentUserType = hasHydrated ? userType : "individual"
+
     return (
         <main>
             <DashboardSubHeader
@@ -58,14 +58,14 @@ export function Dashboard() {
                 selectedMonth={selectedMonth}
                 months={months}
                 onMonthChange={setSelectedMonth}
-                onButtonClick={() => router.push("/marketplace")}
+                userType={currentUserType}
             />
 
             <div className="@container/main space-y-6">
                 <SectionCards
                     summary={data?.summary}
                     isLoading={isLoading}
-                    userType={hasHydrated ? userType : "individual"}
+                    userType={currentUserType}
                 />
                 {userType !== "fundraiser" ?
                     <PortfolioStatChart
@@ -89,7 +89,7 @@ export function Dashboard() {
                 <DataTable
                     holdings={data?.holdings}
                     isLoading={isLoading}
-                    userType={hasHydrated ? userType : "individual"}
+                    userType={currentUserType}
                 />
                 : <FundraisingMilestones />
 
