@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircle2 } from "lucide-react"
+import { Check } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY } from "@/constants/styles"
@@ -28,7 +28,7 @@ export function FundingProgress({
     const isThresholdReached = raisedAmount >= minimumThreshold
 
     // SVG Donut Chart Configurations
-    const radius = 70
+    const radius = 65
     const circumference = 2 * Math.PI * radius
     const strokeDashoffset = circumference - (percentageOfTarget / 100) * circumference
 
@@ -58,7 +58,7 @@ export function FundingProgress({
 
             <CardContent className="p-0">
                 {/* Main Content Layout Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-6 pb-6 pt-2 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-6 pb-10 pt-2 items-center">
 
                     {/* Left Side: SVG Donut Chart Ring */}
                     <div className="flex justify-center md:justify-start items-center relative w-full max-w-[240px] mx-auto md:mx-0">
@@ -69,7 +69,7 @@ export function FundingProgress({
                                 cy="80"
                                 r={radius}
                                 className="stroke-[#EDF1D6]"
-                                strokeWidth="20"
+                                strokeWidth="23"
                                 fill="transparent"
                             />
                             {/* Active Raised Capital Filled Ring */}
@@ -78,7 +78,7 @@ export function FundingProgress({
                                 cy="80"
                                 r={radius}
                                 className={cn("stroke-[#7D8A26] transition-all duration-500", isLoading && "animate-pulse")}
-                                strokeWidth="20"
+                                strokeWidth="23"
                                 fill="transparent"
                                 strokeDasharray={circumference}
                                 strokeDashoffset={strokeDashoffset}
@@ -88,12 +88,12 @@ export function FundingProgress({
                     </div>
 
                     {/* Right Side: Data Breakdowns & Custom Progress Sliders */}
-                    <div className="space-y-5 w-full">
+                    <div className="space-y-6 w-full">
                         <div>
-                            <h2 className="text-[40px] font-bold tracking-tight text-[#1A1C1E] leading-none">
+                            <h2 className="text-[28px] tracking-tight text-[#1B1B1B] leading-none" style={TYPOGRAPHY.heading}>
                                 {isLoading ? "₦0" : formatToMillions(raisedAmount)}
                             </h2>
-                            <p className="text-sm text-[#555555] mt-1">
+                            <p className="text-[16px] text-[#505050] mt-2">
                                 of {formatToMillions(targetAmount)} funding target
                             </p>
                         </div>
@@ -102,21 +102,21 @@ export function FundingProgress({
                         <div className="space-y-4">
                             {/* Minimum Threshold */}
                             <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-medium text-[#555555]">
+                                <div className="flex justify-between text-[14px] text-[#505050]" style={TYPOGRAPHY.body} >
                                     <span>Minimum threshold reached</span>
-                                    <span className="font-bold text-[#1A1C1E]">{formatToMillions(minimumThreshold)}</span>
+                                    <span className="font-medium text-[16px] text-[#505050]">{formatToMillions(minimumThreshold)}</span>
                                 </div>
                                 <div className="w-full h-2 bg-[#EFF3E4] rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-[#7D9433] rounded-full transition-all"
+                                        className="h-full bg-[#7D8A26] rounded-full transition-all"
                                         style={{ width: `${Math.min((raisedAmount / minimumThreshold) * 100, 100)}%` }}
                                     />
                                 </div>
 
                                 {/* Condition pill matching active status */}
                                 {isThresholdReached && (
-                                    <div className="inline-flex items-center gap-1.5 bg-[#EFF3E4] text-[#4A5B18] px-2.5 py-1 rounded-full text-xs font-semibold mt-1">
-                                        <CheckCircle2 className="size-3.5 text-[#7D9433] fill-current stroke-white" />
+                                    <div className="inline-flex items-center gap-1.5 bg-[#DCE3AD] text-[#7D8A26] px-2.5 py-1 rounded-full text-xs font-semibold mt-1">
+                                        <Check className="size-3.5 text-[#7D8A26] stroke-[#7D8A26]" />
                                         Minimum threshold reached
                                     </div>
                                 )}
@@ -124,13 +124,13 @@ export function FundingProgress({
 
                             {/* Maximum Cap */}
                             <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-medium text-[#555555]">
+                                <div className="flex justify-between text-[14px] text-[#505050]" style={TYPOGRAPHY.body} >
                                     <span>Maximum cap</span>
-                                    <span className="font-bold text-[#1A1C1E]">{formatToMillions(targetAmount)}</span>
+                                    <span className="font-medium text-[16px] text-[#505050]">{formatToMillions(targetAmount)}</span>
                                 </div>
                                 <div className="w-full h-2 bg-[#EFF3E4] rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-[#7D9433] rounded-full transition-all"
+                                        className="h-full bg-[#7D8A26] rounded-full transition-all"
                                         style={{ width: `${percentageOfTarget}%` }}
                                     />
                                 </div>
@@ -140,20 +140,20 @@ export function FundingProgress({
                 </div>
 
                 {/* Bottom Metadata Ribbon Matrix */}
-                <div className="grid grid-cols-3 border-t border-[#EAEAEA] bg-[#F9FAFA] text-center md:text-left">
-                    <div className="p-4 border-r border-[#EAEAEA]">
-                        <p className="text-[11px] text-[#7A7A7A] uppercase font-bold tracking-wider">Minimum threshold</p>
-                        <p className="text-sm md:text-base font-bold text-[#1A1C1E] mt-0.5">
+                <div className="grid grid-cols-1 lg:grid-cols-3 bg-[#F4F5F7] p-3 text-center md:text-left" style={TYPOGRAPHY.body}>
+                    <div className="border-b lg:border-b-0 lg:border-r pb-2 lg:pb-0 border-[#A8A8A8]">
+                        <p className="text-[14px] text-[#858585] tracking-wider">Minimum threshold</p>
+                        <p className="text-sm md:text-base font-medium text-[#2C2C2C] mt-0.5">
                             ₦{new Intl.NumberFormat("en-NG").format(minimumThreshold)}
                         </p>
                     </div>
-                    <div className="p-4 border-r border-[#EAEAEA] md:pl-6">
-                        <p className="text-[11px] text-[#7A7A7A] uppercase font-bold tracking-wider">Current velocity</p>
-                        <p className="text-sm md:text-base font-bold text-[#1A1C1E] mt-0.5">{currentVelocity}</p>
+                    <div className="border-b lg:border-b-0 lg:border-r py-2 lg:py-0 border-[#A8A8A8] md:pl-6">
+                        <p className="text-[14px] text-[#858585] tracking-wider">Current velocity</p>
+                        <p className="text-sm md:text-base font-medium text-[#2C2C2C] mt-0.5">{currentVelocity}</p>
                     </div>
-                    <div className="p-4 md:pl-6">
-                        <p className="text-[11px] text-[#7A7A7A] uppercase font-bold tracking-wider">Confidence rate</p>
-                        <p className="text-sm md:text-base font-bold text-[#1A1C1E] mt-0.5">{confidenceRate}%</p>
+                    <div className="md:pl-6 pt-2 lg:pt-0">
+                        <p className="text-[14px] text-[#858585] tracking-wider">Confidence rate</p>
+                        <p className="text-sm md:text-base font-medium text-[#2C2C2C] mt-0.5">{confidenceRate}%</p>
                     </div>
                 </div>
             </CardContent>

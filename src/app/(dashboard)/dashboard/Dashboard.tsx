@@ -13,6 +13,8 @@ import { showApiErrorToast } from "@/lib/error-feedback"
 import { resolveUserDisplayName } from "@/lib/user-display-name"
 import { useUserStore } from "@/store/userStore"
 import { FundingProgress } from "@/app/(dashboard)/dashboard/components/funding-progress"
+import { InvestorBreakdownChart } from "@/app/(dashboard)/dashboard/components/investor-breakdown-chart"
+import { FundraisingMilestones } from "@/app/(dashboard)/dashboard/components/fundraising-milestones"
 
 export function Dashboard() {
     const router = useRouter()
@@ -71,21 +73,27 @@ export function Dashboard() {
                         activeDeals={data?.activeDeals}
                         isLoading={isLoading}
                     />
-                    : <div className="grid grid-cols-10">
-                        <div className="col-span-7">
+                    : <div className="grid grid-cols-1 xl:grid-cols-10 mb-12 gap-5">
+                        <div className="xl:col-span-7">
                             <FundingProgress />
+                        </div>
+                        <div className="xl:col-span-3">
+                            <InvestorBreakdownChart />
                         </div>
                     </div>
                 }
             </div>
 
-            {/* Passes the dynamic userType safely down once state is hydrated */}
-            <DataTable
-                holdings={data?.holdings}
-                isLoading={isLoading}
-                // userType={hasHydrated ? userType : "corporate"}
-                userType={"fundraiser"}
-            />
+
+            {userType !== "fundraiser" ?
+                <DataTable
+                    holdings={data?.holdings}
+                    isLoading={isLoading}
+                    userType={hasHydrated ? userType : "individual"}
+                />
+                : <FundraisingMilestones />
+
+            }
         </main>
     )
 }

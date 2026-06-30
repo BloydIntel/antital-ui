@@ -75,7 +75,7 @@ export function DashboardSubHeader({
                     label={buttonLabel}
                     onClick={onButtonClick}
                     icon={<Plus className="h-5 w-5" />}
-                    className="text-[16px] mt-0 h-[42px] w-fit flex-row-reverse font-normal rounded-md"
+                    className="text-[16px] my-0 h-[42px] w-fit flex-row-reverse font-normal rounded-md"
                 />
             </div>
         </div>
