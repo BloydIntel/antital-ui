@@ -7,9 +7,12 @@ import { Button } from '@/components/ui/button'
 import { RiskBadge } from '../atoms/risk-badge'
 import { StatItem } from '../molecules/stat-item'
 import { FundingProgress } from '../molecules/funding-progress'
+import { buildCheckoutPath } from '@/lib/investment-checkout'
 
 export interface InvestmentCardData {
   id: string
+  offeringId: number
+  slug: string
   name: string
   category: string
   description: string
@@ -25,9 +28,10 @@ export interface InvestmentCardData {
 
 interface InvestmentCardProps {
   data: InvestmentCardData
+  showInvestAction?: boolean
 }
 
-export function InvestmentCard({ data }: InvestmentCardProps) {
+export function InvestmentCard({ data, showInvestAction = false }: InvestmentCardProps) {
   const {
     id,
     name,
@@ -144,22 +148,46 @@ export function InvestmentCard({ data }: InvestmentCardProps) {
               />
             </div>
 
-            {/* View Details Button - width: 365px, height: 48px from Figma */}
-            <Button
-              variant="outline"
-              className="h-12 w-full max-w-[326px] md:max-w-[365px] bg-white dark:bg-white border-[#365852] text-[#365852] [&:hover]:bg-[#365852] [&:hover]:text-white [&:hover]:border-[#365852] dark:[&:hover]:bg-[#365852] dark:[&:hover]:text-white dark:[&:hover]:border-[#365852] rounded-lg shadow-none [&:hover]:shadow-[0_6px_0px_rgba(0,0,0,0.25)] transition-all duration-300"
-              style={{
-                fontFamily: 'var(--font-rethink-sans)',
-                fontWeight: 500,
-                fontSize: '16px',
-                lineHeight: '21px',
-              }}
-              asChild
-            >
-              <Link href={`/explore/${id}`}>
-                View Details
-              </Link>
-            </Button>
+            {/* Actions */}
+            <div className={`flex w-full max-w-[326px] md:max-w-[365px] gap-3 ${showInvestAction ? "flex-col sm:flex-row" : ""}`}>
+              <Button
+                variant="outline"
+                className={`h-12 bg-white dark:bg-white border-[#365852] text-[#365852] [&:hover]:bg-[#365852] [&:hover]:text-white [&:hover]:border-[#365852] dark:[&:hover]:bg-[#365852] dark:[&:hover]:text-white dark:[&:hover]:border-[#365852] rounded-lg shadow-none [&:hover]:shadow-[0_6px_0px_rgba(0,0,0,0.25)] transition-all duration-300 ${showInvestAction ? "flex-1 w-full" : "w-full"}`}
+                style={{
+                  fontFamily: 'var(--font-rethink-sans)',
+                  fontWeight: 500,
+                  fontSize: '16px',
+                  lineHeight: '21px',
+                }}
+                asChild
+              >
+                <Link href={`/explore/${id}`}>
+                  View Details
+                </Link>
+              </Button>
+
+              {showInvestAction && (
+                <Button
+                  className="h-12 flex-1 w-full bg-[#00332C] text-white [&:hover]:bg-[#00332C] rounded-lg shadow-none transition-all duration-300"
+                  style={{
+                    fontFamily: 'var(--font-rethink-sans)',
+                    fontWeight: 500,
+                    fontSize: '16px',
+                    lineHeight: '21px',
+                  }}
+                  asChild
+                >
+                  <Link
+                    href={buildCheckoutPath({
+                      offeringId: data.offeringId,
+                      slug: data.slug,
+                    })}
+                  >
+                    Invest Now
+                  </Link>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

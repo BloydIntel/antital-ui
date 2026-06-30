@@ -2,18 +2,20 @@
 
 import { TYPOGRAPHY } from '@/constants/styles'
 import { InvestmentData, MarketType, RiskLevel, Sector } from '@/types/dashboard'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import investmentDataRaw from '@/data/dashboardInvestmentData.json'
 import { MarketFilterBar } from '@/components/marketplace/organisms/MarketplaceFilterBar'
-import { PrimaryMarketCard } from '@/components/marketplace/organisms/PrimaryMarketCard'
 import { SecondaryMarketCard } from '@/components/marketplace/organisms/SecondaryMarketCard'
+import { InvestmentCard } from '@/components/investment/organisms/investment-card'
 import { DataTable } from '../../dashboard/components/data-table'
 import { useSearchParams } from 'next/navigation'
+import { useInvestments } from '@/hooks/use-investments'
+import { toInvestmentCardData } from '@/lib/investment-mappers'
 
 type MarketFilters = {
     sector: Sector;
     risk: RiskLevel | "all";
-    tradeType?: "buy" | "sell"; // Optional because Primary doesn't use it
+    tradeType?: "buy" | "sell";
 };
 
 const marketTypes = [
@@ -23,6 +25,7 @@ const marketTypes = [
 
 const INVESTMENTS = investmentDataRaw as InvestmentData[]
 
+const PRIMARY_PAGE_SIZE = 24
 
 export function Marketplace() {
     const searchParams = useSearchParams();
@@ -32,19 +35,38 @@ export function Marketplace() {
         tabParam === "secondary" ? "secondary" : "primary"
     )
 
-    // Independent states for Primary Market
     const [primaryFilters, setPrimaryFilters] = useState({
         sector: "All Sector" as Sector,
         risk: "all" as RiskLevel | "all",
     });
 
-    // Independent states for Secondary Market
+    const [primarySearch, setPrimarySearch] = useState("");
+
     const [secondaryFilters, setSecondaryFilters] = useState({
         sector: "All Sector" as Sector,
         risk: "all" as RiskLevel | "all",
         tradeType: "buy" as "buy" | "sell"
     });
 
+    const primaryApiParams = useMemo(() => ({
+        page: 1,
+        pageSize: PRIMARY_PAGE_SIZE,
+        category: primaryFilters.sector === "All Sector" ? undefined : primaryFilters.sector,
+        risk: primaryFilters.risk === "all" ? undefined : primaryFilters.risk,
+        search: primarySearch.trim() || undefined,
+    }), [primaryFilters, primarySearch]);
+
+    const {
+        data: primaryData,
+        isLoading: isPrimaryLoading,
+        isError: isPrimaryError,
+        refetch: refetchPrimary,
+    } = useInvestments(primaryApiParams);
+
+    const primaryItems = useMemo(
+        () => primaryData?.items.map(toInvestmentCardData) ?? [],
+        [primaryData]
+    );
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isAtBottom, setIsAtBottom] = useState(false);
@@ -67,27 +89,19 @@ export function Marketplace() {
         }
     };
 
-    const filteredData = INVESTMENTS.filter((item) => {
-        const marketMatch = item.market === activeMarket;
-
-        const filters = activeMarket === "primary" ? primaryFilters : secondaryFilters;
-
-        const sectorMatch = filters.sector === "All Sector" || item.sector === filters.sector;
-        const riskMatch = filters.risk === "all" || item.risk === filters.risk;
-
-        const tradeMatch = activeMarket === "primary" || item.tradeType === secondaryFilters.tradeType;
-
+    const filteredSecondaryData = INVESTMENTS.filter((item) => {
+        const marketMatch = item.market === "secondary";
+        const sectorMatch = secondaryFilters.sector === "All Sector" || item.sector === secondaryFilters.sector;
+        const riskMatch = secondaryFilters.risk === "all" || item.risk === secondaryFilters.risk;
+        const tradeMatch = item.tradeType === secondaryFilters.tradeType;
         return marketMatch && sectorMatch && riskMatch && tradeMatch;
     });
 
     const handleScrollAction = () => {
         if (scrollRef.current) {
-
             if (isAtBottom) {
-                // Scroll back to top
                 scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                // Scroll down
                 scrollRef.current.scrollBy({ top: 150, behavior: 'smooth' });
             }
         }
@@ -96,10 +110,15 @@ export function Marketplace() {
     const onScroll = () => {
         if (scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-            // If we are within 20px of the bottom, flip the arrow
             setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 20);
         }
     }
+
+    const showPrimaryEmpty = !isPrimaryLoading && !isPrimaryError && primaryItems.length === 0;
+    const showSecondaryEmpty = filteredSecondaryData.length === 0;
+    const hasResults = activeMarket === "primary"
+        ? !isPrimaryLoading && !isPrimaryError && primaryItems.length > 0
+        : filteredSecondaryData.length > 0;
 
     return (
         <main>
@@ -111,7 +130,6 @@ export function Marketplace() {
                     Explore investment opportunities in both primary and secondary market
                 </p>
 
-                {/* Tab Navigation */}
                 <div className="flex gap-3 mb-6">
                     {marketTypes.map((market) => (
                         <button
@@ -152,24 +170,59 @@ export function Marketplace() {
                     tradeType={secondaryFilters.tradeType}
                     onTradeTypeChange={(val) => updateFilter('tradeType', val)}
 
-                    onRefresh={() => console.log("Refreshing data...")}
+                    onRefresh={() => {
+                        if (activeMarket === "primary") {
+                            void refetchPrimary();
+                        }
+                    }}
+                    searchValue={activeMarket === "primary" ? primarySearch : undefined}
+                    onSearchChange={activeMarket === "primary" ? setPrimarySearch : undefined}
                 />
 
-                {/* Conditional Rendering Area */}
                 <div
                     ref={scrollRef}
                     onScroll={onScroll}
                     className={`relative flex flex-col ${activeMarket === "primary" ? "max-h-[710px]" : "max-h-[520px]"} overflow-y-auto px-0 pt-2 mb-12 scrollbar-hide`}
                 >
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                        {filteredData.map((investment) => (
-                            activeMarket === "primary"
-                                ? <PrimaryMarketCard key={investment.id} data={investment} />
-                                : <SecondaryMarketCard key={investment.id} data={investment} tradeType={secondaryFilters.tradeType} />
-                        ))}
-                    </div>
+                    {activeMarket === "primary" ? (
+                        <>
+                            {isPrimaryLoading && (
+                                <p className="text-[#505050] text-center py-12" style={TYPOGRAPHY.body}>
+                                    Loading investment opportunities...
+                                </p>
+                            )}
 
-                    {filteredData.length === 0 && (
+                            {isPrimaryError && (
+                                <p className="text-destructive text-center py-12" style={TYPOGRAPHY.body}>
+                                    Unable to load investment opportunities.
+                                </p>
+                            )}
+
+                            {!isPrimaryLoading && !isPrimaryError && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 place-items-center">
+                                    {primaryItems.map((investment) => (
+                                        <InvestmentCard
+                                            key={investment.id}
+                                            data={investment}
+                                            showInvestAction
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                            {filteredSecondaryData.map((investment) => (
+                                <SecondaryMarketCard
+                                    key={investment.id}
+                                    data={investment}
+                                    tradeType={secondaryFilters.tradeType}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {(activeMarket === "primary" ? showPrimaryEmpty : showSecondaryEmpty) && (
                         <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-xl">
                             <p className="text-[#505050]" style={TYPOGRAPHY.body}>
                                 No results match your selected filters. Try adjusting your criteria.
@@ -177,23 +230,24 @@ export function Marketplace() {
                         </div>
                     )}
 
-                    {filteredData.length !== 0 && (<div className="sticky bottom-0 left-1/2 -translate-x-1/2 z-10 w-fit mx-auto">
-                        <button
-                            onClick={handleScrollAction}
-                            className="w-10 h-10 rounded-full bg-[#344D44] flex items-center justify-center text-white shadow-lg transition-all active:scale-90 cursor-pointer"
-                        >
-                            <ChevronDownIcon
-                                className={`transition-transform duration-300 ${isAtBottom ? 'rotate-180' : ''}`}
-                            />
-                        </button>
-                    </div>)}
+                    {hasResults && (
+                        <div className="sticky bottom-0 left-1/2 -translate-x-1/2 z-10 w-fit mx-auto">
+                            <button
+                                onClick={handleScrollAction}
+                                className="w-10 h-10 rounded-full bg-[#344D44] flex items-center justify-center text-white shadow-lg transition-all active:scale-90 cursor-pointer"
+                            >
+                                <ChevronDownIcon
+                                    className={`transition-transform duration-300 ${isAtBottom ? 'rotate-180' : ''}`}
+                                />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
             <div>
                 <DataTable state={true} />
             </div>
-
         </main>
     )
 }
@@ -205,4 +259,3 @@ function ChevronDownIcon({ className }: { className?: string }) {
         </svg>
     );
 }
-

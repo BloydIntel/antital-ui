@@ -11,30 +11,48 @@ import { PaymentMethodSelect } from "@/components/onboarding/organisms/fundraise
 import { PaymentCardDetails } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentCardDetails"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
-import { useUserStore } from "@/store/userStore"
 import { InvestmentPaymentSummary } from "@/app/(dashboard)/marketplace/invest/InvestmentPaymentSummary"
 import { PaymentSuccessPage } from "@/components/marketplace/organisms/PaymentSuccessPage"
 import onboardingService from "@/services/onboardingService"
+import investmentOrderService from "@/services/investmentOrderService"
 import { showApiErrorToast } from "@/lib/error-feedback"
+import { useCurrentUser } from "@/hooks/use-current-user"
+import { getUserIdFromAccessToken } from "@/lib/jwt"
+import { tokenStorage } from "@/lib/token-storage"
+import { saveCheckoutOrderId } from "@/lib/investment-checkout"
+import type { CreateInvestmentOrderResponse } from "@/types/investment-order"
 
 interface PaymentApplicationFeeProps {
-    companyName?: string //for primary payment page
-    unitPrice?: number //for primary payment page
-    minInvestment?: number //for primary payment page
+    companyName?: string
+    unitPrice?: number
+    minInvestment?: number
+    offeringId?: number
+    offeringSlug?: string
 }
 
 const FUNDRAISER_PAYMENT_STATE_KEY = "fundraiser_application_fee_state";
 
-export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }: PaymentApplicationFeeProps) {
+export function PaymentApplicationFee({
+    companyName,
+    unitPrice,
+    minInvestment,
+    offeringId,
+}: PaymentApplicationFeeProps) {
 
     const pathName = usePathname()
     const router = useRouter();
     const { formData, updateFormData } = useOnboardingStore();
+    const { data: currentUser } = useCurrentUser();
 
-    const userId = useUserStore((state) => state.userId);
+    const tokenUserId = getUserIdFromAccessToken(tokenStorage.getAccessToken());
+    const displayUserId =
+        tokenUserId?.toString() ??
+        (currentUser?.id != null ? String(currentUser.id) : null);
 
     const [unitCount, setUnitCount] = useState(1);
     const [showError, setShowError] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [checkoutOrder, setCheckoutOrder] = useState<CreateInvestmentOrderResponse | null>(null);
 
     const [subStepIndex, setSubStepIndex] = useState(0);
     const [method, setMethod] = useState<PaymentMethod | null>(formData.paymentMethod);
@@ -83,7 +101,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
             return PAYMENT_SUBSTEPS.filter((step) => step !== "investment-summary" && step !== "success");
         }
 
-        return PAYMENT_SUBSTEPS;
+        return PAYMENT_SUBSTEPS.filter((step) => step !== "details");
     }, [isFundraiserPaymentPage]);
 
     const currentSubStep = paymentSubSteps[subStepIndex];
@@ -127,20 +145,30 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
             return;
         }
 
+        if (!isFundraiserPaymentPage && currentSubStep === "summary" && offeringId) {
+            try {
+                setIsSubmitting(true);
+                const order = await investmentOrderService.createOrder(offeringId, unitCount);
+                setCheckoutOrder(order);
+            } catch (error) {
+                showApiErrorToast(error, "Unable to create investment order.");
+                return;
+            } finally {
+                setIsSubmitting(false);
+            }
+        }
+
+        if (!isFundraiserPaymentPage && currentSubStep === "method") {
+            if (!method || !checkoutOrder) return;
+            await initializeInvestmentPayment(method);
+            return;
+        }
+
         if (currentSubStep === "method") {
             if (!method) return;
 
-            if (method !== "card") {
-                if (isFundraiserPaymentPage) {
-                    await finalizePayment();
-                } else {
-                    const successIndex = paymentSubSteps.indexOf("success");
-                    if (successIndex !== -1) {
-                        setSubStepIndex(successIndex);
-                    } else {
-                        setSubStepIndex(prev => prev + 1);
-                    }
-                }
+            if (isFundraiserPaymentPage && method !== "card") {
+                await finalizePayment();
                 return;
             }
         }
@@ -159,6 +187,21 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
             await finalizePayment();
         } else {
             setSubStepIndex(prev => prev + 1);
+        }
+    };
+
+    const initializeInvestmentPayment = async (channel: PaymentMethod) => {
+        if (!checkoutOrder) return;
+
+        try {
+            setIsSubmitting(true);
+            const session = await investmentOrderService.initializePayment(checkoutOrder.orderId, channel);
+            saveCheckoutOrderId(checkoutOrder.orderId);
+            window.location.assign(session.authorizationUrl);
+        } catch (error) {
+            showApiErrorToast(error, "Unable to start Paystack checkout.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -212,26 +255,33 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
         }
     };
 
-    const unitPriceValue = unitPrice ?? 0;
-    const minInvestmentValue = minInvestment ?? 0;
+    const unitPriceValue = checkoutOrder?.sharePrice ?? unitPrice ?? 0;
+    const minInvestmentValue = checkoutOrder?.minInvestment ?? minInvestment ?? 0;
 
-    const subtotal = unitCount * unitPriceValue;
-    const platformFee = subtotal * 0.025;
-    const total = subtotal + platformFee;
+    const subtotal = checkoutOrder?.subtotal ?? unitCount * unitPriceValue;
+    const platformFee = checkoutOrder?.platformFee ?? subtotal * 0.025;
+    const total = checkoutOrder?.totalAmount ?? subtotal + platformFee;
     const isBelowMinimum = !isFundraiserPaymentPage && subtotal < minInvestmentValue;
 
     const isNextDisabled = useMemo(() => {
+        if (isSubmitting) return true;
+
         switch (currentSubStep) {
             case "method":
-                return !method;
+                return !method || (!isFundraiserPaymentPage && !checkoutOrder);
             case "details":
                 return !cardData.nameOnCard || !cardData.cardNumber || !cardData.expiry || !cardData.cvv;
             default:
                 return false;
         }
-    }, [currentSubStep, method, cardData]);
+    }, [currentSubStep, method, cardData, isSubmitting, isFundraiserPaymentPage, checkoutOrder]);
 
-    const nextLabel = currentSubStep === "details" ? "Pay" : "Next";
+    const nextLabel = useMemo(() => {
+        if (isSubmitting) return "Please wait…";
+        if (!isFundraiserPaymentPage && currentSubStep === "method") return "Pay with Paystack";
+        if (currentSubStep === "details") return "Pay";
+        return "Next";
+    }, [currentSubStep, isFundraiserPaymentPage, isSubmitting]);
 
     const backLabel = (!isFundraiserPaymentPage && subStepIndex === 0) ? "Cancel" : "Go back";
 
@@ -279,7 +329,7 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
                     {currentSubStep === "summary" && (
                         <PaymentSummary
                             email={formData.loginEmail}
-                            userId={userId || "No user found"}
+                            userId={displayUserId ?? "Loading…"}
                             isFundraiserPaymentPage={isFundraiserPaymentPage}
                             unitCount={unitCount}
                             setUnitCount={setUnitCount}
@@ -292,12 +342,13 @@ export function PaymentApplicationFee({ companyName, unitPrice, minInvestment }:
                     )}
                     {currentSubStep === "investment-summary" && (
                         <InvestmentPaymentSummary
-                            unitCount={unitCount}
-                            unitPrice={unitPrice!}
-                            userId={userId || "No user found"}
+                            unitCount={checkoutOrder?.units ?? unitCount}
+                            unitPrice={unitPriceValue}
+                            userId={displayUserId ?? "Loading…"}
                             formattedDate={formattedDate}
                             platformFee={platformFee}
                             totalAmount={total}
+                            subtotal={subtotal}
                         />
                     )}
                     {currentSubStep === "method" && (

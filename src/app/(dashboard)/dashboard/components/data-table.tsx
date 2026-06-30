@@ -15,15 +15,16 @@ import { TYPOGRAPHY } from "@/constants/styles"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import allInvestmentsRaw from "@/data/dashboardInvestmentData.json";
+import allInvestmentsRaw from "@/data/dashboardInvestmentData.json"
 import { InvestmentData, RISK_COLORS } from "@/types/dashboard"
+import { buildCheckoutPath } from "@/lib/investment-checkout"
 import type { DashboardHolding } from "@/types/dashboard-api"
 
 interface DataTableProps {
   state?: boolean
   holdings?: DashboardHolding[]
   isLoading?: boolean
-  userType?: "individual" | "corporate" | "fundraiser" // Added userType prop safely
+  userType?: "individual" | "corporate" | "fundraiser"
 }
 
 const formatDashboardDate = (value: string) => {
@@ -51,51 +52,49 @@ const mapHoldingsToRows = (holdings: DashboardHolding[]): InvestmentData[] =>
     raised: holding.raisedAmount,
   }))
 
-export function DataTable({ state = false, holdings, isLoading = false, userType }: DataTableProps) {
-
-  const pathname = usePathname();
+export function DataTable({ state = false, holdings, isLoading = false, userType = "individual" }: DataTableProps) {
+  const pathname = usePathname()
   const router = useRouter()
-  const isDashboardPage = pathname === "/dashboard";
-  const isPortfolioPage = pathname === "/portfolio";
-  const isMarketplacePage = pathname === "/marketplace";
-  const isCorporate = userType === "corporate";
+  const isDashboardPage = pathname === "/dashboard"
+  const isPortfolioPage = pathname === "/portfolio"
+  const isMarketplacePage = pathname === "/marketplace"
+  const isCorporate = userType === "corporate"
 
-  const allInvestments = allInvestmentsRaw as InvestmentData[];
+  const allInvestments = allInvestmentsRaw as InvestmentData[]
 
   const getActiveContent = () => {
     if (isDashboardPage || isPortfolioPage) {
       return holdings ? mapHoldingsToRows(holdings) : []
     }
     if (isMarketplacePage) {
-      return allInvestments;
+      return allInvestments
     }
-    return allInvestments.filter(item => item.invested! > 0);
-  };
+    return allInvestments.filter(item => item.invested! > 0)
+  }
 
-  const activeData = getActiveContent();
+  const activeData = getActiveContent()
   const isEmpty = isDashboardPage || isPortfolioPage
     ? !isLoading && activeData.length === 0
-    : !state || activeData.length === 0;
+    : !state || activeData.length === 0
 
-  // Render a clean numeric abbreviation style matching image_bd989b.png (e.g. ₦325K or 25K)
   const formatCorporateCurrency = (amount: number | undefined | null, showSymbol = true) => {
-    if (amount === undefined || amount === null) return showSymbol ? "₦0" : "0";
+    if (amount === undefined || amount === null) return showSymbol ? "₦0" : "0"
 
-    const prefix = showSymbol ? "₦" : "";
+    const prefix = showSymbol ? "₦" : ""
     if (amount >= 1000) {
-      return `${prefix}${(amount / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
+      return `${prefix}${(amount / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`
     }
-    return `${prefix}${amount.toLocaleString()}`;
-  };
+    return `${prefix}${amount.toLocaleString()}`
+  }
 
   const formatCurrency = (amount: number | undefined | null) => {
-    if (amount === undefined || amount === null) return "₦0.00";
+    if (amount === undefined || amount === null) return "₦0.00"
 
     return `₦${amount.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    })}`;
-  };
+    })}`
+  }
 
   return (
     <div className="space-y-6">
@@ -185,7 +184,6 @@ export function DataTable({ state = false, holdings, isLoading = false, userType
             <Table>
               <TableHeader className="border-0">
                 <TableRow className="border-0 hover:bg-transparent">
-                  {/* Dynamic corporate column headers matching your exact visual spec layout */}
                   {isCorporate && isDashboardPage ? (
                     <>
                       <TableHead className="text-[#505050] text-[14px] py-4 w-1/2" style={TYPOGRAPHY.body}>Investment certificate</TableHead>
@@ -231,10 +229,8 @@ export function DataTable({ state = false, holdings, isLoading = false, userType
                   >
                     {isCorporate && isDashboardPage ? (
                       <>
-                        {/* Corporate specific design implementation */}
                         <TableCell className="py-5 font-medium text-[#595959]">{row.name}</TableCell>
                         <TableCell className="py-5 text-[#595959]">
-                          {/* Matches currency presentation logic for MedTech Innovation vs others in screen shot */}
                           {row.name.toLowerCase().includes("medtech")
                             ? formatCorporateCurrency(row.invested, false)
                             : formatCorporateCurrency(row.invested, true)
@@ -243,7 +239,6 @@ export function DataTable({ state = false, holdings, isLoading = false, userType
                       </>
                     ) : (
                       <>
-                        {/* Standard/Individual layout design paths */}
                         <TableCell className="py-4 font-medium text-[#595959]">{row.name}</TableCell>
                         <TableCell className="py-4 text-[#858585]">{row.sector}</TableCell>
 
@@ -287,7 +282,10 @@ export function DataTable({ state = false, holdings, isLoading = false, userType
                                 className="border border-[#A8A8A8] px-4 py-1.5 rounded-lg text-[14px] font-medium hover:bg-gray-50 transition-colors whitespace-nowrap cursor-pointer"
                                 onClick={() =>
                                   router.push(
-                                    `/marketplace/invest?company=${encodeURIComponent(row.name)}&minInvestment=${row.minInvestment}&price=${row.price}`
+                                    buildCheckoutPath({
+                                      offeringId: Number.parseInt(row.id, 10) || 0,
+                                      slug: row.id,
+                                    })
                                   )
                                 }
                               >

@@ -16,16 +16,19 @@ type ApiEnvelopeLike = {
 export class ApiError extends Error {
   readonly errors: string[];
   readonly validationErrors: Record<string, string[]>;
+  readonly status?: number;
 
   constructor(
     message: string,
     errors: string[] = [],
-    validationErrors: Record<string, string[]> = {}
+    validationErrors: Record<string, string[]> = {},
+    status?: number
   ) {
     super(message);
     this.name = "ApiError";
     this.errors = errors;
     this.validationErrors = validationErrors;
+    this.status = status;
     Object.setPrototypeOf(this, ApiError.prototype);
   }
 
@@ -79,6 +82,7 @@ export function toApiError(error: unknown): Error {
   if (error instanceof ApiError) return error;
 
   if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
     const envelope = readEnvelope(error.response?.data);
     if (envelope) {
       const validationErrors = envelope.validationErrors ?? {};
@@ -91,9 +95,9 @@ export function toApiError(error: unknown): Error {
         envelope.title ??
         error.message;
 
-      return new ApiError(message, errors, validationErrors);
+      return new ApiError(message, errors, validationErrors, status);
     }
-    return new Error(error.message);
+    return new ApiError(error.message, [], {}, status);
   }
 
   if (error instanceof Error) return error;
@@ -117,4 +121,9 @@ export function getApiPrimaryMessage(
   fallback = "Request failed"
 ): string {
   return getApiErrorMessages(error, fallback)[0] ?? fallback;
+}
+
+export function isApiErrorStatus(error: unknown, status: number): boolean {
+  const normalized = toApiError(error);
+  return normalized instanceof ApiError && normalized.status === status;
 }

@@ -92,10 +92,16 @@ export function Preferences({
     };
 
     const handleConfirmDeletion = async () => {
-        if (onDeleteAccount) {
-            await onDeleteAccount();
+        if (!onDeleteAccount) {
+            return;
         }
-        setIsModalOpen(false);
+
+        try {
+            await onDeleteAccount();
+            setIsModalOpen(false);
+        } catch {
+            // Keep modal open; DeleteAccountModal resets submitting state.
+        }
     };
 
     return (

@@ -8,8 +8,9 @@ import { Download, FileText, Settings } from 'lucide-react'
 import { Overview } from '@/components/balance-funding/molecules/Overview'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { TransactionHistory } from '@/components/balance-funding/molecules/TransactionHistory'
-import { userData } from '@/data/transactionsMockData';
 import PaymentMethodsSettings from '@/components/balance-funding/molecules/PaymentMethodsSettings'
+import { useWalletTransactions } from '@/hooks/use-wallet-transactions'
+import { showApiErrorToast } from '@/lib/error-feedback'
 
 const sections = ["Overview", "Transactions", "Payment Methods"];
 
@@ -24,6 +25,13 @@ export default function BalanceFunding() {
     tabParam === "Transactions" ? "Transactions" : "Overview"
   );
 
+  const {
+    data: transactions,
+    isLoading: isTransactionsLoading,
+    isError: isTransactionsError,
+    error: transactionsError,
+  } = useWalletTransactions({ page: 1, pageSize: 50 });
+
   useEffect(() => {
     if (tabParam === "Transactions") {
       setActiveSection("Transactions");
@@ -32,6 +40,12 @@ export default function BalanceFunding() {
       setActiveSection(prev => prev === "Transactions" ? "Overview" : prev);
     }
   }, [tabParam]);
+
+  useEffect(() => {
+    if (isTransactionsError) {
+      showApiErrorToast(transactionsError, "Unable to load transaction history.");
+    }
+  }, [isTransactionsError, transactionsError]);
 
   const handleTabChange = (section: string) => {
     setActiveSection(section);
@@ -123,7 +137,15 @@ export default function BalanceFunding() {
       {/* Conditional Content Rendering */}
       <div className="mt-6">
         {activeSection === "Overview" && <Overview />}
-        {activeSection === "Transactions" && <TransactionHistory data={userData.recentActivity} />}
+        {activeSection === "Transactions" && (
+          isTransactionsLoading ? (
+            <p className="text-[14px] text-[#858585]" style={TYPOGRAPHY.body}>
+              Loading transaction history...
+            </p>
+          ) : (
+            <TransactionHistory data={transactions?.items ?? []} />
+          )
+        )}
         {activeSection === "Payment Methods" && <PaymentMethodsSettings />}
       </div>
     </div>

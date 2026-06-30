@@ -1,8 +1,15 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { User, CheckCircle2, FileText, RefreshCw } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
+import { useInvestorAccount } from '@/hooks/use-settings';
+import {
+  mapAccountCompliance,
+  mapAccountLimits,
+  mapAccountToProfile,
+} from '@/lib/settings-mappers';
+import { showApiErrorToast } from '@/lib/error-feedback';
 
 export interface AccountDataProfile {
     accountType: string;
@@ -29,46 +36,95 @@ export interface ComplianceCheckItem {
 }
 
 interface AccountProps {
-    profile?: AccountDataProfile;
-    limits?: InvestmentLimitsMetrics;
-    compliance?: ComplianceCheckItem[];
     onViewKYC?: () => void;
     onRequestUpgrade?: () => void;
 }
 
-// ==================== MOCK FALLBACK DATA ====================
-// This automatically provides safety data if your API response is loading or blank
-const defaultProfile: AccountDataProfile = {
-    accountType: "Ordinary Investor",
-    accountStatus: "Active",
-    kycStatus: "Completed",
-    kycCompletedDate: "10/1/2024",
-    investorClassification: "Ordinary",
-    verificationStatus: "Verified",
-    memberSince: "9/15/2024",
-    riskRating: "Low"
-};
-
-const defaultLimits: InvestmentLimitsMetrics = {
-    annualLimit: 5000000,
-    usedPercentage: 60,
-    perProjectLimit: 1000000,
-    lifetimeLimit: 20000000,
-};
-
-const defaultCompliance: ComplianceCheckItem[] = [
-    { id: 'aml', label: 'Anti-Money Laundering Check', status: 'Passed' },
-    { id: 'sanctions', label: 'Sanctions Screening', status: 'Clear' },
-    { id: 'pep', label: 'Politically Exposed Person', status: 'Not Applicable' }
-];
-
 export function Account({
-    profile = defaultProfile,
-    limits = defaultLimits,
-    compliance = defaultCompliance,
     onViewKYC,
     onRequestUpgrade
 }: AccountProps) {
+    const { data: account, isLoading, isError, error } = useInvestorAccount();
+
+    useEffect(() => {
+        if (isError) {
+            showApiErrorToast(error, 'Unable to load account information.');
+        }
+    }, [isError, error]);
+
+    const profile = useMemo(
+        () => (account ? mapAccountToProfile(account) : null),
+        [account]
+    );
+    const limits = useMemo(
+        () => (account ? mapAccountLimits(account) : null),
+        [account]
+    );
+    const compliance = useMemo(
+        () => (account ? mapAccountCompliance(account) : []),
+        [account]
+    );
+
+    const informationGridItems = useMemo(() => {
+        if (!profile) {
+            return [];
+        }
+
+        return [
+            {
+                label: "Account Type",
+                value: profile.accountType,
+                badge: profile.accountStatus
+            },
+            {
+                label: "KYC Status",
+                value: profile.kycStatus,
+                badge: profile.kycStatus,
+                subtext: profile.kycStatus === 'Completed' && profile.kycCompletedDate
+                    ? `Completed: ${profile.kycCompletedDate}`
+                    : undefined,
+                showIcon: profile.kycStatus === 'Completed'
+            },
+            {
+                label: "Investor Classification",
+                value: profile.investorClassification
+            },
+            {
+                label: "Verification Status",
+                value: profile.verificationStatus,
+                badge: profile.verificationStatus,
+                showIcon: profile.verificationStatus === 'Verified'
+            },
+            {
+                label: "Member Since",
+                value: profile.memberSince
+            },
+            {
+                label: "Risk Rating",
+                badge: profile.riskRating
+            }
+        ];
+    }, [profile]);
+
+    if (isLoading) {
+        return (
+            <div className="w-full">
+                <p className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
+                    Loading account information...
+                </p>
+            </div>
+        );
+    }
+
+    if (!profile || !limits) {
+        return (
+            <div className="w-full">
+                <p className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
+                    Unable to load account information.
+                </p>
+            </div>
+        );
+    }
 
     // Formatter utility for Nigerian Naira
     const formatNaira = (value: number) => {
@@ -102,40 +158,6 @@ export function Account({
                 return 'bg-[#F4F5F7] text-[#505050] border border-[#EAEAEA]';
         }
     };
-
-    // Dynamic data representation map for rendering Section 1 loops cleanly
-    const informationGridItems = useMemo(() => [
-        {
-            label: "Account Type",
-            value: profile.accountType,
-            badge: profile.accountStatus
-        },
-        {
-            label: "KYC Status",
-            value: profile.kycStatus,
-            badge: profile.kycStatus,
-            subtext: `Completed: ${profile.kycCompletedDate}`,
-            showIcon: profile.kycStatus === 'Completed'
-        },
-        {
-            label: "Investor Classification",
-            value: profile.investorClassification
-        },
-        {
-            label: "Verification Status",
-            value: profile.verificationStatus,
-            badge: profile.verificationStatus,
-            showIcon: profile.verificationStatus === 'Verified'
-        },
-        {
-            label: "Member Since",
-            value: profile.memberSince
-        },
-        {
-            label: "Risk Rating",
-            badge: profile.riskRating
-        }
-    ], [profile]);
 
     return (
         <div className="w-full">

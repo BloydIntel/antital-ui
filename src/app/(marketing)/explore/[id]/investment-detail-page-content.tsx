@@ -30,6 +30,7 @@ import {
   mapBlockItems,
   splitHighlights,
 } from '@/lib/investment-mappers'
+import { useStartInvestmentCheckout } from '@/hooks/use-start-investment-checkout'
 
 interface InvestmentDetailPageContentProps {
   detail: InvestmentDetailBundle
@@ -58,6 +59,11 @@ const IS_IOS = typeof window !== 'undefined' && (
 export function InvestmentDetailPageContent({ detail }: InvestmentDetailPageContentProps) {
   const { shell, highlights, contentBlocks, team, financials, risks, documents, media, updates, testimonials } = detail
   const { offering, funding, dealTerms, corporateProfile } = shell
+  const startCheckout = useStartInvestmentCheckout()
+
+  const handleStartTrading = () => {
+    startCheckout({ offeringId: offering.id, slug: offering.slug })
+  }
 
   const { stats: statCards, bullets } = useMemo(() => splitHighlights(highlights), [highlights])
 
@@ -318,6 +324,7 @@ export function InvestmentDetailPageContent({ detail }: InvestmentDetailPageCont
                       variant="primary"
                       width="100%"
                       height="48px"
+                      onClick={handleStartTrading}
                     />
                   </div>
                 )}
@@ -325,12 +332,17 @@ export function InvestmentDetailPageContent({ detail }: InvestmentDetailPageCont
             </div>
 
             <div className="flex flex-col items-start w-full max-w-full lg:w-auto lg:max-w-[400px] lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
-              <InvestmentPanel funding={funding} />
+              <InvestmentPanel offeringId={offering.id} slug={offering.slug} funding={funding} />
 
               <div className="w-full lg:w-[400px] border-t border-[#EAEAEA] dark:border-[#404040] mt-8" />
 
               <div className="mt-8 w-full">
-                <DealTermsSection dealTerms={dealTerms} companyName={offering.name} />
+                <DealTermsSection
+                  dealTerms={dealTerms}
+                  companyName={offering.name}
+                  offeringId={offering.id}
+                  slug={offering.slug}
+                />
               </div>
             </div>
           </div>
@@ -347,6 +359,7 @@ export function InvestmentDetailPageContent({ detail }: InvestmentDetailPageCont
             variant="primary"
             width="100%"
             height="48px"
+            onClick={handleStartTrading}
           />
         </div>
       )}
