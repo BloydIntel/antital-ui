@@ -16,12 +16,6 @@ import { UploadInvestmentDocumentsModal } from "@/components/dashboard/organisms
 import { UserType } from '@/store/userStore'
 import { useRouter } from 'next/navigation'
 
-interface InvestmentDocuments {
-    founderIntro: File | null;
-    pitchDeck: File | null;
-    prospectus: File | null;
-}
-
 interface DashboardSubHeaderProps {
     title: string;
     desc: string;
@@ -46,23 +40,19 @@ export function DashboardSubHeader({
 }: DashboardSubHeaderProps) {
     const router = useRouter()
     const [isWarningOpen, setIsWarningOpen] = useState(false);
-    const [isUploadOpen, setIsUploadOpen] = useState(false); // Controlled modal view tracking state
+    const [isUploadOpen, setIsUploadOpen] = useState(false);
 
     const handleActionClick = () => {
         if (userType === 'fundraiser') {
             if (hasActiveFundraising) {
                 setIsWarningOpen(true);
             } else {
-                setIsUploadOpen(true); // ✅ Target screen: Mounts upload container when workspace field is clear
+                setIsUploadOpen(true);
             }
             return;
         } else {
             router.push("/marketplace");
         }
-    };
-
-    const handleDocumentSubmission = (docs: InvestmentDocuments) => {
-        console.log("Documents ready for processing:", docs);
     };
 
     return (
@@ -117,12 +107,10 @@ export function DashboardSubHeader({
                 />
             )}
 
-            {/* Document collection panel when setup parameters are initialized */}
             {userType === 'fundraiser' && !hasActiveFundraising && (
                 <UploadInvestmentDocumentsModal
                     isOpen={isUploadOpen}
                     onClose={() => setIsUploadOpen(false)}
-                    onSubmit={handleDocumentSubmission}
                 />
             )}
         </div>

@@ -186,3 +186,18 @@ export interface InvestmentDetailBundle {
   updates: OfferingUpdatesResponse;
   testimonials: Testimonial[];
 }
+
+
+export interface AddNewInvestmentFormPayload {
+  founderAndTeamIntroduction?: File | null;
+  fundraisingDeck?: File | null;
+  investmentMemo?: File | null;
+  termsOfOffering?: File | null;
+  productDemo?: File | null;
+  businessDescription?: string;
+  businessSector?: string;
+  instrumentType?: string;
+  businessSize?: string;
+  fundingTarget?: string;
+  investmentRound?: string;
+}
