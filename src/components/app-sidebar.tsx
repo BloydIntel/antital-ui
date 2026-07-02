@@ -6,6 +6,7 @@ import {
   ChartLine,
   Eye,
   LayoutDashboard,
+  LogOut,
   MessageCircle,
   MessageCircleQuestionMark,
   PiggyBank,
@@ -14,7 +15,6 @@ import {
   Megaphone,
   Users,
   FileText,
-  LogOut,
 } from "lucide-react"
 import Image from "next/image"
 
