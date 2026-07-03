@@ -1,18 +1,20 @@
-import React, { useMemo, useState } from 'react'
-import { CollapsibleUpload } from '@/components/onboarding/molecules/CollapsibleUpload'
-import { TYPOGRAPHY } from '@/constants/styles'
-import { useOnboardingStore } from '@/store/onboardingStore';
+import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, ArrowRight, Info } from 'lucide-react';
+
+import { CollapsibleUpload } from '@/components/onboarding/molecules/CollapsibleUpload';
+import { TYPOGRAPHY } from '@/constants/styles';
+import { useOnboardingStore } from '@/store/onboardingStore';
 import { SelectInput, SelectOption } from '@/components/onboarding/molecules/SelectInput';
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput';
-import { ArrowLeft, ArrowRight, Info } from 'lucide-react';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 import { cn } from '@/lib/utils';
 import { showApiErrorToast } from '@/lib/error-feedback';
 import { useFundraiserOnboardingApi } from '@/hooks/onboarding/useFundraiserOnboardingApi';
+import { AddNewInvestmentFormPayload } from '@/types/investment';
 
 interface OfferingField {
-    id: string;
+    id: keyof AddNewInvestmentFormPayload;
     label: string;
     type: 'textarea' | 'select' | 'number' | 'text';
     placeholder?: string;
@@ -21,11 +23,11 @@ interface OfferingField {
 }
 
 const businessDocuments = [
-    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction', title: 'Founder and Team Introduction', required: true },
-    { id: 'fundraisingDeck', field: 'fundraisingDeck', title: 'Fundraising deck (high-level pitch)', required: true },
-    { id: 'investmentMemo', field: 'investmentMemo', title: 'Investment memo/prospectus (thorough analysis)', required: true },
-    { id: 'termsOfOffering', field: 'termsOfOffering', title: 'Terms of offering', required: true },
-    { id: 'productDemo', field: 'productDemo', title: 'Product Demo (optional)', required: false },
+    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction' as keyof AddNewInvestmentFormPayload, title: 'Founder and Team Introduction', required: true },
+    { id: 'fundraisingDeck', field: 'fundraisingDeck' as keyof AddNewInvestmentFormPayload, title: 'Fundraising deck (high-level pitch)', required: true },
+    { id: 'investmentMemo', field: 'investmentMemo' as keyof AddNewInvestmentFormPayload, title: 'Investment memo/prospectus (thorough analysis)', required: true },
+    { id: 'termsOfOffering', field: 'termsOfOffering' as keyof AddNewInvestmentFormPayload, title: 'Terms of offering', required: true },
+    { id: 'productDemo', field: 'productDemo' as keyof AddNewInvestmentFormPayload, title: 'Product Demo (optional)', required: false },
 ] as const;
 
 const OFFERING_FIELDS: readonly OfferingField[] = [
@@ -86,12 +88,67 @@ const OFFERING_FIELDS: readonly OfferingField[] = [
             { label: 'Initial Public Offering (IPO)', value: 'Initial Public Offering (IPO)' },
         ]
     },
-]
+];
 
-export function UploadBusinessDocument() {
-    const router = useRouter()
-    const { formData, updateFormData, investorUserType } = useOnboardingStore();
+const getBusinessSizeInfo = (size: string | undefined) => {
+    switch (size) {
+        case 'Micro':
+            return 'Choosing the "micro" option will restrict the maximum annual cap to ₦50 million.';
+        case 'Small':
+            return 'Please specify the funding target within the permitted range: ₦25,000,000 and not more than ₦100,000,000.';
+        case 'Medium':
+            return 'Choosing the "medium" option restrict the maximum annual cap to ₦100 million.';
+        default:
+            return null;
+    }
+};
+
+const getFundingError = (amount: string | undefined, size: string | undefined): string | null => {
+    if (!amount) return "Required";
+    const val = Number(amount);
+
+    switch (size) {
+        case 'Micro':
+            return val > 50000000 ? "Please input a different amount less than or equal to ₦50 million" : null;
+        case 'Small':
+            if (val < 25000000 || val > 100000000) {
+                return "Please specify the funding target within the permitted range: ₦25,000,000 to ₦100,000,000";
+            }
+            return null;
+        case 'Medium':
+            return val > 100000000 ? "Please input a different amount less than or equal to ₦100 million" : null;
+        default:
+            return null;
+    }
+};
+
+interface UploadBusinessDocumentProps {
+    isModalVariant?: boolean;
+    externalFormData?: AddNewInvestmentFormPayload;
+    externalUpdateFormData?: (data: Partial<AddNewInvestmentFormPayload>) => void;
+    customSubmitAction?: (data: AddNewInvestmentFormPayload) => Promise<void>;
+    onSuccessCallback?: () => void;
+    onCancelCallback?: () => void;
+}
+
+export function UploadBusinessDocument({
+    isModalVariant = false,
+    externalFormData,
+    externalUpdateFormData,
+    customSubmitAction,
+    onSuccessCallback,
+    onCancelCallback,
+}: UploadBusinessDocumentProps) {
+    const router = useRouter();
     const { saveBusinessDocuments } = useFundraiserOnboardingApi();
+
+    const storeFormData = useOnboardingStore((state) => state.formData) as AddNewInvestmentFormPayload;
+    const storeUpdateFormData = useOnboardingStore((state) => state.updateFormData);
+    const investorUserType = useOnboardingStore((state) => state.investorUserType);
+
+    const activeFormData = externalFormData ?? storeFormData;
+    const activeUpdateFormData = externalUpdateFormData ?? storeUpdateFormData;
+
     const [showErrors, setShowErrors] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -107,67 +164,30 @@ export function UploadBusinessDocument() {
         setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const handleFileChange = (field: string, value: File | null) => {
-        updateFormData({ [field]: value });
+    const handleFieldUpdate = (field: keyof AddNewInvestmentFormPayload, value: string | File | null) => {
+        activeUpdateFormData({ [field]: value });
         if (showErrors) setShowErrors(false);
     };
 
-    const getBusinessSizeInfo = (size: string | undefined) => {
-        switch (size) {
-            case 'Micro':
-                return 'Choosing the "micro" option will restrict the maximum annual cap to ₦50 million.';
-            case 'Small':
-                return 'Please specify the funding target within the permitted range: ₦25,000,000 and not more than ₦100,000,000.';
-            case 'Medium':
-                return 'Choosing the "medium" option restrict the maximum annual cap to ₦100 million.';
-            default:
-                return null;
-        }
-    };
-
-    const getFundingError = (amount: string, size: string): string | null => {
-        const val = Number(amount);
-        if (!amount) return "Required";
-
-        switch (size) {
-            case 'Micro':
-                return val > 50000000 ? "Please input a different amount less than or equal to ₦50 million" : null;
-            case 'Small':
-                if (val < 25000000 || val > 100000000) {
-                    return "Please specify the funding target within the permitted range: ₦25,000,000 to ₦100,000,000";
-                }
-                return null;
-            case 'Medium':
-                return val > 100000000 ? "Please input a different amount less than or equal to ₦100 million" : null;
-            default:
-                return null;
-        }
-    };
-
     const businessSizeInfo = useMemo(() =>
-        getBusinessSizeInfo(formData.businessSize as string),
-        [formData.businessSize]);
+        getBusinessSizeInfo(activeFormData.businessSize),
+        [activeFormData.businessSize]
+    );
 
     const isStepValid = useMemo(() => {
-
         const areDocsValid = businessDocuments
             .filter(doc => doc.required)
-            .every(doc => !!formData[doc.field as keyof typeof formData]);
-
+            .every(doc => !!activeFormData[doc.field]);
 
         const areFieldsFilled = OFFERING_FIELDS.every(field => {
-            const val = formData[field.id as keyof typeof formData];
+            const val = activeFormData[field.id];
             return val !== undefined && val !== null && val !== "";
         });
 
-        const fundingError = getFundingError(
-            formData.fundingTarget as string,
-            formData.businessSize as string
-        );
-        const isFundingRangeValid = !fundingError;
+        const fundingError = getFundingError(activeFormData.fundingTarget, activeFormData.businessSize);
 
-        return areDocsValid && areFieldsFilled && isFundingRangeValid;
-    }, [formData]);
+        return areDocsValid && areFieldsFilled && !fundingError;
+    }, [activeFormData]);
 
     const handleNext = async () => {
         if (!isStepValid) {
@@ -177,11 +197,21 @@ export function UploadBusinessDocument() {
 
         try {
             setIsSubmitting(true);
-            await saveBusinessDocuments();
-            const safeType = investorUserType || 'fundraiser';
-            router.push(`/onboarding/${safeType}/representative-kyc`);
+
+            if (customSubmitAction) {
+                await customSubmitAction(activeFormData);
+            } else {
+                await saveBusinessDocuments();
+            }
+
+            if (onSuccessCallback) {
+                onSuccessCallback();
+            } else {
+                const safeType = investorUserType || 'fundraiser';
+                router.push(`/onboarding/${safeType}/representative-kyc`);
+            }
         } catch (error) {
-            showApiErrorToast(error, "Unable to proceed to representative KYC.");
+            showApiErrorToast(error, isModalVariant ? "Unable to upload document sets safely." : "Unable to proceed to representative KYC.");
             setShowErrors(true);
         } finally {
             setIsSubmitting(false);
@@ -189,19 +219,16 @@ export function UploadBusinessDocument() {
     };
 
     const handleBack = () => {
-        router.back();
+        if (onCancelCallback) {
+            onCancelCallback();
+        } else {
+            router.back();
+        }
     };
-
-    const handleUpdate = (field: string, value: string | File | null) => {
-        updateFormData({ [field]: value });
-        if (showErrors) setShowErrors(false);
-    };
-
 
     return (
-        <div className="lg:w-[558px] w-full mx-auto">
-
-            <div>
+        <div className={cn("w-full mx-auto", !isModalVariant && "lg:w-[558px]")}>
+            {!isModalVariant && (
                 <div className="mb-6">
                     <h2 className="text-[28px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
                         Upload Business Documents
@@ -210,28 +237,28 @@ export function UploadBusinessDocument() {
                         These documents verify your company&apos;s legal status and compliance
                     </p>
                 </div>
+            )}
 
-                <div className="flex flex-col">
-                    {businessDocuments.map((section, index) => {
-                        const fieldValue = formData[section.field as keyof typeof formData] as File | null;
+            <div className="flex flex-col">
+                {businessDocuments.map((section, index) => {
+                    const fieldValue = activeFormData[section.field] as File | null | undefined;
 
-                        return (
-                            <CollapsibleUpload
-                                key={section.id}
-                                title={`${index + 1}. ${section.title}`}
-                                isOpen={!!openSections[section.id]}
-                                onToggle={() => toggleSection(section.id)}
-                                onUpload={(file) => handleFileChange(section.field, file)}
-                                value={fieldValue}
-                                isError={section.required && showErrors && !fieldValue}
-                            />
-                        );
-                    })}
-                </div>
+                    return (
+                        <CollapsibleUpload
+                            key={section.id}
+                            title={`${index + 1}. ${section.title}`}
+                            isOpen={!!openSections[section.id]}
+                            onToggle={() => toggleSection(section.id)}
+                            onUpload={(file) => handleFieldUpdate(section.field, file)}
+                            value={fieldValue ?? null}
+                            isError={section.required && showErrors && !fieldValue}
+                        />
+                    );
+                })}
             </div>
 
             <div>
-                <div className='pb-6 pt-[56px]'>
+                <div className="pb-6 pt-[56px]">
                     <h2 className="text-[20px] text-[#1B1B1B]" style={TYPOGRAPHY.body}>
                         Offering Documents and Disclosure
                     </h2>
@@ -240,13 +267,15 @@ export function UploadBusinessDocument() {
                     </p>
                 </div>
 
-                {/* Dynamic Form Mapping */}
                 <div className="flex flex-col">
                     {OFFERING_FIELDS.map((field) => {
+                        const fieldValue = (activeFormData[field.id] as string) || "";
+                        const hasRequiredError = showErrors && !fieldValue;
+
                         const commonProps = {
                             label: field.label,
-                            value: formData[field.id as keyof typeof formData] as string || "",
-                            error: showErrors && !formData[field.id as keyof typeof formData] ? "Required" : undefined,
+                            value: fieldValue,
+                            error: hasRequiredError ? "Required" : undefined,
                         };
 
                         return (
@@ -256,8 +285,8 @@ export function UploadBusinessDocument() {
                                         {...commonProps}
                                         options={field.options || []}
                                         placeholder={field.placeholder}
-                                        onChange={(val) => handleUpdate(field.id, val)}
-                                        selectAreaStyle='bg-[#FFFFFF] border border-[#A8A8A8]'
+                                        onChange={(val) => handleFieldUpdate(field.id, val)}
+                                        selectAreaStyle="bg-[#FFFFFF] border border-[#A8A8A8]"
                                     />
                                 ) : field.type === 'number' ? (
                                     <div className="flex flex-col gap-2 pb-[16px]">
@@ -269,37 +298,34 @@ export function UploadBusinessDocument() {
                                         </label>
 
                                         {(() => {
-                                            const fundingError = getFundingError(
-                                                formData.fundingTarget as string,
-                                                formData.businessSize as string
-                                            );
-                                            const hasError = showErrors && fundingError;
+                                            const fundingError = getFundingError(activeFormData.fundingTarget, activeFormData.businessSize);
+                                            const isTargetError = showErrors && fundingError;
 
                                             return (
                                                 <>
-                                                    <div className='flex items-stretch h-[48px]'>
+                                                    <div className="flex items-stretch h-[48px]">
                                                         <div className={cn(
-                                                            'flex items-center justify-center px-4 bg-[#EEEEEE] border border-r-0 border-[#A8A8A8] rounded-l-lg shrink-0 transition-colors',
-                                                            hasError && "border-red-500 bg-red-50"
+                                                            "flex items-center justify-center px-4 bg-[#EEEEEE] border border-r-0 border-[#A8A8A8] rounded-l-lg shrink-0 transition-colors",
+                                                            isTargetError && "border-red-500 bg-red-50"
                                                         )}>
                                                             <span className={cn(
                                                                 "text-[18px] font-medium text-[#858585]",
-                                                                hasError && "text-red-500"
+                                                                isTargetError && "text-red-500"
                                                             )}>₦</span>
                                                         </div>
                                                         <OnboardingInput
-                                                            value={formData[field.id as keyof typeof formData] as string || ""}
+                                                            value={fieldValue}
                                                             type={field.type}
                                                             placeholder={field.placeholder}
-                                                            onChange={(e) => handleUpdate(field.id, e.target.value)}
+                                                            onChange={(e) => handleFieldUpdate(field.id, e.target.value)}
                                                             className="pb-0 w-full"
                                                             inputAreaStyle={cn(
-                                                                'bg-[#FFFFFF] border border-[#A8A8A8] rounded-l-none',
-                                                                hasError && "border-red-500"
+                                                                "bg-[#FFFFFF] border border-[#A8A8A8] rounded-l-none",
+                                                                isTargetError && "border-red-500"
                                                             )}
                                                         />
                                                     </div>
-                                                    {hasError && (
+                                                    {isTargetError && (
                                                         <span className="text-xs text-red-500 mt-1">{fundingError}</span>
                                                     )}
                                                 </>
@@ -311,12 +337,11 @@ export function UploadBusinessDocument() {
                                         {...commonProps}
                                         type={field.type}
                                         placeholder={field.placeholder}
-                                        onChange={(e) => handleUpdate(field.id, e.target.value)}
-                                        inputAreaStyle='bg-[#FFFFFF] border border-[#A8A8A8]'
+                                        onChange={(e) => handleFieldUpdate(field.id, e.target.value)}
+                                        inputAreaStyle="bg-[#FFFFFF] border border-[#A8A8A8]"
                                     />
                                 )}
 
-                                {/* Conditional Micro Info Box */}
                                 {field.id === 'businessSize' && businessSizeInfo && (
                                     <div className="flex items-center gap-3 p-3 bg-[#F0F7FF] rounded-lg mb-6 border border-[#D1E9FF]">
                                         <Info className="text-[#0052CC] shrink-0" size={18} />
@@ -331,24 +356,23 @@ export function UploadBusinessDocument() {
                 </div>
             </div>
 
-            <div className="flex max-w-[558px] items-center justify-between  pt-16 pb-10 border-t border-gray-50">
+            <div className={cn("flex items-center justify-between pt-16 pb-10 border-t border-gray-50", !isModalVariant && "max-w-[558px]")}>
                 <OnboardingButton
-                    label='Back'
+                    label={isModalVariant ? 'Cancel' : 'Back'}
                     variant="plain"
                     onClick={handleBack}
-                    icon={<ArrowLeft size={20} />}
-                    className='w-fit'
+                    icon={!isModalVariant ? <ArrowLeft size={20} /> : undefined}
+                    className="w-fit"
                 />
 
                 <OnboardingButton
-                    label={isSubmitting ? "Saving…" : "Next"}
+                    label={isSubmitting ? (isModalVariant ? "Uploading..." : "Saving…") : (isModalVariant ? "Submit for Verification" : "Next")}
                     onClick={handleNext}
-                    icon={<ArrowRight size={20} />}
-                    className="flex-row-reverse w-fit"
+                    icon={!isModalVariant ? <ArrowRight size={20} /> : undefined}
+                    className={cn("w-fit", !isModalVariant && "flex-row-reverse")}
                     loading={isSubmitting}
                 />
-
             </div>
         </div>
-    )
+    );
 }
