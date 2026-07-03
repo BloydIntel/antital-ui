@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+export type UserType = "individual" | "corporate" | "fundraiser"
+
 export interface UserData {
     userId: string | null
     firstName: string | null
@@ -10,6 +12,8 @@ export interface UserData {
     city: string | null
     state: string | null
     profilePictureUrl: string | null
+    userType: UserType
+    isKycCompleted: boolean
 }
 
 interface UserState extends UserData {
@@ -21,6 +25,7 @@ interface UserState extends UserData {
 export const useUserStore = create<UserState>()(
     persist(
         (set) => ({
+            // Initial States
             userId: null,
             firstName: null,
             lastName: null,
@@ -29,10 +34,12 @@ export const useUserStore = create<UserState>()(
             city: null,
             state: null,
             profilePictureUrl: null,
+            userType: "fundraiser",
+            isKycCompleted: false,
 
             setUserId: (id) => set(() => ({ userId: id })),
 
-            updateProfile: (data) => set(() => ({ ...data })),
+            updateProfile: (data) => set((state) => ({ ...state, ...data })),
 
             clearUser: () => set(() => ({
                 userId: null,
@@ -43,6 +50,8 @@ export const useUserStore = create<UserState>()(
                 city: null,
                 state: null,
                 profilePictureUrl: null,
+                userType: "fundraiser",
+                isKycCompleted: false,
             })),
         }),
         {
