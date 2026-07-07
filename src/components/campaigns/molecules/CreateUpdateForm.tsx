@@ -20,9 +20,8 @@ export function CreateUpdateForm({ onPublish, onSaveDraft }: CreateUpdateFormPro
         if (onPublish) onPublish({ title, content })
     }
 
-    const handleSaveDraft = (e: React.MouseEvent) => {
-        e.preventDefault()
-        if (onSaveDraft) onSaveDraft({ title, content })
+    const handleSaveDraft = () => {
+        onSaveDraft?.({ title, content })
     }
 
     return (
@@ -66,13 +65,13 @@ export function CreateUpdateForm({ onPublish, onSaveDraft }: CreateUpdateFormPro
                     <OnboardingButton
                         label="Save Draft"
                         variant='plain'
-                        onClick={() => handleSaveDraft}
+                        onClick={handleSaveDraft}
                         className="w-fit my-0"
                     />
 
                     <OnboardingButton
                         label="Publish Update"
-                        onClick={() => handlePublish}
+                        type="submit"
                         className="w-fit my-0"
                     />
 

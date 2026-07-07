@@ -17,12 +17,12 @@ export default function Campaign() {
                 </p>
             </div>
 
-            <div className='mt-6 grid grid-cols-2 gap-4'>
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <OfferingPagePreview />
                 <CampaignSharingTools />
             </div>
 
-            <div className='mt-6 grid grid-cols-2 gap-4'>
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <CreateUpdateForm />
                 <PublishedUpdates />
             </div>
