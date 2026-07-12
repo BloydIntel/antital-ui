@@ -29,7 +29,7 @@ export function InvestorBreakdownChart() {
         <Card className="w-full border-[#EAEAEA] shadow-none rounded-md bg-white overflow-hidden p-4">
             {/* Header Container with Radix Select Wrapper */}
             <CardHeader className="flex flex-row items-center justify-between p-0 space-y-0">
-                <CardTitle className="text-[16px] font-semibold text-[#1A1C1E]" style={TYPOGRAPHY.body}>
+                <CardTitle className="text-[16px] text-[#1A1C1E]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                     Investor Breakdown
                 </CardTitle>
 
