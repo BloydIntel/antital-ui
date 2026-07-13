@@ -65,9 +65,9 @@ export function AnalyticsOverviewGrid() {
 
     return (
         <div className="w-full flex flex-col md:flex-row items-stretch gap-4 font-sans">
-            {metricsData.map((metric, index) => (
+            {metricsData.map((metric) => (
                 <MetricCard
-                    key={index}
+                    key={metric.title}
                     title={metric.title}
                     value={metric.value}
                     icon={metric.icon}

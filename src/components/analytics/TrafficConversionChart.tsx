@@ -19,7 +19,7 @@ export function TrafficConversionChart() {
         { day: 'Sun', value: 51, displayValue: '5100' },
     ]
 
-    const [activeIndex, setActiveIndex] = useState<number | null>(4)
+    const [activeIndex, setActiveIndex] = useState<number | null>(null)
     const [mouseY, setMouseY] = useState<number>(0)
 
     // 6 ticks create 5 perfectly equal vertical spans (100-80, 80-60, 60-40, 40-20, 20-0)
@@ -77,10 +77,19 @@ export function TrafficConversionChart() {
                             return (
                                 <div
                                     key={idx}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label={`${data.day}: ${data.displayValue} views`}
                                     className="relative flex-1 h-full flex flex-col justify-end items-center cursor-pointer"
                                     onMouseEnter={() => setActiveIndex(idx)}
                                     onMouseLeave={() => setActiveIndex(null)}
                                     onMouseMove={handleMouseMove}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault()
+                                            setActiveIndex(idx)
+                                        }
+                                    }}
                                     onClick={() => setActiveIndex(idx)}
                                 >
 

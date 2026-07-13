@@ -39,9 +39,9 @@ export function InvestorDiversityCard() {
 
                 {/* Multi-segmented distribution line bar */}
                 <div className="w-full h-3 rounded-full flex overflow-hidden bg-[#EDF1D6] mb-3">
-                    {geoSegments.map((segment, index) => (
+                    {geoSegments.map((segment) => (
                         <div
-                            key={index}
+                            key={segment.label}
                             className={`${segment.color} h-full`}
                             style={{ width: `${segment.percentage}%` }}
                         />
@@ -50,8 +50,8 @@ export function InvestorDiversityCard() {
 
                 {/* Legend Indicators Meta text wrapper */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#858585]">
-                    {geoSegments.slice(0, 2).map((segment, index) => (
-                        <div key={index} className="flex items-center gap-1.5">
+                    {geoSegments.slice(0, 2).map((segment) => (
+                        <div key={segment.label} className="flex items-center gap-1.5">
                             <span className={`w-2 h-2 rounded-full ${segment.color}`} />
                             <span>{segment.label} ({segment.percentage}%)</span>
                         </div>
@@ -68,8 +68,8 @@ export function InvestorDiversityCard() {
 
                 {/* Categorization list loop block */}
                 <div className="space-y-4">
-                    {investorCategories.map((category, index) => (
-                        <div key={index} className="space-y-1.5">
+                    {investorCategories.map((category) => (
+                        <div key={category.name} className="space-y-1.5">
                             <div className="flex items-center justify-between text-[14px] text-[#858585]">
                                 <span className="font-medium">{category.name}</span>
                                 <span className="font-medium">{category.percentage}%</span>
