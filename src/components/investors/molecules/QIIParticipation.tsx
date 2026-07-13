@@ -73,7 +73,7 @@ export function QIIParticipation({ records = defaultRecords }: QIIParticipationP
                             return (
                                 <tr
                                     key={record.id}
-                                    className={`transition-colors ${isPending ? 'bg-[#F4F5F7]/60 rounded-lg' : 'hover:bg-gray-50/50'}`}
+                                    className={`transition-colors ${isPending ? 'bg-[#F4F5F7]/60' : 'hover:bg-gray-50/50'}`}
                                 >
                                     {/* Institution Title */}
                                     <td className={`py-4 px-4 font-medium text-[#2D311B] ${isPending ? 'rounded-l-lg' : ''}`}>

@@ -31,7 +31,7 @@ export function ResponseAnalytics() {
                 <div className="flex items-end justify-between gap-4 pt-1">
                     <div className="space-y-1">
                         <div className="text-[24px] md:text-[28px] font-medium tracking-tight">2.4h</div>
-                        <div className="text-xs text-[#F4F5F7]">Avg.Response Time</div>
+                        <div className="text-xs text-[#F4F5F7]">Avg. Response Time</div>
                     </div>
 
                     {/* Audio/Bar Visualizer Metric Indicator Graphic */}
@@ -54,13 +54,13 @@ export function ResponseAnalytics() {
                     {/* Positive Breakdown */}
                     <div className="space-y-1">
                         <div className="text-[24px] text-[#16A34A]" style={TYPOGRAPHY.heading}>82%</div>
-                        <div className="text-xs text-[#A8A8A8]">Postive</div>
+                        <div className="text-xs text-[#A8A8A8]">Positive</div>
                     </div>
 
                     {/* Neutral Breakdown */}
                     <div className="space-y-1">
                         <div className="text-2xl text-[#EFBB08]" style={TYPOGRAPHY.heading}>14%</div>
-                        <div className="text-xs text-[#A8A8A8]">Netral</div>
+                        <div className="text-xs text-[#A8A8A8]">Neutral</div>
                     </div>
 
                     {/* Critical Breakdown */}

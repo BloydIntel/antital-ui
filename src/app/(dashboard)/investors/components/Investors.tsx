@@ -20,8 +20,8 @@ export default function Investors() {
                 <QIIParticipation />
             </div>
 
-            <div className='pt-6 grid lg:grid-cols-13 gap-4'>
-                <div className='lg:col-span-9'>
+            <div className='pt-6 grid lg:grid-cols-12 gap-4'>
+                <div className='lg:col-span-8'>
                     <InboxFeed />
                 </div>
 

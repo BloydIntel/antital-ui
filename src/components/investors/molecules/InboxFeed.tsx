@@ -104,6 +104,7 @@ export function InboxFeed() {
                                         alt={msg.author.name}
                                         fill
                                         className="object-cover"
+                                        sizes="44px"
                                     />
                                 </div>
                                 <div>
@@ -144,7 +145,7 @@ export function InboxFeed() {
                                 <OnboardingButton
                                     label='Respond'
                                     icon={<CornerUpLeft className="w-4 h-4 stroke-[2.5]" />}
-                                    className='w-fit text-[14px] text-white font-normal my-0 border-[#EAEAEA] rounded-md bg-[#A7B832]'
+                                    className='w-fit text-[14px] text-white font-normal my-0 border-[#EAEAEA] hover:border-[#042E27] rounded-md bg-[#A7B832]'
                                 />
 
                                 <OnboardingButton
