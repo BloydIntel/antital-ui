@@ -31,6 +31,7 @@ export function DocumentHeader({ onUploadClick }: DocumentHeaderProps) {
                     icon={<UploadCloud className="w-4 h-4 text-white" />}
                     className='my-0 w-fit '
                     onClick={onUploadClick}
+                    disabled={!onUploadClick}
                 />
             </div>
 

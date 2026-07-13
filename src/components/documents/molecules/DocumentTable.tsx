@@ -26,6 +26,8 @@ export function DocumentTable({ documents, onDownload }: DocumentTableProps) {
                 return { text: 'text-[#D97706]', dot: 'bg-[#D97706]' }
             case 'Revision Requested':
                 return { text: 'text-[#EF4444]', dot: 'bg-[#EF4444]' }
+            default:
+                return { text: 'text-[#717171]', dot: 'bg-[#D1D5DB]' }
         }
     }
 
@@ -48,11 +50,12 @@ export function DocumentTable({ documents, onDownload }: DocumentTableProps) {
 
                 {/* Data Rows Iterator Stack Block */}
                 <tbody className="divide-y divide-[#F2F2F2]">
-                    {documents.map((doc, idx) => {
+                    {documents.map((doc) => {
                         const statusStyle = getStatusStyles(doc.status)
+                        const isDownloadDisabled = !onDownload
 
                         return (
-                            <tr key={idx} className="hover:bg-[#F9FAFB]/50 transition-colors">
+                            <tr key={`${doc.name}-${doc.category}-${doc.lastUpdated}`} className="hover:bg-[#F9FAFB]/50 transition-colors">
 
                                 {/* File Details Identity Meta Cell */}
                                 <td className="py-1.5 pr-4 flex items-center gap-3">
@@ -86,10 +89,13 @@ export function DocumentTable({ documents, onDownload }: DocumentTableProps) {
                                 {/* Row Command Anchor Triggers */}
                                 <td className="py-1.5 text-right">
                                     <button
+                                        type="button"
                                         onClick={() => onDownload?.(doc)}
-                                        className="p-2 hover:bg-[#EFF4E4] text-[#1B1B1B] rounded-lg transition-colors cursor-pointer"
+                                        disabled={isDownloadDisabled}
+                                        aria-label={`Download ${doc.name}`}
+                                        className="p-2 text-[#1B1B1B] rounded-lg transition-colors cursor-pointer hover:bg-[#EFF4E4] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                                     >
-                                        <Download className="w-4 h-4" />
+                                        <Download className="w-4 h-4" aria-hidden="true" />
                                     </button>
                                 </td>
 

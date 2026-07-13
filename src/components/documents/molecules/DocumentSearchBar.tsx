@@ -10,6 +10,8 @@ interface DocumentSearchBarProps {
 }
 
 export function DocumentSearchBar({ value, onChange, onHistoryClick }: DocumentSearchBarProps) {
+    const isHistoryDisabled = !onHistoryClick
+
     return (
         <div className="w-full flex items-center justify-between gap-4 mb-6">
 
@@ -27,10 +29,13 @@ export function DocumentSearchBar({ value, onChange, onHistoryClick }: DocumentS
 
             {/* Historical Audit Log Link Trigger */}
             <button
+                type="button"
                 onClick={onHistoryClick}
-                className="p-2 hover:bg-[#F9FAFB] rounded-lg text-[#717171] hover:text-[#1B1B1B] transition-colors cursor-pointer"
+                disabled={isHistoryDisabled}
+                aria-label="View document history"
+                className="p-2 text-[#717171] hover:text-[#1B1B1B] rounded-lg transition-colors cursor-pointer hover:bg-[#F9FAFB] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
             >
-                <History className="w-5 h-5 stroke-[1.75]" />
+                <History className="w-5 h-5 stroke-[1.75]" aria-hidden="true" />
             </button>
 
         </div>
