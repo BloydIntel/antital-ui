@@ -55,7 +55,7 @@ export function PublishedUpdates({ updates = defaultUpdates }: PublishedUpdatesP
             {/* Updates Stream Container */}
             <div className="divide-y divide-[#F4F5F7]">
                 {updates.map((update) => (
-                    <div key={update.id} className="py-6 first:pt-6 last:pb-0 space-y-2">
+                    <div key={update.id} className="py-2 lg:py-6 first:pt-2 lg:first:pt-6 last:pb-0 space-y-2">
                         {/* Headline */}
                         <h4 className="text-[#1B1B1B] text-base tracking-tight" style={{ ...TYPOGRAPHY.body, fontWeight: 500 }}>
                             {update.title}

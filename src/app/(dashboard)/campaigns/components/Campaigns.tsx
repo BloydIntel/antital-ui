@@ -9,7 +9,7 @@ export default function Campaign() {
     return (
         <div>
             <div>
-                <h1 className="text-[24px] lg:text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
+                <h1 className="text-[20px] lg:text-[28px] text-[#1F1F1F]" style={TYPOGRAPHY.heading}>
                     Campaign Preview, Sharing & Updates
                 </h1>
                 <p className="text-[14px] lg:text-[16px] text-[#505050]" style={TYPOGRAPHY.body}>

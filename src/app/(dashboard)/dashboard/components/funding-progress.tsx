@@ -41,7 +41,7 @@ export function FundingProgress({
         <Card className="w-full border-[#EAEAEA] shadow-none rounded-md bg-white overflow-hidden px-6 py-4">
             {/* Card Header area */}
             <CardHeader className="flex flex-row items-center justify-between p-0 space-y-0">
-                <CardTitle className="text-[16px] font-semibold text-[#051635]" style={TYPOGRAPHY.body}>
+                <CardTitle className="text-[16px] text-[#051635]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                     Funding Progress
                 </CardTitle>
                 <div className="flex items-center gap-4 text-xs font-medium">
