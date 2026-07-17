@@ -53,7 +53,7 @@ export function FundraisingMilestones() {
         <Card className="w-full border-[#EAEAEA] shadow-none rounded-md bg-white overflow-hidden px-6 py-4">
             {/* Header Info Area */}
             <CardHeader className="p-0 pb-6 space-y-1">
-                <CardTitle className="text-[16px] font-semibold text-[#1F1F1F]" style={TYPOGRAPHY.body}>
+                <CardTitle className="text-[16px] text-[#1F1F1F]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                     Fundraising Milestones
                 </CardTitle>
                 <CardDescription className="text-[16px] text-[#858585]">
