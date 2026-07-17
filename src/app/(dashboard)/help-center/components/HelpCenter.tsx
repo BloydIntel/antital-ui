@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, TrendingUp, Wallet, AlertTriangle, RefreshCw, CircleUserRound } from 'lucide-react';
+import { ShieldCheck, TrendingUp, Wallet, AlertTriangle, RefreshCw, CircleUserRound, Lightbulb, MessageCircle, Phone } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { SearchInputBar } from '@/components/watchlist/organisms/SearchInputBar';
 import { HelpCategoryCard } from '@/components/help-center/molecules/HelpCategoryCard';
 import { FAQ } from '@/components/landing/organisms/faq';
+import { useUserStore } from '@/store/userStore';
+import { FundraiserHelpCategory, FundraiserHelpCategoryCard } from '@/components/help-center/molecules/FundraiserHelpCategoryCard';
 
 export interface HelpCategory {
     id: string;
@@ -26,9 +28,22 @@ const HELP_CATEGORIES: HelpCategory[] = [
     { id: '6', slug: 'secondary-market', title: 'Secondary market', articleCount: 4, description: 'Trading shares with other investors', icon: RefreshCw }
 ];
 
+const FUNDRAISER_HELP_CATEGORIES: FundraiserHelpCategory[] = [
+    { id: 'fhm-1', title: 'Knowledge Base', description: 'Browse our complete guide to fundraising on Antital.', icon: Lightbulb, actionSlug: 'knowledge-base' },
+    { id: 'fhm-2', title: 'Live Chat', description: 'Speak with an advisor in real-time for immediate help.', icon: MessageCircle, actionSlug: 'live-chat' },
+    { id: 'fhm-3', title: 'Direct Support', description: 'Dedicated line for Premium Fundraisers; 0800-ANTITAL', icon: Phone, actionSlug: 'direct-support' }
+];
+
 export function HelpCenter() {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState<string>('');
+
+    const userType = useUserStore((state) => state.userType)
+    const [hasHydrated, setHasHydrated] = useState(false)
+
+    useEffect(() => {
+        setHasHydrated(true)
+    }, [])
 
     const filteredCategories = useMemo(() => {
         return HELP_CATEGORIES.filter(category =>
@@ -37,9 +52,19 @@ export function HelpCenter() {
         );
     }, [searchQuery]);
 
+    const filteredFundraiserHelpCategory = useMemo(() => {
+        return FUNDRAISER_HELP_CATEGORIES.filter(category =>
+            category.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            category.description.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery]);
+
     const handleCategoryNavigation = (slug: string) => {
         router.push(`/help-center/${slug}`);
     };
+
+    const currentUserType = hasHydrated ? userType : "individual";
+    const isFundraiser = currentUserType === 'fundraiser';
 
     return (
         <div className="w-full bg-[#FAFAFA] min-h-screen pt-[80px] lg:pt-[171px]">
@@ -67,20 +92,37 @@ export function HelpCenter() {
                 />
             </div>
 
-            {/* Interactive Knowledge Base Grid System */}
             <div className=" mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCategories.length === 0 ? (
-                    <div className="col-span-full text-center py-12 text-[#858585]" style={TYPOGRAPHY.body}>
-                        No help topics found matching &quot;{searchQuery}&quot;.
-                    </div>
+                {isFundraiser ? (
+
+                    filteredFundraiserHelpCategory.length === 0 ? (
+                        <div className="col-span-full text-center py-12 text-[#858585]" style={TYPOGRAPHY.body}>
+                            No support methods found matching &quot;{searchQuery}&quot;.
+                        </div>
+                    ) : (
+                        filteredFundraiserHelpCategory.map((category) => (
+                            <FundraiserHelpCategoryCard
+                                key={category.id}
+                                method={category}
+                                onFundraiserAction={handleCategoryNavigation}
+                            />
+                        ))
+                    )
                 ) : (
-                    filteredCategories.map((category) => (
-                        <HelpCategoryCard
-                            key={category.id}
-                            category={category}
-                            onClick={handleCategoryNavigation}
-                        />
-                    ))
+
+                    filteredCategories.length === 0 ? (
+                        <div className="col-span-full text-center py-12 text-[#858585]" style={TYPOGRAPHY.body}>
+                            No help topics found matching &quot;{searchQuery}&quot;.
+                        </div>
+                    ) : (
+                        filteredCategories.map((category) => (
+                            <HelpCategoryCard
+                                key={category.id}
+                                category={category}
+                                onClick={handleCategoryNavigation}
+                            />
+                        ))
+                    )
                 )}
             </div>
 

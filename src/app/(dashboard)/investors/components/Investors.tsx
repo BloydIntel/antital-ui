@@ -21,11 +21,11 @@ export default function Investors() {
             </div>
 
             <div className='pt-6 grid lg:grid-cols-12 gap-4'>
-                <div className='lg:col-span-8'>
+                <div className='order-last lg:order-0 lg:col-span-8'>
                     <InboxFeed />
                 </div>
 
-                <div className='lg:col-span-4'>
+                <div className='order-first lg:order-0 lg:col-span-4'>
                     <ResponseAnalytics />
                 </div>
             </div>
