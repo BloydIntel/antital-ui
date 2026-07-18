@@ -1,12 +1,12 @@
 'use client'
 
 import PaymentMethodsSettings from '@/components/balance-funding/molecules/PaymentMethodsSettings';
-import { Account } from '@/components/settings/organisms/Account';
-import { Notification } from '@/components/settings/organisms/Notification';
-import { Preferences } from '@/components/settings/organisms/Preferences';
-import { Profile } from '@/components/settings/organisms/Profile';
-import { Security } from '@/components/settings/organisms/Security';
-import { SettingsPillTab } from '@/components/settings/organisms/SettingsPillTab'
+import { Account } from '@/components/settings/organisms/investors/Account';
+import { Notification } from '@/components/settings/organisms/investors/Notification';
+import { Preferences } from '@/components/settings/organisms/investors/Preferences';
+import { Profile } from '@/components/settings/organisms/investors/Profile';
+import { Security } from '@/components/settings/organisms/investors/Security';
+import { SettingsPillTab } from '@/components/settings/organisms/investors/SettingsPillTab'
 import { TYPOGRAPHY } from '@/constants/styles'
 import { useInvestorAccount } from '@/hooks/use-settings';
 import authService from '@/services/authService';
@@ -18,7 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner';
 
-export function Settings() {
+export function InvestorsSettings() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams.get('tab');
