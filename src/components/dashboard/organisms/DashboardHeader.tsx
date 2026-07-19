@@ -17,6 +17,7 @@ const dashboardHeaderData = {
 const CUSTOM_MOBILE_HEADERS: Record<string, string> = {
     "/marketplace/invest": "Invest",
     "/balance-funding/invoice": "Transaction History",
+    "/settings/": "Settings"
 };
 
 export function DashboardHeader() {

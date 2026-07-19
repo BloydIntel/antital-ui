@@ -27,6 +27,7 @@ interface InputProps {
     name?: string
     inputAreaStyle?: string
     disabled?: boolean
+    labelStyle?: string
 }
 
 type OnboardingChangeEvent =
@@ -50,7 +51,7 @@ const getDateObject = (val: unknown): Date | null => {
 };
 
 export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
-    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, disabled, ...props }, ref) => {
+    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, disabled, labelStyle, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false)
         const isPassword = type === "password"
         const isDate = type === "date"
@@ -73,7 +74,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
         return (
             <div className={`w-full flex flex-col gap-2 pb-[16px] ${className || ""}`}>
                 {label && <label
-                    className="text-[16px] text-[#1A1A1A] leading-tight"
+                    className={cn("text-[16px] text-[#1A1A1A] leading-tight", labelStyle)}
                     style={TYPOGRAPHY.body}
                 >
                     {label}
