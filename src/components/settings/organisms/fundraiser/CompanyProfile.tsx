@@ -34,6 +34,23 @@ export const MOCK_COMPANY_PROFILE: CompanyProfileData = {
     companyAvatarFallback: 'ST'
 };
 
+const ONLINE_PRESENCE_CHANNELS = [
+    {
+        key: 'website',
+        label: 'Website',
+        icon: Globe,
+        value: MOCK_COMPANY_PROFILE.website,
+        onEdit: () => console.log('Edit website triggered'),
+    },
+    {
+        key: 'email',
+        label: 'Public email',
+        icon: Mail,
+        value: MOCK_COMPANY_PROFILE.publicEmail,
+        onEdit: () => console.log('Edit public email triggered'),
+    },
+] as const;
+
 interface CompanyProfileProps {
     onBack: () => void;
     onSave?: (updatedData: Partial<CompanyProfileData>) => void;
@@ -132,30 +149,27 @@ export function CompanyProfile({ onBack, onSave }: CompanyProfileProps) {
                             Online Presence
                         </h3>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3.5 bg-[#F4F5F7] rounded-lg border border-transparent">
-                                <div className="flex items-center gap-2">
-                                    <Globe className="w-5 h-5 text-[#1F1F1F]" />
-                                    <div>
-                                        <span className="block text-[12px] text-[#A8A8A8]">Website</span>
-                                        <span className="text-sm text-[#1B1B1B] font-medium">{MOCK_COMPANY_PROFILE.website}</span>
+                            {ONLINE_PRESENCE_CHANNELS.map(({ key, label, icon: Icon, value, onEdit }) => (
+                                <div
+                                    key={key}
+                                    className="flex items-center justify-between p-3.5 bg-[#F4F5F7] rounded-lg border border-transparent"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Icon className="w-5 h-5 text-[#1F1F1F]" />
+                                        <div>
+                                            <span className="block text-[12px] text-[#A8A8A8]">{label}</span>
+                                            <span className="text-sm text-[#1B1B1B] font-medium">{value}</span>
+                                        </div>
                                     </div>
+                                    <button
+                                        type="button"
+                                        onClick={onEdit}
+                                        className="text-[#B9C65B] text-[14px] font-medium cursor-pointer hover:text-[#A4B04E] transition-colors"
+                                    >
+                                        Edit
+                                    </button>
                                 </div>
-                                <button>
-                                    <span className='text-[#B9C65B] text-[14px] font-medium cursor-pointer'> Edit</span>
-                                </button>
-                            </div>
-                            <div className="flex items-center justify-between p-3.5 bg-[#F4F5F7] rounded-lg border border-transparent">
-                                <div className="flex items-center gap-3">
-                                    <Mail className="w-5 h-5 text-[#1F1F1F]" />
-                                    <div>
-                                        <span className="block text-[12px] text-[#A8A8A8]">Public email</span>
-                                        <span className="text-sm text-[#1B1B1B] font-medium">{MOCK_COMPANY_PROFILE.publicEmail}</span>
-                                    </div>
-                                </div>
-                                <button>
-                                    <span className='text-[#B9C65B] text-[14px] font-medium cursor-pointer'> Edit</span>
-                                </button>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -208,7 +222,7 @@ export function CompanyProfile({ onBack, onSave }: CompanyProfileProps) {
             </div>
 
             {/* Bottom Form Actions Control Footnotes */}
-            <div className="w-full flex  flex-col lg:flex-row justify-end items-center gap-3 pt-4 border-t border-[#F2F2F2]">
+            <div className="w-full flex  flex-col lg:flex-row justify-end items-center gap-3 pt-4">
                 <OnboardingButton
                     label="Discard Changes"
                     variant="plain"

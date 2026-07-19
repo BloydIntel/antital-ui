@@ -10,6 +10,9 @@ import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingBu
 import { CompanyProfile, MOCK_COMPANY_PROFILE } from '@/components/settings/organisms/fundraiser/CompanyProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TeamManagement } from '@/components/settings/organisms/fundraiser/TeamManagement';
+import { ContactInformation } from '@/components/settings/organisms/fundraiser/ContactInformation';
+import { EmailAlerts } from '@/components/settings/organisms/fundraiser/EmailAlert';
+import { InAppNotifications } from '@/components/settings/organisms/fundraiser/InAppNotification';
 
 interface FundraiserSettingsProps {
     activeSlug: string;
@@ -78,6 +81,12 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                 return <CompanyProfile onBack={handleBack} />;
             case 'team-management':
                 return <TeamManagement />;
+            case 'contact-information':
+                return <ContactInformation onBack={handleBack} />;
+            case 'email-alerts':
+                return <EmailAlerts />;
+            case 'in-app-notifications':
+                return <InAppNotifications />;
             default:
                 return null;
         }
