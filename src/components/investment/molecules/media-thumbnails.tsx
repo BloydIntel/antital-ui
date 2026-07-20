@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { ThumbsUp, Share2 } from 'lucide-react'
+import { shareCurrentPage } from '@/lib/share-page'
 
 interface MediaThumbnailsProps {
   thumbnails?: string[]
@@ -92,6 +93,10 @@ export function MediaThumbnails({
 
         {/* Share Button */}
         <button
+          type="button"
+          onClick={() => {
+            void shareCurrentPage()
+          }}
           className="cursor-pointer border-none bg-transparent p-0"
           style={{
             width: '24px',

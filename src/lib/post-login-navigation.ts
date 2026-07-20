@@ -2,6 +2,7 @@ import type { LoginResponse } from "@/services/authService";
 import { ONBOARDING_CONFIG, type InvestorUserType } from "@/constants/steps";
 import onboardingService from "@/services/onboardingService";
 import { mapOnboardingStepToUiStep } from "@/lib/onboarding-hydration";
+import { mapApiUserTypeToStoreUserType } from "@/lib/user-type";
 import type { OnboardingResponse } from "@/types/onboarding";
 import {
   buildCheckoutPath,
@@ -11,11 +12,7 @@ import {
 
 /** Maps API login `userType` (camelCase or PascalCase) to onboarding URL segment. */
 export function mapLoginUserTypeToInvestorPathSegment(userType: string): InvestorUserType {
-  const t = userType.trim();
-  if (t === "IndividualInvestor" || t === "individualInvestor") return "individual";
-  if (t === "CorporateInvestor" || t === "corporateInvestor") return "corporate";
-  if (t === "FundRaiser" || t === "fundRaiser") return "fundraiser";
-  return "individual";
+  return mapApiUserTypeToStoreUserType(userType);
 }
 
 function firstStepKeyForType(type: InvestorUserType): string {

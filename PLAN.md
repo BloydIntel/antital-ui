@@ -1,97 +1,61 @@
-# Investment Explore UI Integration
+# Feedback from testing — bugfix plan
 
 ## Goal
 
-Replace static `investments.json` and hardcoded detail sections with the domain-first `/api/investments` backend.
+Fix guest, KYC, dashboard, and marketplace issues reported from QA testing so public browsing and core authenticated flows work as expected.
 
 ## Scope
 
-- Types, service, React Query hooks for list + detail bundle.
-- Landing/explore cards, new launches carousel.
-- Detail page composes domain resources (highlights, content-blocks, team, financials, etc.).
+- Guest homepage / landing CTAs and campaign detail actions.
+- Guest About Us CTA.
+- KYC validation for first two stages (non-skip path).
+- Dashboard/portfolio chart toggle, kebab menu, and graph/data alignment.
+- Marketplace sidebar label rename.
+- Login: sync `userType` from API into persisted store (correct investor vs fundraiser dashboard).
+- Preserve prior fix: explore detail stays public for guests (no forced login on load).
 
 ## Out Of Scope
 
-- Invest / watchlist / ask-question authenticated actions.
-- Admin listing CRUD.
-
-## API contracts and endpoints available
-
-See `antital-api/PLAN.md`. UI consumes:
-
-- `GET /api/investments`
-- `GET /api/investments/{idOrSlug}` + sub-resources (parallel fetch in one hook)
+- Building a real secondary-market trading product (MVP: Coming Soon only).
+- Building a full founder “apply to list” product (MVP: fix dead link only).
+- Backend watchlist/invest API contract changes.
+- Unrelated footer 404s (`/investments`, `/fixed-savings`, etc.) unless they appear in this feedback list.
 
 ## Checkpoints
 
 | # | Checkpoint | Status |
-|---|------------|--------|
-| 1 | Types, service, mappers, hooks | completed |
-| 2 | List integration (landing, explore, new launches) | completed |
-| 3 | Detail page + section props from API | completed |
-| 4 | Browser verification (Playwright) | completed |
+|---|---|---|
+| 0 | Explore detail public for guests (watchlist status + 401 interceptor) | completed |
+| 1 | Guest homepage CTAs + secondary market Coming Soon | completed |
+| 2 | Guest campaign detail actions (share, watchlist, Start trading ×N) | completed |
+| 3 | Guest About Us — Explore investment | completed |
+| 4 | KYC — require first 2 stages before proceed (non-skip) | completed |
+| 5 | Dashboard — portfolio toggle, kebab, graph vs holdings | completed |
+| 6 | Sidebar — rename Trade & Market → Marketplace | completed |
+| 7 | Login — sync userType from API to localStorage | completed |
+| 8 | Playwright / browser verification of fixed flows | completed |
 
 ## Permission rule
 
-Implement checkpoints sequentially; update status when complete.
+All checkpoints implemented in this branch per user approval.
 
 ---
 
-## Checkpoint 1 — Types, service, mappers, hooks
+## Issue tracker (QA feedback)
 
-- [x] Status: completed
-
-**Files:** `src/types/investment.ts`, `src/services/investmentService.ts`, `src/lib/investment-mappers.ts`, `src/hooks/use-investments.ts`, `src/hooks/use-investment-detail.ts`, `src/constants.ts`
-
-**Done criteria:** Service calls all public investment routes; hooks expose list + detail bundle.
-
----
-
-## Checkpoint 2 — List integration
-
-- [x] Status: completed
-
-**UI entry:** Landing `InvestmentOpportunities`, explore page, `NewLaunches`.
-
-**Files:** `investment-opportunities.tsx`, `new-launches.tsx`
-
-**Done criteria:** Cards render from API with loading/error states; links use slug.
-
-**Verified:** Landing at `http://localhost:3000/` shows AgriTech Innovations, AquaPure Innovations, EcoBuild Materials from API.
-
----
-
-## Checkpoint 3 — Detail page
-
-- [x] Status: completed
-
-**UI entry:** `/explore/[id]`
-
-**Files:** `explore/[id]/page.tsx`, `investment-detail-page-client.tsx`, `investment-detail-page-content.tsx`, investment section components
-
-**Done criteria:** Page fetches shell + sub-resources; no hardcoded NEXUS AI copy; UI composes domain data.
-
-**Verified:** `/explore/greentech-solutions` renders GreenTech Solutions with API highlights, team, financials, deal terms, and funding panel.
-
----
-
-## Checkpoint 4 — Browser verification
-
-- [x] Status: completed
-
-**Done criteria:** Landing shows API cards; detail page for `greentech-solutions` shows GreenTech data from API.
-
-**Test notes (Playwright, 2026-05-31):**
-
-- Landing cards load after React Query fetch (no static JSON).
-- Detail overview: problem statement, ₦675M ARR highlight, proprietary edge, market traction, TL;DR.
-- Detail tab: Dr. Eleanor Vance / Alex Chen team, financial metrics table, use of proceeds, risks, documents.
-- Investment panel: ₦7,381,254 raised, 341 investors, target rating 4.5.
-- Minor: seed media thumbnails (`/investments/thumb*.jpg`) 404 in Next image optimizer — assets not in `public/` yet.
-
-## Readiness checklist
-
-- [x] API running with investment routes (`https://localhost:7008`)
-- [x] UI `NEXT_PUBLIC_API_URL` points at API
-- [x] GreenTech full detail seeded on backend
-- [ ] Optional follow-up: add thumbnail assets to `public/investments/` or update seed URLs
+| ID | Area | Issue | Status |
+|---|---|---|---|
+| G1 | Guest homepage | Share button on campaigns unresponsive | fixed |
+| G2 | Guest homepage | Add to watchlist on guest campaign unresponsive | fixed |
+| G3 | Guest homepage | Start trading buttons on guest campaign | fixed (via checkout hook) |
+| G4 | Guest homepage | Hero Invest now → 404 | fixed → `/create-account` |
+| G5 | Guest homepage | Secondary market Start trading → 404 | fixed → `/secondary-market` + Coming Soon |
+| G6 | Guest homepage | Apply to list → 404 | fixed → `/create-account` |
+| A1 | Guest About Us | Explore investment unresponsive | fixed → `/explore` |
+| K1 | Sign up KYC | Proceed without first 2 KYC stages | fixed validation + review labels |
+| D1 | Dashboard | Portfolio stat / distribution toggle | fixed controlled select |
+| D2 | Dashboard | Three-dot does nothing | fixed (removed) |
+| D3 | Dashboard | Graph vs portfolio mismatch | fixed currency + holdings dist |
+| M1 | Trade & market | Rename sidebar to Marketplace | fixed |
+| U1 | Login / dashboard | Wrong userType (fundraiser default) | fixed API sync |
+| P0 | Explore detail | Guest forced to login | fixed |

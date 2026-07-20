@@ -1,4 +1,5 @@
 import React from 'react'
+import { ComingSoonBanner } from '@/components/secondary-market/molecules/coming-soon-banner'
 import { SecondaryMarketHero } from '@/components/secondary-market/organisms/SecondaryMarketHero'
 import { WhatIsTheAntitalSecondaryMarket } from '@/components/secondary-market/organisms/WhatIsTheAntitalSecondaryMarket'
 import { HowToInvest } from '@/components/secondary-market/organisms/HowToInvest'
@@ -11,6 +12,7 @@ import { FAQ } from '@/components/landing/organisms/faq'
 export default function SecondaryMarketLandingPageContent() {
     return (
         <div className="min-h-screen bg-background">
+            <ComingSoonBanner />
             <SecondaryMarketHero />
             <WhatIsTheAntitalSecondaryMarket />
             <HowToInvest />
