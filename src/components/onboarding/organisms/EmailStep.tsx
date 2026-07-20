@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Info } from 'lucide-react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
@@ -8,10 +8,14 @@ import { useOnboardingStore } from '@/store/onboardingStore'
 import { tokenStorage } from '@/lib/token-storage'
 import authService from '@/services/authService'
 import onboardingService from '@/services/onboardingService'
+import userService from '@/services/userService'
 import { ApiError } from '@/lib/api-error'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { buildFormPatchFromOnboarding, mapOnboardingStepToUiStep } from '@/lib/onboarding-hydration'
+import { useUserStore } from '@/store/userStore'
+import { useCurrentUser } from '@/hooks/use-current-user'
+import { getUserIdFromAccessToken } from '@/lib/jwt'
 import {
     Dialog,
     DialogContent,
@@ -43,7 +47,9 @@ const fundraiserMessage = {
 }
 
 export function EmailStep({ onNext }: EmailStepProps) {
-    const { setEmailVerified, investorUserType, formData, updateFormData, setCurrentStep } = useOnboardingStore()
+    const { setEmailVerified, emailVerified, investorUserType, formData, updateFormData, setCurrentStep } = useOnboardingStore()
+    const storeEmail = useUserStore((s) => s.emailAddress)
+    const { data: currentUser } = useCurrentUser()
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
     const [isRequestingDeleteOtp, setIsRequestingDeleteOtp] = useState(false);
@@ -52,11 +58,60 @@ export function EmailStep({ onNext }: EmailStepProps) {
     const [deleteOtp, setDeleteOtp] = useState("");
     const [deleteDialogStep, setDeleteDialogStep] = useState<"confirm" | "otp">("confirm");
     const router = useRouter();
-    const verificationEmail = (
+
+    const formEmail = (
         investorUserType === "individual"
             ? formData.email
             : formData.loginEmail || formData.email
     )?.trim();
+
+    const verificationEmail = (
+        formEmail
+        || storeEmail?.trim()
+        || currentUser?.email?.trim()
+        || ""
+    );
+
+    // Keep onboarding form in sync when email comes from session/API (e.g. after refresh).
+    useEffect(() => {
+        const email = storeEmail?.trim() || currentUser?.email?.trim();
+        if (!email) return;
+        if (investorUserType === "individual" && !formData.email) {
+            updateFormData({ email });
+        } else if (investorUserType !== "individual" && !formData.loginEmail && !formData.email) {
+            updateFormData({ loginEmail: email, email });
+        }
+    }, [
+        storeEmail,
+        currentUser?.email,
+        investorUserType,
+        formData.email,
+        formData.loginEmail,
+        updateFormData,
+    ]);
+
+    const resolveVerificationEmail = async (): Promise<string | null> => {
+        if (verificationEmail) return verificationEmail;
+
+        const userId = getUserIdFromAccessToken(tokenStorage.getAccessToken());
+        if (userId == null) return null;
+
+        try {
+            const profile = await userService.getById(userId);
+            const email = profile.email?.trim();
+            if (!email) return null;
+
+            useUserStore.getState().updateProfile({ emailAddress: email });
+            if (investorUserType === "individual") {
+                updateFormData({ email });
+            } else {
+                updateFormData({ loginEmail: email, email });
+            }
+            return email;
+        } catch {
+            return null;
+        }
+    };
 
     const handleVerifyEmail = async () => {
         const refreshToken = tokenStorage.getRefreshToken();
@@ -73,6 +128,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
 
             if (data.isEmailVerified) {
                 setEmailVerified(true);
+                useUserStore.getState().updateProfile({ isEmailVerified: true });
 
                 // Hydrate individual and corporate flows from backend progress.
                 if (investorUserType !== "individual" && investorUserType !== "corporate") {
@@ -105,14 +161,15 @@ export function EmailStep({ onNext }: EmailStepProps) {
     }
 
     const handleResendVerification = async () => {
-        if (!verificationEmail) {
-            toast.error("Email address is missing. Go back and complete account details.");
-            return;
-        }
-
         setIsResending(true);
         try {
-            await authService.resendVerification(verificationEmail);
+            const email = await resolveVerificationEmail();
+            if (!email) {
+                toast.error("Email address is missing. Go back and complete account details.");
+                return;
+            }
+
+            await authService.resendVerification(email);
             toast.success("Verification email resent. Check your inbox.");
         } catch (error) {
             if (error instanceof ApiError) toast.error(error.primaryMessage);
@@ -124,14 +181,14 @@ export function EmailStep({ onNext }: EmailStepProps) {
     };
 
     const handleRequestDeleteOtp = async () => {
-        const email = verificationEmail;
-        if (!email) {
-            toast.error("Email address is missing. Go back and complete account details.");
-            return;
-        }
-
         setIsRequestingDeleteOtp(true);
         try {
+            const email = await resolveVerificationEmail();
+            if (!email) {
+                toast.error("Email address is missing. Go back and complete account details.");
+                return;
+            }
+
             await authService.requestUnverifiedOtp({ email });
             toast.success("OTP sent to your email.");
             setDeleteDialogStep("otp");
@@ -145,7 +202,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
     }
 
     const handleDeleteAccountWithOtp = async () => {
-        const email = verificationEmail;
+        const email = await resolveVerificationEmail();
         if (!email) {
             toast.error("Email address is missing. Go back and complete account details.");
             return;
@@ -161,6 +218,7 @@ export function EmailStep({ onNext }: EmailStepProps) {
             await authService.deleteUnverified({ email, otp: deleteOtp });
             tokenStorage.clear();
             setEmailVerified(false);
+            useUserStore.getState().clearUser();
             setShowDeleteConfirm(false);
             setDeleteDialogStep("confirm");
             setDeleteOtp("");
@@ -178,6 +236,38 @@ export function EmailStep({ onNext }: EmailStepProps) {
     const isDeleteBusy = isRequestingDeleteOtp || isDeletingWithOtp;
 
     const isFundraiser = investorUserType === 'fundraiser';
+
+    // Already verified — show continue only (no re-verify / delete account).
+    if (emailVerified) {
+        return (
+            <section>
+                <div className="flex flex-col items-center">
+                    <Image
+                        src="/onboarding/caution-icon.png"
+                        alt="Email verified"
+                        width={80}
+                        height={80}
+                    />
+                    <h4
+                        className="text-[24px] text-[#1F1F1F] leading-none pt-[16px]"
+                        style={{ fontWeight: 500, ...bodyStyle }}
+                    >
+                        Email verified
+                    </h4>
+                    <p
+                        className="text-[16px] text-[#858585] leading-tight py-[8px] text-center max-w-[480px]"
+                        style={bodyStyle}
+                    >
+                        Your email is already verified. You can continue, or use the menu to edit
+                        your personal or company details.
+                    </p>
+                    <div className="w-full max-w-[280px] mt-6">
+                        <OnboardingButton label="Continue" onClick={onNext} />
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section>

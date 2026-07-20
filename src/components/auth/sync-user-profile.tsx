@@ -16,6 +16,7 @@ export function SyncUserProfile() {
     updateProfile({
       emailAddress: user.email,
       userType: mapApiUserTypeToStoreUserType(user.userType),
+      isEmailVerified: user.isEmailVerified,
     });
     setUserId(String(user.id));
   }, [user]);

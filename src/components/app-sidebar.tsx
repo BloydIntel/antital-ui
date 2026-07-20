@@ -17,6 +17,7 @@ import {
   FileText,
 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 import { NavMain } from "@/components/nav-main"
 import {
@@ -44,7 +45,7 @@ const investorNavGroups = [
       { title: "Access Chat", url: "/access-chat", icon: MessageCircle },
       { title: "Help Center", url: "/help-center", icon: MessageCircleQuestionMark },
       { title: "Settings", url: "/settings", icon: Settings },
-      { title: "Log Out", url: "/log-out", icon: LogOut },
+      { title: "Log Out", url: "#", icon: LogOut, action: "logout" as const },
     ],
   },
 ];
@@ -66,7 +67,7 @@ const fundraiserNavGroups = [
       { title: "Access Chat", url: "/access-chat", icon: MessageCircle },
       { title: "Help Center", url: "/help-center", icon: MessageCircleQuestionMark },
       { title: "Settings", url: "/settings", icon: Settings },
-      { title: "Log Out", url: "/log-out", icon: LogOut },
+      { title: "Log Out", url: "#", icon: LogOut, action: "logout" as const },
     ],
   },
 ];
@@ -80,14 +81,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props} className="bg-[#FFFFFF] shrink-0 scrollbar-hide">
       <SidebarHeader className="pt-10 pb-7 bg-[#FFFFFF]">
-        <Image
-          src="/icons/antital.svg"
-          alt="Antital Logo"
-          width={80}
-          height={80}
-          priority
-          className="object-contain"
-        />
+        <Link href="/" aria-label="Antital home" className="inline-flex">
+          <Image
+            src="/icons/antital.svg"
+            alt="Antital Logo"
+            width={80}
+            height={80}
+            priority
+            className="object-contain"
+          />
+        </Link>
       </SidebarHeader>
       <SidebarContent className="flex flex-col justify-between h-full overflow-visible scrollbar-hide bg-[#FFFFFF]">
         {activeNavGroups.map((group) => (

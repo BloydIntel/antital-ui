@@ -8,8 +8,12 @@ import { Menu, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useTheme } from '@/hooks/use-theme'
 import { ExploreMenu } from '@/components/landing/organisms/explore-menu'
+import { tokenStorage } from '@/lib/token-storage'
+import { useUserStore } from '@/store/userStore'
+import { resolveSessionResumePath } from '@/lib/post-login-navigation'
 
 // Navigation items based on your Figma design
 const navigationItems = [
@@ -55,11 +59,60 @@ const handleNavClick = (href: string, e: React.MouseEvent, callback?: () => void
   }
 }
 
+function getInitials(firstName: string | null, lastName: string | null, email: string | null): string {
+  const first = firstName?.trim()?.[0]
+  const last = lastName?.trim()?.[0]
+  if (first || last) return `${first ?? ''}${last ?? ''}`.toUpperCase()
+  const fromEmail = email?.trim()?.[0]
+  return (fromEmail ?? 'U').toUpperCase()
+}
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const { theme } = useTheme()
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [appHref, setAppHref] = useState('/dashboard')
+  const [appCtaLabel, setAppCtaLabel] = useState('Go to Dashboard')
+
+  const profilePictureUrl = useUserStore((s) => s.profilePictureUrl)
+  const firstName = useUserStore((s) => s.firstName)
+  const lastName = useUserStore((s) => s.lastName)
+  const emailAddress = useUserStore((s) => s.emailAddress)
+  const isEmailVerified = useUserStore((s) => s.isEmailVerified)
+  const userType = useUserStore((s) => s.userType)
+
+  useEffect(() => {
+    // Tokens exist after signup before email verify — don't treat that as logged-in marketing UI.
+    setIsLoggedIn(Boolean(tokenStorage.getAccessToken()) && isEmailVerified)
+  }, [pathname, isEmailVerified])
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setAppHref('/dashboard')
+      setAppCtaLabel('Go to Dashboard')
+      return
+    }
+
+    let cancelled = false
+    void resolveSessionResumePath({
+      userType,
+      isEmailVerified: true,
+    }).then((resume) => {
+      if (cancelled) return
+      setAppHref(resume.path)
+      setAppCtaLabel(
+        resume.kind === 'onboarding' || resume.kind === 'email'
+          ? 'Continue Onboarding'
+          : 'Go to Dashboard'
+      )
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isLoggedIn, userType, pathname])
 
   // Resolve system theme to actual light/dark
   useEffect(() => {
@@ -81,6 +134,65 @@ export function Navbar() {
 
   // Choose logo based on theme
   const logoSrc = resolvedTheme === 'dark' ? '/icons/antital-white.svg' : '/icons/antital.svg'
+  const avatarFallback = getInitials(firstName, lastName, emailAddress)
+
+  const guestActions = (
+    <>
+      <Button
+        className="bg-[#365852] hover:bg-[#365852]/90 text-white px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[100px] lg:min-w-[110px]"
+        asChild
+        style={{
+          fontFamily: 'var(--font-rethink-sans)',
+          fontSize: '15px',
+          lineHeight: '21px',
+          fontWeight: 500,
+        }}
+      >
+        <Link href="/sign-in">Invest now</Link>
+      </Button>
+      <Button
+        variant="outline"
+        className="border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
+        asChild
+        style={{
+          fontFamily: 'var(--font-rethink-sans)',
+          fontSize: '15px',
+          lineHeight: '21px',
+          fontWeight: 500,
+        }}
+      >
+        <Link href="/sign-in">Raise funds</Link>
+      </Button>
+    </>
+  )
+
+  const loggedInActions = (
+    <>
+      <Link href={appHref} aria-label={appCtaLabel}>
+        <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
+          {profilePictureUrl ? (
+            <AvatarImage src={profilePictureUrl} alt="User profile" />
+          ) : null}
+          <AvatarFallback className="bg-[#F4F5F7] text-[#042E27] text-sm font-medium">
+            {avatarFallback}
+          </AvatarFallback>
+        </Avatar>
+      </Link>
+      <Button
+        variant="outline"
+        className="border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 whitespace-nowrap"
+        asChild
+        style={{
+          fontFamily: 'var(--font-rethink-sans)',
+          fontSize: '15px',
+          lineHeight: '21px',
+          fontWeight: 500,
+        }}
+      >
+        <Link href={appHref}>{appCtaLabel}</Link>
+      </Button>
+    </>
+  )
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-background">
@@ -156,31 +268,7 @@ export function Navbar() {
 
           {/* Account Actions - compact on smaller screens, don't shrink */}
           <div className="hidden lg:flex items-center gap-1.5 shrink-0">
-            <Button
-              className="bg-[#365852] hover:bg-[#365852]/90 text-white px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[100px] lg:min-w-[110px]"
-              asChild
-              style={{
-                fontFamily: 'var(--font-rethink-sans)',
-                fontSize: '15px',
-                lineHeight: '21px',
-                fontWeight: 500,
-              }}
-            >
-              <Link href="/sign-in">Invest now</Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] bg-transparent px-3 lg:px-4 py-2 rounded-lg font-medium h-12 min-w-[105px] lg:min-w-[116px]"
-              asChild
-              style={{
-                fontFamily: 'var(--font-rethink-sans)',
-                fontSize: '15px',
-                lineHeight: '21px',
-                fontWeight: 500,
-              }}
-            >
-              <Link href="/sign-in">Raise funds</Link>
-            </Button>
+            {isLoggedIn ? loggedInActions : guestActions}
           </div>
 
           {/* Mobile Menu Button - pushed to the right */}
@@ -241,37 +329,72 @@ export function Navbar() {
                 {/* Divider */}
                 <div className="border-t border-[#EAEAEA]" />
 
-                {/* Mobile Actions - Invest now first, then Raise funds */}
+                {/* Mobile Actions */}
                 <div className="flex flex-col gap-3">
-                  <Button
-                    className="w-full h-12 bg-[#365852] hover:bg-[#365852]/90 text-white rounded-lg"
-                    style={{
-                      fontFamily: 'var(--font-rethink-sans)',
-                      fontSize: '16px',
-                      lineHeight: '21px',
-                      fontWeight: 500,
-                    }}
-                    asChild
-                  >
-                    <Link href="/sign-in" onClick={() => setIsOpen(false)}>
-                      Invest now
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] rounded-lg"
-                    style={{
-                      fontFamily: 'var(--font-rethink-sans)',
-                      fontSize: '16px',
-                      lineHeight: '21px',
-                      fontWeight: 500,
-                    }}
-                    asChild
-                  >
-                    <Link href="/sign-in" onClick={() => setIsOpen(false)}>
-                      Raise funds
-                    </Link>
-                  </Button>
+                  {isLoggedIn ? (
+                    <>
+                      <div className="flex items-center gap-3 px-1">
+                        <Avatar className="h-12 w-12 border border-[#EAEAEA]">
+                          {profilePictureUrl ? (
+                            <AvatarImage src={profilePictureUrl} alt="User profile" />
+                          ) : null}
+                          <AvatarFallback className="bg-[#F4F5F7] text-[#042E27] text-sm font-medium">
+                            {avatarFallback}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-[16px] text-[#2C2C2C]" style={{ fontFamily: 'var(--font-dm-sans)' }}>
+                          {[firstName, lastName].filter(Boolean).join(' ') || emailAddress || 'Account'}
+                        </span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] rounded-lg"
+                        style={{
+                          fontFamily: 'var(--font-rethink-sans)',
+                          fontSize: '16px',
+                          lineHeight: '21px',
+                          fontWeight: 500,
+                        }}
+                        asChild
+                      >
+                        <Link href={appHref} onClick={() => setIsOpen(false)}>
+                          {appCtaLabel}
+                        </Link>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        className="w-full h-12 bg-[#365852] hover:bg-[#365852]/90 text-white rounded-lg"
+                        style={{
+                          fontFamily: 'var(--font-rethink-sans)',
+                          fontSize: '16px',
+                          lineHeight: '21px',
+                          fontWeight: 500,
+                        }}
+                        asChild
+                      >
+                        <Link href="/sign-in" onClick={() => setIsOpen(false)}>
+                          Invest now
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 border-[#A8A8A8] text-foreground [&:hover]:bg-[#A7B832] [&:hover]:text-[#11110F] [&:hover]:border-[#A7B832] dark:[&:hover]:bg-[#A7B832] dark:[&:hover]:text-[#11110F] dark:[&:hover]:border-[#A7B832] rounded-lg"
+                        style={{
+                          fontFamily: 'var(--font-rethink-sans)',
+                          fontSize: '16px',
+                          lineHeight: '21px',
+                          fontWeight: 500,
+                        }}
+                        asChild
+                      >
+                        <Link href="/sign-in" onClick={() => setIsOpen(false)}>
+                          Raise funds
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
@@ -281,4 +404,3 @@ export function Navbar() {
     </header>
   )
 }
-

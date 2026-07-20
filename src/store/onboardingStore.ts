@@ -113,6 +113,7 @@ export interface OnboardingState {
     setEmailVerified: (verified: boolean) => void
     setLastAllowedStep: (step: AllowedStepBeforeVerify) => void
     updateFormData: (data: Partial<Omit<OnboardingFormData, 'kycData'>> & { kycData?: Partial<KYCData> }) => void
+    resetOnboarding: () => void
 }
 
 const initialFormData: OnboardingFormData = {
@@ -226,5 +227,18 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
                     kycData: updatedKycData
                 }
             };
+        }),
+
+    resetOnboarding: () =>
+        set({
+            investorUserType: null,
+            currentStep: "personal",
+            personalSubStep: 0,
+            companySubStep: 0,
+            fundraiserCompanySubStep: 0,
+            kycSubStep: 0,
+            emailVerified: false,
+            lastAllowedStep: "personal",
+            formData: initialFormData,
         }),
 }))

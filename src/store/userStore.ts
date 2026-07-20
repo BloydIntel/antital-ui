@@ -14,6 +14,7 @@ export interface UserData {
     profilePictureUrl: string | null
     userType: UserType
     isKycCompleted: boolean
+    isEmailVerified: boolean
 }
 
 interface UserState extends UserData {
@@ -36,6 +37,7 @@ export const useUserStore = create<UserState>()(
             profilePictureUrl: null,
             userType: "individual",
             isKycCompleted: false,
+            isEmailVerified: false,
 
             setUserId: (id) => set(() => ({ userId: id })),
 
@@ -52,6 +54,7 @@ export const useUserStore = create<UserState>()(
                 profilePictureUrl: null,
                 userType: "individual",
                 isKycCompleted: false,
+                isEmailVerified: false,
             })),
         }),
         {
