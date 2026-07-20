@@ -93,9 +93,9 @@ const OFFERING_FIELDS: readonly OfferingField[] = [
 const getBusinessSizeInfo = (size: string | undefined) => {
     switch (size) {
         case 'Micro':
-            return 'Choosing the "micro" option will restrict the maximum annual cap to ₦50 million.';
-        case 'Small':
             return 'Please specify the funding target within the permitted range: ₦25,000,000 and not more than ₦100,000,000.';
+        case 'Small':
+            return 'Choosing the "small" option will restrict the maximum annual cap to ₦50 million.';
         case 'Medium':
             return 'Choosing the "medium" option restrict the maximum annual cap to ₦100 million.';
         default:
@@ -106,15 +106,18 @@ const getBusinessSizeInfo = (size: string | undefined) => {
 const getFundingError = (amount: string | undefined, size: string | undefined): string | null => {
     if (!amount) return "Required";
     const val = Number(amount);
+    if (!Number.isFinite(val) || val <= 0) {
+        return "Please enter a valid funding amount";
+    }
 
     switch (size) {
         case 'Micro':
-            return val > 50000000 ? "Please input a different amount less than or equal to ₦50 million" : null;
-        case 'Small':
             if (val < 25000000 || val > 100000000) {
                 return "Please specify the funding target within the permitted range: ₦25,000,000 to ₦100,000,000";
             }
             return null;
+        case 'Small':
+            return val > 50000000 ? "Please input a different amount less than or equal to ₦50 million" : null;
         case 'Medium':
             return val > 100000000 ? "Please input a different amount less than or equal to ₦100 million" : null;
         default:
@@ -129,6 +132,7 @@ interface UploadBusinessDocumentProps {
     customSubmitAction?: (data: AddNewInvestmentFormPayload) => Promise<void>;
     onSuccessCallback?: () => void;
     onCancelCallback?: () => void;
+    onBack?: () => void;
 }
 
 export function UploadBusinessDocument({
@@ -138,6 +142,7 @@ export function UploadBusinessDocument({
     customSubmitAction,
     onSuccessCallback,
     onCancelCallback,
+    onBack,
 }: UploadBusinessDocumentProps) {
     const router = useRouter();
     const { saveBusinessDocuments } = useFundraiserOnboardingApi();
@@ -166,7 +171,6 @@ export function UploadBusinessDocument({
 
     const handleFieldUpdate = (field: keyof AddNewInvestmentFormPayload, value: string | File | null) => {
         activeUpdateFormData({ [field]: value });
-        if (showErrors) setShowErrors(false);
     };
 
     const businessSizeInfo = useMemo(() =>
@@ -221,6 +225,8 @@ export function UploadBusinessDocument({
     const handleBack = () => {
         if (onCancelCallback) {
             onCancelCallback();
+        } else if (onBack) {
+            onBack();
         } else {
             router.back();
         }
@@ -252,6 +258,7 @@ export function UploadBusinessDocument({
                             onUpload={(file) => handleFieldUpdate(section.field, file)}
                             value={fieldValue ?? null}
                             isError={section.required && showErrors && !fieldValue}
+                            documentsOnly
                         />
                     );
                 })}
@@ -299,7 +306,12 @@ export function UploadBusinessDocument({
 
                                         {(() => {
                                             const fundingError = getFundingError(activeFormData.fundingTarget, activeFormData.businessSize);
-                                            const isTargetError = showErrors && fundingError;
+                                            const hasAmount = Boolean(activeFormData.fundingTarget);
+                                            const rangeError = fundingError && fundingError !== "Required" ? fundingError : null;
+                                            const displayError = showErrors
+                                                ? fundingError
+                                                : (hasAmount ? rangeError : null);
+                                            const isTargetError = Boolean(displayError);
 
                                             return (
                                                 <>
@@ -326,7 +338,7 @@ export function UploadBusinessDocument({
                                                         />
                                                     </div>
                                                     {isTargetError && (
-                                                        <span className="text-xs text-red-500 mt-1">{fundingError}</span>
+                                                        <span className="text-xs text-red-500 mt-1">{displayError}</span>
                                                     )}
                                                 </>
                                             );

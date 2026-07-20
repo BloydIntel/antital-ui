@@ -1,4 +1,5 @@
 import OnboardingSidebar from "@/components/onboarding/organisms/onboarding-sidebar/OnboardingSidebar"
+import { OnboardingMobileLogout } from "@/components/onboarding/organisms/OnboardingMobileLogout"
 
 export default function OnboardingLayout({
     children,
@@ -18,6 +19,8 @@ export default function OnboardingLayout({
 
             {/* Main content */}
             <main className="flex flex-1 flex-col min-h-screen items-center bg-white">
+
+                <OnboardingMobileLogout />
 
                 <div className="flex-1 flex flex-col justify-between items-center w-full">
 

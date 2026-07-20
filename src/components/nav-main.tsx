@@ -19,29 +19,34 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
+import useLogout from "@/hooks/use-logout"
+
+export type NavMainItem = {
+  title: string
+  url: string
+  icon?: React.ComponentType<React.ComponentProps<"svg">>
+  iconClassName?: string
+  isActive?: boolean
+  action?: "logout"
+  items?: {
+    title: string
+    url: string
+    isActive?: boolean
+  }[]
+}
 
 export function NavMain({
   label,
   items,
 }: {
   label?: string
-  items: {
-    title: string
-    url: string
-    icon?: React.ComponentType<React.ComponentProps<"svg">>
-    iconClassName?: string
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-      isActive?: boolean
-    }[]
-  }[]
+  items: NavMainItem[]
 }) {
   const pathname = usePathname()
+  const logoutMutation = useLogout()
 
   // Check if any subitem is active to determine if parent should be open
-  const shouldBeOpen = (item: typeof items[0]) => {
+  const shouldBeOpen = (item: NavMainItem) => {
     if (item.isActive) return true
     return item.items?.some(subItem => pathname === subItem.url) || false
   }
@@ -97,6 +102,20 @@ export function NavMain({
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </>
+              ) : item.action === "logout" ? (
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  className="cursor-pointer"
+                  disabled={logoutMutation.isPending}
+                  onClick={() => logoutMutation.mutate()}
+                >
+                  {item.icon && (
+                    <item.icon className={cn("transition-all", item.iconClassName)} />
+                  )}
+                  <span className="text-[16px]">
+                    {logoutMutation.isPending ? "Logging out…" : item.title}
+                  </span>
+                </SidebarMenuButton>
               ) : (
                 <SidebarMenuButton
                   asChild

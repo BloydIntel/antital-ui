@@ -12,9 +12,17 @@ import { PersonalSubStepId, validatePersonalStep } from '@/lib/onboardingValidat
 import authService from '@/services/authService';
 import { tokenStorage } from '@/lib/token-storage';
 import { showApiErrorToast } from '@/lib/error-feedback';
+import { useUserStore } from '@/store/userStore';
+import { mapApiUserTypeToStoreUserType } from '@/lib/user-type';
 
 export function PersonalStep() {
-    const { personalSubStep: subStep, setPersonalSubStep: setSubStep, formData, setEmailVerified } = useOnboardingStore();
+    const {
+        personalSubStep: subStep,
+        setPersonalSubStep: setSubStep,
+        formData,
+        setEmailVerified,
+        emailVerified,
+    } = useOnboardingStore();
     const [showErrors, setShowErrors] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,6 +38,13 @@ export function PersonalStep() {
 
     const canProceed = validatePersonalStep(currentStep.id as PersonalSubStepId, formData);
 
+    const backSubstep = () => {
+        if (subStep > 0) {
+            setShowErrors(false);
+            setSubStep(subStep - 1);
+        }
+    };
+
     const handleNext = async () => {
         if (!canProceed) {
             setShowErrors(true);
@@ -38,6 +53,12 @@ export function PersonalStep() {
 
         setShowErrors(false);
         if (isLastSubStep) {
+            // Account already exists after email verification — keep edits and resume flow.
+            if (emailVerified) {
+                router.push('/onboarding/individual/investor');
+                return;
+            }
+
             setIsSubmitting(true);
 
             try {
@@ -63,6 +84,14 @@ export function PersonalStep() {
                     tokenStorage.setRefreshToken(data.refreshToken);
                 }
                 setEmailVerified(data.isEmailVerified);
+                useUserStore.getState().setUserId(String(data.userId));
+                useUserStore.getState().updateProfile({
+                    emailAddress: data.email,
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    userType: mapApiUserTypeToStoreUserType(data.userType),
+                    isEmailVerified: data.isEmailVerified,
+                });
 
                 router.push('/onboarding/individual/email');
             } catch (error) {
@@ -74,6 +103,12 @@ export function PersonalStep() {
             setSubStep(subStep + 1);
         }
     };
+
+    const primaryLabel = subStep === 0
+        ? "Proceed"
+        : emailVerified
+            ? (isSubmitting ? "Saving…" : "Save & Continue")
+            : (isSubmitting ? "Creating account…" : "Create Account");
 
     return (
         <div className="w-full lg:w-[558px] flex flex-col gap-4">
@@ -91,18 +126,23 @@ export function PersonalStep() {
                 {currentStep && stepContent[currentStep.id]}
             </div>
 
-            <OnboardingButton
-                label={
-                    subStep === 0
-                        ? "Proceed"
-                        : isSubmitting
-                          ? "Creating account…"
-                          : "Create Account"
-                }
-                variant="solid"
-                onClick={handleNext}
-                loading={isSubmitting}
-            />
+            <div className={`flex items-center pt-8 pb-10 ${subStep > 0 ? "justify-between" : ""}`}>
+                {subStep > 0 && (
+                    <OnboardingButton
+                        label="Back"
+                        variant="plain"
+                        onClick={backSubstep}
+                        className="w-[115px]"
+                    />
+                )}
+                <OnboardingButton
+                    label={primaryLabel}
+                    variant="solid"
+                    onClick={handleNext}
+                    loading={isSubmitting}
+                    className={subStep > 0 ? "w-[230px]" : undefined}
+                />
+            </div>
         </div>
     )
 }

@@ -12,6 +12,8 @@ import { CompanySubStepId, validateFullStep, validateSubStep } from '@/lib/onboa
 import authService from '@/services/authService';
 import { tokenStorage } from '@/lib/token-storage';
 import { showApiErrorToast } from '@/lib/error-feedback';
+import { useUserStore } from '@/store/userStore';
+import { mapApiUserTypeToStoreUserType } from '@/lib/user-type';
 
 const corporateHeaderLabels = [
     { id: 'details', title: 'Corporate Investment Account', desc: 'Register your organization to invest in vetted Nigerian startups' },
@@ -70,6 +72,15 @@ export function CompanyInformation() {
                 return;
             }
 
+            // Account already exists after email verification — keep edits and resume flow.
+            if (store.emailVerified) {
+                const nextAfterEmail = isFundraiser
+                    ? "company-documentation"
+                    : "categorization";
+                router.push(`/onboarding/${investorUserType}/${nextAfterEmail}`);
+                return;
+            }
+
             if (isFundraiser) {
                 setIsSubmitting(true);
                 try {
@@ -110,6 +121,12 @@ export function CompanyInformation() {
                         tokenStorage.setRefreshToken(data.refreshToken);
                     }
                     store.setEmailVerified(data.isEmailVerified);
+                    useUserStore.getState().setUserId(String(data.userId));
+                    useUserStore.getState().updateProfile({
+                        emailAddress: data.email,
+                        userType: mapApiUserTypeToStoreUserType(data.userType),
+                        isEmailVerified: data.isEmailVerified,
+                    });
                     router.push(`/onboarding/${investorUserType}/email`);
                 } catch (error) {
                     showApiErrorToast(error, "Unable to create fundraiser account.");
@@ -166,6 +183,12 @@ export function CompanyInformation() {
                     tokenStorage.setRefreshToken(data.refreshToken);
                 }
                 store.setEmailVerified(data.isEmailVerified);
+                useUserStore.getState().setUserId(String(data.userId));
+                useUserStore.getState().updateProfile({
+                    emailAddress: data.email,
+                    userType: mapApiUserTypeToStoreUserType(data.userType),
+                    isEmailVerified: data.isEmailVerified,
+                });
 
                 router.push(`/onboarding/${investorUserType}/email`);
             } catch (error) {
@@ -216,21 +239,24 @@ export function CompanyInformation() {
                 {renderStepContent()}
             </div>
 
-            <div className="flex items-center justify-between pt-8 pb-10">
-                <OnboardingButton
-                    label='Back'
-                    variant="plain"
-                    disabled={subStep === 0}
-                    onClick={backSubstep}
-                    className="w-[115px]"
-                />
+            <div className={`flex items-center pt-8 pb-10 ${subStep > 0 ? "justify-between" : ""}`}>
+                {subStep > 0 && (
+                    <OnboardingButton
+                        label='Back'
+                        variant="plain"
+                        onClick={backSubstep}
+                        className="w-[115px]"
+                    />
+                )}
 
                 <OnboardingButton
                     label={
                         isLastSubStep
-                            ? isSubmitting
-                                ? "Creating account…"
-                                : "Create Account"
+                            ? store.emailVerified
+                                ? "Save & Continue"
+                                : isSubmitting
+                                    ? "Creating account…"
+                                    : "Create Account"
                             : isSubmitting
                                 ? "Saving…"
                                 : "Proceed"
@@ -238,7 +264,7 @@ export function CompanyInformation() {
                     variant="solid"
                     onClick={nextSubStep}
                     loading={isSubmitting}
-                    className="w-[230px]"
+                    className={subStep > 0 ? "w-[230px]" : undefined}
                 />
             </div>
 

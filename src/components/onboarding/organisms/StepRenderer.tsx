@@ -41,9 +41,17 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
         }
     };
 
+    // Skip the email step when going back — after verify, return to personal/company.
     const navigateToBack = () => {
-        if (currentIndex > 0) {
-            const prevStepKey = steps[currentIndex - 1].key;
+        if (currentIndex <= 0) return;
+
+        let targetIndex = currentIndex - 1;
+        if (steps[targetIndex]?.key === "email" && targetIndex > 0) {
+            targetIndex -= 1;
+        }
+
+        const prevStepKey = steps[targetIndex]?.key;
+        if (prevStepKey) {
             router.push(`/onboarding/${investorUserTypeFromUrl}/${prevStepKey}`);
         }
     };
@@ -58,12 +66,12 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return <EmailStep onNext={navigateToNext} />;
 
         case "company-documentation":
-            return <UploadBusinessDocument />
+            return <UploadBusinessDocument onBack={navigateToBack} />;
 
         case "investor":
-            return <InvestorStep onNext={navigateToNext} />;
+            return <InvestorStep onBack={navigateToBack} onNext={navigateToNext} />;
         case "categorization":
-            return <CorporateCategorization onNext={navigateToNext} />;
+            return <CorporateCategorization onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "profile":
             return <InvestmentProfile onBack={navigateToBack} onNext={navigateToNext} />;
