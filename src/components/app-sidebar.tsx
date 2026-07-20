@@ -32,7 +32,7 @@ const investorNavGroups = [
     items: [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
       { title: "Portfolio", url: "/portfolio", icon: BriefcaseBusiness },
-      { title: "Trade & Market", url: "/marketplace", icon: ChartLine },
+      { title: "Marketplace", url: "/marketplace", icon: ChartLine },
       { title: "Fixed Savings", url: "/fixed-savings", icon: PiggyBank },
       { title: "Balance & Funding", url: "/balance-funding", icon: Wallet },
       { title: "Watchlist", url: "/watchlist", icon: Eye },

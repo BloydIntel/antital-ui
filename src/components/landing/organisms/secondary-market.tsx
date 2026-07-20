@@ -36,7 +36,7 @@ export function SecondaryMarket() {
 
             {/* Buttons */}
             <ButtonGroup
-              primaryHref="/secondary-market/trade"
+              primaryHref="/secondary-market"
               primaryText="Start trading"
               secondaryHref="/secondary-market"
               secondaryText="Learn more"

@@ -71,6 +71,7 @@ export function Dashboard() {
                     <PortfolioStatChart
                         portfolioPerformance={data?.portfolioPerformance}
                         activeDeals={data?.activeDeals}
+                        holdings={data?.holdings}
                         isLoading={isLoading}
                     />
                     : <div className="grid grid-cols-1 xl:grid-cols-10 mb-12 gap-5">

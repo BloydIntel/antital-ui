@@ -34,7 +34,7 @@ export const useUserStore = create<UserState>()(
             city: null,
             state: null,
             profilePictureUrl: null,
-            userType: "fundraiser",
+            userType: "individual",
             isKycCompleted: false,
 
             setUserId: (id) => set(() => ({ userId: id })),
@@ -50,7 +50,7 @@ export const useUserStore = create<UserState>()(
                 city: null,
                 state: null,
                 profilePictureUrl: null,
-                userType: "fundraiser",
+                userType: "individual",
                 isKycCompleted: false,
             })),
         }),

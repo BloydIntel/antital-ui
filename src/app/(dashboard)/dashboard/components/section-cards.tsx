@@ -128,7 +128,7 @@ function SummaryCard({
         </div>
       </CardContent>
       {footerText && (
-        <CardFooter className="px-5 py-3 flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity bg-[#E6EAE9] border-t border-[#EAEAEA]">
+        <CardFooter className="px-5 py-3 flex justify-between items-center bg-[#E6EAE9] border-t border-[#EAEAEA]">
           <span className="text-[14px] text-[#042E27]" style={TYPOGRAPHY.heading}>
             {footerText}
           </span>

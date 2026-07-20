@@ -58,7 +58,7 @@ export function Hero() {
               }}
               asChild
             >
-              <Link href="/auth/sign-up" className="flex items-center justify-between w-full">
+              <Link href="/create-account" className="flex items-center justify-between w-full">
                 <span className="mx-auto">Invest Now</span>
                 <ArrowRight className="h-6 w-6" />
               </Link>

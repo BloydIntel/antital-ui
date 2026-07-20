@@ -8,6 +8,7 @@ import { useSidebarConfig } from "@/hooks/use-sidebar-config";
 import { DashboardHeader } from "@/components/dashboard/organisms/DashboardHeader";
 import { InfoBanner } from "@/components/dashboard/organisms/InfoBanner";
 import { useRouter } from "next/navigation";
+import { SyncUserProfile } from "@/components/auth/sync-user-profile";
 import { useUserStore } from "@/store/userStore";
 
 export default function DashboardLayout({
@@ -36,7 +37,8 @@ export default function DashboardLayout({
   const router = useRouter();
 
   return (
-
+    <>
+      <SyncUserProfile />
     <SidebarProvider
       style={{
         "--sidebar-width": isMobile ? "50vw" : "16rem",
@@ -76,5 +78,6 @@ export default function DashboardLayout({
 
       <FloatingChatButton />
     </SidebarProvider>
+    </>
   );
 }
