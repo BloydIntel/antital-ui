@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 
@@ -63,8 +62,8 @@ export function HowToInvest() {
                     </p>
 
                     <div className="flex items-center justify-center md:justify-start">
-                        <Button className="rounded-lg h-16 px-4 gap-2 flex flex-row items-center justify-between w-full transition-all 
-                                        bg-[#F2F1FE] hover:bg-[#7A6FF0]/90 text-[#5C53B4] border border-[#7A6FF0]"
+                        <Button className="rounded-lg h-16 px-4 gap-2 flex flex-row items-center justify-between w-full transition-all opacity-60 cursor-not-allowed
+                                        bg-[#F2F1FE] text-[#5C53B4] border border-[#7A6FF0]"
                             style={{
                                 fontFamily: 'var(--font-rethink-sans)',
                                 fontWeight: 500,
@@ -72,11 +71,14 @@ export function HowToInvest() {
                                 lineHeight: '21px',
                                 width: '287px',
                             }}
-                            asChild >
-                            <Link href="/invest-now" className="flex items-center justify-between w-full">
+                            type="button"
+                            disabled
+                            aria-disabled
+                        >
+                            <span className="flex items-center justify-between w-full">
                                 <span>Invest Now</span>
                                 <ArrowRight className="h-7 w-7" strokeWidth={2.5} />
-                            </Link>
+                            </span>
                         </Button>
                     </div>
                 </div>

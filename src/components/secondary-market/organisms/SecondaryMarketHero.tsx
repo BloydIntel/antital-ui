@@ -48,7 +48,9 @@ export function SecondaryMarketHero() {
                     {buttonDetails.map((action, index) => (
                         <Button
                             key={index}
-                            className={`rounded-lg h-16 px-4 gap-2 flex flex-row items-center justify-between w-full transition-all
+                            disabled
+                            aria-disabled
+                            className={`rounded-lg h-16 px-4 gap-2 flex flex-row items-center justify-between w-full transition-all opacity-60 cursor-not-allowed
                                         ${action.variant === 'primary'
                                     ? "bg-[#7A6FF0] hover:bg-[#7A6FF0]/90 text-white"
                                     : "bg-[#F2F1FE] hover:bg-[#7A6FF0]/90 text-[#5C53B4] border border-[#7A6FF0]"}`}

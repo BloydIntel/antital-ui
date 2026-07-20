@@ -64,7 +64,7 @@ export function RaiseCapital() {
               }}
               asChild
             >
-              <Link href="/apply" className="flex items-center justify-center gap-2">
+              <Link href="/create-account" className="flex items-center justify-center gap-2">
                 <span>Apply to List Your Startup</span>
                 <ArrowRight className="h-6 w-6" />
               </Link>

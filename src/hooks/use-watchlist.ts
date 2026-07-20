@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CACHE_KEY_WATCHLIST } from "@/constants";
+import { tokenStorage } from "@/lib/token-storage";
 import watchlistService from "@/services/watchlistService";
 
 export function useWatchlist() {
@@ -10,10 +11,12 @@ export function useWatchlist() {
 }
 
 export function useWatchlistStatus(offeringId: number, enabled = true) {
+  const isAuthenticated = Boolean(tokenStorage.getAccessToken());
+
   return useQuery({
     queryKey: [...CACHE_KEY_WATCHLIST, "status", offeringId],
     queryFn: () => watchlistService.getWatchlistStatus(offeringId),
-    enabled: enabled && offeringId > 0,
+    enabled: enabled && isAuthenticated && offeringId > 0,
   });
 }
 

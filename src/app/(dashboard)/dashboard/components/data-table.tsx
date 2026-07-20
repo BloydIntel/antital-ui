@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Filter, MoreVertical, Search } from "lucide-react"
+import { Filter, Search } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TYPOGRAPHY } from "@/constants/styles"
@@ -160,7 +160,6 @@ export function DataTable({ state = false, holdings, isLoading = false, userType
                 <SelectItem value="amount-raised">Amount Raised</SelectItem>
               </SelectContent>
             </Select>
-            <MoreVertical className="h-5 w-5 text-[#323232] cursor-pointer" />
           </div>
         </CardHeader>
 

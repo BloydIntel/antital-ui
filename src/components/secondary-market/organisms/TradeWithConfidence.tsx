@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { cn } from '@/lib/utils'
@@ -110,8 +109,10 @@ export function TradeWithConfidence({
                         {/* Button */}
                         <div>
                             <Button
+                                disabled
+                                aria-disabled
                                 className={cn(
-                                    'group rounded-lg px-4 flex flex-row items-center justify-between transition-all text-white',
+                                    'group rounded-lg px-4 flex flex-row items-center justify-between transition-all text-white opacity-60 cursor-not-allowed',
                                     hasImages
                                         ? 'bg-[#B9C65B] h-[64px] w-[287px] gap-[74px] hover:bg-[#7A6FF0]'
                                         : 'bg-[#B9C65B] h-[48px] w-[242px]'
@@ -122,18 +123,16 @@ export function TradeWithConfidence({
                                     fontSize: '16px',
                                     lineHeight: '21px',
                                 }}
-                                asChild
+                                type="button"
                             >
-                                <Link href="/go-to-secondary-market" className="flex items-center justify-between w-full">
-                                    <span
-                                        className={cn(
-                                            !hasImages && 'group-hover:text-black'
-                                        )}
-                                    >
-                                        Go to Secondary Market
-                                    </span>
-                                    <ArrowRight className="h-7 w-7" strokeWidth={2.5} />
-                                </Link>
+                                <span
+                                    className={cn(
+                                        !hasImages && 'group-hover:text-black'
+                                    )}
+                                >
+                                    Go to Secondary Market
+                                </span>
+                                <ArrowRight className="h-7 w-7" strokeWidth={2.5} />
                             </Button>
                         </div>
                     </div>

@@ -69,6 +69,11 @@ export function setupInterceptors(instance: AxiosInstance): void {
       ) {
         return Promise.reject(err);
       }
+      // Guests hitting auth-only endpoints: reject without forcing login redirect
+      if (!tokenStorage.getRefreshToken()) {
+        tokenStorage.clear();
+        return Promise.reject(err);
+      }
       const now = Date.now();
       if (
         refreshFailureTime !== null &&

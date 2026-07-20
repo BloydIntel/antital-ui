@@ -49,6 +49,7 @@ export function Portfolio() {
                 <SectionCards summary={data?.summary} isLoading={isLoading} />
                 <PortfolioStatChart
                     portfolioPerformance={data?.portfolioPerformance}
+                    holdings={data?.holdings}
                     isLoading={isLoading}
                 />
             </div>
