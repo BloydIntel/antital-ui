@@ -11,12 +11,13 @@ export function useWatchlist() {
 }
 
 export function useWatchlistStatus(offeringId: number, enabled = true) {
-  const isAuthenticated = Boolean(tokenStorage.getAccessToken());
+  // Skip auth-only status fetch for guests (avoids 401). Click-time redirect lives in the panel.
+  const hasSession = Boolean(tokenStorage.getAccessToken());
 
   return useQuery({
     queryKey: [...CACHE_KEY_WATCHLIST, "status", offeringId],
     queryFn: () => watchlistService.getWatchlistStatus(offeringId),
-    enabled: enabled && isAuthenticated && offeringId > 0,
+    enabled: enabled && hasSession && offeringId > 0,
   });
 }
 
