@@ -16,7 +16,7 @@ const toApiCorporateCategory = (
   return null;
 };
 
-export function CorporateCategorization({ onNext }: { onNext: () => void }) {
+export function CorporateCategorization({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
 
   const { formData, updateFormData } = useOnboardingStore();
   const [selectedId, setSelectedId] = useState<string | null>(formData.selectedCategoryId || null);
@@ -55,9 +55,9 @@ export function CorporateCategorization({ onNext }: { onNext: () => void }) {
 
       <div className="grid grid-cols-2 gap-4 w-full mt-8">
         <OnboardingButton
-          label="Skip for now"
+          label="Back"
           variant="plain"
-          onClick={onNext}
+          onClick={onBack}
           disabled={isSaving}
         />
         <OnboardingButton
@@ -67,6 +67,14 @@ export function CorporateCategorization({ onNext }: { onNext: () => void }) {
           loading={isSaving}
         />
       </div>
+      <button
+        type="button"
+        className="mt-3 text-sm text-[#858585] hover:text-[#042E27] hover:underline"
+        disabled={isSaving}
+        onClick={onNext}
+      >
+        Skip for now
+      </button>
     </section>
   );
 }

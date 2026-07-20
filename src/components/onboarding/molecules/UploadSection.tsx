@@ -1,8 +1,26 @@
 "use client"
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { Info, Upload, FileText, X } from 'lucide-react'
 import { TYPOGRAPHY } from '@/constants/styles'
+
+const DEFAULT_ACCEPT = "image/jpeg,image/png,application/pdf"
+const DOCUMENT_ACCEPT =
+  "application/pdf,.pdf,application/vnd.ms-powerpoint,.ppt,application/vnd.openxmlformats-officedocument.presentationml.presentation,.pptx"
+
+const DOCUMENT_MIME_TYPES = new Set([
+  "application/pdf",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+])
+
+const DOCUMENT_EXTENSIONS = [".pdf", ".ppt", ".pptx"]
+
+function isAllowedDocument(file: File): boolean {
+  if (DOCUMENT_MIME_TYPES.has(file.type)) return true
+  const lower = file.name.toLowerCase()
+  return DOCUMENT_EXTENSIONS.some((ext) => lower.endsWith(ext))
+}
 
 interface UploadSectionProps {
     label?: string;
@@ -10,25 +28,57 @@ interface UploadSectionProps {
     onUpload?: (file: File | null) => void;
     isError?: boolean;
     value?: File | null;
+    /** File picker accept list. Defaults to images + PDF (KYC). */
+    accept?: string;
+    /** Helper text under the drop zone. */
+    helperText?: string;
+    /** When true, only PDF / PowerPoint files are accepted. */
+    documentsOnly?: boolean;
 }
 
-export function UploadSection({ label, desc, onUpload, isError, value }: UploadSectionProps) {
+export function UploadSection({
+    label,
+    desc,
+    onUpload,
+    isError,
+    value,
+    accept,
+    helperText,
+    documentsOnly = false,
+}: UploadSectionProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [typeError, setTypeError] = useState<string | null>(null);
+
+    const resolvedAccept = accept ?? (documentsOnly ? DOCUMENT_ACCEPT : DEFAULT_ACCEPT);
+    const resolvedHelper =
+        helperText ??
+        (documentsOnly
+            ? "Click here to upload, or drag and drop files (PDF and PowerPoint are supported)"
+            : "Click here to upload, or drag and drop files (JPG's and PNG's are supported)");
 
     const handleContainerClick = () => {
         fileInputRef.current?.click();
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0];
-        if (selectedFile) {
-            onUpload?.(selectedFile);
-            e.target.value = '';
+    const applyFile = (selectedFile: File | undefined) => {
+        if (!selectedFile) return;
+        if (documentsOnly && !isAllowedDocument(selectedFile)) {
+            setTypeError("Please upload a PDF or PowerPoint file (.pdf, .ppt, .pptx)");
+            onUpload?.(null);
+            return;
         }
+        setTypeError(null);
+        onUpload?.(selectedFile);
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        applyFile(e.target.files?.[0]);
+        e.target.value = '';
     };
 
     const clearFile = (e: React.MouseEvent) => {
         e.stopPropagation();
+        setTypeError(null);
         onUpload?.(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
@@ -39,14 +89,12 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        const droppedFile = e.dataTransfer.files?.[0];
-        if (droppedFile) {
-            onUpload?.(droppedFile);
-        }
+        applyFile(e.dataTransfer.files?.[0]);
     };
 
     // Safely detect if we have a file and it has a name property
     const hasFile = value instanceof File || (value && typeof value === 'object' && 'name' in value);
+    const showError = (isError && !hasFile) || Boolean(typeError);
 
     return (
         <div className="space-y-2">
@@ -54,7 +102,7 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept="image/jpeg,image/png,application/pdf"
+                accept={resolvedAccept}
                 className="hidden"
             />
 
@@ -78,14 +126,14 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
                     border-2 border-dashed rounded-xl px-10 py-[72px] flex flex-col items-center justify-center 
                     transition-all cursor-pointer bg-white text-center
                     ${hasFile ? 'border-[#A7B832] bg-[#F9FAF5]' : 'border-[#E6EEDC] hover:bg-gray-50'}
-                    ${isError && !hasFile ? 'border-red-500 bg-red-50' : ''} 
+                    ${showError ? 'border-red-500 bg-red-50' : ''} 
                 `}
             >
                 {!hasFile ? (
                     <>
-                        <Upload className={`w-8 h-8 mb-3 ${isError ? 'text-red-400' : 'text-gray-400'}`} />
-                        <p className={`text-[14px] max-w-[446px] ${isError ? 'text-red-500' : 'text-gray-500'}`} style={TYPOGRAPHY.body}>
-                            Click here to upload, or drag and drop files (JPG&apos;s and PNG&apos;s are supported)
+                        <Upload className={`w-8 h-8 mb-3 ${showError ? 'text-red-400' : 'text-gray-400'}`} />
+                        <p className={`text-[14px] max-w-[446px] ${showError ? 'text-red-500' : 'text-gray-500'}`} style={TYPOGRAPHY.body}>
+                            {resolvedHelper}
                         </p>
                     </>
                 ) : (
@@ -113,10 +161,14 @@ export function UploadSection({ label, desc, onUpload, isError, value }: UploadS
                 )}
             </div>
 
-            <div className={`flex items-center gap-3 p-3 rounded-lg border ${isError && !hasFile ? 'bg-red-50 border-red-100' : 'bg-[#F0F7FF] border-[#D1E4F9]'}`}>
-                <Info className={`w-5 h-5 shrink-0 ${isError && !hasFile ? 'text-red-500' : 'text-[#3E82D5]'}`} />
-                <p className={`text-[12px] ${isError && !hasFile ? 'text-red-500' : 'text-[#3E82D5]'}`} style={TYPOGRAPHY.body}>
-                    {isError && !hasFile ? "This document is required to proceed" : "Ensure the document is clear and all information is visible"}
+            <div className={`flex items-center gap-3 p-3 rounded-lg border ${showError ? 'bg-red-50 border-red-100' : 'bg-[#F0F7FF] border-[#D1E4F9]'}`}>
+                <Info className={`w-5 h-5 shrink-0 ${showError ? 'text-red-500' : 'text-[#3E82D5]'}`} />
+                <p className={`text-[12px] ${showError ? 'text-red-500' : 'text-[#3E82D5]'}`} style={TYPOGRAPHY.body}>
+                    {typeError
+                        ? typeError
+                        : isError && !hasFile
+                            ? "This document is required to proceed"
+                            : "Ensure the document is clear and all information is visible"}
                 </p>
             </div>
         </div>

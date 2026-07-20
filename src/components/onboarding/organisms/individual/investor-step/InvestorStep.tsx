@@ -10,7 +10,7 @@ import onboardingService from '@/services/onboardingService';
 import { mapToInvestmentProfilePayload } from '@/lib/onboarding-payload-mappers';
 import { showApiErrorToast } from '@/lib/error-feedback';
 
-export function InvestorStep({ onNext }: { onNext: () => void }) {
+export function InvestorStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
     const { formData } = useOnboardingStore();
     const [view, setView] = useState<"selection" | "questionnaire">(
         formData.selectedCategoryId ? "questionnaire" : "selection"
@@ -108,11 +108,11 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
 
             <div className="grid grid-cols-2 gap-4 w-full mt-8">
                 <OnboardingButton
-                    label={view === "selection" ? "Skip for now" : "Go Back"}
+                    label={view === "selection" ? "Back" : "Go Back"}
                     variant="plain"
                     disabled={isSavingCategory || isSavingProfile}
                     onClick={() => {
-                        if (view === "selection") onNext();
+                        if (view === "selection") onBack();
                         else {
                             setView("selection");
                             setShowErrors(false);
@@ -126,6 +126,16 @@ export function InvestorStep({ onNext }: { onNext: () => void }) {
                     loading={isSavingCategory || isSavingProfile}
                 />
             </div>
+            {view === "selection" && (
+                <button
+                    type="button"
+                    className="mt-3 text-sm text-[#858585] hover:text-[#042E27] hover:underline"
+                    disabled={isSavingCategory || isSavingProfile}
+                    onClick={onNext}
+                >
+                    Skip for now
+                </button>
+            )}
         </section>
     );
 }

@@ -8,10 +8,15 @@ import { ONBOARDING_CONFIG, InvestorUserType, StepKey, isKnownOnboardingStep, On
 import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
 import { SubSteps } from "@/components/onboarding/organisms/onboarding-sidebar/subSteps"
 import { toast } from "sonner"
+import { LogOut } from "lucide-react"
+import useLogout from "@/hooks/use-logout"
+
+const HIGHEST_STEP_KEY = "onboarding_highestStepIndex"
 
 export default function OnboardingSidebar() {
     const router = useRouter()
     const pathname = usePathname()
+    const logoutMutation = useLogout()
 
 
     const {
@@ -58,16 +63,31 @@ export default function OnboardingSidebar() {
         setLastAllowedStep
     ]);
 
-    const hasMovedPastVerificationGate =
-        emailVerified && !ALLOWED_STEP_BEFORE_VERIFICATION.includes(currentStep);
-
     const isInReviewLockPhase = ["review", "activation", "application-submitted"].includes(currentStep);
 
     const currentStepIndex = steps.findIndex(s => s.key === currentStep);
 
+    // Keep the farthest step reached so users can edit earlier steps (e.g. personal)
+    // after email verify without locking later steps in the sidebar.
+    const [highestStepIndex, setHighestStepIndex] = React.useState(currentStepIndex);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const stored = Number(sessionStorage.getItem(HIGHEST_STEP_KEY) ?? "-1");
+        const fromStorage = Number.isFinite(stored) ? stored : -1;
+        const next = Math.max(currentStepIndex, fromStorage, highestStepIndex);
+        if (next !== highestStepIndex) {
+            setHighestStepIndex(next);
+        }
+        if (currentStepIndex >= 0 && currentStepIndex > fromStorage) {
+            sessionStorage.setItem(HIGHEST_STEP_KEY, String(currentStepIndex));
+        }
+    }, [currentStepIndex, highestStepIndex]);
+
     const isMenuLockedStep = (stepKey: StepKey): boolean => {
-        if (hasMovedPastVerificationGate && ALLOWED_STEP_BEFORE_VERIFICATION.includes(stepKey)) {
-            return true;
+        // After email verify, personal/company/email stay editable from the menu.
+        if (emailVerified && ALLOWED_STEP_BEFORE_VERIFICATION.includes(stepKey)) {
+            return false;
         }
 
         // Once user reaches review/final stage, keep navigation on the current stage.
@@ -77,7 +97,7 @@ export default function OnboardingSidebar() {
 
         // Prevent navigating to future steps that haven't been reached yet.
         const stepIndex = steps.findIndex(s => s.key === stepKey);
-        if (stepIndex > currentStepIndex) {
+        if (stepIndex > highestStepIndex) {
             return true;
         }
 
@@ -89,10 +109,8 @@ export default function OnboardingSidebar() {
         if (isMenuLockedStep(stepKey)) {
             if (isInReviewLockPhase) {
                 toast.info("Navigation is locked at application review stage.");
-            } else if (stepIndex > currentStepIndex) {
+            } else if (stepIndex > highestStepIndex) {
                 toast.info("Please complete the current step before proceeding.");
-            } else {
-                toast.info("This step is locked after verification.");
             }
             return;
         }
@@ -194,6 +212,15 @@ export default function OnboardingSidebar() {
                 <p className="text-[#545C19] leading-tight text-[12px] w-[279px] pt-[24px] opacity-80 font-[family-name:var(--font-dm-sans)]">
                     Tip: Your information helps us verify your account and keep things secure
                 </p>
+                <button
+                    type="button"
+                    onClick={() => logoutMutation.mutate()}
+                    disabled={logoutMutation.isPending}
+                    className="mt-6 flex items-center gap-2 text-[14px] text-[#042E27] hover:underline disabled:opacity-60 font-[family-name:var(--font-dm-sans)] cursor-pointer"
+                >
+                    <LogOut className="h-4 w-4" />
+                    {logoutMutation.isPending ? "Logging out…" : "Log out"}
+                </button>
             </div>
         </nav>
     )
