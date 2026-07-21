@@ -63,6 +63,9 @@ export function HelpCenter() {
         router.push(`/help-center/${slug}`);
     };
 
+    const handleFundraiserCategoryNavigation = () => {
+    };
+
     const currentUserType = hasHydrated ? userType : "individual";
     const isFundraiser = currentUserType === 'fundraiser';
 
@@ -104,7 +107,7 @@ export function HelpCenter() {
                             <FundraiserHelpCategoryCard
                                 key={category.id}
                                 method={category}
-                                onFundraiserAction={handleCategoryNavigation}
+                                onFundraiserAction={handleFundraiserCategoryNavigation}
                             />
                         ))
                     )
