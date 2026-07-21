@@ -35,7 +35,7 @@ export const useUserStore = create<UserState>()(
             city: null,
             state: null,
             profilePictureUrl: null,
-            userType: "individual",
+            userType: "fundraiser",
             isKycCompleted: false,
             isEmailVerified: false,
 

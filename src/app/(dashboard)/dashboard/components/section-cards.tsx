@@ -112,7 +112,7 @@ function SummaryCard({
             <Icon className={cn("size-5 xl:size-6 text-[#1A1C1E]")} />
           </div>
           <div>
-            <p className={cn("text-[20px] lg:text-[16px] xl:text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
+            <p className={cn("text-[20px] lg:text-[14px] xl:text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
               {title}
             </p>
             <p className={cn("text-[12px] xl:text-[16px]", isPrimary ? "text-[#F1F1F1]" : "text-[#2C2C2C]")} style={TYPOGRAPHY.body}>
@@ -212,7 +212,7 @@ export function SectionCards({
   return (
     <div className={cn(
       "grid gap-6",
-      isFundraiser ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      isFundraiser ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-2 xl:gap-6"
     )}>
       {activeCards.map((card, index) => (
         <SummaryCard key={index} {...card} isLoading={isLoading} />

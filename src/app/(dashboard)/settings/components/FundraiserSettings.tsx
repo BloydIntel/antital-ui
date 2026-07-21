@@ -13,6 +13,8 @@ import { TeamManagement } from '@/components/settings/organisms/fundraiser/TeamM
 import { ContactInformation } from '@/components/settings/organisms/fundraiser/ContactInformation';
 import { EmailAlerts } from '@/components/settings/organisms/fundraiser/EmailAlert';
 import { InAppNotifications } from '@/components/settings/organisms/fundraiser/InAppNotification';
+import { MarketingPreferences } from '@/components/settings/organisms/fundraiser/MarketingPreferences';
+import { SecurityAnd2fa } from '@/components/settings/organisms/fundraiser/SecurityAnd2fa';
 
 interface FundraiserSettingsProps {
     activeSlug: string;
@@ -87,6 +89,14 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                 return <EmailAlerts />;
             case 'in-app-notifications':
                 return <InAppNotifications />;
+            case 'marketing-preferences':
+                return <MarketingPreferences />;
+            case 'marketing-preferences':
+                return <MarketingPreferences />;
+            case 'password-2fa':
+            case 'authorized-devices':
+            case 'login-history':
+                return <SecurityAnd2fa targetSection={activeSlug} />;
             default:
                 return null;
         }
@@ -112,12 +122,14 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                     <ChevronRight className="w-4.5 h-4.5 text-[#CCCCCC]" />
                     <span>Settings</span>
                     <ChevronRight className="w-4.5 h-4.5 text-[#CCCCCC]" />
-                    <span className="text-[#1B1B1B]">{activePageName}</span>
+                    <span className="text-[#1B1B1B]">{activeSlug === "password-2fa" ? "Security & 2FA" : activePageName}</span>
                 </div>
             )}
 
             {subView ? (
-                subView
+                <div key={activeSlug} className="w-full animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-forwards">
+                    {subView}
+                </div>
             ) : (
                 <div className="w-full grid lg:grid-cols-11 gap-6 font-sans items-start">
 

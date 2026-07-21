@@ -222,47 +222,47 @@ export function PortfolioStatChart({
                 )}
               </BarChart>
             ) : (
-            <AreaChart data={chartData} margin={{ left: -20, right: 10 }}>
-              <defs>
-                <linearGradient id="colorUnits" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#7CC755" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#7CC755" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid stroke="#F0F0F0" />
-              <XAxis
-                dataKey={hasActivePortfolio ? "month" : "year"}
-                axisLine={false} tickLine={false}
-                tick={{ fill: '#A2A3A1', fontSize: 12 }} dy={10}
-              />
-              <YAxis
-                axisLine={false} tickLine={false}
-                tick={{ fill: '#A2A3A1', fontSize: 12 }}
-                tickFormatter={(value: number) => formatCurrency(value)}
-                domain={[0, 'auto']}
-              />
-              <ChartTooltip content={({ active, payload }) => (
-                active && payload?.length ? (
-                  <div className="bg-[#55B32B] px-3 py-1 rounded text-white text-xs font-bold shadow-lg">
-                    {formatCurrency(Number(payload[0].value))}
-                  </div>
-                ) : null
-              )} />
-              {hasActivePortfolio && (
-                <Area
-                  type="monotone" dataKey="value" stroke="#55B32B" strokeWidth={3}
-                  fillOpacity={1} fill="url(#colorUnits)"
-                  activeDot={{ r: 6, fill: "#fff", stroke: "#55B32B", strokeWidth: 2 }}
+              <AreaChart data={chartData} margin={{ left: -20, right: 10 }}>
+                <defs>
+                  <linearGradient id="colorUnits" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#7CC755" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#7CC755" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="#F0F0F0" />
+                <XAxis
+                  dataKey={hasActivePortfolio ? "month" : "year"}
+                  axisLine={false} tickLine={false}
+                  tick={{ fill: '#A2A3A1', fontSize: 12 }} dy={10}
                 />
-              )}
-            </AreaChart>
+                <YAxis
+                  axisLine={false} tickLine={false}
+                  tick={{ fill: '#A2A3A1', fontSize: 12 }}
+                  tickFormatter={(value: number) => formatCurrency(value)}
+                  domain={[0, 'auto']}
+                />
+                <ChartTooltip content={({ active, payload }) => (
+                  active && payload?.length ? (
+                    <div className="bg-[#55B32B] px-3 py-1 rounded text-white text-xs font-bold shadow-lg">
+                      {formatCurrency(Number(payload[0].value))}
+                    </div>
+                  ) : null
+                )} />
+                {hasActivePortfolio && (
+                  <Area
+                    type="monotone" dataKey="value" stroke="#55B32B" strokeWidth={3}
+                    fillOpacity={1} fill="url(#colorUnits)"
+                    activeDot={{ r: 6, fill: "#fff", stroke: "#55B32B", strokeWidth: 2 }}
+                  />
+                )}
+              </AreaChart>
             )}
           </ChartContainer>
         </CardContent>
       </Card>
 
       {!isPortfolioPage && (
-        <Card className="bg-white">
+        <Card className="bg-white shadow-none">
           <CardHeader className="flex justify-between items-center">
             <p className="text-[16px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>Active Deals</p>
           </CardHeader>
