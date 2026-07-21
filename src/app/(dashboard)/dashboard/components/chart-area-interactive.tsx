@@ -1,7 +1,6 @@
 "use client"
 
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { MoreVertical, Plus } from "lucide-react"
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import Image from "next/image"
 
 import {
@@ -22,16 +21,23 @@ import { TYPOGRAPHY } from "@/constants/styles"
 import { useMemo, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import type { DashboardActiveDeal, DashboardPerformancePoint } from "@/types/dashboard-api"
+import type { DashboardActiveDeal, DashboardHolding, DashboardPerformancePoint } from "@/types/dashboard-api"
+
+type DashboardChartView = "portfolio-stat" | "investment-dist"
+
+const CHART_VIEW_LABELS: Record<DashboardChartView, string> = {
+  "portfolio-stat": "Portfolio Stat",
+  "investment-dist": "Investment dist",
+}
 
 const portfolioData = [
-  { month: "Jan", year: "2019", units: 10 },
-  { month: "Feb", year: "2020", units: 55 },
-  { month: "Mar", year: "2021", units: 45 },
-  { month: "Apr", year: "2022", units: 35 },
-  { month: "May", year: "2023", units: 50 },
-  { month: "Jun", year: "2024", units: 48 },
-  { month: "Jul", year: "2025", units: 65 },
+  { month: "Jan", year: "2019", value: 10 },
+  { month: "Feb", year: "2020", value: 55 },
+  { month: "Mar", year: "2021", value: 45 },
+  { month: "Apr", year: "2022", value: 35 },
+  { month: "May", year: "2023", value: 50 },
+  { month: "Jun", year: "2024", value: 48 },
+  { month: "Jul", year: "2025", value: 65 },
 ]
 
 const formatCurrency = (amount: number) =>
@@ -57,6 +63,7 @@ const activeDealTextStyle = {
 interface PortfolioStatChartProps {
   portfolioPerformance?: DashboardPerformancePoint[]
   activeDeals?: DashboardActiveDeal[]
+  holdings?: DashboardHolding[]
   isLoading?: boolean
   state?: boolean
 }
@@ -64,6 +71,7 @@ interface PortfolioStatChartProps {
 export function PortfolioStatChart({
   portfolioPerformance,
   activeDeals,
+  holdings,
   isLoading = false,
   state = false,
 }: PortfolioStatChartProps) {
@@ -74,15 +82,16 @@ export function PortfolioStatChart({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [chartView, setChartView] = useState<DashboardChartView>("portfolio-stat");
 
-  const chartData = useMemo(() => {
+  const performanceChartData = useMemo(() => {
     if ((isDashboardPage || isPortfolioPage) && portfolioPerformance && portfolioPerformance.length > 0) {
       return portfolioPerformance.map((point) => {
         const [monthLabel, yearLabel] = point.periodLabel.split(" ")
         return {
           month: monthLabel,
           year: yearLabel ?? "",
-          units: point.value,
+          value: point.value,
         }
       })
     }
@@ -90,9 +99,29 @@ export function PortfolioStatChart({
     return portfolioData
   }, [isDashboardPage, isPortfolioPage, portfolioPerformance])
 
-  const portfolioHasData = useMemo(() =>
-    chartData.some(d => d.units !== undefined && d.units > 0),
-    [chartData]);
+  const distributionChartData = useMemo(() => {
+    if (!holdings?.length) return []
+
+    const bySector = new Map<string, number>()
+    for (const holding of holdings) {
+      const sector = holding.sector?.trim() || "Other"
+      bySector.set(sector, (bySector.get(sector) ?? 0) + holding.invested)
+    }
+
+    return Array.from(bySector.entries()).map(([sector, invested]) => ({
+      sector,
+      invested,
+    }))
+  }, [holdings])
+
+  const chartData = chartView === "investment-dist" ? distributionChartData : performanceChartData
+
+  const portfolioHasData = useMemo(() => {
+    if (chartView === "investment-dist") {
+      return distributionChartData.some((item) => item.invested > 0)
+    }
+    return performanceChartData.some((d) => d.value !== undefined && d.value > 0)
+  }, [chartView, distributionChartData, performanceChartData]);
 
   const deals = useMemo(() => {
     if (isDashboardPage) {
@@ -140,7 +169,7 @@ export function PortfolioStatChart({
               Portfolio Stats
             </h3>
           ) : (
-            <Select>
+            <Select value={chartView} onValueChange={(value) => setChartView(value as DashboardChartView)}>
               <SelectTrigger
                 className="h-auto py-6 px-4 border-[#A8A8A8] rounded-md bg-white cursor-pointer focus:ring-0 font-bold text-black"
                 style={{
@@ -149,21 +178,50 @@ export function PortfolioStatChart({
                   fontWeight: 500
                 }}
               >
-                <SelectValue placeholder="Portfolio Stat" />
+                <SelectValue>{CHART_VIEW_LABELS[chartView]}</SelectValue>
               </SelectTrigger>
 
               <SelectContent>
                 <SelectGroup>
+                  <SelectItem value="portfolio-stat">Portfolio Stat</SelectItem>
                   <SelectItem value="investment-dist">Investment dist</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           )}
-          <MoreVertical className="h-5 w-5 text-[#6A7682] cursor-pointer" />
         </CardHeader>
 
         <CardContent className={hasActivePortfolio ? "pt-4" : "flex flex-col items-center justify-center min-h-[350px]"}>
           <ChartContainer config={{}} className={isPortfolioPage ? "h-[350px] w-full" : "h-[300px] w-full"}>
+            {chartView === "investment-dist" && isDashboardPage ? (
+              <BarChart data={chartData} margin={{ left: -10, right: 10 }}>
+                <CartesianGrid stroke="#F0F0F0" />
+                <XAxis
+                  dataKey="sector"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#A2A3A1', fontSize: 12 }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#A2A3A1', fontSize: 12 }}
+                  tickFormatter={(value: number) => formatCurrency(value)}
+                  domain={[0, 'auto']}
+                />
+                <ChartTooltip content={({ active, payload }) => (
+                  active && payload?.length ? (
+                    <div className="bg-[#55B32B] px-3 py-1 rounded text-white text-xs font-bold shadow-lg">
+                      {formatCurrency(Number(payload[0].value))}
+                    </div>
+                  ) : null
+                )} />
+                {hasActivePortfolio && (
+                  <Bar dataKey="invested" fill="#55B32B" radius={[4, 4, 0, 0]} />
+                )}
+              </BarChart>
+            ) : (
             <AreaChart data={chartData} margin={{ left: -20, right: 10 }}>
               <defs>
                 <linearGradient id="colorUnits" x1="0" y1="0" x2="0" y2="1">
@@ -180,23 +238,25 @@ export function PortfolioStatChart({
               <YAxis
                 axisLine={false} tickLine={false}
                 tick={{ fill: '#A2A3A1', fontSize: 12 }}
+                tickFormatter={(value: number) => formatCurrency(value)}
                 domain={[0, 'auto']}
               />
               <ChartTooltip content={({ active, payload }) => (
                 active && payload?.length ? (
                   <div className="bg-[#55B32B] px-3 py-1 rounded text-white text-xs font-bold shadow-lg">
-                    {payload[0].value} units
+                    {formatCurrency(Number(payload[0].value))}
                   </div>
                 ) : null
               )} />
               {hasActivePortfolio && (
                 <Area
-                  type="monotone" dataKey="units" stroke="#55B32B" strokeWidth={3}
+                  type="monotone" dataKey="value" stroke="#55B32B" strokeWidth={3}
                   fillOpacity={1} fill="url(#colorUnits)"
                   activeDot={{ r: 6, fill: "#fff", stroke: "#55B32B", strokeWidth: 2 }}
                 />
               )}
             </AreaChart>
+            )}
           </ChartContainer>
         </CardContent>
       </Card>
@@ -205,7 +265,6 @@ export function PortfolioStatChart({
         <Card className="bg-white">
           <CardHeader className="flex justify-between items-center">
             <p className="text-[16px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>Active Deals</p>
-            <button className="bg-[#042E27] p-1 rounded-sm"><Plus className="h-4 w-4 text-white" /></button>
           </CardHeader>
 
           <CardContent className={hasActiveDeals ? "p-0 relative overflow-hidden" : "flex flex-col items-center justify-center min-h-[350px]"}>

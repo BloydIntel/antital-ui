@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY } from "@/constants/styles"
 import type { DashboardSummary } from "@/types/dashboard-api"
+import type { FundraiserDashboardSummary } from "@/types/fundraiser-dashboard-api"
 import { UserType } from "@/store/userStore"
 
 const formatCurrency = (val: string | number) => {
@@ -128,7 +129,7 @@ function SummaryCard({
         </div>
       </CardContent>
       {footerText && (
-        <CardFooter className="px-5 py-3 flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity bg-[#E6EAE9] border-t border-[#EAEAEA]">
+        <CardFooter className="px-5 py-3 flex justify-between items-center bg-[#E6EAE9] border-t border-[#EAEAEA]">
           <span className="text-[14px] text-[#042E27]" style={TYPOGRAPHY.heading}>
             {footerText}
           </span>
@@ -141,38 +142,45 @@ function SummaryCard({
 
 interface SectionCardsProps {
   summary?: DashboardSummary
+  fundraiserSummary?: FundraiserDashboardSummary
   isLoading?: boolean
   state?: boolean
   userType?: UserType
 }
 
-export function SectionCards({ summary, isLoading = false, state = false, userType = "individual" }: SectionCardsProps) {
+export function SectionCards({
+  summary,
+  fundraiserSummary,
+  isLoading = false,
+  state = false,
+  userType = "individual",
+}: SectionCardsProps) {
   const useMock = summary === undefined && state
   const isFundraiser = userType === "fundraiser"
 
   const fundraiserCardData = [
     {
       title: "Total Amount Raised",
-      value: formatFundraiserCurrency(useMock ? 245000000 : (summary?.totalInvested ?? 0), false),
+      value: formatFundraiserCurrency(fundraiserSummary?.totalAmountRaised ?? 0, false),
       icon: Wallet,
       isPrimary: true,
       isFundraiserView: true
     },
     {
       title: "Total Number of Investors",
-      value: formatFundraiserCurrency(useMock ? 128 : (summary?.totalReturns ?? 0), false),
+      value: formatFundraiserCurrency(fundraiserSummary?.totalInvestors ?? 0, false),
       icon: HandCoins,
       isFundraiserView: true
     },
     {
       title: "Days Remaining",
-      value: String(useMock ? 18 : 0),
+      value: String(fundraiserSummary?.daysRemaining ?? 0),
       icon: TrendingUp,
       isFundraiserView: true
     },
     {
       title: "Avg. Investment Size",
-      value: formatFundraiserCurrency(useMock ? 196314 : (summary?.availableBalance ?? 0), true),
+      value: formatFundraiserCurrency(fundraiserSummary?.averageInvestmentSize ?? 0, true),
       icon: TrendingUp,
       isFundraiserView: true
     }

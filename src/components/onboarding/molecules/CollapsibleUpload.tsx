@@ -9,9 +9,18 @@ interface CollapsibleProps {
     isOpen: boolean;
     onToggle: () => void;
     value: File | null;
+    documentsOnly?: boolean;
 }
 
-export const CollapsibleUpload = ({ title, onUpload, isError, isOpen, onToggle, value }: CollapsibleProps) => (
+export const CollapsibleUpload = ({
+    title,
+    onUpload,
+    isError,
+    isOpen,
+    onToggle,
+    value,
+    documentsOnly = false,
+}: CollapsibleProps) => (
     <div className="space-y-1 pt-4 border-b border-gray-50">
         <div
             className="flex justify-between items-center cursor-pointer group"
@@ -33,6 +42,7 @@ export const CollapsibleUpload = ({ title, onUpload, isError, isOpen, onToggle, 
                 value={value}
                 onUpload={onUpload}
                 isError={isError}
+                documentsOnly={documentsOnly}
             />
         </div>
     </div>

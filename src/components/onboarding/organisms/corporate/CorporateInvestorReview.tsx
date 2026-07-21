@@ -6,6 +6,16 @@ import { useOnboardingStore } from "@/store/onboardingStore"
 import { ReviewCard } from "@/components/onboarding/molecules/ReviewCard"
 import { InvestorUserType } from "@/constants/steps"
 
+function formatTextField(value: string | undefined | null): string {
+    return value?.trim() ? value : "Pending";
+}
+
+function formatUploadField(value: File | string | null | undefined): string {
+    if (value instanceof File && value.size > 0) return "Uploaded";
+    if (typeof value === "string" && value.trim()) return "Uploaded";
+    return "Pending";
+}
+
 export function CorporateInvestorReview() {
     const router = useRouter();
     const params = useParams();
@@ -100,11 +110,11 @@ export function CorporateInvestorReview() {
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
                 items={[
-                    { label: "ID Type", value: formData.kycData.idType },
-                    { label: "ID Number", value: formData.kycData.idNumber },
-                    { label: "Address", value: formData.kycData.address },
-                    ...(isQII ? [{ label: "Proof of Address", value: formData.kycData.addressFile }] : []),
-                    { label: "Selfie", value: formData.kycData.selfie ? "Uploaded" : "Pending" },
+                    { label: "ID Type", value: formatTextField(formData.kycData.idType) },
+                    { label: "ID Number", value: formatTextField(formData.kycData.idNumber) },
+                    { label: "Address", value: formatTextField(formData.kycData.address) },
+                    ...(isQII ? [{ label: "Proof of Address", value: formatUploadField(formData.kycData.addressFile) }] : []),
+                    { label: "Selfie", value: formatUploadField(formData.kycData.selfie) },
                 ]}
             />
 
@@ -114,13 +124,13 @@ export function CorporateInvestorReview() {
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
                 items={[
-                    { label: "Government ID", value: formData.kycData.idFile },
-                    { label: "Proof of Address", value: formData.kycData.addressFile },
-                    { label: "Recent status report document", value: formData.kycData.statusReport },
+                    { label: "Government ID", value: formatUploadField(formData.kycData.idFile) },
+                    { label: "Proof of Address", value: formatUploadField(formData.kycData.addressFile) },
+                    { label: "Recent status report document", value: formatUploadField(formData.kycData.statusReport) },
                     ...(isQII
-                        ? [{ label: "Proof of QII License", value: formData.kycData.qiiLicense }]
-                        : [{ label: "Incorporation Certificate", value: formData.kycData.incorporationCertificate }]),
-                    { label: "Board Resolution", value: formData.kycData.boardResolution },
+                        ? [{ label: "Proof of QII License", value: formatUploadField(formData.kycData.qiiLicense) }]
+                        : [{ label: "Incorporation Certificate", value: formatUploadField(formData.kycData.incorporationCertificate) }]),
+                    { label: "Board Resolution", value: formatUploadField(formData.kycData.boardResolution) },
                 ]}
             />
 

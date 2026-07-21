@@ -7,6 +7,7 @@ import { DataTable } from "@/app/(dashboard)/dashboard/components/data-table"
 import { SectionCards } from "@/app/(dashboard)/dashboard/components/section-cards"
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { useDashboard } from "@/hooks/use-dashboard"
+import { useFundraiserDashboard } from "@/hooks/use-fundraiser-dashboard"
 import { buildDashboardMonthOptions, toDashboardPeriod } from "@/lib/dashboard-period"
 import { showApiErrorToast } from "@/lib/error-feedback"
 import { resolveUserDisplayName } from "@/lib/user-display-name"
@@ -15,20 +16,43 @@ import { FundingProgress } from "@/app/(dashboard)/dashboard/components/funding-
 import { InvestorBreakdownChart } from "@/app/(dashboard)/dashboard/components/investor-breakdown-chart"
 import { FundraisingMilestones } from "@/app/(dashboard)/dashboard/components/fundraising-milestones"
 
+function formatVelocityLabel(amount: number, period: string): string {
+    const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0
+    const formatted = safeAmount <= 0
+        ? "₦0"
+        : `₦${(safeAmount / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`
+    const periodLabel = period === "week" ? "Week" : period
+    return `${formatted} / ${periodLabel}`
+}
+
 export function Dashboard() {
     const months = useMemo(() => buildDashboardMonthOptions(), [])
     const [selectedMonth, setSelectedMonth] = useState("This month")
     const period = toDashboardPeriod(selectedMonth)
     const { data: user, isError: isUserError, error: userError } = useCurrentUser()
-    const { data, isLoading, isError, error } = useDashboard(period)
 
-    // Select the userType from your Zustand store
     const userType = useUserStore((state) => state.userType)
     const [hasHydrated, setHasHydrated] = useState(false)
 
     useEffect(() => {
         setHasHydrated(true)
     }, [])
+
+    const isFundraiser = hasHydrated && userType === "fundraiser"
+
+    const {
+        data: investorData,
+        isLoading: isInvestorLoading,
+        isError: isInvestorError,
+        error: investorError,
+    } = useDashboard(period, hasHydrated && !isFundraiser)
+
+    const {
+        data: fundraiserData,
+        isLoading: isFundraiserLoading,
+        isError: isFundraiserError,
+        error: fundraiserError,
+    } = useFundraiserDashboard(period, isFundraiser)
 
     useEffect(() => {
         if (isUserError) {
@@ -37,21 +61,27 @@ export function Dashboard() {
     }, [isUserError, userError])
 
     useEffect(() => {
-        if (isError) {
-            showApiErrorToast(error, "Unable to load dashboard.")
+        if (!isFundraiser && isInvestorError) {
+            showApiErrorToast(investorError, "Unable to load dashboard.")
         }
-    }, [isError, error])
+    }, [isFundraiser, isInvestorError, investorError])
+
+    useEffect(() => {
+        if (isFundraiser && isFundraiserError) {
+            showApiErrorToast(fundraiserError, "Unable to load fundraiser dashboard.")
+        }
+    }, [isFundraiser, isFundraiserError, fundraiserError])
 
     const displayName = resolveUserDisplayName(user)
-
     const currentUserType = hasHydrated ? userType : "individual"
+    const isLoading = isFundraiser ? isFundraiserLoading : isInvestorLoading
 
     return (
         <main>
             <DashboardSubHeader
                 title={`Welcome back, ${displayName}`}
                 desc={
-                    hasHydrated && userType === "fundraiser"
+                    isFundraiser
                         ? "Here is a real-time summary of your current fundraising campaign."
                         : "Here is a summary of overall data"
                 }
@@ -59,41 +89,60 @@ export function Dashboard() {
                 months={months}
                 onMonthChange={setSelectedMonth}
                 userType={currentUserType}
+                hasActiveFundraising={Boolean(fundraiserData?.offeringId)}
             />
 
             <div className="@container/main space-y-6">
                 <SectionCards
-                    summary={data?.summary}
+                    summary={investorData?.summary}
+                    fundraiserSummary={fundraiserData?.summary}
                     isLoading={isLoading}
                     userType={currentUserType}
                 />
-                {userType !== "fundraiser" ?
+                {!isFundraiser ? (
                     <PortfolioStatChart
-                        portfolioPerformance={data?.portfolioPerformance}
-                        activeDeals={data?.activeDeals}
+                        portfolioPerformance={investorData?.portfolioPerformance}
+                        activeDeals={investorData?.activeDeals}
+                        holdings={investorData?.holdings}
                         isLoading={isLoading}
                     />
-                    : <div className="grid grid-cols-1 xl:grid-cols-10 mb-12 gap-5">
+                ) : (
+                    <div className="grid grid-cols-1 xl:grid-cols-10 mb-12 gap-5">
                         <div className="xl:col-span-7">
-                            <FundingProgress />
+                            <FundingProgress
+                                raisedAmount={fundraiserData?.fundingProgress.raisedAmount ?? 0}
+                                targetAmount={fundraiserData?.fundingProgress.targetAmount ?? 0}
+                                minimumThreshold={fundraiserData?.fundingProgress.minimumThreshold ?? 0}
+                                currentVelocity={formatVelocityLabel(
+                                    fundraiserData?.fundingProgress.currentVelocity ?? 0,
+                                    fundraiserData?.fundingProgress.velocityPeriod ?? "week"
+                                )}
+                                confidenceRate={fundraiserData?.fundingProgress.confidenceRate ?? 0}
+                                isLoading={isLoading}
+                            />
                         </div>
                         <div className="xl:col-span-3">
-                            <InvestorBreakdownChart />
+                            <InvestorBreakdownChart
+                                buckets={fundraiserData?.investorBreakdown.buckets}
+                                isLoading={isLoading}
+                            />
                         </div>
                     </div>
-                }
+                )}
             </div>
 
-
-            {userType !== "fundraiser" ?
+            {!isFundraiser ? (
                 <DataTable
-                    holdings={data?.holdings}
+                    holdings={investorData?.holdings}
                     isLoading={isLoading}
                     userType={currentUserType}
                 />
-                : <FundraisingMilestones />
-
-            }
+            ) : (
+                <FundraisingMilestones
+                    milestones={fundraiserData?.milestones}
+                    isLoading={isLoading}
+                />
+            )}
         </main>
     )
 }

@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation"
 import StepRenderer from "@/components/onboarding/organisms/StepRenderer"
 import { ONBOARDING_CONFIG, StepKey, isKnownOnboardingStep, InvestorUserType, isInvestorUserType, ALLOWED_STEP_BEFORE_VERIFICATION } from "@/constants/steps"
 import { AllowedStepBeforeVerify, useOnboardingStore } from "@/store/onboardingStore"
+import { useUserStore } from "@/store/userStore"
 import { tokenStorage } from "@/lib/token-storage"
+import { getUserIdFromAccessToken } from "@/lib/jwt"
 import authService from "@/services/authService"
 import onboardingService from "@/services/onboardingService"
+import userService from "@/services/userService"
 import {
     buildFormPatchFromOnboarding,
+    buildFormPatchFromUserProfile,
     mapOnboardingStepToUiStep,
 } from "@/lib/onboarding-hydration"
 
@@ -33,7 +37,8 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         emailVerified,
         setEmailVerified,
         setInvestorUserType,
-        updateFormData
+        updateFormData,
+        formData,
     } = useOnboardingStore()
     const [isAuthResolved, setIsAuthResolved] = useState(false);
     const [isHydrationResolved, setIsHydrationResolved] = useState(false);
@@ -56,12 +61,6 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         let cancelled = false;
 
         const bootstrapAuth = async () => {
-            // Only bootstrap refresh when user is trying to access steps that require verification.
-            if (!configData.REQUIRING_VERIFICATION.includes(stepKey)) {
-                if (!cancelled) setIsAuthResolved(true);
-                return;
-            }
-
             const refreshToken = tokenStorage.getRefreshToken();
             if (!refreshToken) {
                 if (!cancelled) setIsAuthResolved(true);
@@ -74,6 +73,10 @@ export function OnboardingClient({ step, investorUserType }: Props) {
                 if (data.refreshToken) tokenStorage.setRefreshToken(data.refreshToken);
                 if (!cancelled) {
                     setEmailVerified(data.isEmailVerified);
+                    useUserStore.getState().updateProfile({
+                        isEmailVerified: data.isEmailVerified,
+                        emailAddress: data.email,
+                    });
                 }
             } catch {
                 // Ignore bootstrap errors; existing route guard will handle access.
@@ -87,7 +90,7 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         return () => {
             cancelled = true;
         };
-    }, [setEmailVerified, configData, stepKey]);
+    }, [setEmailVerified, stepKey]);
 
     useEffect(() => {
         let cancelled = false;
@@ -95,14 +98,7 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         const hydrateOnboarding = async () => {
             if (!isAuthResolved) return;
 
-            // Hydration contract now supports individual, corporate and fundraiser.
-            if ((type !== "individual" && type !== "corporate" && type !== "fundraiser") || !emailVerified) {
-                if (!cancelled) setIsHydrationResolved(true);
-                return;
-            }
-
-            // Hydrate only for steps after verification.
-            if (!configData.REQUIRING_VERIFICATION.includes(stepKey)) {
+            if (type !== "individual" && type !== "corporate" && type !== "fundraiser") {
                 if (!cancelled) setIsHydrationResolved(true);
                 return;
             }
@@ -110,11 +106,36 @@ export function OnboardingClient({ step, investorUserType }: Props) {
             if (!cancelled) setIsHydrationResolved(false);
 
             try {
-                const onboarding = await onboardingService.getOnboarding();
-                if (!cancelled) {
-                    updateFormData(buildFormPatchFromOnboarding(onboarding));
-                    const serverStep = mapOnboardingStepToUiStep(onboarding.currentStep, type);
-                    setCurrentStep(serverStep);
+                if (emailVerified && configData.REQUIRING_VERIFICATION.includes(stepKey)) {
+                    const onboarding = await onboardingService.getOnboarding();
+                    if (!cancelled) {
+                        updateFormData(buildFormPatchFromOnboarding(onboarding));
+                        const serverStep = mapOnboardingStepToUiStep(onboarding.currentStep, type);
+                        setCurrentStep(serverStep);
+                    }
+                } else if (
+                    configData.ALLOWED_STEP_BEFORE_VERIFICATION.includes(stepKey)
+                    && !formData.email
+                    && !formData.loginEmail
+                    && !formData.firstName
+                    && !formData.companyName
+                ) {
+                    // After logout/login (or store reset), refill signup details from the user API.
+                    const userId = getUserIdFromAccessToken(tokenStorage.getAccessToken());
+                    if (userId != null) {
+                        const profile = await userService.getById(userId);
+                        if (!cancelled) {
+                            updateFormData(buildFormPatchFromUserProfile(profile));
+                            useUserStore.getState().updateProfile({
+                                emailAddress: profile.email,
+                                firstName: profile.firstName,
+                                lastName: profile.lastName,
+                                isEmailVerified: profile.isEmailVerified,
+                                userType: type,
+                            });
+                            setEmailVerified(profile.isEmailVerified);
+                        }
+                    }
                 }
             } catch {
                 // Keep the current route even if hydration fails; user can continue.
@@ -136,6 +157,11 @@ export function OnboardingClient({ step, investorUserType }: Props) {
         stepKey,
         updateFormData,
         setCurrentStep,
+        setEmailVerified,
+        formData.email,
+        formData.loginEmail,
+        formData.firstName,
+        formData.companyName,
     ]);
 
     useEffect(() => {

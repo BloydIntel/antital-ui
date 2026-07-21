@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { Gauge, Bookmark, BookmarkCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
@@ -14,6 +15,7 @@ import {
 } from '@/hooks/use-watchlist'
 import { isApiErrorStatus } from '@/lib/api-error'
 import { showApiErrorToast } from '@/lib/error-feedback'
+import { tokenStorage } from '@/lib/token-storage'
 
 interface InvestmentPanelProps {
   offeringId: number
@@ -22,6 +24,7 @@ interface InvestmentPanelProps {
 }
 
 export function InvestmentPanel({ offeringId, slug, funding }: InvestmentPanelProps) {
+  const router = useRouter()
   const startCheckout = useStartInvestmentCheckout()
   const { data: status, isLoading: isStatusLoading } = useWatchlistStatus(offeringId)
   const addToWatchlist = useAddToWatchlist()
@@ -33,6 +36,11 @@ export function InvestmentPanel({ offeringId, slug, funding }: InvestmentPanelPr
   }
 
   const handleAddToWatchlist = () => {
+    if (!tokenStorage.getAccessToken()) {
+      router.push('/sign-in')
+      return
+    }
+
     if (isWatchlisted || addToWatchlist.isPending) {
       return
     }

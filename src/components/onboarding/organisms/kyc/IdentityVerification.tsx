@@ -97,6 +97,17 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 return;
             }
 
+            if (!isFundraiser) {
+                if (subStep === 0 && !isStep0Valid) {
+                    setShowErrors(true);
+                    return;
+                }
+                if (subStep === 1 && !isStep1Valid) {
+                    setShowErrors(true);
+                    return;
+                }
+            }
+
             setSubStep(subStep + 1);
         } else {
             const isCurrentFlowValid = isFundraiser
