@@ -7,6 +7,9 @@ import { CACHE_KEY_USER } from "@/constants";
 import { tokenStorage } from "@/lib/token-storage";
 import { showApiErrorToast } from "@/lib/error-feedback";
 import { resolvePostLoginPath } from "@/lib/post-login-navigation";
+import { mapApiUserTypeToStoreUserType } from "@/lib/user-type";
+import { useUserStore } from "@/store/userStore";
+import { useOnboardingStore } from "@/store/onboardingStore";
 
 export type { LoginRequest, LoginResponse };
 
@@ -26,6 +29,18 @@ const useLogin = (options?: UseLoginOptions) => {
       tokenStorage.setAccessToken(data.token, persistent);
       if (data.refreshToken)
         tokenStorage.setRefreshToken(data.refreshToken, persistent);
+
+      useUserStore.getState().setUserId(String(data.userId));
+      useUserStore.getState().updateProfile({
+        emailAddress: data.email,
+        userType: mapApiUserTypeToStoreUserType(data.userType),
+        isEmailVerified: data.isEmailVerified,
+      });
+      useOnboardingStore.getState().setEmailVerified(data.isEmailVerified);
+      useOnboardingStore.getState().setInvestorUserType(
+        mapApiUserTypeToStoreUserType(data.userType)
+      );
+
       queryClient.invalidateQueries({ queryKey: CACHE_KEY_USER });
 
       const path = await resolvePostLoginPath(data, {

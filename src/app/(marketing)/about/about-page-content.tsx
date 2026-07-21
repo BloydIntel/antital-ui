@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { ValueCard } from '@/components/about/molecules/value-card'
 import { FeatureCard } from '@/components/about/molecules/feature-card'
 import { Briefcase, ShieldCheck, TrendingUp, ArrowLeftRight } from 'lucide-react'
@@ -345,7 +346,8 @@ export function AboutPageContent() {
                 </div>
 
                 {/* CTA Button */}
-                <button
+                <Link
+                  href="/explore"
                   className="flex items-center justify-center gap-2 px-4 py-2 w-[204px] h-[48px] bg-[#B9C65B] hover:bg-[#B9C65B]/90 rounded-lg transition-colors"
                 >
                   <span
@@ -374,7 +376,7 @@ export function AboutPageContent() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                </button>
+                </Link>
               </div>
             </div>
           </div>

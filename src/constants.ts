@@ -1,6 +1,7 @@
 export const CACHE_KEY_USER = ["user"] as const;
 export const CACHE_KEY_INVESTMENTS = ["investments"] as const;
 export const CACHE_KEY_DASHBOARD = ["dashboard"] as const;
+export const CACHE_KEY_FUNDRAISER_DASHBOARD = ["fundraiser-dashboard"] as const;
 export const CACHE_KEY_WALLET_TRANSACTIONS = ["wallet-transactions"] as const;
 export const CACHE_KEY_PAYMENT_METHODS = ["payment-methods"] as const;
 export const CACHE_KEY_WATCHLIST = ["watchlist"] as const;

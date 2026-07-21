@@ -11,6 +11,7 @@ import type {
   ApiOnboardingStep,
   OnboardingResponse,
 } from "@/types/onboarding";
+import type { UserProfile } from "@/types/user-api";
 
 const INVESTOR_CATEGORY_TO_UI: Record<string, OnboardingFormData["selectedCategoryId"]> =
   {
@@ -342,6 +343,60 @@ export function buildFormPatchFromOnboarding(
   }
   if (incomeTypes.length > 0) kycPatch.incomeDocuments = incomeTypes;
   if (Object.keys(kycPatch).length > 0) patch.kycData = kycPatch;
+
+  return patch;
+}
+
+/** Hydrate signup/personal (and company) fields from GET /api/users/{id} — used before email verify. */
+export function buildFormPatchFromUserProfile(
+  profile: UserProfile
+): Parameters<OnboardingState["updateFormData"]>[0] {
+  const patch: Parameters<OnboardingState["updateFormData"]>[0] = {};
+
+  if (profile.firstName) patch.firstName = profile.firstName;
+  if (profile.lastName) patch.lastName = profile.lastName;
+  if (profile.email) patch.email = profile.email;
+  if (profile.preferredName) patch.alias = profile.preferredName;
+  if (profile.phoneNumber) patch.phone = profile.phoneNumber;
+  if (profile.dateOfBirth) patch.dob = String(profile.dateOfBirth).slice(0, 10);
+  if (profile.nationality) patch.nationality = profile.nationality;
+  if (profile.countryOfResidence) patch.residence = profile.countryOfResidence;
+  if (profile.stateOfResidence) patch.state = profile.stateOfResidence;
+  if (profile.residentialAddress) patch.address = profile.residentialAddress;
+  if (profile.hasAgreedToTerms === true) patch.agreed = true;
+
+  const company = profile.company;
+  if (company) {
+    if (company.companyLegalName) patch.companyName = company.companyLegalName;
+    if (company.tradingBrandName) patch.brandName = company.tradingBrandName;
+    if (company.registrationType) patch.registrationType = company.registrationType;
+    if (company.registrationNumber) patch.registrationNumber = company.registrationNumber;
+    if (company.companyLoginEmail) patch.loginEmail = company.companyLoginEmail;
+    else if (profile.email) patch.loginEmail = profile.email;
+    if (company.dateOfRegistration) {
+      patch.registrationDate = String(company.dateOfRegistration).slice(0, 10);
+    }
+    if (company.companyWebsite) patch.companyWebsite = company.companyWebsite;
+    if (company.businessAddress) patch.businessAddress = company.businessAddress;
+    if (company.registeredAddress) patch.registeredAddress = company.registeredAddress;
+    if (company.companyEmail) patch.companyEmail = company.companyEmail;
+    if (company.companyPhone) patch.companyPhone = company.companyPhone;
+    if (company.representativeFullName) patch.repFullName = company.representativeFullName;
+    if (company.representativeJobTitle) patch.repJobTitle = company.representativeJobTitle;
+    if (company.representativePhoneNumber) patch.repPhoneNumber = company.representativePhoneNumber;
+    if (company.representativeDateOfBirth) {
+      patch.repDob = String(company.representativeDateOfBirth).slice(0, 10);
+    }
+    if (company.representativeEmail) patch.repEmail = company.representativeEmail;
+    if (company.representativeNationality) patch.repNationality = company.representativeNationality;
+    if (company.representativeCountryOfResidence) {
+      patch.repResidence = company.representativeCountryOfResidence;
+    }
+    if (company.representativeAddress) patch.repAddress = company.representativeAddress;
+  } else if (profile.email) {
+    // Corporate login email often mirrors user email at signup.
+    patch.loginEmail = profile.email;
+  }
 
   return patch;
 }
