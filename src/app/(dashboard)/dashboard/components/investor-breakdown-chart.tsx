@@ -6,34 +6,36 @@ import { ChevronDown } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY } from "@/constants/styles"
+import type { FundraiserBreakdownBucket } from "@/types/fundraiser-dashboard-api"
 
-interface BreakdownChartItem {
-    range: string
-    percentage: number // e.g., 20
-    colorClass: string
+const BUCKET_COLORS = ["bg-[#C49132]", "bg-[#3B75BE]", "bg-[#80AC49]", "bg-[#A792CD]"]
+
+interface InvestorBreakdownChartProps {
+    buckets?: FundraiserBreakdownBucket[]
+    isLoading?: boolean
 }
 
-export function InvestorBreakdownChart() {
+export function InvestorBreakdownChart({
+    buckets = [],
+    isLoading = false,
+}: InvestorBreakdownChartProps) {
     const [filterValue, setFilterValue] = useState("size")
 
-    const chartData: BreakdownChartItem[] = [
-        { range: "0 - 5M", percentage: 20, colorClass: "bg-[#C49132]" },
-        { range: "6M - 20M", percentage: 40, colorClass: "bg-[#3B75BE]" },
-        { range: "21M - 100M", percentage: 30, colorClass: "bg-[#80AC49]" },
-        { range: "101M - 500M", percentage: 10, colorClass: "bg-[#A792CD]" },
-    ]
+    const chartData = buckets.map((bucket, idx) => ({
+        range: bucket.label,
+        percentage: bucket.percentage,
+        colorClass: BUCKET_COLORS[idx % BUCKET_COLORS.length],
+    }))
 
     const yAxisMarkers = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0]
 
     return (
         <Card className="w-full border-[#EAEAEA] shadow-none rounded-md bg-white overflow-hidden p-4">
-            {/* Header Container with Radix Select Wrapper */}
             <CardHeader className="flex flex-row items-center justify-between p-0 space-y-0">
                 <CardTitle className="text-[16px] text-[#1A1C1E]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                     Investor Breakdown
                 </CardTitle>
 
-                {/* Radix UI Select Configuration */}
                 <Select.Root value={filterValue} onValueChange={setFilterValue}>
                     <Select.Trigger
                         className="inline-flex items-center justify-between gap-4 px-4 py-2 text-[16px] text-[#11110F] border border-[#CCCCCC] rounded-md bg-white hover:bg-[#F9FAFA] transition-colors focus:outline-none min-w-[110px]"
@@ -70,11 +72,8 @@ export function InvestorBreakdownChart() {
                 </Select.Root>
             </CardHeader>
 
-            {/* Grid Content Layout Container */}
             <CardContent className="px-0 pt-4 pb-0.5">
-                <div className="relative h-[260px] w-full flex flex-col justify-between">
-
-                    {/* Background Grid Guidelines with Y-Axis Values */}
+                <div className={cn("relative h-[260px] w-full flex flex-col justify-between", isLoading && "animate-pulse opacity-60")}>
                     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
                         {yAxisMarkers.map((marker) => (
                             <div key={marker} className="w-full flex items-center gap-4 group">
@@ -89,11 +88,9 @@ export function InvestorBreakdownChart() {
                         ))}
                     </div>
 
-                    {/* Active Data Bar Tracks */}
                     <div className="absolute left-12 right-4 bottom-0 top-0 flex justify-between items-end z-10 gap-3 md:gap-4 px-2">
                         {chartData.map((bar, idx) => (
                             <div key={idx} className="flex flex-col items-center flex-1 h-full max-w-[52px] justify-end">
-                                {/* Dynamic Height Filled Column Segment */}
                                 <div
                                     className={cn(
                                         "w-full rounded-t-[4px] transition-all duration-700 ease-out shadow-xs",
@@ -104,10 +101,8 @@ export function InvestorBreakdownChart() {
                             </div>
                         ))}
                     </div>
+                </div>
 
-                </div> {/* This closes the relative h-[260px] Chart Matrix wrapper */}
-
-                {/* NEW: Clean, isolated X-Axis Label Track running parallel with chart items */}
                 <div className="flex justify-between items-start left-12 right-4 ml-12 mr-4 mt-2 gap-3 md:gap-4 px-2">
                     {chartData.map((bar, idx) => (
                         <div key={idx} className="flex-1 max-w-[52px] text-center">
@@ -117,9 +112,6 @@ export function InvestorBreakdownChart() {
                         </div>
                     ))}
                 </div>
-
-
-
             </CardContent>
         </Card>
     )
