@@ -15,6 +15,8 @@ import { EmailAlerts } from '@/components/settings/organisms/fundraiser/EmailAle
 import { InAppNotifications } from '@/components/settings/organisms/fundraiser/InAppNotification';
 import { MarketingPreferences } from '@/components/settings/organisms/fundraiser/MarketingPreferences';
 import { SecurityAnd2fa } from '@/components/settings/organisms/fundraiser/SecurityAnd2fa';
+import { BankAccount } from '@/components/settings/organisms/fundraiser/BankAccounts';
+import { DisbursementSchedule } from '@/components/settings/organisms/fundraiser/DisbursementSchedule';
 
 interface FundraiserSettingsProps {
     activeSlug: string;
@@ -57,8 +59,8 @@ const SETTINGS_GROUPS = [
         icon: Wallet,
         bgIcon: "bg-lime-50 text-lime-600",
         items: [
-            { name: "Verified Bank Accounts", slug: "verified-banking" },
-            { name: "Disbursement Schedule", slug: "disbursements" },
+            { name: "Bank Accounts", slug: "bank-accounts" },
+            { name: "Disbursement Schedule", slug: "disbursement" },
             { name: "Tax Documentation", slug: "tax-docs" },
         ]
     }
@@ -97,6 +99,10 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
             case 'authorized-devices':
             case 'login-history':
                 return <SecurityAnd2fa targetSection={activeSlug} />;
+            case 'bank-accounts':
+                return <BankAccount />;
+            case 'disbursement':
+                return <DisbursementSchedule />;
             default:
                 return null;
         }
