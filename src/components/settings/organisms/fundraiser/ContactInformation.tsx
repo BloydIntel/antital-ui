@@ -88,7 +88,7 @@ export function ContactInformation({ onBack, onSave }: ContactInformationProps) 
             <div className="grid lg:grid-cols-12 gap-6 items-start">
 
                 {/* Left Side Sheet: Primary Contact Details Fields */}
-                <div className="lg:col-span-7 bg-white border border-[#F4F5F7] rounded-xl p-6 shadow-sm space-y-4">
+                <div className="lg:col-span-7 bg-white border border-[#F4F5F7] rounded-xl p-6 space-y-4">
                     <h3 className="text-[16px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                         Primary Contact
                     </h3>
@@ -111,7 +111,7 @@ export function ContactInformation({ onBack, onSave }: ContactInformationProps) 
                 </div>
 
                 {/* Right Side Sheet: Integration Support Channels Panel */}
-                <div className="lg:col-span-5 bg-white border border-[#F4F5F7] rounded-xl p-6 shadow-sm space-y-4">
+                <div className="lg:col-span-5 bg-white border border-[#F4F5F7] rounded-xl p-6 space-y-4">
                     <h3 className="text-[16px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                         Support Channels
                     </h3>

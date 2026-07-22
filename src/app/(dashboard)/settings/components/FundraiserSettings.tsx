@@ -17,6 +17,7 @@ import { MarketingPreferences } from '@/components/settings/organisms/fundraiser
 import { SecurityAnd2fa } from '@/components/settings/organisms/fundraiser/SecurityAnd2fa';
 import { BankAccount } from '@/components/settings/organisms/fundraiser/BankAccounts';
 import { DisbursementSchedule } from '@/components/settings/organisms/fundraiser/DisbursementSchedule';
+import { TaxDocumentation } from '@/components/settings/organisms/fundraiser/TaxDocumentation';
 
 interface FundraiserSettingsProps {
     activeSlug: string;
@@ -103,6 +104,8 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                 return <BankAccount />;
             case 'disbursement':
                 return <DisbursementSchedule />;
+            case 'tax-docs':
+                return <TaxDocumentation />;
             default:
                 return null;
         }
