@@ -85,7 +85,7 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
             case 'company-profile':
                 return <CompanyProfile onBack={handleBack} />;
             case 'team-management':
-                return <TeamManagement onBack={handleBack} />;
+                return <TeamManagement />;
             case 'contact-information':
                 return <ContactInformation onBack={handleBack} />;
             case 'email-alerts':
