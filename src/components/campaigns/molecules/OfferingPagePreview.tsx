@@ -5,15 +5,14 @@ import { Navbar } from '@/components/landing/organisms/navbar'
 import { InvestmentDetailPageContent } from '@/app/(marketing)/explore/[id]/investment-detail-page-content'
 import { useInvestmentDetail } from '@/hooks/use-investment-detail'
 
-const FALLBACK_SLUG = 'agritech-innovations'
 const PREVIEW_WIDTH = 1440
 
 interface OfferingPagePreviewProps {
-    idOrSlug?: string
+    idOrSlug: string
 }
 
 export function OfferingPagePreview({ idOrSlug }: OfferingPagePreviewProps) {
-    const { data, isLoading, isError } = useInvestmentDetail(idOrSlug ?? FALLBACK_SLUG)
+    const { data, isLoading, isError } = useInvestmentDetail(idOrSlug)
 
     const containerRef = useRef<HTMLDivElement>(null)
     const contentRef = useRef<HTMLDivElement>(null)
