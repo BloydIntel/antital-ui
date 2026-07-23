@@ -63,7 +63,20 @@ export function HelpCenter() {
         router.push(`/help-center/${slug}`);
     };
 
-    const handleFundraiserCategoryNavigation = () => {
+    const handleFundraiserCategoryAction = (actionSlug: string) => {
+        switch (actionSlug) {
+            case 'knowledge-base':
+                router.push('/help-center/account-setup');
+                break;
+            case 'live-chat':
+                window.open('mailto:support@antital.com?subject=Fundraiser%20Support%20Request', '_blank');
+                break;
+            case 'direct-support':
+                window.location.href = 'tel:0800-ANTITAL';
+                break;
+            default:
+                router.push('/help-center');
+        }
     };
 
     const currentUserType = hasHydrated ? userType : "individual";
@@ -106,8 +119,8 @@ export function HelpCenter() {
                         filteredFundraiserHelpCategory.map((category) => (
                             <FundraiserHelpCategoryCard
                                 key={category.id}
-                                method={category}
-                                onFundraiserAction={handleFundraiserCategoryNavigation}
+                                category={category}
+                                onAction={handleFundraiserCategoryAction}
                             />
                         ))
                     )

@@ -13,17 +13,17 @@ export interface FundraiserHelpCategory {
 }
 
 interface FundraiserHelpCategoryCardProps {
-    method: FundraiserHelpCategory;
-    onFundraiserAction: (slug: string) => void;
+    category: FundraiserHelpCategory;
+    onAction: (slug: string) => void;
 }
 
-export function FundraiserHelpCategoryCard({ method, onFundraiserAction }: FundraiserHelpCategoryCardProps) {
-    const IconComponent = method.icon;
+export function FundraiserHelpCategoryCard({ category, onAction }: FundraiserHelpCategoryCardProps) {
+    const IconComponent = category.icon;
 
     return (
         <button
             type="button"
-            onClick={() => onFundraiserAction(method.actionSlug)}
+            onClick={() => onAction(category.actionSlug)}
             className="w-full text-left bg-white border border-[#EAEAEA] rounded-xl p-6 flex flex-col justify-between items-start min-h-[220px] transition-all duration-300 hover:border-[#B9C65B] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B9C65B] focus-visible:ring-offset-2 cursor-pointer group"
         >
             {/* Top Content Information Block */}
@@ -39,13 +39,13 @@ export function FundraiserHelpCategoryCard({ method, onFundraiserAction }: Fundr
                         className="text-[20px] text-[#1F1F1F] tracking-tight"
                         style={TYPOGRAPHY.body}
                     >
-                        {method.title}
+                        {category.title}
                     </h3>
                     <p
                         className="text-[16px] text-[#858585] leading-relaxed"
                         style={TYPOGRAPHY.body}
                     >
-                        {method.description}
+                        {category.description}
                     </p>
                 </div>
             </div>
