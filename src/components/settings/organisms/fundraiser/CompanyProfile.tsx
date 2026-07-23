@@ -105,7 +105,7 @@ export function CompanyProfile({ onBack, onSave }: CompanyProfileProps) {
 
                 {/* Left Side: Editable form fields */}
                 <div className="lg:col-span-8 space-y-6">
-                    <div className="bg-white border border-[#F4F5F7] rounded-xl p-5">
+                    <div className="bg-white border border-[#F4F5F7] rounded-xl px-4 pt-4">
                         <h3 className="text-[16px] text-[#1B1B1B] mb-4" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                             General Information
                         </h3>
@@ -139,12 +139,13 @@ export function CompanyProfile({ onBack, onSave }: CompanyProfileProps) {
                             onChange={(e) => handleInputChange('bio', e.target.value)}
                             inputAreaStyle='text-[16px] text-[#505050] focus:ring-1'
                             labelStyle='text-[#505050]'
+                            className='pb-0'
                         />
 
                     </div>
 
                     {/* Online Presence (Static Read-Only for Now) */}
-                    <div className="bg-white border border-[#F4F5F7] rounded-xl p-5 space-y-4 shadow-sm">
+                    <div className="bg-white border border-[#F4F5F7] rounded-xl p-5 space-y-4">
                         <h3 className="text-[16px] text-[#1B1B1B] mb-4" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                             Online Presence
                         </h3>
