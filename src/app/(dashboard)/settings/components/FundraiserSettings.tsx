@@ -85,15 +85,13 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
             case 'company-profile':
                 return <CompanyProfile onBack={handleBack} />;
             case 'team-management':
-                return <TeamManagement />;
+                return <TeamManagement onBack={handleBack} />;
             case 'contact-information':
                 return <ContactInformation onBack={handleBack} />;
             case 'email-alerts':
                 return <EmailAlerts />;
             case 'in-app-notifications':
                 return <InAppNotifications />;
-            case 'marketing-preferences':
-                return <MarketingPreferences />;
             case 'marketing-preferences':
                 return <MarketingPreferences />;
             case 'password-2fa':

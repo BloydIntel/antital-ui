@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Smartphone, } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { Switch } from '@/components/ui/switch';
-import { GlobalSettingsCard } from '@/components/settings//molecules/GlobalSettingsCard';
+import { GlobalSettingsCard } from '@/components/settings/molecules/GlobalSettingsCard';
 
 
 export interface NotificationPreferenceItem {

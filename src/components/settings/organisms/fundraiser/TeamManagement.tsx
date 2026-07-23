@@ -34,7 +34,11 @@ const MOCK_PENDING_INVITES: PendingInvite[] = [
 ];
 
 
-export function TeamManagement() {
+interface TeamManagementProps {
+    onBack?: () => void;
+}
+
+export function TeamManagement({ onBack }: TeamManagementProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [members] = useState<TeamMember[]>(MOCK_TEAM_MEMBERS);
     const [invites, setInvites] = useState<PendingInvite[]>(MOCK_PENDING_INVITES);

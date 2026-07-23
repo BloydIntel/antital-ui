@@ -18,7 +18,8 @@ export function ActiveSessionsPanel() {
                 </h3>
                 <button
                     type="button"
-                    className="text-[14px] font-bold text-[#D4001A] hover:underline cursor-pointer"
+                    className="text-[14px] font-bold text-[#D4001A] hover:underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4001A] focus:ring-offset-2 rounded"
+                    aria-label="Log out of all active sessions"
                 >
                     Log Out All
                 </button>
@@ -42,7 +43,8 @@ export function ActiveSessionsPanel() {
                         </div>
                         <button
                             type="button"
-                            className="text-[12px] font-bold text-[#858585] underline hover:text-[#1B1B1B] cursor-pointer"
+                            className="text-[12px] font-bold text-[#858585] underline hover:text-[#1B1B1B] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#858585] focus:ring-offset-2 rounded"
+                            aria-label={`Revoke session for ${session.device}`}
                         >
                             Revoke
                         </button>

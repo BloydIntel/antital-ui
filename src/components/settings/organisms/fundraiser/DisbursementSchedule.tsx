@@ -46,7 +46,7 @@ export function DisbursementSchedule() {
                 {/* Left Primary Panel: Active Payout List */}
                 <div className="lg:col-span-8 bg-white border border-[#F4F5F7] rounded-xl p-6 space-y-4">
                     <h3 className="text-[16px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
-                        Active Members
+                        Upcoming Payouts
                     </h3>
 
                     <div>

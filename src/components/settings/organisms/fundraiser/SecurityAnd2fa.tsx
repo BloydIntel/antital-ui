@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { Lock, Smartphone, Key, AlertTriangle, Shield } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
-import { SecurityRowItem } from '@//components/settings/organisms/fundraiser//password2fa/SecurityRowItem';
+import { SecurityRowItem } from '@/components/settings/organisms/fundraiser/password2fa/SecurityRowItem';
 import { ActiveSessionsPanel } from '@/components/settings/organisms/fundraiser/password2fa/ActiveSessionsPanel';
 import { LoginHistoryPanel } from '@/components/settings/organisms/fundraiser/password2fa/LoginHistoryPanel';
 

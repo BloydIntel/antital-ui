@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Mail, } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { Switch } from '@/components/ui/switch';
-import { GlobalSettingsCard } from '@/components/settings//molecules/GlobalSettingsCard';
+import { GlobalSettingsCard } from '@/components/settings/molecules/GlobalSettingsCard';
 
 export interface AlertPreferenceItem {
     id: string;
@@ -21,12 +21,12 @@ const ALERT_PREFERENCE: AlertPreferenceItem[] = [
     {
         id: 'newInvestments',
         title: 'New Investments',
-        description: 'Security Alerts',
+        description: 'Receive alerts when new investments are made in your campaigns.',
     },
     {
         id: 'securityAlerts',
         title: 'Security Alerts',
-        description: 'Security Alerts',
+        description: 'Get notified about login attempts and security-related activities.',
     },
 ];
 

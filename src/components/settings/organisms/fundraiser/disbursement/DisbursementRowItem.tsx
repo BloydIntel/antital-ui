@@ -39,7 +39,11 @@ export function DisbursementRowItem({ item }: DisbursementRowItemProps) {
                 <span className="block text-[18px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 700 }}>
                     {item.amount}
                 </span>
-                <span className="block text-[12px] font-bold tracking-wider text-[#DCA73B] uppercase mt-0.5">
+                <span className={`block text-[12px] font-bold tracking-wider uppercase mt-0.5 ${
+                    item.status === 'COMPLETED' ? 'text-[#34C759]' :
+                    item.status === 'FAILED' ? 'text-[#D4001A]' :
+                    'text-[#DCA73B]'
+                }`}>
                     {item.status}
                 </span>
             </div>
