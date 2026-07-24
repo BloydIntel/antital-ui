@@ -1,7 +1,9 @@
-import { Lightbulb, User, Smile, Camera, FileUp, CheckCircle2 } from 'lucide-react';
+import { Lightbulb, User, Smile, Camera, FileUp, CheckCircle2, Loader2 } from 'lucide-react';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { useRef } from 'react';
+import { useRef, type ChangeEvent } from 'react';
+import { useOnboardingFileUpload } from '@/hooks/onboarding/useOnboardingFileUpload';
+import { displayNameFromPathOrKey, hasOnboardingDocument } from '@/lib/onboarding-file-upload';
 
 const instructions = [
     {
@@ -22,18 +24,18 @@ const instructions = [
 ];
 
 export function SelfieUpload({ showErrors }: { showErrors: boolean }) {
-    const { formData, updateFormData } = useOnboardingStore();
+    const { formData } = useOnboardingStore();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const selfieFile = formData.kycData.selfie;
+    const selfiePathOrKey = formData.kycData.selfiePathOrKey;
+    const { uploadKycDocument, isUploading } = useOnboardingFileUpload();
+    const uploading = isUploading("selfie");
+    const hasSelfie = hasOnboardingDocument(selfieFile, selfiePathOrKey);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            updateFormData({
-                kycData: { selfie: file }
-            });
-            e.target.value = '';
-        }
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        e.target.value = '';
+        void uploadKycDocument("selfie", "selfiePathOrKey", file);
     };
     const handleSelfie = () => { }
 
@@ -44,8 +46,9 @@ export function SelfieUpload({ showErrors }: { showErrors: boolean }) {
                 type="file"
                 className="hidden"
                 ref={fileInputRef}
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 onChange={handleFileChange}
+                disabled={uploading}
             />
 
             {/* Instruction List */}
@@ -62,14 +65,27 @@ export function SelfieUpload({ showErrors }: { showErrors: boolean }) {
                 ))}
             </div>
 
-            {selfieFile ? (
+            {uploading ? (
+                <div className="flex items-center gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <Loader2 className="text-blue-600 w-5 h-5 animate-spin" />
+                    <p className="text-blue-700 text-sm">Uploading selfie…</p>
+                </div>
+            ) : hasSelfie ? (
                 <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
                     <CheckCircle2 className="text-green-600 w-5 h-5" />
-                    <p className="text-green-700 text-sm">Selfie captured: <b>{selfieFile.name}</b></p>
+                    <p className="text-green-700 text-sm">
+                        Selfie captured:{" "}
+                        <b>
+                            {selfieFile?.name ||
+                                (selfiePathOrKey
+                                    ? displayNameFromPathOrKey(selfiePathOrKey)
+                                    : "Uploaded")}
+                        </b>
+                    </p>
                 </div>
-            ) : showErrors && (
+            ) : showErrors ? (
                 <p className="text-red-500 text-sm font-medium">Please capture or upload a selfie to continue.</p>
-            )}
+            ) : null}
 
             {/* Buttons Layout */}
             <div className="grid grid-cols-2 gap-4 w-full mt-8">
@@ -78,12 +94,15 @@ export function SelfieUpload({ showErrors }: { showErrors: boolean }) {
                     variant="solid"
                     icon={<Camera size={20} />}
                     onClick={handleSelfie}
+                    disabled={uploading}
                 />
                 <OnboardingButton
-                    label="Upload Photo"
+                    label={uploading ? "Uploading…" : "Upload Photo"}
                     variant="plain"
                     icon={<FileUp size={20} />}
                     onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    loading={uploading}
                 />
             </div>
         </div>

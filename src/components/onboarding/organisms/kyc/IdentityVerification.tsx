@@ -14,6 +14,7 @@ import onboardingService from '@/services/onboardingService'
 import { mapToCorporateDocsPayload, mapToKycPayload } from '@/lib/onboarding-payload-mappers'
 import { showApiErrorToast } from '@/lib/error-feedback'
 import { useFundraiserOnboardingApi } from '@/hooks/onboarding/useFundraiserOnboardingApi'
+import { hasOnboardingDocument } from '@/lib/onboarding-file-upload'
 
 interface IdentityVerificationProps {
     onNext: () => void
@@ -62,25 +63,51 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 formData.repAddress
             );
         }
-        return !!(kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
+        return !!(
+            kycData.idNumber &&
+            hasOnboardingDocument(kycData.idFile, kycData.idFilePathOrKey) &&
+            kycData.bvn &&
+            kycData.address &&
+            hasOnboardingDocument(kycData.addressFile, kycData.addressFilePathOrKey)
+        );
     }, [isFundraiser, formData, kycData]);
 
     const isStep1Valid = useMemo(() => {
         if (isFundraiser) {
-            return !!(kycData.idNumber && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
+            return !!(
+                kycData.idNumber &&
+                hasOnboardingDocument(kycData.idFile, kycData.idFilePathOrKey) &&
+                kycData.bvn &&
+                kycData.address &&
+                hasOnboardingDocument(kycData.addressFile, kycData.addressFilePathOrKey)
+            );
         }
-        return !!kycData.selfie;
+        return hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey);
     }, [isFundraiser, kycData]);
 
     const isStep2Valid = useMemo(() => {
         if (isFundraiser) return true;
         if (isCorporate) {
             if (categoryId === "qii") {
-                return !!(kycData.statusReport && kycData.qiiLicense && kycData.boardResolution);
+                return !!(
+                    hasOnboardingDocument(kycData.statusReport, kycData.statusReportPathOrKey) &&
+                    hasOnboardingDocument(kycData.qiiLicense, kycData.qiiLicensePathOrKey) &&
+                    hasOnboardingDocument(kycData.boardResolution, kycData.boardResolutionPathOrKey)
+                );
             }
-            return !!(kycData.incorporationCertificate && kycData.statusReport && kycData.boardResolution);
+            return !!(
+                hasOnboardingDocument(
+                    kycData.incorporationCertificate,
+                    kycData.incorporationCertificatePathOrKey
+                ) &&
+                hasOnboardingDocument(kycData.statusReport, kycData.statusReportPathOrKey) &&
+                hasOnboardingDocument(kycData.boardResolution, kycData.boardResolutionPathOrKey)
+            );
         }
-        return kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+        return (
+            kycData.incomeDocuments.length > 0 &&
+            hasOnboardingDocument(kycData.incomeFile, kycData.incomeFilePathOrKey)
+        );
     }, [isCorporate, isFundraiser, categoryId, kycData]);
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;

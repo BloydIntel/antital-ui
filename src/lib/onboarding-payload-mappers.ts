@@ -6,6 +6,7 @@ import type {
   SaveKycPayload,
   SaveKycIdType,
 } from "@/types/onboarding";
+import { pathOrKeyOrNull } from "@/lib/onboarding-file-upload";
 
 function toNumber(value: QuestionValue): number | null {
   if (typeof value === "number") return Number.isFinite(value) ? value : null;
@@ -221,10 +222,10 @@ export function mapToKycPayload(kycData: KYCData): SaveKycPayload {
     idType: mapKycIdType(kycData.idType),
     nin: toElevenDigitsOrNull(kycData.idNumber),
     bvn: toElevenDigitsOrNull(kycData.bvn),
-    governmentIdDocumentPathOrKey: null,
-    proofOfAddressDocumentPathOrKey: null,
-    selfieVerificationPathOrKey: null,
-    incomeVerificationPathOrKey: null,
+    governmentIdDocumentPathOrKey: pathOrKeyOrNull(kycData.idFilePathOrKey),
+    proofOfAddressDocumentPathOrKey: pathOrKeyOrNull(kycData.addressFilePathOrKey),
+    selfieVerificationPathOrKey: pathOrKeyOrNull(kycData.selfiePathOrKey),
+    incomeVerificationPathOrKey: pathOrKeyOrNull(kycData.incomeFilePathOrKey),
     incomeVerificationDocumentTypesCommaSeparated:
       encodedIncomeTypes.length > 0
         ? encodedIncomeTypes.join(",")
@@ -356,19 +357,17 @@ export function mapToCorporateOciProfilePayload(
 
 export function mapToCorporateDocsPayload(
   selectedCategoryId: string | null,
-  _kycData: KYCData
+  kycData: KYCData
 ): Pick<
   SaveOnboardingRequest,
   "corporateQiiDocumentsPayload" | "corporateOciDocumentsPayload"
 > {
-  void _kycData;
-
   if (selectedCategoryId === "qii") {
     return {
       corporateQiiDocumentsPayload: {
-        recentStatusReportDocumentPathOrKey: null,
-        qiiLicenseEvidenceDocumentPathOrKey: null,
-        boardResolutionDocumentPathOrKey: null,
+        recentStatusReportDocumentPathOrKey: pathOrKeyOrNull(kycData.statusReportPathOrKey),
+        qiiLicenseEvidenceDocumentPathOrKey: pathOrKeyOrNull(kycData.qiiLicensePathOrKey),
+        boardResolutionDocumentPathOrKey: pathOrKeyOrNull(kycData.boardResolutionPathOrKey),
       },
       corporateOciDocumentsPayload: null,
     };
@@ -377,9 +376,11 @@ export function mapToCorporateDocsPayload(
     return {
       corporateQiiDocumentsPayload: null,
       corporateOciDocumentsPayload: {
-        incorporationCertificateDocumentPathOrKey: null,
-        recentStatusReportDocumentPathOrKey: null,
-        boardResolutionDocumentPathOrKey: null,
+        incorporationCertificateDocumentPathOrKey: pathOrKeyOrNull(
+          kycData.incorporationCertificatePathOrKey
+        ),
+        recentStatusReportDocumentPathOrKey: pathOrKeyOrNull(kycData.statusReportPathOrKey),
+        boardResolutionDocumentPathOrKey: pathOrKeyOrNull(kycData.boardResolutionPathOrKey),
       },
     };
   }

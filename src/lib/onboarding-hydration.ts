@@ -342,7 +342,52 @@ export function buildFormPatchFromOnboarding(
     kycPatch.address = response.locationInfo.residentialAddress;
   }
   if (incomeTypes.length > 0) kycPatch.incomeDocuments = incomeTypes;
+  if (response.kyc?.governmentIdDocumentPathOrKey) {
+    kycPatch.idFilePathOrKey = response.kyc.governmentIdDocumentPathOrKey;
+  }
+  if (response.kyc?.proofOfAddressDocumentPathOrKey) {
+    kycPatch.addressFilePathOrKey = response.kyc.proofOfAddressDocumentPathOrKey;
+  }
+  if (response.kyc?.selfieVerificationPathOrKey) {
+    kycPatch.selfiePathOrKey = response.kyc.selfieVerificationPathOrKey;
+  }
+  if (response.kyc?.incomeVerificationPathOrKey) {
+    kycPatch.incomeFilePathOrKey = response.kyc.incomeVerificationPathOrKey;
+  }
+  if (response.kyc?.recentStatusReportDocumentPathOrKey) {
+    kycPatch.statusReportPathOrKey = response.kyc.recentStatusReportDocumentPathOrKey;
+  }
+  if (response.kyc?.qiiLicenseEvidenceDocumentPathOrKey) {
+    kycPatch.qiiLicensePathOrKey = response.kyc.qiiLicenseEvidenceDocumentPathOrKey;
+  }
+  if (response.kyc?.boardResolutionDocumentPathOrKey) {
+    kycPatch.boardResolutionPathOrKey = response.kyc.boardResolutionDocumentPathOrKey;
+  }
+  if (response.kyc?.incorporationCertificateDocumentPathOrKey) {
+    kycPatch.incorporationCertificatePathOrKey =
+      response.kyc.incorporationCertificateDocumentPathOrKey;
+  }
   if (Object.keys(kycPatch).length > 0) patch.kycData = kycPatch;
+
+  if (response.fundRaiserProfile?.businessDocuments) {
+    const docs = response.fundRaiserProfile.businessDocuments;
+    if (docs.founderAndTeamIntroductionDocumentPathOrKey) {
+      patch.founderAndTeamIntroductionPathOrKey =
+        docs.founderAndTeamIntroductionDocumentPathOrKey;
+    }
+    if (docs.fundraisingDeckDocumentPathOrKey) {
+      patch.fundraisingDeckPathOrKey = docs.fundraisingDeckDocumentPathOrKey;
+    }
+    if (docs.investmentMemoDocumentPathOrKey) {
+      patch.investmentMemoPathOrKey = docs.investmentMemoDocumentPathOrKey;
+    }
+    if (docs.termsOfOfferingDocumentPathOrKey) {
+      patch.termsOfOfferingPathOrKey = docs.termsOfOfferingDocumentPathOrKey;
+    }
+    if (docs.productDemoDocumentPathOrKey) {
+      patch.productDemoPathOrKey = docs.productDemoDocumentPathOrKey;
+    }
+  }
 
   return patch;
 }

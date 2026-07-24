@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { ReviewCard } from "@/components/onboarding/molecules/ReviewCard"
 import { PERSONAL_SUB_STEPS, INDIVIDUAL_KYC_SUB_STEPS } from "@/constants/subSteps"
+import { hasOnboardingDocument } from "@/lib/onboarding-file-upload"
 
 export function IndividualInvestorReview() {
     const router = useRouter();
@@ -68,9 +69,9 @@ export function IndividualInvestorReview() {
                 isStatusType
                 onEditClick={() => handleEdit("kyc")}
                 items={[
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: formData.kycData.idFile instanceof File && formData.kycData.idFile.size > 0 ? "Completed" : "Pending" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: formData.kycData.selfie instanceof File && formData.kycData.selfie.size > 0 ? "Completed" : "Pending" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: formData.kycData.incomeFile instanceof File && formData.kycData.incomeFile.size > 0 ? "Completed" : "Pending" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: hasOnboardingDocument(formData.kycData.idFile, formData.kycData.idFilePathOrKey) ? "Completed" : "Pending" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: hasOnboardingDocument(formData.kycData.selfie, formData.kycData.selfiePathOrKey) ? "Completed" : "Pending" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: hasOnboardingDocument(formData.kycData.incomeFile, formData.kycData.incomeFilePathOrKey) ? "Completed" : "Pending" },
                 ]}
             />
         </div>

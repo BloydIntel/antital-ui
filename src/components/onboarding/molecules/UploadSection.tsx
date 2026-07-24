@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useRef, useState } from 'react'
-import { Info, Upload, FileText, X } from 'lucide-react'
+import { Info, Upload, FileText, X, Loader2 } from 'lucide-react'
 import { TYPOGRAPHY } from '@/constants/styles'
+import { displayNameFromPathOrKey } from '@/lib/onboarding-file-upload'
 
 const DEFAULT_ACCEPT = "image/jpeg,image/png,application/pdf"
 const DOCUMENT_ACCEPT =
@@ -28,6 +29,9 @@ interface UploadSectionProps {
     onUpload?: (file: File | null) => void;
     isError?: boolean;
     value?: File | null;
+    /** Already-uploaded Cloudinary URL (hydration or eager upload). */
+    uploadedUrl?: string | null;
+    uploading?: boolean;
     /** File picker accept list. Defaults to images + PDF (KYC). */
     accept?: string;
     /** Helper text under the drop zone. */
@@ -42,6 +46,8 @@ export function UploadSection({
     onUpload,
     isError,
     value,
+    uploadedUrl,
+    uploading = false,
     accept,
     helperText,
     documentsOnly = false,
@@ -94,7 +100,14 @@ export function UploadSection({
 
     // Safely detect if we have a file and it has a name property
     const hasFile = value instanceof File || (value && typeof value === 'object' && 'name' in value);
-    const showError = (isError && !hasFile) || Boolean(typeError);
+    const hasUploaded = Boolean(uploadedUrl);
+    const showCompleted = Boolean(hasFile || hasUploaded);
+    const displayName = hasFile
+        ? (value?.name || "Document Uploaded")
+        : hasUploaded
+            ? displayNameFromPathOrKey(uploadedUrl!)
+            : "Document Uploaded";
+    const showError = (isError && !showCompleted && !uploading) || Boolean(typeError);
 
     return (
         <div className="space-y-2">
@@ -104,6 +117,7 @@ export function UploadSection({
                 onChange={handleFileChange}
                 accept={resolvedAccept}
                 className="hidden"
+                disabled={uploading}
             />
 
             {label && (
@@ -119,17 +133,25 @@ export function UploadSection({
             )}
 
             <div
-                onClick={handleContainerClick}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
+                onClick={uploading ? undefined : handleContainerClick}
+                onDragOver={uploading ? undefined : handleDragOver}
+                onDrop={uploading ? undefined : handleDrop}
                 className={`
                     border-2 border-dashed rounded-xl px-10 py-[72px] flex flex-col items-center justify-center 
-                    transition-all cursor-pointer bg-white text-center
-                    ${hasFile ? 'border-[#A7B832] bg-[#F9FAF5]' : 'border-[#E6EEDC] hover:bg-gray-50'}
+                    transition-all bg-white text-center
+                    ${uploading ? 'cursor-wait opacity-80' : 'cursor-pointer'}
+                    ${showCompleted ? 'border-[#A7B832] bg-[#F9FAF5]' : 'border-[#E6EEDC] hover:bg-gray-50'}
                     ${showError ? 'border-red-500 bg-red-50' : ''} 
                 `}
             >
-                {!hasFile ? (
+                {uploading ? (
+                    <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="w-8 h-8 text-[#A7B832] animate-spin" />
+                        <p className="text-[14px] text-gray-500" style={TYPOGRAPHY.body}>
+                            Uploading…
+                        </p>
+                    </div>
+                ) : !showCompleted ? (
                     <>
                         <Upload className={`w-8 h-8 mb-3 ${showError ? 'text-red-400' : 'text-gray-400'}`} />
                         <p className={`text-[14px] max-w-[446px] ${showError ? 'text-red-500' : 'text-gray-500'}`} style={TYPOGRAPHY.body}>
@@ -148,15 +170,16 @@ export function UploadSection({
                                 <X size={12} />
                             </button>
                         </div>
-                        {/* Improved Name Display */}
                         <p className="text-[14px] font-medium text-[#2C2C2C] max-w-[250px] truncate px-2">
-                            {value?.name || "Document Uploaded"}
+                            {displayName}
                         </p>
-                        {value?.size && (
+                        {value?.size ? (
                             <p className="text-[12px] text-gray-400">
                                 {(value.size / 1024).toFixed(1)} KB
                             </p>
-                        )}
+                        ) : hasUploaded ? (
+                            <p className="text-[12px] text-gray-400">Saved to cloud storage</p>
+                        ) : null}
                     </div>
                 )}
             </div>
@@ -166,7 +189,7 @@ export function UploadSection({
                 <p className={`text-[12px] ${showError ? 'text-red-500' : 'text-[#3E82D5]'}`} style={TYPOGRAPHY.body}>
                     {typeError
                         ? typeError
-                        : isError && !hasFile
+                        : isError && !showCompleted
                             ? "This document is required to proceed"
                             : "Ensure the document is clear and all information is visible"}
                 </p>
