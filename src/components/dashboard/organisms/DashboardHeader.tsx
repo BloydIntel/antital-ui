@@ -1,11 +1,20 @@
 "use client"
 
 import { Input } from '@/components/ui/input'
-import { Search, HelpCircle, Bell, MessageSquare } from 'lucide-react'
+import { Search, HelpCircle, Bell, MessageSquare, LogOut, Settings } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { TYPOGRAPHY } from '@/constants/styles'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import useLogout from '@/hooks/use-logout'
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 const dashboardHeaderData = {
@@ -23,15 +32,13 @@ const CUSTOM_MOBILE_HEADERS: Record<string, string> = {
 export function DashboardHeader() {
     const pathname = usePathname()
     const router = useRouter();
+    const logoutMutation = useLogout()
 
     const onHelpIconClick = () => {
         router.push('/help-center/')
     }
     const onNotificationIconClick = () => {
         router.push('/notifications')
-    }
-    const onProfileIconClick = () => {
-        router.push('/settings')
     }
 
     const customHeaderPath = Object.keys(CUSTOM_MOBILE_HEADERS).find(route => pathname.startsWith(route));
@@ -112,10 +119,42 @@ export function DashboardHeader() {
                     </Button>
 
                     {/* User Profile */}
-                    <Avatar onClick={onProfileIconClick} className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
-                        <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
-                        <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
-                    </Avatar>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                type="button"
+                                className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#4379B7] focus-visible:ring-offset-2"
+                                aria-label="Account menu"
+                            >
+                                <Avatar className="h-12 w-12 border border-[#EAEAEA] cursor-pointer">
+                                    <AvatarImage src={dashboardHeaderData.userAvatarURL} alt="User" />
+                                    <AvatarFallback>{dashboardHeaderData.userAvatarFallback}</AvatarFallback>
+                                </Avatar>
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="min-w-44 rounded-lg">
+                            <DropdownMenuItem asChild className="cursor-pointer">
+                                <Link href="/settings">
+                                    <Settings />
+                                    Settings
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onSelect={(event) => {
+                                    event.preventDefault()
+                                    if (!logoutMutation.isPending) {
+                                        logoutMutation.mutate()
+                                    }
+                                }}
+                                disabled={logoutMutation.isPending}
+                            >
+                                <LogOut />
+                                {logoutMutation.isPending ? "Logging out…" : "Log out"}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 
