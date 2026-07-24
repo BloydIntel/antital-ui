@@ -4,11 +4,13 @@ import React from 'react'
 import { FileText, Download } from 'lucide-react'
 
 export interface DocumentItem {
+    id: number
     name: string
     size: string
     category: string
     status: 'Approved' | 'Pending Approval' | 'Revision Requested'
     lastUpdated: string
+    fileUrl: string
 }
 
 interface DocumentTableProps {
@@ -55,7 +57,7 @@ export function DocumentTable({ documents, onDownload }: DocumentTableProps) {
                         const isDownloadDisabled = !onDownload
 
                         return (
-                            <tr key={`${doc.name}-${doc.category}-${doc.lastUpdated}`} className="hover:bg-[#F9FAFB]/50 transition-colors">
+                            <tr key={doc.id} className="hover:bg-[#F9FAFB]/50 transition-colors">
 
                                 {/* File Details Identity Meta Cell */}
                                 <td className="py-1.5 pr-4 flex items-center gap-3">
