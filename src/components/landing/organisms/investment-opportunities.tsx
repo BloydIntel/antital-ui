@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { InvestmentCard } from '@/components/investment/organisms/investment-card'
+import { InvestmentCardGridSkeleton } from '@/components/skeletons/investment-skeletons'
 import { useInvestments } from '@/hooks/use-investments'
 import { toInvestmentCardData } from '@/lib/investment-mappers'
 
@@ -49,9 +50,7 @@ export function InvestmentOpportunities({ limit }: InvestmentOpportunitiesProps)
           </div>
 
           <div className="flex flex-col items-center gap-12 w-full">
-            {isLoading && (
-              <p className="text-muted-foreground font-dm-sans">Loading investment opportunities...</p>
-            )}
+            {isLoading && <InvestmentCardGridSkeleton count={3} />}
             {isError && (
               <p className="text-destructive font-dm-sans">Unable to load investment opportunities.</p>
             )}
