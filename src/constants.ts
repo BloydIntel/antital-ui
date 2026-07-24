@@ -8,6 +8,7 @@ export const CACHE_KEY_FUNDRAISER_QII = ["fundraiser-qii"] as const;
 export const CACHE_KEY_FUNDRAISER_INVESTOR_MESSAGES = ["fundraiser-investor-messages"] as const;
 export const CACHE_KEY_FUNDRAISER_INVESTOR_ANALYTICS = ["fundraiser-investor-analytics"] as const;
 export const CACHE_KEY_FUNDRAISER_ANALYTICS = ["fundraiser-analytics"] as const;
+export const CACHE_KEY_FUNDRAISER_DOCUMENTS = ["fundraiser-documents"] as const;
 export const CACHE_KEY_WALLET_TRANSACTIONS = ["wallet-transactions"] as const;
 export const CACHE_KEY_PAYMENT_METHODS = ["payment-methods"] as const;
 export const CACHE_KEY_WATCHLIST = ["watchlist"] as const;
