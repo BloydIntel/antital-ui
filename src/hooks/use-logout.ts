@@ -1,7 +1,6 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import authService from "@/services/authService";
 import { CACHE_KEY_USER } from "@/constants";
 import { tokenStorage } from "@/lib/token-storage";
@@ -21,7 +20,6 @@ function clearLocalSession(queryClient: ReturnType<typeof useQueryClient>) {
 }
 
 const useLogout = () => {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -29,13 +27,13 @@ const useLogout = () => {
     mutationFn: authService.logout,
     onSuccess: () => {
       clearLocalSession(queryClient);
-      router.push("/sign-in");
+      window.location.assign("/sign-in");
     },
     onError: (err) => {
       // Still end the local session if the API call fails.
       clearLocalSession(queryClient);
       showApiErrorToast(err, "Unable to logout.");
-      router.push("/sign-in");
+      window.location.assign("/sign-in");
     },
   });
 };

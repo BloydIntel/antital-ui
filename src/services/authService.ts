@@ -13,6 +13,8 @@ import type {
   SignupRequest,
   VerifyEmailRequest,
   ChangePasswordRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
 } from "@/types/auth";
 import type { ApiResponse } from "@/types/api";
 
@@ -26,6 +28,8 @@ export type {
   SignupRequest,
   VerifyEmailRequest,
   ChangePasswordRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
 };
 
 const loginApi = new ApiClient<LoginRequest, LoginResponse>("/api/auth/login");
@@ -87,6 +91,28 @@ const authService = {
     try {
       const response = await request.post<ApiResponse<void>>(
         "/api/auth/change-password",
+        payload
+      );
+      unwrap(response.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  forgotPassword: async (payload: ForgotPasswordRequest): Promise<void> => {
+    try {
+      const response = await request.post<ApiResponse<void>>(
+        "/api/auth/forgot-password",
+        payload
+      );
+      unwrap(response.data);
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  resetPassword: async (payload: ResetPasswordRequest): Promise<void> => {
+    try {
+      const response = await request.post<ApiResponse<void>>(
+        "/api/auth/reset-password",
         payload
       );
       unwrap(response.data);
