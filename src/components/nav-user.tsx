@@ -103,7 +103,12 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => logoutMutation.mutate()}
+              onSelect={(event) => {
+                event.preventDefault()
+                if (!logoutMutation.isPending) {
+                  logoutMutation.mutate()
+                }
+              }}
               disabled={logoutMutation.isPending}
             >
               <LogOut />

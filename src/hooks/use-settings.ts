@@ -36,3 +36,19 @@ export function useChangePassword() {
     mutationFn: (payload: ChangePasswordRequest) => authService.changePassword(payload),
   });
 }
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (payload: { email: string }) => authService.forgotPassword(payload),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (payload: {
+      token: string;
+      newPassword: string;
+      confirmPassword: string;
+    }) => authService.resetPassword(payload),
+  });
+}

@@ -43,6 +43,11 @@ export function Security() {
     const handleUpdatePassword = (e: React.FormEvent) => {
         e.preventDefault();
         if (passwords.new !== passwords.confirm) {
+            toast.error('New password and confirmation do not match.');
+            return;
+        }
+        if (passwords.new.length < 8) {
+            toast.error('Password must be at least 8 characters long.');
             return;
         }
 
@@ -128,8 +133,9 @@ export function Security() {
 
                 <div className="w-full flex justify-end">
                     <OnboardingButton
-                        label={changePassword.isPending ? 'Updating...' : 'Update Password'}
+                        label="Update Password"
                         type="submit"
+                        loading={changePassword.isPending}
                         disabled={isSubmitDisabled}
                         className="bg-[#042E27] hover:bg-[#03241F] text-white max-w-[160px] rounded-lg text-[14px] font-medium"
                     />

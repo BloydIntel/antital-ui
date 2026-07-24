@@ -176,7 +176,7 @@ export function Login({
               )}
             />
             <Link
-              href="/auth/forgot-password-2"
+              href="/forgot-password"
               className="text-[#7BA147] ml-auto text-sm lg:text-base"
               style={{
                 fontFamily: "var(--font-rethink-sans)",

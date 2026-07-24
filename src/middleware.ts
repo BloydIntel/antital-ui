@@ -3,19 +3,26 @@ import type { NextRequest } from 'next/server'
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  // Add custom middleware logic here
-  // For example: authentication, redirects, etc.
-  
-  // Example: Redirect /login to /auth/sign-in
-  if (request.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
+  const { pathname } = request.nextUrl
+
+  // Legacy auth paths → current sign-in / create-account routes
+  if (
+    pathname === '/login' ||
+    pathname === '/auth/sign-in' ||
+    pathname === '/auth/sign-in-2' ||
+    pathname === '/auth/sign-in-3'
+  ) {
+    return NextResponse.redirect(new URL('/sign-in', request.url))
   }
-  
-  // Example: Redirect /register to /auth/sign-up
-  if (request.nextUrl.pathname === '/register') {
-    return NextResponse.redirect(new URL('/auth/sign-up', request.url))
+
+  if (
+    pathname === '/register' ||
+    pathname === '/auth/sign-up' ||
+    pathname === '/auth/create-account'
+  ) {
+    return NextResponse.redirect(new URL('/create-account', request.url))
   }
-  
+
   return NextResponse.next()
 }
 

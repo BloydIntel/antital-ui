@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Lock, Smartphone, Key, AlertTriangle, Shield } from 'lucide-react';
+import { Lock, Smartphone, Key, AlertTriangle, Shield, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { SecurityRowItem } from '@/components/settings/organisms/fundraiser/password2fa/SecurityRowItem';
 import { ActiveSessionsPanel } from '@/components/settings/organisms/fundraiser/password2fa/ActiveSessionsPanel';
 import { LoginHistoryPanel } from '@/components/settings/organisms/fundraiser/password2fa/LoginHistoryPanel';
 import { OnboardingInput } from '@/components/onboarding/molecules/OnboardingInput';
-import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -57,6 +57,10 @@ export function SecurityAnd2fa({ targetSection }: SecurityAnd2faProps) {
     e.preventDefault();
     if (passwords.new !== passwords.confirm) {
       toast.error('New password and confirmation do not match.');
+      return;
+    }
+    if (passwords.new.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
       return;
     }
 
@@ -209,22 +213,32 @@ export function SecurityAnd2fa({ targetSection }: SecurityAnd2faProps) {
               )}
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-2">
-              <OnboardingButton
+            <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
+              <Button
                 type="button"
-                label="Cancel"
-                variant="plain"
-                className="my-0 max-w-none"
+                variant="outline"
+                className="h-12 w-full sm:w-auto sm:min-w-[120px] border-[#A8A8A8] text-[#11110F] hover:bg-[#F4F5F7]"
+                style={{ fontFamily: 'var(--font-rethink-sans)' }}
                 onClick={() => setIsPasswordDialogOpen(false)}
                 disabled={changePassword.isPending}
-              />
-              <OnboardingButton
+              >
+                Cancel
+              </Button>
+              <Button
                 type="submit"
-                label="Update Password"
-                className="my-0 max-w-none"
-                loading={changePassword.isPending}
+                className="h-12 w-full sm:w-auto sm:min-w-[160px] bg-[#042E27] text-white hover:bg-[#042E27] hover:shadow-[0_6px_0px_#0C4037]"
+                style={{ fontFamily: 'var(--font-rethink-sans)' }}
                 disabled={isSubmitDisabled}
-              />
+              >
+                {changePassword.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Password'
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -1,19 +1,26 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
-import { ForgotPasswordForm } from './components/forgot-password-form';
+import { Suspense } from 'react';
+import { ResetPasswordForm } from './components/reset-password-form';
 
 export const metadata: Metadata = {
-  title: 'Forgot Password | Antital',
-  description: 'Reset your Antital account password.',
+  title: 'Reset Password | Antital',
+  description: 'Choose a new password for your Antital account.',
 };
 
-export default function ForgotPasswordPage() {
+export default function ResetPasswordPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-5">
       <div className="flex flex-col gap-4 p-6 md:p-10 col-span-3">
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md">
-            <ForgotPasswordForm />
+            <Suspense
+              fallback={
+                <p className="text-[16px] text-[#858585]">Loading reset form...</p>
+              }
+            >
+              <ResetPasswordForm />
+            </Suspense>
           </div>
         </div>
 
