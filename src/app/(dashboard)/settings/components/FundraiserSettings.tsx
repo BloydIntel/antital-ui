@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
     User, Bell, Shield, Wallet, ChevronRight,
     ArrowLeft,
 } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
-import { CompanyProfile, MOCK_COMPANY_PROFILE } from '@/components/settings/organisms/fundraiser/CompanyProfile';
+import { CompanyProfile } from '@/components/settings/organisms/fundraiser/CompanyProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TeamManagement } from '@/components/settings/organisms/fundraiser/TeamManagement';
 import { ContactInformation } from '@/components/settings/organisms/fundraiser/ContactInformation';
@@ -18,6 +18,8 @@ import { SecurityAnd2fa } from '@/components/settings/organisms/fundraiser/Secur
 import { BankAccount } from '@/components/settings/organisms/fundraiser/BankAccounts';
 import { DisbursementSchedule } from '@/components/settings/organisms/fundraiser/DisbursementSchedule';
 import { TaxDocumentation } from '@/components/settings/organisms/fundraiser/TaxDocumentation';
+import { useFundraiserSettingsProfile } from '@/hooks/use-fundraiser-settings';
+import { showApiErrorToast } from '@/lib/error-feedback';
 
 interface FundraiserSettingsProps {
     activeSlug: string;
@@ -68,6 +70,13 @@ const SETTINGS_GROUPS = [
 ];
 
 export default function FundraiserSettings({ activeSlug, onNavigate }: FundraiserSettingsProps) {
+    const { data: profile, isError, error } = useFundraiserSettingsProfile();
+
+    useEffect(() => {
+        if (isError) {
+            showApiErrorToast(error, 'Unable to load settings profile.');
+        }
+    }, [isError, error]);
 
     const activePageName = useMemo(() => {
         if (!activeSlug) return '';
@@ -79,6 +88,10 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
     }, [activeSlug]);
 
     const handleBack = () => onNavigate('');
+
+    const brandName = profile?.companyName?.trim() || 'Your organization';
+    const brandLocation = profile?.locationLabel?.trim() || 'Location not set';
+    const brandFallback = profile?.companyAvatarFallback?.trim() || 'FR';
 
     const renderSubView = () => {
         switch (activeSlug) {
@@ -150,29 +163,30 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                     </div>
                     <div className="w-full grid lg:grid-cols-11 gap-6 font-sans items-start">
 
-                        {/* Left Corporate Brand Panel Block Card */}
                         <div className="lg:col-span-3 w-full shrink-0 flex flex-col items-center">
                             <div className=' bg-white border border-[#F4F5F7] rounded-md px-4 py-6 flex flex-col items-center w-full'>
                                 <Avatar className="mb-4 h-14 w-14 border border-[#EAEAEA] cursor-pointer">
-                                    <AvatarImage src={MOCK_COMPANY_PROFILE.companyAvatarURL} alt="Company shorthand" />
-                                    <AvatarFallback>{MOCK_COMPANY_PROFILE.companyAvatarFallback}</AvatarFallback>
+                                    {profile?.companyAvatarUrl ? (
+                                        <AvatarImage src={profile.companyAvatarUrl} alt="Company shorthand" />
+                                    ) : null}
+                                    <AvatarFallback>{brandFallback}</AvatarFallback>
                                 </Avatar>
 
                                 <h4 className="text-[18px] text-[#1B1B1B] text-center mb-2" style={{ ...TYPOGRAPHY.body, fontWeight: 500 }}>
-                                    {MOCK_COMPANY_PROFILE.companyName}
+                                    {brandName}
                                 </h4>
                                 <p className="text-[12px] text-[#858585] text-center mb-4">
-                                    {MOCK_COMPANY_PROFILE.locationLabel}
+                                    {brandLocation}
                                 </p>
 
                                 <OnboardingButton
                                     label="Edit Branding"
                                     variant="plain"
                                     className="w-full text-[14px] bg-[#F9FAFB] text-[#1B1B1B] border-none"
+                                    onClick={() => onNavigate('company-profile')}
                                 />
                             </div>
 
-                            {/* Premium Badge Frame segment */}
                             <div className="w-full mt-4 bg-[#021310] text-white rounded-md p-4 relative overflow-hidden">
                                 <span className="text-[12px] tracking-wide text-[#B9C65B]">Membership</span>
                                 <h5 className="text-[18px] text-[#F4F5F7] font-medium mt-4">Premium Fundraiser</h5>
@@ -184,13 +198,11 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                             </div>
                         </div>
 
-                        {/* Right Group Stack Workspace Columns Layout Menu Panel */}
                         <div className="lg:col-span-8 w-full space-y-4">
                             {SETTINGS_GROUPS.map((group, gIdx) => {
                                 const GroupIcon = group.icon;
                                 return (
                                     <div key={gIdx} className="bg-white border border-[#EAEAEA] rounded-md overflow-hidden">
-                                        {/* Inner Heading Anchor Panel */}
                                         <div className="p-4 bg-[#F4F5F7] flex items-center gap-3">
                                             <div className='p-2 rounded-md bg-white'>
                                                 <GroupIcon className="w-4 h-4 text-[#B9C65B]" />
@@ -200,7 +212,6 @@ export default function FundraiserSettings({ activeSlug, onNavigate }: Fundraise
                                             </h4>
                                         </div>
 
-                                        {/* Settings Target Item Lists */}
                                         <div className="divide-y divide-[#EAEAEA] px-4">
                                             {group.items.map((item, iIdx) => (
                                                 <button
