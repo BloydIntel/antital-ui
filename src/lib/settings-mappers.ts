@@ -3,7 +3,7 @@ import type {
   AccountDataProfile,
   ComplianceCheckItem,
   InvestmentLimitsMetrics,
-} from "@/components/settings/organisms/Account";
+} from "@/components/settings/organisms/investors/Account";
 
 export interface ProfileFormData {
   firstName: string;

@@ -1,7 +1,8 @@
 "use client"
 
 import React from 'react'
-import { Search, History } from 'lucide-react'
+import { History } from 'lucide-react'
+import { SearchInputBar } from '@/components/watchlist/organisms/SearchInputBar'
 
 interface DocumentSearchBarProps {
     value: string
@@ -15,17 +16,14 @@ export function DocumentSearchBar({ value, onChange, onHistoryClick }: DocumentS
     return (
         <div className="w-full flex items-center justify-between gap-4 mb-6">
 
-            {/* Custom Framed Search Input Field Wrapper */}
-            <div className="relative max-w-sm w-full">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#717171]" />
-                <input
-                    type="text"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="Search document"
-                    className="w-full h-10 pl-10 pr-4 bg-[#EAEAEA]/60 hover:bg-[#EAEAEA]/90 focus:bg-white border-transparent focus:border-[#EAEAEA] rounded-lg text-sm text-[#1B1B1B] placeholder-[#717171] outline-none transition-all"
-                />
-            </div>
+            <SearchInputBar
+                value={value}
+                onChange={onChange}
+                placeholder="Search document"
+                inputClassName='bg-[#EAEAEA] placeholder:text-[#2C2C2C]'
+                containerClassName='max-w-[344px]'
+                iconClassName='text-[#2C2C2C]'
+            />
 
             {/* Historical Audit Log Link Trigger */}
             <button
