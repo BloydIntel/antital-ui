@@ -1,6 +1,8 @@
 import { UploadSection } from '@/components/onboarding/molecules/UploadSection'
 import { CheckboxGroup } from '@/components/onboarding/molecules/CheckboxGroup'
 import { KYCData, useOnboardingStore } from '@/store/onboardingStore';
+import { useOnboardingFileUpload } from '@/hooks/onboarding/useOnboardingFileUpload';
+import { hasOnboardingDocument } from '@/lib/onboarding-file-upload';
 
 const documentOptions = {
     options: [
@@ -20,6 +22,7 @@ const documentOptions = {
 export function IncomeVerification({ showErrors }: { showErrors: boolean }) {
     const { formData, updateFormData } = useOnboardingStore();
     const data = formData.kycData;
+    const { uploadKycDocument, isUploading } = useOnboardingFileUpload();
 
     const handleDataChange = <K extends keyof KYCData>(field: K, value: KYCData[K]) => {
         updateFormData({
@@ -56,8 +59,12 @@ export function IncomeVerification({ showErrors }: { showErrors: boolean }) {
                 label="Upload Income Documents"
                 desc="You can upload multiple documents as a single PDF or combine them"
                 value={data.incomeFile}
-                onUpload={(file) => handleDataChange('incomeFile', file)}
-                isError={showErrors && !data.incomeFile}
+                uploadedUrl={data.incomeFilePathOrKey}
+                uploading={isUploading("incomeFile")}
+                onUpload={(file) => {
+                    void uploadKycDocument("incomeFile", "incomeFilePathOrKey", file);
+                }}
+                isError={showErrors && !hasOnboardingDocument(data.incomeFile, data.incomeFilePathOrKey)}
             />
         </div>
     )

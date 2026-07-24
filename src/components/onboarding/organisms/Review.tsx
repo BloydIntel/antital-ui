@@ -30,11 +30,16 @@ export function Review({ onBack, onNext }: { onBack: () => void, onNext: () => v
 
         setIsSubmitting(true);
         try {
-            if (investorUserType === "fundraiser" && formData.applicationFeePaid) {
+            if (
+                investorUserType === "fundraiser" &&
+                formData.applicationFeePaid &&
+                formData.paymentReference
+            ) {
                 await onboardingService.saveFundraiserPayment({
                     paymentMethod: formData.paymentMethod ?? "card",
-                    paymentReference: formData.paymentReference ?? `FR-${Date.now()}`,
-                    paymentStatus: formData.paymentStatus === "failed" ? "failed" : "success",
+                    paymentReference: formData.paymentReference,
+                    paymentStatus:
+                        formData.paymentStatus === "failed" ? "Failed" : "Paid",
                     applicationFeePaid: true,
                 });
             }

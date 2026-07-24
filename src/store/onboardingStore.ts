@@ -10,18 +10,26 @@ export interface KYCData {
     idType: string;
     idNumber: string;
     idFile: File | null;
+    idFilePathOrKey: string | null;
     bvn: string;
     address: string;
     addressFile: File | null;
+    addressFilePathOrKey: string | null;
     selfie: File | null;
+    selfiePathOrKey: string | null;
     incomeDocuments: string[];
     incomeFile: File | null;
+    incomeFilePathOrKey: string | null;
 
-    // Corporate Fields 
+    // Corporate Fields
     incorporationCertificate: File | null;
+    incorporationCertificatePathOrKey: string | null;
     qiiLicense: File | null;
+    qiiLicensePathOrKey: string | null;
     statusReport: File | null;
+    statusReportPathOrKey: string | null;
     boardResolution: File | null;
+    boardResolutionPathOrKey: string | null;
 }
 
 export interface OnboardingFormData {
@@ -76,10 +84,15 @@ export interface OnboardingFormData {
 
     // Fundraiser Business Documents
     founderAndTeamIntroduction: File | null;
+    founderAndTeamIntroductionPathOrKey: string | null;
     fundraisingDeck: File | null;
+    fundraisingDeckPathOrKey: string | null;
     investmentMemo: File | null;
+    investmentMemoPathOrKey: string | null;
     termsOfOffering: File | null;
+    termsOfOfferingPathOrKey: string | null;
     productDemo: File | null;
+    productDemoPathOrKey: string | null;
     businessDescription: string;
     businessSector: string;
     instrumentType: string;
@@ -161,25 +174,38 @@ const initialFormData: OnboardingFormData = {
         idType: "",
         idNumber: "",
         idFile: null,
+        idFilePathOrKey: null,
         bvn: "",
         address: "",
         addressFile: null,
+        addressFilePathOrKey: null,
         selfie: null,
+        selfiePathOrKey: null,
         incomeDocuments: [],
         incomeFile: null,
+        incomeFilePathOrKey: null,
 
         incorporationCertificate: null,
+        incorporationCertificatePathOrKey: null,
         statusReport: null,
+        statusReportPathOrKey: null,
         boardResolution: null,
+        boardResolutionPathOrKey: null,
         qiiLicense: null,
+        qiiLicensePathOrKey: null,
     },
 
     // Fundraiser Business Documents
     founderAndTeamIntroduction: null,
+    founderAndTeamIntroductionPathOrKey: null,
     fundraisingDeck: null,
+    fundraisingDeckPathOrKey: null,
     investmentMemo: null,
+    investmentMemoPathOrKey: null,
     termsOfOffering: null,
+    termsOfOfferingPathOrKey: null,
     productDemo: null,
+    productDemoPathOrKey: null,
     businessDescription: "",
     businessSector: "",
     instrumentType: "",

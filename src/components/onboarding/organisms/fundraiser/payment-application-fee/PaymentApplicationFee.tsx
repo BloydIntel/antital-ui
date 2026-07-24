@@ -1,26 +1,27 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { PaymentMethod, CardFormData } from "@/types/payment"
+import { PaymentMethod } from "@/types/payment"
 import { TYPOGRAPHY } from "@/constants/styles"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
 import { useRouter, usePathname } from "next/navigation"
 
 import { PaymentSummary } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentSummary"
 import { PaymentMethodSelect } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentMethodSelect"
-import { PaymentCardDetails } from "@/components/onboarding/organisms/fundraiser/payment-application-fee/PaymentCardDetails"
 import { useOnboardingStore } from "@/store/onboardingStore"
 import { PAYMENT_SUBSTEPS } from "@/constants/paymentStep"
 import { InvestmentPaymentSummary } from "@/app/(dashboard)/marketplace/invest/InvestmentPaymentSummary"
 import { PaymentSuccessPage } from "@/components/marketplace/organisms/PaymentSuccessPage"
-import onboardingService from "@/services/onboardingService"
 import investmentOrderService from "@/services/investmentOrderService"
+import applicationFeeService from "@/services/applicationFeeService"
 import { showApiErrorToast } from "@/lib/error-feedback"
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { getUserIdFromAccessToken } from "@/lib/jwt"
 import { tokenStorage } from "@/lib/token-storage"
 import { saveCheckoutOrderId } from "@/lib/investment-checkout"
 import type { CreateInvestmentOrderResponse } from "@/types/investment-order"
+import { useQuery } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 interface PaymentApplicationFeeProps {
     companyName?: string
@@ -31,6 +32,7 @@ interface PaymentApplicationFeeProps {
 }
 
 const FUNDRAISER_PAYMENT_STATE_KEY = "fundraiser_application_fee_state";
+const FUNDRAISER_FEE_REFERENCE_KEY = "fundraiser_application_fee_reference";
 
 export function PaymentApplicationFee({
     companyName,
@@ -56,14 +58,14 @@ export function PaymentApplicationFee({
 
     const [subStepIndex, setSubStepIndex] = useState(0);
     const [method, setMethod] = useState<PaymentMethod | null>(formData.paymentMethod);
-    const [cardData, setCardData] = useState<CardFormData>({
-        nameOnCard: "",
-        cardNumber: "",
-        expiry: "",
-        cvv: ""
-    });
 
     const isFundraiserPaymentPage = pathName === "/onboarding/fundraiser/application-fee"
+
+    const applicationFeeQuery = useQuery({
+        queryKey: ["application-fee"],
+        queryFn: () => applicationFeeService.getApplicationFee(),
+        enabled: isFundraiserPaymentPage,
+    });
 
     useEffect(() => {
         if (!isFundraiserPaymentPage || typeof window === "undefined") return;
@@ -93,12 +95,25 @@ export function PaymentApplicationFee({
     }, [isFundraiserPaymentPage, updateFormData]);
 
     useEffect(() => {
+        if (!applicationFeeQuery.data?.applicationFeePaid) return;
+        updateFormData({
+            applicationFeePaid: true,
+            paymentReference: applicationFeeQuery.data.paymentReference,
+            paymentStatus: "success",
+            paymentMethod: (applicationFeeQuery.data.paymentMethod as PaymentMethod | null) ?? method,
+        });
+    }, [applicationFeeQuery.data, updateFormData, method]);
+
+    useEffect(() => {
         setShowError(false);
     }, [unitCount]);
 
     const paymentSubSteps = useMemo(() => {
         if (isFundraiserPaymentPage) {
-            return PAYMENT_SUBSTEPS.filter((step) => step !== "investment-summary" && step !== "success");
+            // Mirror marketplace: Paystack handles card details — skip local card form.
+            return PAYMENT_SUBSTEPS.filter(
+                (step) => step !== "investment-summary" && step !== "success" && step !== "details"
+            );
         }
 
         return PAYMENT_SUBSTEPS.filter((step) => step !== "details");
@@ -108,15 +123,12 @@ export function PaymentApplicationFee({
 
     const { currentStage, totalStages } = useMemo(() => {
         if (isFundraiserPaymentPage) {
-            // Fundraiser Flow: 1. Summary, 2. Method, 3. Details (Linear 1-2-3)
             const fundraiserMap: Record<string, number> = {
                 "summary": 1,
                 "method": 2,
-                "details": 3,
             };
-            return { currentStage: fundraiserMap[currentSubStep] || 1, totalStages: 3 };
+            return { currentStage: fundraiserMap[currentSubStep] || 1, totalStages: 2 };
         } else {
-            // Investment Flow: 1. Summary, 2. Invest Summary, 3. Method/Details, 4. Success
             const investmentMap: Record<string, number> = {
                 "summary": 1,
                 "investment-summary": 2,
@@ -158,34 +170,25 @@ export function PaymentApplicationFee({
             }
         }
 
-        if (!isFundraiserPaymentPage && currentSubStep === "method") {
-            if (!method || !checkoutOrder) return;
+        if (currentSubStep === "method") {
+            if (!method) return;
+
+            if (isFundraiserPaymentPage) {
+                if (formData.applicationFeePaid || applicationFeeQuery.data?.applicationFeePaid) {
+                    router.push("/onboarding/fundraiser/review");
+                    return;
+                }
+                await initializeApplicationFeePayment(method);
+                return;
+            }
+
+            if (!checkoutOrder) return;
             await initializeInvestmentPayment(method);
             return;
         }
 
-        if (currentSubStep === "method") {
-            if (!method) return;
-
-            if (isFundraiserPaymentPage && method !== "card") {
-                await finalizePayment();
-                return;
-            }
-        }
-
-        if (currentSubStep === "details") {
-            if (isFundraiserPaymentPage) {
-                await finalizePayment();
-            } else {
-                setSubStepIndex(prev => prev + 1);
-            }
-            return;
-        }
-
         const isLastSubStep = subStepIndex === paymentSubSteps.length - 1;
-        if (isLastSubStep) {
-            await finalizePayment();
-        } else {
+        if (!isLastSubStep) {
             setSubStepIndex(prev => prev + 1);
         }
     };
@@ -205,44 +208,37 @@ export function PaymentApplicationFee({
         }
     };
 
-    const finalizePayment = async () => {
-        const paymentReference = formData.paymentReference || `FR-${Date.now()}`;
-        const nextPaymentState = {
-            paymentMethod: method,
-            paymentReference,
-            paymentStatus: "success" as const,
-            applicationFeePaid: true,
-        };
-        updateFormData(nextPaymentState);
-
-        if (isFundraiserPaymentPage) {
-            if (!method) {
-                setShowError(true);
-                return;
+    const initializeApplicationFeePayment = async (channel: PaymentMethod) => {
+        try {
+            setIsSubmitting(true);
+            const session = await applicationFeeService.initializePayment(channel);
+            if (typeof window !== "undefined") {
+                window.sessionStorage.setItem(FUNDRAISER_FEE_REFERENCE_KEY, session.reference);
+                window.sessionStorage.setItem(
+                    FUNDRAISER_PAYMENT_STATE_KEY,
+                    JSON.stringify({
+                        paymentMethod: channel,
+                        applicationFeePaid: false,
+                        paymentReference: session.reference,
+                        paymentStatus: "pending",
+                    })
+                );
             }
-
-            try {
-                await onboardingService.saveFundraiserPayment({
-                    paymentMethod: method,
-                    paymentReference,
-                    paymentStatus: "success",
-                    applicationFeePaid: true,
-                });
-            } catch (error) {
-                showApiErrorToast(error, "Unable to save payment details.");
-                return;
-            }
+            updateFormData({
+                paymentMethod: channel,
+                paymentReference: session.reference,
+                paymentStatus: "pending",
+                applicationFeePaid: false,
+            });
+            window.location.assign(session.authorizationUrl);
+        } catch (error) {
+            showApiErrorToast(error, "Unable to start Paystack checkout.");
+        } finally {
+            setIsSubmitting(false);
         }
-
-        if (isFundraiserPaymentPage && typeof window !== "undefined") {
-            window.sessionStorage.setItem(FUNDRAISER_PAYMENT_STATE_KEY, JSON.stringify(nextPaymentState));
-        }
-
-        router.push('/onboarding/fundraiser/review');
     };
 
     const handleBack = () => {
-        // If Investment Flow and on first step, go back to marketplace
         if (!isFundraiserPaymentPage && subStepIndex === 0) {
             router.push('/marketplace');
             return;
@@ -266,24 +262,30 @@ export function PaymentApplicationFee({
     const isNextDisabled = useMemo(() => {
         if (isSubmitting) return true;
 
-        switch (currentSubStep) {
-            case "method":
-                return !method || (!isFundraiserPaymentPage && !checkoutOrder);
-            case "details":
-                return !cardData.nameOnCard || !cardData.cardNumber || !cardData.expiry || !cardData.cvv;
-            default:
-                return false;
+        if (currentSubStep === "method") {
+            return !method || (!isFundraiserPaymentPage && !checkoutOrder);
         }
-    }, [currentSubStep, method, cardData, isSubmitting, isFundraiserPaymentPage, checkoutOrder]);
+
+        return false;
+    }, [currentSubStep, method, isSubmitting, isFundraiserPaymentPage, checkoutOrder]);
 
     const nextLabel = useMemo(() => {
         if (isSubmitting) return "Please wait…";
-        if (!isFundraiserPaymentPage && currentSubStep === "method") return "Pay with Paystack";
-        if (currentSubStep === "details") return "Pay";
+        if (currentSubStep === "method") {
+            if (isFundraiserPaymentPage && (formData.applicationFeePaid || applicationFeeQuery.data?.applicationFeePaid)) {
+                return "Continue to review";
+            }
+            return "Pay with Paystack";
+        }
         return "Next";
-    }, [currentSubStep, isFundraiserPaymentPage, isSubmitting]);
+    }, [currentSubStep, isFundraiserPaymentPage, isSubmitting, formData.applicationFeePaid, applicationFeeQuery.data?.applicationFeePaid]);
 
     const backLabel = (!isFundraiserPaymentPage && subStepIndex === 0) ? "Cancel" : "Go back";
+
+    useEffect(() => {
+        if (!isFundraiserPaymentPage || !applicationFeeQuery.isError) return;
+        toast.error("Unable to load application fee.");
+    }, [isFundraiserPaymentPage, applicationFeeQuery.isError]);
 
     return (
         <div className="flex flex-col justify-between lg:justify-start w-full h-screen lg:w-[568px] mx-auto">
@@ -324,7 +326,6 @@ export function PaymentApplicationFee({
                     </header>
                 )}
 
-                {/* Sub-step content */}
                 <main>
                     {currentSubStep === "summary" && (
                         <PaymentSummary
@@ -338,6 +339,8 @@ export function PaymentApplicationFee({
                             isBelowMinimum={isBelowMinimum}
                             formattedDate={formattedDate}
                             showError={showError}
+                            applicationFeeAmount={applicationFeeQuery.data?.amount}
+                            applicationFeeCurrency={applicationFeeQuery.data?.currency}
                         />
                     )}
                     {currentSubStep === "investment-summary" && (
@@ -353,9 +356,6 @@ export function PaymentApplicationFee({
                     )}
                     {currentSubStep === "method" && (
                         <PaymentMethodSelect selectedMethod={method} onSelect={setMethod} />
-                    )}
-                    {currentSubStep === "details" && (
-                        <PaymentCardDetails cardData={cardData} setCardData={setCardData} isFundraiserPaymentPage={isFundraiserPaymentPage} totalAmount={total} />
                     )}
                     {currentSubStep === "success" && (
                         <PaymentSuccessPage totalAmount={total} companyName={companyName!} />

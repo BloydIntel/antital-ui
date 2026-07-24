@@ -2,6 +2,7 @@ import onboardingService from "@/services/onboardingService";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import type { SaveOnboardingRequest } from "@/types/onboarding";
 import { toElevenDigitsOrNull } from "@/lib/onboarding-payload-mappers";
+import { pathOrKeyOrNull } from "@/lib/onboarding-file-upload";
 
 function toNullable(value: string): string | null {
   const trimmed = value?.trim();
@@ -43,10 +44,6 @@ function toNullableNumber(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function fileNameOrNull(file: File | null | undefined): string | null {
-  return file?.name ?? null;
-}
-
 export function useFundraiserOnboardingApi() {
   const formData = useOnboardingStore((state) => state.formData);
 
@@ -85,11 +82,15 @@ export function useFundraiserOnboardingApi() {
   const mapBusinessDocumentsPayload = (): NonNullable<
     SaveOnboardingRequest["fundraiserBusinessDocumentsPayload"]
   > => ({
-    founderAndTeamIntroductionDocumentPathOrKey: fileNameOrNull(formData.founderAndTeamIntroduction),
-    fundraisingDeckDocumentPathOrKey: fileNameOrNull(formData.fundraisingDeck),
-    investmentMemoDocumentPathOrKey: fileNameOrNull(formData.investmentMemo),
-    termsOfOfferingDocumentPathOrKey: fileNameOrNull(formData.termsOfOffering),
-    productDemoDocumentPathOrKey: fileNameOrNull(formData.productDemo),
+    founderAndTeamIntroductionDocumentPathOrKey:
+      pathOrKeyOrNull(formData.founderAndTeamIntroductionPathOrKey) ?? "",
+    fundraisingDeckDocumentPathOrKey:
+      pathOrKeyOrNull(formData.fundraisingDeckPathOrKey) ?? "",
+    investmentMemoDocumentPathOrKey:
+      pathOrKeyOrNull(formData.investmentMemoPathOrKey) ?? "",
+    termsOfOfferingDocumentPathOrKey:
+      pathOrKeyOrNull(formData.termsOfOfferingPathOrKey) ?? "",
+    productDemoDocumentPathOrKey: pathOrKeyOrNull(formData.productDemoPathOrKey),
     businessDescription: toNullable(formData.businessDescription),
     businessSector: toNullable(formData.businessSector),
     instrumentType: toNullable(formData.instrumentType),
@@ -124,9 +125,9 @@ export function useFundraiserOnboardingApi() {
           : "NationalIdCard",
     nin: toElevenDigitsOrNull(formData.kycData.idNumber ?? ""),
     bvn: toElevenDigitsOrNull(formData.kycData.bvn ?? ""),
-    governmentIdDocumentPathOrKey: fileNameOrNull(formData.kycData.idFile),
-    proofOfAddressDocumentPathOrKey: fileNameOrNull(formData.kycData.addressFile),
-    selfieVerificationPathOrKey: fileNameOrNull(formData.kycData.selfie),
+    governmentIdDocumentPathOrKey: pathOrKeyOrNull(formData.kycData.idFilePathOrKey),
+    proofOfAddressDocumentPathOrKey: pathOrKeyOrNull(formData.kycData.addressFilePathOrKey),
+    selfieVerificationPathOrKey: pathOrKeyOrNull(formData.kycData.selfiePathOrKey),
     incomeVerificationPathOrKey: null,
     incomeVerificationDocumentTypesCommaSeparated: null,
   });

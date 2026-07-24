@@ -11,7 +11,31 @@ import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingBu
 import { cn } from '@/lib/utils';
 import { showApiErrorToast } from '@/lib/error-feedback';
 import { useFundraiserOnboardingApi } from '@/hooks/onboarding/useFundraiserOnboardingApi';
+import { useOnboardingFileUpload } from '@/hooks/onboarding/useOnboardingFileUpload';
+import { hasOnboardingDocument } from '@/lib/onboarding-file-upload';
 import { AddNewInvestmentFormPayload } from '@/types/investment';
+
+type BusinessDocFileField =
+    | 'founderAndTeamIntroduction'
+    | 'fundraisingDeck'
+    | 'investmentMemo'
+    | 'termsOfOffering'
+    | 'productDemo';
+
+const BUSINESS_PATH_FIELDS: Record<
+    BusinessDocFileField,
+    | 'founderAndTeamIntroductionPathOrKey'
+    | 'fundraisingDeckPathOrKey'
+    | 'investmentMemoPathOrKey'
+    | 'termsOfOfferingPathOrKey'
+    | 'productDemoPathOrKey'
+> = {
+    founderAndTeamIntroduction: 'founderAndTeamIntroductionPathOrKey',
+    fundraisingDeck: 'fundraisingDeckPathOrKey',
+    investmentMemo: 'investmentMemoPathOrKey',
+    termsOfOffering: 'termsOfOfferingPathOrKey',
+    productDemo: 'productDemoPathOrKey',
+};
 
 interface OfferingField {
     id: keyof AddNewInvestmentFormPayload;
@@ -22,13 +46,18 @@ interface OfferingField {
     info?: string;
 }
 
-const businessDocuments = [
-    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction' as keyof AddNewInvestmentFormPayload, title: 'Founder and Team Introduction', required: true },
-    { id: 'fundraisingDeck', field: 'fundraisingDeck' as keyof AddNewInvestmentFormPayload, title: 'Fundraising deck (high-level pitch)', required: true },
-    { id: 'investmentMemo', field: 'investmentMemo' as keyof AddNewInvestmentFormPayload, title: 'Investment memo/prospectus (thorough analysis)', required: true },
-    { id: 'termsOfOffering', field: 'termsOfOffering' as keyof AddNewInvestmentFormPayload, title: 'Terms of offering', required: true },
-    { id: 'productDemo', field: 'productDemo' as keyof AddNewInvestmentFormPayload, title: 'Product Demo (optional)', required: false },
-] as const;
+const businessDocuments: readonly {
+    id: BusinessDocFileField;
+    field: BusinessDocFileField;
+    title: string;
+    required: boolean;
+}[] = [
+    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction', title: 'Founder and Team Introduction', required: true },
+    { id: 'fundraisingDeck', field: 'fundraisingDeck', title: 'Fundraising deck (high-level pitch)', required: true },
+    { id: 'investmentMemo', field: 'investmentMemo', title: 'Investment memo/prospectus (thorough analysis)', required: true },
+    { id: 'termsOfOffering', field: 'termsOfOffering', title: 'Terms of offering', required: true },
+    { id: 'productDemo', field: 'productDemo', title: 'Product Demo (optional)', required: false },
+];
 
 const OFFERING_FIELDS: readonly OfferingField[] = [
     {
@@ -146,6 +175,8 @@ export function UploadBusinessDocument({
 }: UploadBusinessDocumentProps) {
     const router = useRouter();
     const { saveBusinessDocuments } = useFundraiserOnboardingApi();
+    const { uploadBusinessDocument, isUploading } = useOnboardingFileUpload();
+    const usesStoreUploads = !externalFormData && !customSubmitAction;
 
     const storeFormData = useOnboardingStore((state) => state.formData) as AddNewInvestmentFormPayload;
     const storeUpdateFormData = useOnboardingStore((state) => state.updateFormData);
@@ -181,7 +212,18 @@ export function UploadBusinessDocument({
     const isStepValid = useMemo(() => {
         const areDocsValid = businessDocuments
             .filter(doc => doc.required)
-            .every(doc => !!activeFormData[doc.field]);
+            .every(doc => {
+                if (usesStoreUploads) {
+                    const pathKey = BUSINESS_PATH_FIELDS[doc.field];
+                    const pathOrKey = (activeFormData as Record<string, unknown>)[pathKey] as
+                        | string
+                        | null
+                        | undefined;
+                    const file = activeFormData[doc.field] as File | null | undefined;
+                    return hasOnboardingDocument(file, pathOrKey);
+                }
+                return !!activeFormData[doc.field];
+            });
 
         const areFieldsFilled = OFFERING_FIELDS.every(field => {
             const val = activeFormData[field.id];
@@ -191,7 +233,7 @@ export function UploadBusinessDocument({
         const fundingError = getFundingError(activeFormData.fundingTarget, activeFormData.businessSize);
 
         return areDocsValid && areFieldsFilled && !fundingError;
-    }, [activeFormData]);
+    }, [activeFormData, usesStoreUploads]);
 
     const handleNext = async () => {
         if (!isStepValid) {
@@ -248,6 +290,10 @@ export function UploadBusinessDocument({
             <div className="flex flex-col">
                 {businessDocuments.map((section, index) => {
                     const fieldValue = activeFormData[section.field] as File | null | undefined;
+                    const pathKey = BUSINESS_PATH_FIELDS[section.field];
+                    const uploadedUrl = usesStoreUploads
+                        ? ((activeFormData as Record<string, unknown>)[pathKey] as string | null | undefined)
+                        : null;
 
                     return (
                         <CollapsibleUpload
@@ -255,9 +301,23 @@ export function UploadBusinessDocument({
                             title={`${index + 1}. ${section.title}`}
                             isOpen={!!openSections[section.id]}
                             onToggle={() => toggleSection(section.id)}
-                            onUpload={(file) => handleFieldUpdate(section.field, file)}
+                            onUpload={(file) => {
+                                if (usesStoreUploads) {
+                                    void uploadBusinessDocument(section.field, pathKey, file);
+                                    return;
+                                }
+                                handleFieldUpdate(section.field, file);
+                            }}
                             value={fieldValue ?? null}
-                            isError={section.required && showErrors && !fieldValue}
+                            uploadedUrl={uploadedUrl}
+                            uploading={usesStoreUploads ? isUploading(section.field) : false}
+                            isError={
+                                section.required &&
+                                showErrors &&
+                                !(usesStoreUploads
+                                    ? hasOnboardingDocument(fieldValue, uploadedUrl)
+                                    : fieldValue)
+                            }
                             documentsOnly
                         />
                     );

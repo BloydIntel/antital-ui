@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,33 +24,27 @@ export function SidebarNotification() {
           <X className="h-3 w-3" />
           <span className="sr-only">Close notification</span>
         </Button>
-        
+
         <div className="pr-6">
           <h3 className="flex items-center gap-3 font-semibold text-neutral-900 dark:text-neutral-100 mb-2 mt-1">
             <Logo size={42} className="-mt-1" />
             <div>
               Welcome to{" "}
-              <a 
-                href="https://shadcnstore.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                ShadcnStore
-              </a>
+              <Link href="/" className="text-primary hover:underline">
+                Antital
+              </Link>
             </div>
           </h3>
           <p className="text-sm text-muted-foreground dark:text-neutral-400 leading-relaxed">
-            Explore our premium Shadcn UI{" "}
-            <a 
-              href="https://shadcnstore.com/blocks" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary underline"
-            >
-              blocks
-            </a>{" "}
-            to build your next project faster.
+            Turn your earnings into opportunities. Explore the{" "}
+            <Link href="/marketplace" className="text-primary underline">
+              marketplace
+            </Link>{" "}
+            or visit the{" "}
+            <Link href="/help-center" className="text-primary underline">
+              help center
+            </Link>{" "}
+            to get started.
           </p>
         </div>
       </CardContent>
