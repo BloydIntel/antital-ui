@@ -5,7 +5,7 @@ import { CreditCard, Trash2 } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
 import { cn } from '@/lib/utils';
 import { SelectInput, type SelectOption } from '@/components/onboarding/molecules/SelectInput';
-import { DeleteAccountModal } from '@/components/settings/organisms/DeleteAccountModal';
+import { DeleteAccountModal } from '@/components/settings/organisms/investors/DeleteAccountModal';
 
 export interface GeneralPreferencesData {
     language: string;

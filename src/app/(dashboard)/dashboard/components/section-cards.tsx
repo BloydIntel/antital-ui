@@ -101,41 +101,37 @@ function SummaryCard({
   return (
     <Card className="w-full xl:min-w-[300px] overflow-hidden border-[#EAEAEA] shadow-none rounded-md">
       <CardContent className={cn(
-        "p-5",
+        "-mt-6 pt-3 pb-6",
         isPrimary ? "bg-[#052119] text-white" : "bg-white text-[#1A1C1E]"
       )}>
         <div className="flex items-center gap-4">
           <div className={cn(
-            "p-2 rounded-md",
+            "p-1 xl:p-2 rounded-md",
             isPrimary ? "bg-white" : "bg-[#E6EAE9]"
           )}>
-            <Icon className="size-5 xl:size-6 text-[#1A1C1E]" />
+            <Icon className={cn("size-5 xl:size-6 text-[#1A1C1E]")} />
           </div>
           <div>
-            <p className={cn("text-[20px] lg:text-[16px] xl:text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
+            <p className={cn("text-[20px] lg:text-[14px] xl:text-[24px] leading-tight", isPrimary ? "text-white" : "text-[#1A1C1E]")} style={TYPOGRAPHY.heading}>
               {title}
             </p>
-            {subtitle && (
-              <p className={cn("text-[12px] xl:text-[16px] mt-0.5", isPrimary ? "text-[#F1F1F1]" : "text-[#2C2C2C]")} style={TYPOGRAPHY.body}>
-                {subtitle}
-              </p>
-            )}
+            <p className={cn("text-[12px] xl:text-[16px]", isPrimary ? "text-[#F1F1F1]" : "text-[#2C2C2C]")} style={TYPOGRAPHY.body}>
+              {subtitle}
+            </p>
           </div>
         </div>
-        <div className="mt-4">
+        <div className="mt-5">
           <h3 className={cn("text-[24px] tracking-tight", isPrimary ? "text-[#F1F1F1]" : "text-[#1B1B1B]", isLoading && "animate-pulse opacity-60")} style={TYPOGRAPHY.heading}>
             {isLoading ? "₦0.00" : value}
           </h3>
         </div>
       </CardContent>
-      {footerText && (
-        <CardFooter className="px-5 py-3 flex justify-between items-center bg-[#E6EAE9] border-t border-[#EAEAEA]">
-          <span className="text-[14px] text-[#042E27]" style={TYPOGRAPHY.heading}>
-            {footerText}
-          </span>
-          <ArrowRight className="size-4 text-[#052119]" />
-        </CardFooter>
-      )}
+      <CardFooter className="-my-6 px-4 py-[13.5px] flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity bg-[#E6EAE9]">
+        <span className="text-[16px] text-[#042E27]" style={TYPOGRAPHY.heading}>
+          {footerText}
+        </span>
+        <ArrowRight className="size-4 text-[#052119]" />
+      </CardFooter>
     </Card>
   )
 }
@@ -216,7 +212,7 @@ export function SectionCards({
   return (
     <div className={cn(
       "grid gap-6",
-      isFundraiser ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      isFundraiser ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-2 xl:gap-6"
     )}>
       {activeCards.map((card, index) => (
         <SummaryCard key={index} {...card} isLoading={isLoading} />
