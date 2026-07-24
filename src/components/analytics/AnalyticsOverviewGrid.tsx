@@ -1,6 +1,7 @@
 "use client"
 
 import { Eye, ThumbsUp, Share2 } from 'lucide-react'
+import type { FundraiserAnalyticsOverview } from '@/types/fundraiser-analytics-api'
 
 interface MetricCardProps {
     title: string
@@ -13,8 +14,6 @@ interface MetricCardProps {
 function MetricCard({ title, value, icon, iconBgColor, iconColor }: MetricCardProps) {
     return (
         <div className="flex-1 bg-white border border-[#EAEAEA] rounded-xl p-4 flex items-center gap-5 min-w-[240px]">
-
-            {/* Icon Wrapper Container */}
             <div
                 className="w-14 h-14 rounded-lg flex items-center justify-center shrink-0"
                 style={{ backgroundColor: iconBgColor }}
@@ -24,7 +23,6 @@ function MetricCard({ title, value, icon, iconBgColor, iconColor }: MetricCardPr
                 </div>
             </div>
 
-            {/* Metric Details Label Meta Text */}
             <div className="space-y-1">
                 <span className="text-[16px] text-[#858585] font-medium block">
                     {title}
@@ -33,34 +31,42 @@ function MetricCard({ title, value, icon, iconBgColor, iconColor }: MetricCardPr
                     {value}
                 </span>
             </div>
-
         </div>
     )
 }
 
-export function AnalyticsOverviewGrid() {
+interface AnalyticsOverviewGridProps {
+    overview?: FundraiserAnalyticsOverview | null
+    isLoading?: boolean
+}
+
+function formatCount(value: number) {
+    return value.toLocaleString('en-US')
+}
+
+export function AnalyticsOverviewGrid({ overview = null, isLoading = false }: AnalyticsOverviewGridProps) {
     const metricsData = [
         {
-            title: "Total page views",
-            value: "42,891",
+            title: 'Total page views',
+            value: isLoading ? '—' : formatCount(overview?.totalPageViews ?? 0),
             icon: <Eye className="w-6 h-6" />,
-            iconBgColor: "#EDF4FC",
-            iconColor: "#4A90E2"
+            iconBgColor: '#EDF4FC',
+            iconColor: '#4A90E2',
         },
         {
-            title: "Campaign likes",
-            value: "12,460",
+            title: 'Campaign likes',
+            value: isLoading ? '—' : formatCount(overview?.campaignLikes ?? 0),
             icon: <ThumbsUp className="w-6 h-6 stroke-[1.75]" />,
-            iconBgColor: "#F6FBEF",
-            iconColor: "#A4D65E"
+            iconBgColor: '#F6FBEF',
+            iconColor: '#A4D65E',
         },
         {
-            title: "Social shares",
-            value: "1,803",
+            title: 'Social shares',
+            value: isLoading ? '—' : formatCount(overview?.socialShares ?? 0),
             icon: <Share2 className="w-6 h-6" />,
-            iconBgColor: "#EDF0F5",
-            iconColor: "#46699D"
-        }
+            iconBgColor: '#EDF0F5',
+            iconColor: '#46699D',
+        },
     ]
 
     return (
