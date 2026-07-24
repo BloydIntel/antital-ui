@@ -3,6 +3,7 @@
 import React from 'react'
 import { Map, Users } from 'lucide-react'
 import type { FundraiserAnalyticsDiversity } from '@/types/fundraiser-analytics-api'
+import { AnalyticsDiversitySkeleton } from '../skeletons/analytics-skeletons'
 
 const GEO_COLORS = ['bg-[#7D8A26]', 'bg-[#4A90E2]', 'bg-[#F4B942]', 'bg-[#EFF4E4]']
 const CATEGORY_COLORS = ['bg-[#4A90E2]', 'bg-[#F4B942]', 'bg-[#7D8A26]', 'bg-[#A7B832]', 'bg-[#858585]']
@@ -32,7 +33,7 @@ export function InvestorDiversityCard({ diversity = null, isLoading = false }: I
             </h3>
 
             {isLoading ? (
-                <div className="py-10 text-center text-sm text-[#717171]">Loading diversity…</div>
+                <AnalyticsDiversitySkeleton />
             ) : geoSegments.length === 0 && investorCategories.length === 0 ? (
                 <div className="py-10 text-center text-sm text-[#717171]">
                     No investor diversity data yet.

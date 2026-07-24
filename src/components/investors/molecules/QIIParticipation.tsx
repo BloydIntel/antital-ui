@@ -2,6 +2,7 @@
 
 import React from 'react'
 import type { FundraiserQiiParticipationItem } from '@/types/fundraiser-investors-api'
+import { RecordTableRowSkeleton } from '@/components/skeletons/table-skeletons'
 
 interface QIIParticipationProps {
     records?: FundraiserQiiParticipationItem[]
@@ -52,11 +53,7 @@ export function QIIParticipation({ records = [], isLoading = false }: QIIPartici
                     </thead>
                     <tbody className="divide-y divide-[#F4F5F7]">
                         {isLoading ? (
-                            <tr>
-                                <td colSpan={5} className="py-8 px-4 text-center text-[#717171]">
-                                    Loading QII participation...
-                                </td>
-                            </tr>
+                            <RecordTableRowSkeleton />
                         ) : records.length === 0 ? (
                             <tr>
                                 <td colSpan={5} className="py-8 px-4 text-center text-[#717171]">

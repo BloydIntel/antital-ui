@@ -98,3 +98,82 @@ export function InvestmentDetailSkeleton({ compact = false }: { compact?: boolea
     </div>
   )
 }
+
+export function SecondaryMarketCardSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col p-5 bg-white rounded-xl border border-[#EAEAEA] w-full",
+        className
+      )}
+    >
+      {/* Top Header Section: Logo + Title + Badge + Price */}
+      <div className="flex items-start gap-4">
+        {/* Company Logo */}
+        <Skeleton className="h-[64px] w-[64px] rounded-lg shrink-0" />
+
+        <div className="flex flex-col gap-1.5 flex-1">
+          {/* Title and Category Badge */}
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-5 w-16 rounded-md" />
+          </div>
+
+          {/* Price and Percentage Change */}
+          <div className="flex items-center gap-2 mt-1">
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-4 w-12" />
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section: 3 Columns */}
+      <div className="grid grid-cols-3 gap-4 my-6">
+        {/* 24h Volume */}
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-3.5 w-20" />
+          <Skeleton className="h-5 w-24" />
+        </div>
+
+        {/* Market Cap */}
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-3.5 w-20" />
+          <Skeleton className="h-5 w-20" />
+        </div>
+
+        {/* Available */}
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-3.5 w-16" />
+          <Skeleton className="h-5 w-16" />
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-2 gap-3 mt-auto">
+        <Skeleton className="h-11 rounded-lg" />
+        <Skeleton className="h-11 rounded-lg" />
+      </div>
+    </div>
+  )
+}
+
+export function SecondaryMarketCardGridSkeleton({
+  count = 2,
+  className,
+}: {
+  count?: number
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        "w-full grid grid-cols-1 md:grid-cols-2 gap-5",
+        className
+      )}
+    >
+      {Array.from({ length: count }).map((_, index) => (
+        <SecondaryMarketCardSkeleton key={index} />
+      ))}
+    </div>
+  )
+}

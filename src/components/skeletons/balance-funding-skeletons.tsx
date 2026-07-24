@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils"
 
 export function PaymentMethodsSkeleton({ rows = 2 }: { rows?: number }) {
   return (
@@ -132,6 +133,63 @@ export function MarketplacePaymentSkeleton() {
           <Skeleton className="h-12 w-full rounded-lg" />
         </div>
       </div>
+    </div>
+  )
+}
+
+
+export function PaymentMethodItemSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "w-full bg-white border border-[#EAEAEA] rounded-xl p-2 lg:p-5 flex items-center justify-between",
+        className
+      )}
+    >
+      {/* Left section: Icon + Text Info */}
+      <div className="flex items-center gap-1 lg:gap-4">
+        {/* Credit Card Icon Circle */}
+        <Skeleton className="w-8 lg:w-12 h-8 lg:h-12 rounded-full shrink-0" />
+
+        {/* Text lines */}
+        <div className="space-y-1.5">
+          {/* Title + Badges row */}
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 lg:h-5 w-28 lg:w-36" />
+            <Skeleton className="h-4 w-12 rounded" />
+          </div>
+
+          {/* Subtitle */}
+          <Skeleton className="h-3 lg:h-4 w-36 lg:w-48" />
+
+          {/* AddedAt date */}
+          <Skeleton className="h-3 w-20 lg:w-24" />
+        </div>
+      </div>
+
+      {/* Right section: Action Buttons */}
+      <div className="flex items-center gap-4 lg:gap-6">
+        {/* Set Default text button */}
+        <Skeleton className="h-4 lg:h-5 w-16 lg:w-20" />
+        {/* Trash icon button */}
+        <Skeleton className="h-5 w-5 rounded-md shrink-0" />
+      </div>
+    </div>
+  )
+}
+
+export function PaymentMethodListSkeleton({
+  count = 3,
+  className,
+}: {
+  count?: number
+  className?: string
+}) {
+  return (
+    <div className={cn("space-y-4", className)}>
+      {Array.from({ length: count }).map((_, index) => (
+        <PaymentMethodItemSkeleton key={index} />
+      ))}
     </div>
   )
 }

@@ -12,6 +12,7 @@ import {
 } from "@/lib/watchlist-mappers";
 import { showApiErrorToast } from "@/lib/error-feedback";
 import { Button } from "@/components/ui/button";
+import { WatchlistTableSkeleton } from "@/components/skeletons/table-skeletons";
 
 export function Watchlist() {
   const [activeCategory, setActiveCategory] = useState<WatchlistCategory>("all");
@@ -91,9 +92,7 @@ export function Watchlist() {
       />
 
       {isLoading ? (
-        <p className="text-[14px] text-[#717171]" style={TYPOGRAPHY.body}>
-          Loading watchlist...
-        </p>
+        <WatchlistTableSkeleton />
       ) : isError ? (
         <div className="flex flex-col items-center gap-3 py-8">
           <p className="text-[14px] text-[#717171]" style={TYPOGRAPHY.body}>

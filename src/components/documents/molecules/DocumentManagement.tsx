@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react"
 import { ApplicationStatus } from "@/components/documents/molecules/ApplicationStatus"
 import { DocumentSearchBar } from "@/components/documents/molecules/DocumentSearchBar"
 import { DocumentTable, DocumentItem } from "@/components/documents/molecules/DocumentTable"
+import { DocumentTableSkeleton } from "@/components/skeletons/table-skeletons"
 
 interface DocumentManagementProps {
   documents: DocumentItem[]
@@ -39,9 +40,7 @@ export default function DocumentManagement({
           <DocumentSearchBar value={searchQuery} onChange={setSearchQuery} />
 
           {isLoading ? (
-            <div className="rounded-lg border border-[#EAEAEA] bg-[#FAFAFA] p-6 text-sm text-[#505050]">
-              Loading documents...
-            </div>
+            <DocumentTableSkeleton />
           ) : filteredDocs.length === 0 ? (
             <div className="rounded-lg border border-[#EAEAEA] bg-[#FAFAFA] p-6 text-sm text-[#505050]">
               {searchQuery.trim()

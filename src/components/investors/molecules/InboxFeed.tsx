@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { MessageSquare, CornerUpLeft, EyeOff, Eye } from 'lucide-react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
 import type { FundraiserInvestorMessage } from '@/types/fundraiser-investors-api'
+import { InboxFeedSkeleton } from '@/components/skeletons/table-skeletons'
 
 type MessageFilter = 'All' | 'Unanswered' | 'Answered'
 
@@ -91,9 +92,7 @@ export function InboxFeed({
 
             <div className="divide-y divide-[#EAEAEA]">
                 {isLoading ? (
-                    <div className="p-12 text-center text-sm text-[#717171]">
-                        Loading messages...
-                    </div>
+                    <InboxFeedSkeleton />
                 ) : messages.length === 0 ? (
                     <div className="p-12 text-center text-sm text-[#717171]">
                         No messages found matching this status filter view.

@@ -14,6 +14,7 @@ import {
   type ProfileFormData,
 } from '@/lib/settings-mappers';
 import { showApiErrorToast } from '@/lib/error-feedback';
+import { SettingsProfileSkeleton } from '@/components/skeletons/settings-skeletons';
 
 const EMPTY_FORM: ProfileFormData = {
   firstName: '',
@@ -106,11 +107,7 @@ export function Profile() {
 
   if (isLoading) {
     return (
-      <div className="w-full mx-auto rounded-xl">
-        <p className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
-          Loading profile...
-        </p>
-      </div>
+      <SettingsProfileSkeleton />
     );
   }
 
