@@ -1,7 +1,10 @@
 import { Portfolio } from '@/app/(dashboard)/portfolio/components/Portfolio'
+import { InvestorOnly } from '@/components/auth/require-user-type'
 
 export default function Page() {
     return (
-        <Portfolio />
+        <InvestorOnly>
+            <Portfolio />
+        </InvestorOnly>
     )
 }
