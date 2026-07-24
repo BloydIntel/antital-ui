@@ -108,6 +108,8 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                     </div>
 
                     <OnboardingInput
+                        name="address"
+                        autoComplete="street-address"
                         label="Residential Address"
                         value={formData.address}
                         placeholder="23A Unity Crescent Lekki Phase 1..."
@@ -119,6 +121,8 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
 
                     <div className="grid lg:grid-cols-2 lg:gap-4">
                         <OnboardingInput
+                            name="password"
+                            autoComplete="new-password"
                             label="Create Password"
                             type="password"
                             value={formData.password}
@@ -128,6 +132,8 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                             onBlur={() => handleBlur("password")}
                         />
                         <OnboardingInput
+                            name="confirmPassword"
+                            autoComplete="new-password"
                             label="Confirm Password"
                             type="password"
                             value={formData.confirmPassword}
@@ -137,7 +143,6 @@ export function LocationForm({ showErrors, levelLabel }: LocationFormProps) {
                             onBlur={() => handleBlur("confirmPassword")}
                         />
                     </div>
-
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center space-x-2">
                             <Checkbox

@@ -70,6 +70,8 @@ export function Security() {
     };
 
     const isPasswordMismatch = passwords.confirm.length > 0 && passwords.new !== passwords.confirm;
+    const isPasswordTooShort = passwords.new.length > 0 && passwords.new.length < 8;
+
     const isSubmitDisabled =
         changePassword.isPending
         || isPasswordMismatch
@@ -93,6 +95,8 @@ export function Security() {
             <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-full">
 
                 <OnboardingInput
+                    name="currentPassword"
+                    autoComplete="current-password"
                     label="Current Password"
                     placeholder="Enter current password"
                     type='password'
@@ -102,33 +106,41 @@ export function Security() {
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 items-start">
-
-                    <OnboardingInput
-                        label="New Password"
-                        placeholder="Enter new password"
-                        type='password'
-                        value={passwords.new}
-                        onChange={(e) => handlePasswordChange('new', e.target.value)}
-                        inputAreaStyle="bg-[#FFFFFF] text-[16px] text-[#858585] pr-10"
-                    />
+                    <div>
+                        <OnboardingInput
+                            name="newPassword"
+                            autoComplete="new-password"
+                            label="New Password"
+                            placeholder="Enter new password"
+                            type='password'
+                            value={passwords.new}
+                            onChange={(e) => handlePasswordChange('new', e.target.value)}
+                            inputAreaStyle="bg-[#FFFFFF] text-[16px] text-[#1F1F1F] pr-10"
+                        />
+                        {isPasswordTooShort && (
+                            <span className="text-[#EF4444] text-[12px] mt-1 block" style={TYPOGRAPHY.body}>
+                                Password must be at least 8 characters
+                            </span>
+                        )}
+                    </div>
 
                     <div>
                         <OnboardingInput
+                            name="confirmPassword"
+                            autoComplete="new-password"
                             label="Confirm new password"
                             placeholder="Confirm new password"
                             type='password'
                             value={passwords.confirm}
                             onChange={(e) => handlePasswordChange('confirm', e.target.value)}
-                            inputAreaStyle="bg-[#FFFFFF] text-[16px] text-[#858585] pr-10"
+                            inputAreaStyle="bg-[#FFFFFF] text-[16px] text-[#1F1F1F] pr-10"
                         />
-
                         {isPasswordMismatch && (
-                            <span className="text-[#EF4444] text-[12px]" style={TYPOGRAPHY.body}>
+                            <span className="text-[#EF4444] text-[12px] mt-1 block" style={TYPOGRAPHY.body}>
                                 Passwords do not match
                             </span>
                         )}
                     </div>
-
                 </div>
 
                 <div className="w-full flex justify-end">

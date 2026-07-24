@@ -44,6 +44,7 @@ interface OfferingField {
     placeholder?: string;
     options?: readonly SelectOption[];
     info?: string;
+    autoComplete?: string;
 }
 
 const businessDocuments: readonly {
@@ -52,19 +53,20 @@ const businessDocuments: readonly {
     title: string;
     required: boolean;
 }[] = [
-    { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction', title: 'Founder and Team Introduction', required: true },
-    { id: 'fundraisingDeck', field: 'fundraisingDeck', title: 'Fundraising deck (high-level pitch)', required: true },
-    { id: 'investmentMemo', field: 'investmentMemo', title: 'Investment memo/prospectus (thorough analysis)', required: true },
-    { id: 'termsOfOffering', field: 'termsOfOffering', title: 'Terms of offering', required: true },
-    { id: 'productDemo', field: 'productDemo', title: 'Product Demo (optional)', required: false },
-];
+        { id: 'founderAndTeamIntroduction', field: 'founderAndTeamIntroduction', title: 'Founder and Team Introduction', required: true },
+        { id: 'fundraisingDeck', field: 'fundraisingDeck', title: 'Fundraising deck (high-level pitch)', required: true },
+        { id: 'investmentMemo', field: 'investmentMemo', title: 'Investment memo/prospectus (thorough analysis)', required: true },
+        { id: 'termsOfOffering', field: 'termsOfOffering', title: 'Terms of offering', required: true },
+        { id: 'productDemo', field: 'productDemo', title: 'Product Demo (optional)', required: false },
+    ];
 
 const OFFERING_FIELDS: readonly OfferingField[] = [
     {
         id: 'businessDescription',
         label: 'Business Description',
         type: 'textarea',
-        placeholder: 'Tell us about your business'
+        placeholder: 'Tell us about your business',
+        autoComplete: 'off',
     },
     {
         id: 'businessSector',
@@ -103,6 +105,7 @@ const OFFERING_FIELDS: readonly OfferingField[] = [
         label: 'Funding Target',
         type: 'number',
         placeholder: 'Enter amount',
+        autoComplete: 'transaction-amount',
     },
     {
         id: 'investmentRound',
@@ -122,9 +125,9 @@ const OFFERING_FIELDS: readonly OfferingField[] = [
 const getBusinessSizeInfo = (size: string | undefined) => {
     switch (size) {
         case 'Micro':
-            return 'Please specify the funding target within the permitted range: ₦25,000,000 and not more than ₦100,000,000.';
+            return 'Choosing the "micro" option will restrict the maximum annual cap to ₦50 million.';
         case 'Small':
-            return 'Choosing the "small" option will restrict the maximum annual cap to ₦50 million.';
+            return 'Please specify the funding target within the permitted range: ₦25,000,000 and not more than ₦100,000,000.';
         case 'Medium':
             return 'Choosing the "medium" option restrict the maximum annual cap to ₦100 million.';
         default:
@@ -140,13 +143,14 @@ const getFundingError = (amount: string | undefined, size: string | undefined): 
     }
 
     switch (size) {
+
         case 'Micro':
+            return val > 50000000 ? "Please input a different amount less than or equal to ₦50 million" : null;
+        case 'Small':
             if (val < 25000000 || val > 100000000) {
                 return "Please specify the funding target within the permitted range: ₦25,000,000 to ₦100,000,000";
             }
             return null;
-        case 'Small':
-            return val > 50000000 ? "Please input a different amount less than or equal to ₦50 million" : null;
         case 'Medium':
             return val > 100000000 ? "Please input a different amount less than or equal to ₦100 million" : null;
         default:
@@ -187,6 +191,7 @@ export function UploadBusinessDocument({
 
     const [showErrors, setShowErrors] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isFundingTargetBlurred, setIsFundingTargetBlurred] = useState(false);
 
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         founderAndTeamIntroduction: true,
@@ -340,6 +345,8 @@ export function UploadBusinessDocument({
                         const hasRequiredError = showErrors && !fieldValue;
 
                         const commonProps = {
+                            name: field.id,
+                            autoComplete: field.autoComplete || "on",
                             label: field.label,
                             value: fieldValue,
                             error: hasRequiredError ? "Required" : undefined,
@@ -366,11 +373,8 @@ export function UploadBusinessDocument({
 
                                         {(() => {
                                             const fundingError = getFundingError(activeFormData.fundingTarget, activeFormData.businessSize);
-                                            const hasAmount = Boolean(activeFormData.fundingTarget);
-                                            const rangeError = fundingError && fundingError !== "Required" ? fundingError : null;
-                                            const displayError = showErrors
-                                                ? fundingError
-                                                : (hasAmount ? rangeError : null);
+                                            const shouldShowError = showErrors || isFundingTargetBlurred;
+                                            const displayError = shouldShowError ? fundingError : null;
                                             const isTargetError = Boolean(displayError);
 
                                             return (
@@ -387,9 +391,12 @@ export function UploadBusinessDocument({
                                                         </div>
                                                         <OnboardingInput
                                                             value={fieldValue}
+                                                            name={field.id}
+                                                            autoComplete={field.autoComplete || "on"}
                                                             type={field.type}
                                                             placeholder={field.placeholder}
                                                             onChange={(e) => handleFieldUpdate(field.id, e.target.value)}
+                                                            onBlur={() => setIsFundingTargetBlurred(true)}
                                                             className="pb-0 w-full"
                                                             inputAreaStyle={cn(
                                                                 "bg-[#FFFFFF] border border-[#A8A8A8] rounded-l-none",

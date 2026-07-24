@@ -51,8 +51,7 @@ export function TestimonialItem({
           src={avatar}
           alt={author}
           fill
-          className="object-cover rounded-full"
-          sizes="64px"
+          className="object-cover rounded-full h-12 lg:h-16 w-12 lg:w-16"
         />
       </div>
 

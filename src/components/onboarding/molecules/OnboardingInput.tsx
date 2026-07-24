@@ -28,6 +28,7 @@ interface InputProps {
     inputAreaStyle?: string
     disabled?: boolean
     labelStyle?: string
+    autoComplete: string
 }
 
 type OnboardingChangeEvent =
@@ -51,7 +52,7 @@ const getDateObject = (val: unknown): Date | null => {
 };
 
 export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
-    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, disabled, labelStyle, ...props }, ref) => {
+    ({ label, error, icon: Icon, type, className, placeholder, value, onChange, onBlur, inputAreaStyle, disabled, labelStyle, autoComplete, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false)
         const isPassword = type === "password"
         const isDate = type === "date"
@@ -114,12 +115,14 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                         <input
                             ref={ref as React.Ref<HTMLInputElement>}
                             type={isPassword ? (showPassword ? "text" : "password") : type}
+                            autoComplete={autoComplete || "on"}
                             placeholder={placeholder}
                             value={typeof value === 'string' ? value : ''}
                             onChange={onChange}
                             onBlur={onBlur}
                             className={inputStyles}
                             disabled={disabled}
+                            name={props.name}
                             {...props}
                         />
                     )}

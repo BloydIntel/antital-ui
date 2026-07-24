@@ -34,12 +34,11 @@ export function UpdatesSection({ updates }: UpdatesSectionProps) {
 
   return (
     <div
-      className="flex flex-col items-start w-full relative"
-      style={{ maxWidth: '816px', gap: '32px', paddingLeft: '120px' }}
+      className="flex flex-col items-start w-full relative pl-4 lg:pl-[120px] gap-8"
+      style={{ maxWidth: '816px' }}
     >
       <div
-        className="absolute left-[120px] top-0 bottom-0"
-        style={{ width: '1px', backgroundColor: '#EAEAEA' }}
+        className="hidden lg:block absolute left-[120px] top-0 bottom-0 w-px bg-[#EAEAEA]"
       />
 
       {updates.map((update) => (
@@ -53,5 +52,5 @@ export function UpdatesSection({ updates }: UpdatesSectionProps) {
         </div>
       ))}
     </div>
-  )
+  );
 }

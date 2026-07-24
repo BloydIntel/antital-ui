@@ -185,15 +185,17 @@ export function Profile() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
         {(
           [
-            { id: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
-            { id: 'lastName', label: 'Last Name', placeholder: 'Enter last name' },
-            { id: 'userId', label: 'User ID', placeholder: 'Enter user id', alwaysDisabled: true },
-            { id: 'emailAddress', label: 'Email Address', placeholder: 'Enter email address', alwaysDisabled: true },
-            { id: 'phoneNumber', label: 'Phone Number', placeholder: 'Enter phone number' },
-          ] as Array<{ id: keyof ProfileFormData; label: string; placeholder: string; alwaysDisabled?: boolean }>
-        ).map(({ id, label, placeholder, alwaysDisabled }) => (
+            { id: 'firstName', label: 'First Name', placeholder: 'Enter first name', autoComplete: 'given-name' },
+            { id: 'lastName', label: 'Last Name', placeholder: 'Enter last name', autoComplete: 'family-name' },
+            { id: 'userId', label: 'User ID', placeholder: 'Enter user id', alwaysDisabled: true, autoComplete: 'off' },
+            { id: 'emailAddress', label: 'Email Address', placeholder: 'Enter email address', alwaysDisabled: true, autoComplete: 'email' },
+            { id: 'phoneNumber', label: 'Phone Number', placeholder: 'Enter phone number', autoComplete: 'tel' },
+          ] as Array<{ id: keyof ProfileFormData; label: string; placeholder: string; alwaysDisabled?: boolean; autoComplete: string }>
+        ).map(({ id, label, placeholder, alwaysDisabled, autoComplete }) => (
           <OnboardingInput
             key={id}
+            name={id}
+            autoComplete={autoComplete}
             label={label}
             placeholder={placeholder}
             value={formData[id]}
@@ -213,6 +215,8 @@ export function Profile() {
 
       <div className="w-full mb-2">
         <OnboardingInput
+          name="streetAddress"
+          autoComplete="street-address"
           label="Street Address"
           placeholder="Enter street address"
           value={formData.streetAddress}
@@ -225,12 +229,14 @@ export function Profile() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
         {(
           [
-            { id: 'city', label: 'City', placeholder: 'Enter city' },
-            { id: 'state', label: 'State', placeholder: 'Enter state' },
+            { id: 'city', label: 'City', placeholder: 'Enter city', autoComplete: 'address-level2' },
+            { id: 'state', label: 'State', placeholder: 'Enter state', autoComplete: 'address-level1' },
           ] as const
-        ).map(({ id, label, placeholder }) => (
+        ).map(({ id, label, placeholder, autoComplete }) => (
           <OnboardingInput
             key={id}
+            name={id}
+            autoComplete={autoComplete}
             label={label}
             placeholder={placeholder}
             value={formData[id]}

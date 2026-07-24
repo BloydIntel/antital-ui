@@ -17,7 +17,7 @@ const DISBURSEMENT_MOCK_DATA: DisbursementItem[] = [
         id: '2',
         title: 'Scheduled Payout',
         dateAndBank: 'June 17, 2026 – Access Bank',
-        amount: '₦1,243,678.00',
+        amount: '₦1,243,678,.00',
         status: 'PROCESSING',
     },
 ];
@@ -44,7 +44,7 @@ export function DisbursementSchedule() {
             <div className="grid lg:grid-cols-12 gap-6 items-start">
 
                 {/* Left Primary Panel: Active Payout List */}
-                <div className="lg:col-span-8 bg-white border border-[#F4F5F7] rounded-xl p-6 space-y-4">
+                <div className="lg:col-span-8 bg-white border border-[#F4F5F7] rounded-xl p-3 lg:p-6 space-y-4">
                     <h3 className="text-[16px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
                         Upcoming Payouts
                     </h3>
