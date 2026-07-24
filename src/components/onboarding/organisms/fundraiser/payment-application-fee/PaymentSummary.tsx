@@ -1,5 +1,4 @@
 import { TYPOGRAPHY } from "@/constants/styles"
-import { ApplicationFee } from "@/types/payment"
 import { Minus, Plus } from "lucide-react"
 import Image from "next/image"
 
@@ -14,18 +13,16 @@ interface PaymentSummary {
     isBelowMinimum?: boolean
     formattedDate: string
     showError?: boolean
+    applicationFeeAmount?: number
+    applicationFeeCurrency?: string
 }
 
-const fee: ApplicationFee = {
-    amount: 25750,
-    currency: "NGN"
-}
-
-
-export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCount, setUnitCount, unitPrice = 0, minInvestment = 0, isBelowMinimum, formattedDate, showError }: PaymentSummary) {
+export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCount, setUnitCount, unitPrice = 0, minInvestment = 0, isBelowMinimum, formattedDate, showError, applicationFeeAmount = 25750, applicationFeeCurrency = "NGN" }: PaymentSummary) {
 
     const safeUnitPrice = unitPrice ?? 0;
     const safeMinInvestment = minInvestment ?? 0;
+    const feeAmount = applicationFeeAmount ?? 25750;
+    const feeCurrency = applicationFeeCurrency ?? "NGN";
 
     return (
         <div className="space-y-6">
@@ -58,20 +55,20 @@ export function PaymentSummary({ email, userId, isFundraiserPaymentPage, unitCou
                     <>
                         <div className="flex justify-between text-[#505050] text-[16px]">
                             <span>Application Fee</span>
-                            <span>{fee.currency}{fee.amount}</span>
+                            <span>{feeCurrency}{feeAmount.toLocaleString()}</span>
                         </div>
                         <div className="my-2"
                             style={{
                                 ...TYPOGRAPHY.body,
                                 backgroundImage: `linear-gradient(to right, #1011114D 50%, rgba(255,255,255,0) 0%)`,
                                 backgroundPosition: 'top',
-                                backgroundSize: '12px 1px', // Increase 12px to make dashes longer
+                                backgroundSize: '12px 1px',
                                 backgroundRepeat: 'repeat-x',
                             }}
                         />
                         <div className="flex justify-between font-medium text-[#2C2C2C] text-[16px]">
                             <span>Total Amount:</span>
-                            <span>{fee.currency}{fee.amount}</span>
+                            <span>{feeCurrency}{feeAmount.toLocaleString()}</span>
                         </div>
                     </>
                 ) : (

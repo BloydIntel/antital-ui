@@ -9,6 +9,8 @@ interface CollapsibleProps {
     isOpen: boolean;
     onToggle: () => void;
     value: File | null;
+    uploadedUrl?: string | null;
+    uploading?: boolean;
     documentsOnly?: boolean;
 }
 
@@ -19,6 +21,8 @@ export const CollapsibleUpload = ({
     isOpen,
     onToggle,
     value,
+    uploadedUrl,
+    uploading = false,
     documentsOnly = false,
 }: CollapsibleProps) => (
     <div className="space-y-1 pt-4 border-b border-gray-50">
@@ -40,6 +44,8 @@ export const CollapsibleUpload = ({
             }`}>
             <UploadSection
                 value={value}
+                uploadedUrl={uploadedUrl}
+                uploading={uploading}
                 onUpload={onUpload}
                 isError={isError}
                 documentsOnly={documentsOnly}

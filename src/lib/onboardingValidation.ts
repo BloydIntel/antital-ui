@@ -1,5 +1,6 @@
 import { StepKey } from "@/constants/steps";
 import { OnboardingFormData, OnboardingState } from "@/store/onboardingStore";
+import { hasOnboardingDocument } from "@/lib/onboarding-file-upload";
 
 export function validateStep(step: StepKey, state: OnboardingState): boolean {
     const { formData, investorUserType, emailVerified } = state;
@@ -46,12 +47,24 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             return emailVerified;
 
         case "company-documentation":
-            // Check if essential fundraiser documents are uploaded
+            // Check if essential fundraiser documents are uploaded (Cloudinary PathOrKey or File)
             return !!(
-                formData.fundraisingDeck &&
-                formData.founderAndTeamIntroduction &&
-                formData.investmentMemo &&
-                formData.termsOfOffering &&
+                hasOnboardingDocument(
+                    formData.fundraisingDeck,
+                    formData.fundraisingDeckPathOrKey
+                ) &&
+                hasOnboardingDocument(
+                    formData.founderAndTeamIntroduction,
+                    formData.founderAndTeamIntroductionPathOrKey
+                ) &&
+                hasOnboardingDocument(
+                    formData.investmentMemo,
+                    formData.investmentMemoPathOrKey
+                ) &&
+                hasOnboardingDocument(
+                    formData.termsOfOffering,
+                    formData.termsOfOfferingPathOrKey
+                ) &&
                 formData.businessDescription &&
                 formData.businessSector &&
                 formData.instrumentType &&
@@ -69,13 +82,41 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
 
         case "kyc":
         case "representative-kyc":
-            const baseKyc = !!(kycData.idNumber && kycData.idType && kycData.idFile && kycData.bvn && kycData.address && kycData.addressFile);
+            const baseKyc = !!(
+                kycData.idNumber &&
+                kycData.idType &&
+                hasOnboardingDocument(kycData.idFile, kycData.idFilePathOrKey) &&
+                kycData.bvn &&
+                kycData.address &&
+                hasOnboardingDocument(kycData.addressFile, kycData.addressFilePathOrKey)
+            );
 
             if (investorUserType === 'corporate') {
                 const isQII = formData.selectedCategoryId === "qii";
                 return isQII
-                    ? baseKyc && !!(kycData.qiiLicense && kycData.statusReport && kycData.boardResolution && kycData.selfie)
-                    : baseKyc && !!(kycData.incorporationCertificate && kycData.statusReport && kycData.boardResolution && kycData.selfie);
+                    ? baseKyc &&
+                      !!(
+                          hasOnboardingDocument(kycData.qiiLicense, kycData.qiiLicensePathOrKey) &&
+                          hasOnboardingDocument(kycData.statusReport, kycData.statusReportPathOrKey) &&
+                          hasOnboardingDocument(
+                              kycData.boardResolution,
+                              kycData.boardResolutionPathOrKey
+                          ) &&
+                          hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey)
+                      )
+                    : baseKyc &&
+                      !!(
+                          hasOnboardingDocument(
+                              kycData.incorporationCertificate,
+                              kycData.incorporationCertificatePathOrKey
+                          ) &&
+                          hasOnboardingDocument(kycData.statusReport, kycData.statusReportPathOrKey) &&
+                          hasOnboardingDocument(
+                              kycData.boardResolution,
+                              kycData.boardResolutionPathOrKey
+                          ) &&
+                          hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey)
+                      );
             }
 
             // Fundraiser KYC (usually similar to Corporate or base)
@@ -91,7 +132,12 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             );;
 
             // Individual KYC
-            return baseKyc && !!kycData.selfie && kycData.incomeDocuments.length > 0 && !!kycData.incomeFile;
+            return (
+                baseKyc &&
+                hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey) &&
+                kycData.incomeDocuments.length > 0 &&
+                hasOnboardingDocument(kycData.incomeFile, kycData.incomeFilePathOrKey)
+            );
 
         case "application-fee":
             const { paymentMethod, applicationFeePaid } = formData;

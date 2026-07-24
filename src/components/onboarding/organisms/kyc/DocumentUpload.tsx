@@ -7,11 +7,13 @@ import { SelectInput } from '@/components/onboarding/molecules/SelectInput';
 import { UploadSection } from '@/components/onboarding/molecules/UploadSection';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { type KYCData, useOnboardingStore } from '@/store/onboardingStore';
+import { useOnboardingFileUpload } from '@/hooks/onboarding/useOnboardingFileUpload';
+import { hasOnboardingDocument } from '@/lib/onboarding-file-upload';
 
 export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
     const { formData, updateFormData } = useOnboardingStore();
     const data = formData.kycData;
-
+    const { uploadKycDocument, isUploading } = useOnboardingFileUpload();
 
     const handleDataChange = <K extends keyof KYCData>(field: K, value: KYCData[K]) => {
         updateFormData({
@@ -88,8 +90,12 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         label='Upload Government ID'
                         desc='Ensure all details are clearly visible'
                         value={data.idFile}
-                        onUpload={(file) => handleDataChange('idFile', file)}
-                        isError={showErrors && !data.idFile}
+                        uploadedUrl={data.idFilePathOrKey}
+                        uploading={isUploading("idFile")}
+                        onUpload={(file) => {
+                            void uploadKycDocument("idFile", "idFilePathOrKey", file);
+                        }}
+                        isError={showErrors && !hasOnboardingDocument(data.idFile, data.idFilePathOrKey)}
                     />
 
                     <OnboardingInput
@@ -136,8 +142,12 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         label='Upload Proof of Address'
                         desc='Document must show your current residential address'
                         value={data.addressFile}
-                        onUpload={(file) => handleDataChange('addressFile', file)}
-                        isError={showErrors && !data.addressFile}
+                        uploadedUrl={data.addressFilePathOrKey}
+                        uploading={isUploading("addressFile")}
+                        onUpload={(file) => {
+                            void uploadKycDocument("addressFile", "addressFilePathOrKey", file);
+                        }}
+                        isError={showErrors && !hasOnboardingDocument(data.addressFile, data.addressFilePathOrKey)}
                     />
                 </div>
             </div>

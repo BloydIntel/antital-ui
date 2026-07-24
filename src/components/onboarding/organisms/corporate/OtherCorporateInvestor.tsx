@@ -3,55 +3,68 @@
 import React, { useState, useMemo } from 'react'
 import { useOnboardingStore, KYCData } from '@/store/onboardingStore'
 import { CollapsibleUpload } from '@/components/onboarding/molecules/CollapsibleUpload'
+import { useOnboardingFileUpload } from '@/hooks/onboarding/useOnboardingFileUpload'
+import { hasOnboardingDocument } from '@/lib/onboarding-file-upload'
+
+type CorporateDocField =
+  | 'statusReport'
+  | 'qiiLicense'
+  | 'boardResolution'
+  | 'incorporationCertificate'
+
+const PATH_FIELD: Record<CorporateDocField, keyof KYCData> = {
+  statusReport: 'statusReportPathOrKey',
+  qiiLicense: 'qiiLicensePathOrKey',
+  boardResolution: 'boardResolutionPathOrKey',
+  incorporationCertificate: 'incorporationCertificatePathOrKey',
+}
 
 export function OtherCorporateInvestor({ showErrors }: { showErrors: boolean }) {
-    const { formData, updateFormData } = useOnboardingStore();
+    const { formData } = useOnboardingStore();
     const data = formData.kycData;
     const categoryId = formData.selectedCategoryId;
+    const { uploadKycDocument, isUploading } = useOnboardingFileUpload();
 
-    // Define the sections inside useMemo to switch based on categoryId
     const activeSections = useMemo(() => {
         if (categoryId === 'qii') {
             return [
                 {
                     id: 'statusReport',
-                    field: 'statusReport' as keyof KYCData,
+                    field: 'statusReport' as CorporateDocField,
                     title: 'Upload recent status report document',
                 },
                 {
                     id: 'qiiLicense',
-                    field: 'qiiLicense' as keyof KYCData,
+                    field: 'qiiLicense' as CorporateDocField,
                     title: 'Evidence of QII registration/license',
                 },
                 {
                     id: 'resolution',
-                    field: 'boardResolution' as keyof KYCData,
+                    field: 'boardResolution' as CorporateDocField,
                     title: 'Board resolution authorising registration, investment and account representative',
                 }
             ];
         }
 
-        // Default to OCI sections
         return [
             {
                 id: 'certificate',
-                field: 'incorporationCertificate' as keyof KYCData,
+                field: 'incorporationCertificate' as CorporateDocField,
                 title: 'Incorporation Certificate',
             },
             {
                 id: 'statusReport',
-                field: 'statusReport' as keyof KYCData,
+                field: 'statusReport' as CorporateDocField,
                 title: 'Upload recent status report document',
             },
             {
                 id: 'resolution',
-                field: 'boardResolution' as keyof KYCData,
+                field: 'boardResolution' as CorporateDocField,
                 title: 'Board resolution authorising registration, investment and account representative',
             }
         ];
     }, [categoryId]);
 
-    // Track open states for each section ID
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         certificate: true,
         statusReport: true,
@@ -63,25 +76,37 @@ export function OtherCorporateInvestor({ showErrors }: { showErrors: boolean }) 
         setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const handleFileChange = (field: keyof KYCData, value: File | null) => {
-        updateFormData({
-            kycData: { ...data, [field]: value }
-        });
-    };
-
     return (
         <div className="flex flex-col">
-            {activeSections.map((section) => (
-                <CollapsibleUpload
-                    key={section.id}
-                    title={section.title}
-                    isOpen={!!openSections[section.id]}
-                    onToggle={() => toggleSection(section.id)}
-                    onUpload={(file) => handleFileChange(section.field, file)}
-                    value={data[section.field] as File | null}
-                    isError={showErrors && !data[section.field]}
-                />
-            ))}
+            {activeSections.map((section) => {
+                const pathField = PATH_FIELD[section.field];
+                const pathOrKey = data[pathField] as string | null;
+                const file = data[section.field] as File | null;
+
+                return (
+                    <CollapsibleUpload
+                        key={section.id}
+                        title={section.title}
+                        isOpen={!!openSections[section.id]}
+                        onToggle={() => toggleSection(section.id)}
+                        onUpload={(nextFile) => {
+                            void uploadKycDocument(
+                                section.field,
+                                pathField as
+                                    | "statusReportPathOrKey"
+                                    | "qiiLicensePathOrKey"
+                                    | "boardResolutionPathOrKey"
+                                    | "incorporationCertificatePathOrKey",
+                                nextFile
+                            );
+                        }}
+                        value={file}
+                        uploadedUrl={pathOrKey}
+                        uploading={isUploading(section.field)}
+                        isError={showErrors && !hasOnboardingDocument(file, pathOrKey)}
+                    />
+                );
+            })}
         </div>
     );
 }

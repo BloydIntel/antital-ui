@@ -190,10 +190,15 @@ export interface InvestmentDetailBundle {
 
 export interface AddNewInvestmentFormPayload {
   founderAndTeamIntroduction?: File | null;
+  founderAndTeamIntroductionPathOrKey?: string | null;
   fundraisingDeck?: File | null;
+  fundraisingDeckPathOrKey?: string | null;
   investmentMemo?: File | null;
+  investmentMemoPathOrKey?: string | null;
   termsOfOffering?: File | null;
+  termsOfOfferingPathOrKey?: string | null;
   productDemo?: File | null;
+  productDemoPathOrKey?: string | null;
   businessDescription?: string;
   businessSector?: string;
   instrumentType?: string;
