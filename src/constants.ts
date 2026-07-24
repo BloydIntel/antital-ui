@@ -14,6 +14,8 @@ export const CACHE_KEY_PAYMENT_METHODS = ["payment-methods"] as const;
 export const CACHE_KEY_WATCHLIST = ["watchlist"] as const;
 export const CACHE_KEY_INVESTOR_PROFILE = ["investor-profile"] as const;
 export const CACHE_KEY_INVESTOR_ACCOUNT = ["investor-account"] as const;
+export const CACHE_KEY_FUNDRAISER_SETTINGS_PROFILE = ["fundraiser-settings-profile"] as const;
+export const CACHE_KEY_FUNDRAISER_SETTINGS_NOTIFICATIONS = ["fundraiser-settings-notifications"] as const;
 
 export const ACCESS_TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";
