@@ -11,23 +11,27 @@ const ADDRESS_FIELDS = [
         name: "registrationDate",
         label: "Date of Registration",
         placeholder: "DD/MM/YYYY",
-        type: "date"
+        type: "date",
+        autoComplete: "bday"
     },
     {
         name: "companyWebsite",
         label: "Company Website (if available)",
         placeholder: "https://yourcompany.com",
-        type: "url"
+        type: "url",
+        autoComplete: "url"
     },
     {
         name: "businessAddress",
         label: "Business Address",
         placeholder: "23A Unity Crescent Lekki Phase 1, Lagos State, Nigeria.",
+        autoComplete: "street-address"
     },
     {
         name: "registeredAddress",
         label: "Registered Address",
         placeholder: "23A Unity Crescent Lekki Phase 1, Lagos State, Nigeria.",
+        autoComplete: "street-address"
     },
     {
         isGrid: true,
@@ -36,13 +40,15 @@ const ADDRESS_FIELDS = [
                 name: "companyEmail",
                 label: "Company Email",
                 placeholder: "info@yourcompany.com",
-                type: "email"
+                type: "email",
+                autoComplete: "email"
             },
             {
                 name: "companyPhone",
                 label: "Company Phone",
                 placeholder: "+234 987654321",
-                type: "tel"
+                type: "tel",
+                autoComplete: "tel"
             }
         ]
     }
@@ -91,10 +97,13 @@ export function CompanyAddress({ showErrors, title, desc }: CompanyAddressProps)
                                     const fieldName = field.name as keyof typeof formData;
                                     const errorKey = field.name as keyof typeof errors;
                                     const errorMsg = (touched[field.name] || showErrors) ? errors[errorKey] : "";
+                                    const autoCompleteVal = ("autoComplete" in field ? (field.autoComplete as string) : undefined) || "on";
 
                                     return (
                                         <OnboardingInput
                                             key={field.name}
+                                            name={field.name}
+                                            autoComplete={autoCompleteVal}
                                             label={field.label}
                                             placeholder={field.placeholder}
                                             type={field.type}
@@ -113,10 +122,13 @@ export function CompanyAddress({ showErrors, title, desc }: CompanyAddressProps)
                     const fieldType = 'type' in fieldGroup ? fieldGroup.type : "text";
                     const errorKey = fieldGroup.name as keyof typeof errors;
                     const errorMsg = (touched[fieldGroup.name] || showErrors) ? errors[errorKey] : "";
+                    const autoCompleteVal = ("autoComplete" in fieldGroup ? (fieldGroup.autoComplete as string) : undefined) || "on";
 
                     return (
                         <OnboardingInput
                             key={fieldGroup.name}
+                            name={fieldGroup.name}
+                            autoComplete={autoCompleteVal}
                             label={fieldGroup.label}
                             placeholder={fieldGroup.placeholder}
                             type={fieldType}

@@ -2,6 +2,7 @@
 
 import { notFound } from 'next/navigation'
 import { InvestmentDetailPageContent } from './investment-detail-page-content'
+import { InvestmentDetailSkeleton } from '@/components/skeletons/investment-skeletons'
 import { useInvestmentDetail } from '@/hooks/use-investment-detail'
 
 interface InvestmentDetailPageClientProps {
@@ -12,11 +13,7 @@ export function InvestmentDetailPageClient({ idOrSlug }: InvestmentDetailPageCli
   const { data, isLoading, isError } = useInvestmentDetail(idOrSlug)
 
   if (isLoading) {
-    return (
-      <div className="w-full max-w-[1440px] mx-auto px-4 py-24 text-center text-muted-foreground font-dm-sans">
-        Loading investment details...
-      </div>
-    )
+    return <InvestmentDetailSkeleton />
   }
 
   if (isError || !data) {

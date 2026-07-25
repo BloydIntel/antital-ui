@@ -11,6 +11,7 @@ import { DataTable } from '../../dashboard/components/data-table'
 import { useSearchParams } from 'next/navigation'
 import { useInvestments } from '@/hooks/use-investments'
 import { toInvestmentCardData } from '@/lib/investment-mappers'
+import { InvestmentCardGridSkeleton } from '@/components/skeletons/investment-skeletons'
 
 type MarketFilters = {
     sector: Sector;
@@ -186,11 +187,7 @@ export function Marketplace() {
                 >
                     {activeMarket === "primary" ? (
                         <>
-                            {isPrimaryLoading && (
-                                <p className="text-[#505050] text-center py-12" style={TYPOGRAPHY.body}>
-                                    Loading investment opportunities...
-                                </p>
-                            )}
+                            {isPrimaryLoading && <InvestmentCardGridSkeleton count={3} />}
 
                             {isPrimaryError && (
                                 <p className="text-destructive text-center py-12" style={TYPOGRAPHY.body}>

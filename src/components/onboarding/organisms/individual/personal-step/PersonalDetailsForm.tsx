@@ -53,6 +53,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
 
                 <div className="grid lg:grid-cols-2 lg:gap-4">
                     <OnboardingInput
+                        name="firstName"
+                        autoComplete="given-name"
                         label="First Name"
                         placeholder="John"
                         value={formData.firstName}
@@ -61,6 +63,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                         onBlur={() => handleBlur("firstName")}
                     />
                     <OnboardingInput
+                        name="lastName"
+                        autoComplete="family-name"
                         label="Last Name"
                         placeholder="Doe"
                         value={formData.lastName}
@@ -71,6 +75,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                 </div>
 
                 <OnboardingInput
+                    name="email"
+                    autoComplete="email"
                     label="Email"
                     type="email"
                     placeholder="johndoe@email.com"
@@ -81,6 +87,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                 />
 
                 <OnboardingInput
+                    name="alias"
+                    autoComplete="nickname"
                     label="Preferred Name/Alias"
                     placeholder="John Doe"
                     value={formData.alias}
@@ -89,6 +97,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
 
                 <div className="grid lg:grid-cols-2 lg:gap-4">
                     <OnboardingInput
+                        name="phone"
+                        autoComplete="tel"
                         label="Phone Number"
                         type="tel"
                         placeholder="+234 90 1234 5678"
@@ -98,6 +108,8 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                         onBlur={() => handleBlur("phone")}
                     />
                     <OnboardingInput
+                        name="dob"
+                        autoComplete="bday"
                         label="Date of Birth"
                         type="date"
                         value={formData.dob || ""}

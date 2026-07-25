@@ -19,7 +19,7 @@ export function DisbursementRowItem({ item }: DisbursementRowItemProps) {
     return (
         <div className="flex items-center justify-between py-4">
             {/* Left Column: Icon & Details */}
-            <div className="flex items-center gap-4 min-w-0">
+            <div className="flex items-center gap-2 lg:gap-4 min-w-0">
                 <div className="w-12 h-12 bg-[#EFF6FF] text-[#1B1B1B] font-bold rounded-full flex items-center justify-center shrink-0 text-[16px]">
                     ₦
                 </div>
@@ -36,14 +36,13 @@ export function DisbursementRowItem({ item }: DisbursementRowItemProps) {
 
             {/* Right Column: Amount & Status Badge */}
             <div className="text-right shrink-0">
-                <span className="block text-[18px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 700 }}>
+                <span className="block text-[14px] lg:text-[18px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 700 }}>
                     {item.amount}
                 </span>
-                <span className={`block text-[12px] font-bold tracking-wider uppercase mt-0.5 ${
-                    item.status === 'COMPLETED' ? 'text-[#34C759]' :
+                <span className={`block text-[10px] lg:text-[12px] font-bold tracking-wider uppercase mt-0.5 ${item.status === 'COMPLETED' ? 'text-[#34C759]' :
                     item.status === 'FAILED' ? 'text-[#D4001A]' :
-                    'text-[#DCA73B]'
-                }`}>
+                        'text-[#DCA73B]'
+                    }`}>
                     {item.status}
                 </span>
             </div>

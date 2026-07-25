@@ -39,20 +39,13 @@ export function TestimonialItem({
       }}
     >
       {/* Avatar */}
-      <div
-        className="flex-shrink-0"
-        style={{
-          width: '64px',
-          height: '64px',
-          position: 'relative',
-        }}
-      >
+      <div className="flex-shrink-0 w-12 h-12 lg:w-16 lg:h-16 relative">
         <Image
           src={avatar}
           alt={author}
           fill
           className="object-cover rounded-full"
-          sizes="64px"
+          sizes="(min-width: 1024px) 64px, 48px"
         />
       </div>
 
