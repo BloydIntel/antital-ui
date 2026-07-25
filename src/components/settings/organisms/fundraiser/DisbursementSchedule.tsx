@@ -17,7 +17,7 @@ const DISBURSEMENT_MOCK_DATA: DisbursementItem[] = [
         id: '2',
         title: 'Scheduled Payout',
         dateAndBank: 'June 17, 2026 – Access Bank',
-        amount: '₦1,243,678,.00',
+        amount: '₦1,243,678.00',
         status: 'PROCESSING',
     },
 ];

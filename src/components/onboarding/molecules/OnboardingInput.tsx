@@ -28,7 +28,7 @@ interface InputProps {
     inputAreaStyle?: string
     disabled?: boolean
     labelStyle?: string
-    autoComplete: string
+    autoComplete?: string
 }
 
 type OnboardingChangeEvent =
