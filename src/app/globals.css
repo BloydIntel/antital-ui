@@ -261,6 +261,17 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
 /* Logo carousel animation */
 @keyframes logo-scroll {
   0% {
