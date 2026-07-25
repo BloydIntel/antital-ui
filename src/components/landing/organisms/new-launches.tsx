@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { InvestmentCard } from '@/components/investment/organisms/investment-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { InvestmentCardRowSkeleton } from '@/components/skeletons/investment-skeletons'
 import { useInvestments } from '@/hooks/use-investments';
 import { toInvestmentCardData } from '@/lib/investment-mappers';
 
@@ -36,9 +37,7 @@ export function NewLaunches() {
           </div>
 
           <div className="flex flex-col items-center gap-12 w-full">
-            {isLoading && (
-              <p className="text-muted-foreground font-dm-sans">Loading new launches...</p>
-            )}
+            {isLoading && <InvestmentCardRowSkeleton count={3} />}
             {isError && (
               <p className="text-destructive font-dm-sans">Unable to load new launches.</p>
             )}

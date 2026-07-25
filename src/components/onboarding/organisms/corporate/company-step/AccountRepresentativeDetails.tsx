@@ -11,7 +11,8 @@ const REPRESENTATIVE_FIELDS = [
     {
         name: "repFullName",
         label: "Full Name",
-        placeholder: "John Doe"
+        placeholder: "John Doe",
+        autoComplete: "name"
     },
     {
         isGrid: true,
@@ -25,13 +26,14 @@ const REPRESENTATIVE_FIELDS = [
                     { label: 'Director/Partner', value: 'director_partner' },
                     { label: 'CEO/Founder', value: 'ceo_founder' },
                     { label: 'Manager', value: 'manager' }
-                ]
+                ] as const
             },
             {
                 name: "repPhoneNumber",
                 label: "Phone Number",
                 placeholder: "+234 987654321",
-                type: "tel"
+                type: "tel",
+                autoComplete: "tel"
             }
         ]
     },
@@ -39,13 +41,15 @@ const REPRESENTATIVE_FIELDS = [
         name: "repDob",
         label: "DOB",
         placeholder: "Enter your date of birth",
-        type: "date"
+        type: "date",
+        autoComplete: "bday"
     },
     {
         name: "repEmail",
         label: "Email Address",
         placeholder: "your.email@gmail.com",
-        type: "email"
+        type: "email",
+        autoComplete: "email"
     },
     {
         name: "repNationality",
@@ -55,7 +59,7 @@ const REPRESENTATIVE_FIELDS = [
         options: [
             { label: 'Nigerian', value: 'nigerian' },
             { label: 'Other', value: 'other' }
-        ]
+        ] as const
     },
     {
         name: "repResidence",
@@ -65,13 +69,14 @@ const REPRESENTATIVE_FIELDS = [
         options: [
             { label: 'Nigeria', value: 'nigeria' },
             { label: 'United States', value: 'usa' }
-        ]
+        ] as const
     },
     {
         name: "repAddress",
         label: "Address",
         placeholder: "23A Unity Crescent Lekki Phase 1, Lagos State, Nigeria.",
-        icon: "home"
+        icon: "home",
+        autoComplete: "street-address"
     }
 ] as const;
 
@@ -126,6 +131,7 @@ export function AccountRepresentativeDetails({
                                     const fieldName = field.name as keyof typeof formData;
                                     const errorKey = field.name as keyof typeof errors;
                                     const errorMsg = (touched[field.name] || showErrors) ? errors[errorKey] : "";
+                                    const autoCompleteVal = ("autoComplete" in field ? (field.autoComplete as string) : undefined) || "on";
 
                                     if (field.type === "select") {
                                         return (
@@ -148,6 +154,8 @@ export function AccountRepresentativeDetails({
                                     return (
                                         <OnboardingInput
                                             key={field.name}
+                                            name={field.name}
+                                            autoComplete={autoCompleteVal}
                                             label={field.label}
                                             placeholder={field.placeholder}
                                             type={field.type || "text"}
@@ -168,6 +176,7 @@ export function AccountRepresentativeDetails({
                     const fieldType = 'type' in fieldGroup ? fieldGroup.type : 'text';
                     const errorKey = fieldGroup.name as keyof typeof errors;
                     const errorMsg = (touched[fieldGroup.name] || showErrors) ? errors[errorKey] : "";
+                    const autoCompleteVal = ("autoComplete" in fieldGroup ? (fieldGroup.autoComplete as string) : undefined) || "on";
 
                     if (fieldType === "select" && 'options' in fieldGroup) {
                         return (
@@ -190,6 +199,8 @@ export function AccountRepresentativeDetails({
                     return (
                         <OnboardingInput
                             key={fieldGroup.name}
+                            name={fieldGroup.name}
+                            autoComplete={autoCompleteVal}
                             label={fieldGroup.label}
                             placeholder={fieldGroup.placeholder}
                             type={fieldType}

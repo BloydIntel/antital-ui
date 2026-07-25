@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef } from "react";
 import { InvestmentCard } from "@/components/investment/organisms/investment-card";
+import { InvestmentCardGridSkeleton } from "@/components/skeletons/investment-skeletons";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useInfiniteInvestments } from "@/hooks/use-infinite-investments";
 import { toInvestmentCardData } from "@/lib/investment-mappers";
 
@@ -88,11 +90,7 @@ export function InvestmentInfiniteGrid({
             </p>
           </div>
 
-          {isLoading && (
-            <p className="text-muted-foreground font-dm-sans w-full text-center">
-              Loading investment opportunities...
-            </p>
-          )}
+          {isLoading && <InvestmentCardGridSkeleton count={6} />}
 
           {isError && (
             <p className="text-destructive font-dm-sans w-full text-center">
@@ -120,9 +118,9 @@ export function InvestmentInfiniteGrid({
                 aria-hidden={!hasNextPage}
               >
                 {isFetchingNextPage && (
-                  <p className="text-muted-foreground font-dm-sans text-sm">
-                    Loading more opportunities...
-                  </p>
+                  <div className="w-full flex justify-center py-2">
+                    <Skeleton className="h-4 w-48" />
+                  </div>
                 )}
                 {!hasNextPage && totalCount > 0 && (
                   <p className="text-muted-foreground font-dm-sans text-sm">

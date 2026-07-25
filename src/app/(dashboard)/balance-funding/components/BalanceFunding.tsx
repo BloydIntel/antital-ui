@@ -11,6 +11,7 @@ import { TransactionHistory } from '@/components/balance-funding/molecules/Trans
 import PaymentMethodsSettings from '@/components/balance-funding/molecules/PaymentMethodsSettings'
 import { useWalletTransactions } from '@/hooks/use-wallet-transactions'
 import { showApiErrorToast } from '@/lib/error-feedback'
+import { TransactionHistorySkeleton2 } from '@/components/skeletons/table-skeletons'
 
 const sections = ["Overview", "Transactions", "Payment Methods"];
 
@@ -51,18 +52,14 @@ export default function BalanceFunding() {
     setActiveSection(section);
 
     if (section === "Transactions") {
-      // Keep the query string for deep linking
       router.push(`${pathname}?tab=Transactions`);
     } else {
-      // Wipe the query parameter cleanly when moving to Overview or Payment Methods
       router.push(pathname);
     }
   };
 
   return (
     <div className='space-y-8'>
-      {/* Header Section */}
-      {/* Dynamic Header Section */}
       <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center gap-2 lg:gap-0'>
         <div>
           <h2
@@ -139,9 +136,7 @@ export default function BalanceFunding() {
         {activeSection === "Overview" && <Overview />}
         {activeSection === "Transactions" && (
           isTransactionsLoading ? (
-            <p className="text-[14px] text-[#858585]" style={TYPOGRAPHY.body}>
-              Loading transaction history...
-            </p>
+            <TransactionHistorySkeleton2 />
           ) : (
             <TransactionHistory data={transactions?.items ?? []} />
           )

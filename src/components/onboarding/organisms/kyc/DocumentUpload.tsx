@@ -78,6 +78,8 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     </div>
 
                     <OnboardingInput
+                        name="idNumber"
+                        autoComplete="off"
                         label={`${selectedIdLabel} Number`}
                         placeholder="Enter ID Number"
                         className="pb-0"
@@ -99,6 +101,8 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                     />
 
                     <OnboardingInput
+                        name="bvn"
+                        autoComplete="off"
                         label="Bank Verification Number"
                         placeholder="1234567890"
                         className="pb-0"
@@ -128,6 +132,8 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                 <div className={`space-y-4 px-1 transition-all duration-300 ease-in-out overflow-hidden ${showAddress ? "max-h-[800px] opacity-100 mt-4" : "max-h-0 opacity-0 invisible"}`}>
                     <div className="relative">
                         <OnboardingInput
+                            name="address"
+                            autoComplete="street-address"
                             label="Residential Address"
                             placeholder="Enter your full address"
                             icon={Home}

@@ -17,12 +17,14 @@ const COMPANY_FIELDS = [
     {
         name: "companyName",
         label: "Company Legal Name",
-        placeholder: "Exactly as registered with CAC"
+        placeholder: "Exactly as registered with CAC",
+        autoComplete: "organization"
     },
     {
         name: "brandName",
         label: "Trading/Brand Name",
-        placeholder: "Public business name"
+        placeholder: "Public business name",
+        autoComplete: "organization-title"
     },
     {
         isGrid: true,
@@ -41,7 +43,8 @@ const COMPANY_FIELDS = [
             {
                 name: "registrationNumber",
                 label: "Registration Number",
-                placeholder: "BN1234567"
+                placeholder: "BN1234567",
+                autoComplete: "off"
             }
         ]
     },
@@ -49,7 +52,8 @@ const COMPANY_FIELDS = [
         name: "loginEmail",
         label: "Email",
         placeholder: "Enter email",
-        type: "email"
+        type: "email",
+        autoComplete: "email"
     },
     {
         isGrid: true,
@@ -58,13 +62,15 @@ const COMPANY_FIELDS = [
                 name: "password",
                 label: "Create Password",
                 placeholder: "***********",
-                type: "password"
+                type: "password",
+                autoComplete: "new-password"
             },
             {
                 name: "confirmPassword",
                 label: "Confirm Password",
                 placeholder: "***********",
-                type: "password"
+                type: "password",
+                autoComplete: "new-password"
             }
         ]
     }
@@ -108,7 +114,7 @@ export function CompanyDetails({ showErrors, title, desc }: CompanyInformationPr
                     {COMPANY_FIELDS.map((fieldGroup, idx) => {
                         if ("isGrid" in fieldGroup) {
                             return (
-                                <div key={`grid-${idx}`} className="grid grid-cols-2 gap-4">
+                                <div key={`grid-${idx}`} className="grid lg:grid-cols-2 gap-4">
                                     {fieldGroup.fields.map((field) => {
                                         const fieldName = field.name as keyof typeof formData;
                                         const fieldType = "type" in field ? field.type : "text";
@@ -135,6 +141,8 @@ export function CompanyDetails({ showErrors, title, desc }: CompanyInformationPr
                                         return (
                                             <OnboardingInput
                                                 key={field.name}
+                                                name={field.name}
+                                                autoComplete={("autoComplete" in field ? (field.autoComplete as string) : undefined) || "on"}
                                                 label={field.label}
                                                 type={fieldType}
                                                 placeholder={field.placeholder}
@@ -157,6 +165,8 @@ export function CompanyDetails({ showErrors, title, desc }: CompanyInformationPr
                         return (
                             <OnboardingInput
                                 key={fieldGroup.name}
+                                name={fieldGroup.name}
+                                autoComplete={("autoComplete" in fieldGroup ? (fieldGroup.autoComplete as string) : undefined) || "on"}
                                 label={fieldGroup.label}
                                 placeholder={fieldGroup.placeholder}
                                 type={fieldType}

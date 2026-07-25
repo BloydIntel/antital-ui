@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import type { FundraiserAnalyticsTraffic } from '@/types/fundraiser-analytics-api'
+import { AnalyticsTrafficSkeleton } from '@/components/skeletons/analytics-skeletons'
 
 interface TrafficConversionChartProps {
     traffic?: FundraiserAnalyticsTraffic | null
@@ -54,9 +55,7 @@ export function TrafficConversionChart({ traffic = null, isLoading = false }: Tr
             </div>
 
             {isLoading ? (
-                <div className="h-[392px] flex items-center justify-center text-sm text-[#717171]">
-                    Loading traffic…
-                </div>
+                <AnalyticsTrafficSkeleton />
             ) : chartData.length === 0 ? (
                 <div className="h-[392px] flex items-center justify-center text-sm text-[#717171]">
                     No traffic data for this period.
@@ -125,11 +124,10 @@ export function TrafficConversionChart({ traffic = null, isLoading = false }: Tr
                                             style={{
                                                 height: `${data.value}%`,
                                             }}
-                                            className={`w-full max-w-[40px] rounded-t-md transition-all duration-300 ${
-                                                isActive
-                                                    ? 'bg-[#A7B832]'
-                                                    : 'bg-[#E0E0E0] hover:bg-[#CCCCCC]'
-                                            }`}
+                                            className={`w-full max-w-[40px] rounded-t-md transition-all duration-300 ${isActive
+                                                ? 'bg-[#A7B832]'
+                                                : 'bg-[#E0E0E0] hover:bg-[#CCCCCC]'
+                                                }`}
                                         />
                                     </div>
                                 )
@@ -140,9 +138,8 @@ export function TrafficConversionChart({ traffic = null, isLoading = false }: Tr
                             {chartData.map((data, idx) => (
                                 <span
                                     key={`${data.day}-label-${idx}`}
-                                    className={`w-full max-w-[40px] text-center pt-2 transition-colors ${
-                                        activeIndex === idx ? 'text-[#1B1B1B] font-medium' : ''
-                                    }`}
+                                    className={`w-full max-w-[40px] text-center pt-2 transition-colors ${activeIndex === idx ? 'text-[#1B1B1B] font-medium' : ''
+                                        }`}
                                 >
                                     {data.day}
                                 </span>

@@ -13,6 +13,7 @@ import {
     useFundraiserCampaignUpdates,
 } from '@/hooks/use-fundraiser-campaign'
 import { showApiErrorToast } from '@/lib/error-feedback'
+import { CampaignPageSkeleton } from '@/components/skeletons/campaign-skeletons'
 
 function buildAbsoluteShareUrl(publicPath: string | null | undefined, slug: string | null | undefined) {
     if (typeof window === 'undefined') {
@@ -104,9 +105,7 @@ export default function Campaign() {
             </div>
 
             {campaignQuery.isLoading ? (
-                <div className="mt-6 rounded-xl border border-[#EAEAEA] bg-white p-6 text-sm text-[#505050]">
-                    Loading campaign...
-                </div>
+                <CampaignPageSkeleton />
             ) : !hasOffering ? (
                 <div className="mt-6 rounded-xl border border-[#EAEAEA] bg-white p-6 text-sm text-[#505050]">
                     No owned campaign found yet. Publish an offering to preview, share, and post updates.

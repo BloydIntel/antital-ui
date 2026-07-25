@@ -5,11 +5,12 @@ import { User, CheckCircle2, FileText, RefreshCw } from 'lucide-react';
 import { TYPOGRAPHY } from "@/constants/styles";
 import { useInvestorAccount } from '@/hooks/use-settings';
 import {
-  mapAccountCompliance,
-  mapAccountLimits,
-  mapAccountToProfile,
+    mapAccountCompliance,
+    mapAccountLimits,
+    mapAccountToProfile,
 } from '@/lib/settings-mappers';
 import { showApiErrorToast } from '@/lib/error-feedback';
+import { SettingsAccountSkeleton } from '@/components/skeletons/settings-skeletons';
 
 export interface AccountDataProfile {
     accountType: string;
@@ -108,11 +109,7 @@ export function Account({
 
     if (isLoading) {
         return (
-            <div className="w-full">
-                <p className="text-[16px] text-[#858585]" style={TYPOGRAPHY.body}>
-                    Loading account information...
-                </p>
-            </div>
+            <SettingsAccountSkeleton />
         );
     }
 

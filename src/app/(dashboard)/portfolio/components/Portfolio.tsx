@@ -45,7 +45,7 @@ export function Portfolio() {
                 userType={currentUserType}
             />
 
-            <div className="@container/main px-4 lg:px-6 space-y-6">
+            <div className="@container/main space-y-6">
                 <SectionCards summary={data?.summary} isLoading={isLoading} />
                 <PortfolioStatChart
                     portfolioPerformance={data?.portfolioPerformance}
