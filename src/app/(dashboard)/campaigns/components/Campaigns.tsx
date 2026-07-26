@@ -12,6 +12,7 @@ import {
     useFundraiserCampaign,
     useFundraiserCampaignUpdates,
 } from '@/hooks/use-fundraiser-campaign'
+import { parseDateValue } from '@/lib/date'
 import { showApiErrorToast } from '@/lib/error-feedback'
 import { CampaignPageSkeleton } from '@/components/skeletons/campaign-skeletons'
 
@@ -26,8 +27,8 @@ function buildAbsoluteShareUrl(publicPath: string | null | undefined, slug: stri
 
 function formatUpdateDate(value: string | null) {
     if (!value) return 'Draft'
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return 'Draft'
+    const date = parseDateValue(value)
+    if (!date) return 'Draft'
     return date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
