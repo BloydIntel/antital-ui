@@ -68,6 +68,10 @@ export interface OnboardingKycDto {
   qiiLicenseEvidenceDocumentPathOrKey?: string | null;
   boardResolutionDocumentPathOrKey?: string | null;
   incorporationCertificateDocumentPathOrKey?: string | null;
+  governmentIdCompleted?: boolean;
+  proofOfAddressCompleted?: boolean;
+  selfieCompleted?: boolean;
+  incomeCompleted?: boolean;
 }
 
 export interface OnboardingCorporateQiiProfileDto {

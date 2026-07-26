@@ -351,6 +351,9 @@ export function buildFormPatchFromOnboarding(
   if (response.kyc?.selfieVerificationPathOrKey) {
     kycPatch.selfiePathOrKey = response.kyc.selfieVerificationPathOrKey;
   }
+  if (response.kyc?.selfieCompleted) {
+    kycPatch.selfieCompleted = true;
+  }
   if (response.kyc?.incomeVerificationPathOrKey) {
     kycPatch.incomeFilePathOrKey = response.kyc.incomeVerificationPathOrKey;
   }

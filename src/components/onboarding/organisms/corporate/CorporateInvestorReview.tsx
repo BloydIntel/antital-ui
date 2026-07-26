@@ -114,7 +114,7 @@ export function CorporateInvestorReview() {
                     { label: "ID Number", value: formatTextField(formData.kycData.idNumber) },
                     { label: "Address", value: formatTextField(formData.kycData.address) },
                     ...(isQII ? [{ label: "Proof of Address", value: formatUploadField(formData.kycData.addressFile) }] : []),
-                    { label: "Selfie", value: formatUploadField(formData.kycData.selfie) },
+                    { label: "Selfie", value: (formData.kycData.selfieCompleted || formData.kycData.selfiePathOrKey) ? "Verified" : "Pending" },
                 ]}
             />
 

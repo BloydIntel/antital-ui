@@ -1,7 +1,7 @@
 import onboardingService from "@/services/onboardingService";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import type { SaveOnboardingRequest } from "@/types/onboarding";
-import { toElevenDigitsOrNull } from "@/lib/onboarding-payload-mappers";
+import { toApiBvnOrNull, toApiIdNumberOrNull } from "@/lib/kyc-id-validation";
 import { pathOrKeyOrNull } from "@/lib/onboarding-file-upload";
 
 function toNullable(value: string): string | null {
@@ -123,8 +123,8 @@ export function useFundraiserOnboardingApi() {
         : formData.kycData.idType === "drivers_licence"
           ? "DriversLicence"
           : "NationalIdCard",
-    nin: toElevenDigitsOrNull(formData.kycData.idNumber ?? ""),
-    bvn: toElevenDigitsOrNull(formData.kycData.bvn ?? ""),
+    nin: toApiIdNumberOrNull(formData.kycData.idType, formData.kycData.idNumber ?? ""),
+    bvn: toApiBvnOrNull(formData.kycData.bvn ?? ""),
     governmentIdDocumentPathOrKey: pathOrKeyOrNull(formData.kycData.idFilePathOrKey),
     proofOfAddressDocumentPathOrKey: pathOrKeyOrNull(formData.kycData.addressFilePathOrKey),
     selfieVerificationPathOrKey: pathOrKeyOrNull(formData.kycData.selfiePathOrKey),
