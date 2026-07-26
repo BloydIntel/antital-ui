@@ -18,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation"
 import allInvestmentsRaw from "@/data/dashboardInvestmentData.json"
 import { InvestmentData, RISK_COLORS } from "@/types/dashboard"
 import { buildCheckoutPath } from "@/lib/investment-checkout"
+import { parseDateValue } from "@/lib/date"
 import type { DashboardHolding } from "@/types/dashboard-api"
 
 interface DataTableProps {
@@ -28,8 +29,8 @@ interface DataTableProps {
 }
 
 const formatDashboardDate = (value: string) => {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
+  const date = parseDateValue(value)
+  if (!date) {
     return value
   }
 

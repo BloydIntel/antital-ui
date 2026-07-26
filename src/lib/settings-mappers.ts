@@ -4,6 +4,7 @@ import type {
   ComplianceCheckItem,
   InvestmentLimitsMetrics,
 } from "@/components/settings/organisms/investors/Account";
+import { parseDateValue } from "@/lib/date";
 
 export interface ProfileFormData {
   firstName: string;
@@ -47,8 +48,8 @@ export function mapFormDataToUpdateRequest(
 }
 
 function formatAccountDate(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseDateValue(value);
+  if (!date) {
     return value;
   }
 

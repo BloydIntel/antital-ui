@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import { parseDateValue } from '@/lib/date'
 import type { FundraiserQiiParticipationItem } from '@/types/fundraiser-investors-api'
 import { RecordTableRowSkeleton } from '@/components/skeletons/table-skeletons'
 
@@ -15,8 +16,8 @@ function formatCommitment(amount: number, currency: string) {
 }
 
 function formatDate(value: string) {
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return '—'
+    const date = parseDateValue(value)
+    if (!date) return '—'
     return date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
