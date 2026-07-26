@@ -10,6 +10,7 @@ import { SubSteps } from "@/components/onboarding/organisms/onboarding-sidebar/s
 import { toast } from "sonner"
 import { LogOut } from "lucide-react"
 import useLogout from "@/hooks/use-logout"
+import { OnboardingDeleteAccountAction } from "@/components/onboarding/organisms/OnboardingDeleteAccountAction"
 
 const HIGHEST_STEP_KEY = "onboarding_highestStepIndex"
 
@@ -138,7 +139,7 @@ export default function OnboardingSidebar() {
     };
 
     return (
-        <nav className="flex flex-col justify-items-start pl-[66px] pt-[20px] pr-[34px] bg-[#F7FBF4] min-h-screen border-r border-gray-100">
+        <nav className="flex h-screen min-h-0 flex-col overflow-hidden pl-[66px] pt-[20px] pr-[34px] bg-[#F7FBF4] border-r border-gray-100">
             <Link href="/" aria-label="Go to landing page" className="inline-flex pb-[20px]">
                 <Image
                     src="/icons/antital.svg"
@@ -148,57 +149,59 @@ export default function OnboardingSidebar() {
                 />
             </Link>
 
-            <ul className="space-y-0">
-                {stepsToShow.map((step, index) => {
-                    const fullIndex = steps.findIndex(s => s.key === step.key)
-                    const isCompletedOrActive = fullIndex <= currentStepIndex
-                    const isCurrentPage = currentStep === step.key
-                    const isLast = index === stepsToShow.length - 1
-                    const isLocked = isMenuLockedStep(step.key as StepKey)
+            <div className="min-h-0 flex-1 overflow-y-auto pr-2">
+                <ul className="space-y-0">
+                    {stepsToShow.map((step, index) => {
+                        const fullIndex = steps.findIndex(s => s.key === step.key)
+                        const isCompletedOrActive = fullIndex <= currentStepIndex
+                        const isCurrentPage = currentStep === step.key
+                        const isLast = index === stepsToShow.length - 1
+                        const isLocked = isMenuLockedStep(step.key as StepKey)
 
-                    const hasActiveSubsteps = isCurrentPage && step.hasSubsteps;
+                        const hasActiveSubsteps = isCurrentPage && step.hasSubsteps;
 
-                    return (
-                        <li
-                            key={step.key}
-                            className={`relative transition-all duration-300 ${hasActiveSubsteps ? "pb-2" : "pb-4"}`}
-                        >
-                            {!isLast && (
-                                <div
-                                    className={`absolute left-[24px] top-[48px] bottom-0 w-[1.5px] -translate-x-1/2 transition-colors duration-500 
-                                    ${fullIndex < currentStepIndex ? "bg-[#042E27]" : "bg-[#D1D5DB]"}`}
-                                />
-                            )}
+                        return (
+                            <li
+                                key={step.key}
+                                className={`relative transition-all duration-300 ${hasActiveSubsteps ? "pb-2" : "pb-4"}`}
+                            >
+                                {!isLast && (
+                                    <div
+                                        className={`absolute left-[24px] top-[48px] bottom-0 w-[1.5px] -translate-x-1/2 transition-colors duration-500 
+                                        ${fullIndex < currentStepIndex ? "bg-[#042E27]" : "bg-[#D1D5DB]"}`}
+                                    />
+                                )}
 
-                            <div className="flex items-center gap-4">
-                                <div className={`z-10 w-[48px] h-[48px] rounded-md flex items-center justify-center shrink-0 transition-all duration-300 
-                                    ${isCompletedOrActive
-                                        ? "bg-[#042E27] text-white shadow-lg shadow-black/5"
-                                        : " text-[#042E27] border"
-                                    }`}>
-                                    <step.icon className="w-6 h-6" />
+                                <div className="flex items-center gap-4">
+                                    <div className={`z-10 w-[48px] h-[48px] rounded-md flex items-center justify-center shrink-0 transition-all duration-300 
+                                        ${isCompletedOrActive
+                                            ? "bg-[#042E27] text-white shadow-lg shadow-black/5"
+                                            : " text-[#042E27] border"
+                                        }`}>
+                                        <step.icon className="w-6 h-6" />
+                                    </div>
+
+                                    <button
+                                        onClick={() => handleMainStepClick(step.key as StepKey)}
+                                        disabled={isLocked}
+                                        className={`transition-colors flex items-center h-[48px] text-left
+                                            ${isCompletedOrActive ? "text-[#042E27] font-medium" : "text-[#858585] hover:text-[#042E27]"}
+                                            ${isLocked ? "opacity-50 cursor-not-allowed hover:text-[#858585]" : ""}`}
+                                    >
+                                        <span className="text-[18px] leading-none block font-[family-name:var(--font-dm-sans)] cursor-pointer tracking-[-1%]">
+                                            {step.label}
+                                        </span>
+                                    </button>
                                 </div>
 
-                                <button
-                                    onClick={() => handleMainStepClick(step.key as StepKey)}
-                                    disabled={isLocked}
-                                    className={`transition-colors flex items-center h-[48px] text-left
-                                        ${isCompletedOrActive ? "text-[#042E27] font-medium" : "text-[#858585] hover:text-[#042E27]"}
-                                        ${isLocked ? "opacity-50 cursor-not-allowed hover:text-[#858585]" : ""}`}
-                                >
-                                    <span className="text-[18px] leading-none block font-[family-name:var(--font-dm-sans)] cursor-pointer tracking-[-1%]">
-                                        {step.label}
-                                    </span>
-                                </button>
-                            </div>
+                                <SubSteps stepKey={step.key} isActive={isCurrentPage} />
+                            </li>
+                        )
+                    })}
+                </ul>
+            </div>
 
-                            <SubSteps stepKey={step.key} isActive={isCurrentPage} />
-                        </li>
-                    )
-                })}
-            </ul>
-
-            <div className="mt-auto pb-10 pl-6">
+            <div className="shrink-0 pt-6 pb-10 pl-6">
                 <div className="w-[198px] h-[168px] relative">
                     <Image
                         src={getStepAssets()}
@@ -221,6 +224,10 @@ export default function OnboardingSidebar() {
                     <LogOut className="h-4 w-4" />
                     {logoutMutation.isPending ? "Logging out…" : "Log out"}
                 </button>
+                <OnboardingDeleteAccountAction
+                    showIcon
+                    className="mt-3 flex items-center gap-2 text-[14px] text-[#8B1E2D] hover:underline disabled:opacity-60 font-[family-name:var(--font-dm-sans)] cursor-pointer"
+                />
             </div>
         </nav>
     )
