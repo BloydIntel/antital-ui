@@ -11,7 +11,7 @@ const REPRESENTATIVE_FIELDS = [
     {
         name: "repFullName",
         label: "Full Name",
-        placeholder: "John Doe",
+        placeholder: "John Adamu",
         autoComplete: "name"
     },
     {
@@ -40,7 +40,7 @@ const REPRESENTATIVE_FIELDS = [
     {
         name: "repDob",
         label: "DOB",
-        placeholder: "Enter your date of birth",
+        placeholder: "1990-01-01",
         type: "date",
         autoComplete: "bday"
     },
