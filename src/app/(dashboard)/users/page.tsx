@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { StatCards } from "./components/stat-cards"
 import { DataTable } from "./components/data-table"
+import { todayDateInputValue } from "@/lib/date"
 
 import initialUsersData from "./data.json"
 
@@ -49,8 +50,8 @@ export default function UsersPage() {
       plan: userData.plan,
       billing: userData.billing,
       status: userData.status,
-      joinedDate: new Date().toISOString().split('T')[0],
-      lastLogin: new Date().toISOString().split('T')[0],
+      joinedDate: todayDateInputValue(),
+      lastLogin: todayDateInputValue(),
     }
     setUsers(prev => [newUser, ...prev])
   }

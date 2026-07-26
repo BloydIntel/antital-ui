@@ -1,5 +1,6 @@
 import React from 'react'
 import { UpdateItem } from '@/components/investment/molecules/update-item'
+import { parseDateValue } from '@/lib/date'
 import type { OfferingUpdate } from '@/types/investment'
 
 interface UpdatesSectionProps {
@@ -7,7 +8,10 @@ interface UpdatesSectionProps {
 }
 
 function formatUpdateDate(isoDate: string): string {
-  const date = new Date(isoDate)
+  const date = parseDateValue(isoDate)
+  if (!date) {
+    return isoDate
+  }
   const now = new Date()
   const isToday =
     date.getFullYear() === now.getFullYear() &&

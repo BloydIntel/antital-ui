@@ -9,6 +9,7 @@ import {
   useFundraiserDocuments,
   useUploadFundraiserDocument,
 } from "@/hooks/use-fundraiser-documents"
+import { parseDateValue } from "@/lib/date"
 import { showApiErrorToast } from "@/lib/error-feedback"
 import type { DocumentItem } from "@/components/documents/molecules/DocumentTable"
 import type { FundraiserDocumentStatus } from "@/types/fundraiser-documents-api"
@@ -20,9 +21,9 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function formatDate(value: string): string {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return "—"
+function formatDate(value: string | number): string {
+  const date = parseDateValue(value)
+  if (!date) return "—"
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -71,11 +72,11 @@ export default function Documents() {
   const latestUpdatedLabel = useMemo(() => {
     if (!data?.items?.length) return null
     const latest = data.items.reduce((max, item) => {
-      const ts = new Date(item.lastUpdatedAt).getTime()
+      const ts = parseDateValue(item.lastUpdatedAt)?.getTime() ?? Number.NaN
       return Number.isNaN(ts) ? max : Math.max(max, ts)
     }, 0)
     if (!latest) return null
-    return formatDate(new Date(latest).toISOString())
+    return formatDate(latest)
   }, [data?.items])
 
   const handleDownload = (doc: DocumentItem) => {

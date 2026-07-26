@@ -5,6 +5,7 @@ import { Eye, EyeOff, LucideIcon } from "lucide-react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { TYPOGRAPHY } from "@/constants/styles"
+import { formatDateInputValue, parseDateValue } from "@/lib/date"
 import { cn } from "@/lib/utils"
 
 interface CustomChangeEvent {
@@ -40,15 +41,7 @@ type OnboardingRef = HTMLInputElement | HTMLTextAreaElement
 
 const getDateObject = (val: unknown): Date | null => {
     if (!val) return null;
-    if (val instanceof Date) return val;
-
-    // If it's a string or number, try to parse it
-    if (typeof val === 'string' || typeof val === 'number') {
-        const parsed = new Date(val);
-        return isNaN(parsed.getTime()) ? null : parsed;
-    }
-
-    return null;
+    return parseDateValue(val as string | number | Date | null | undefined);
 };
 
 export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
@@ -87,7 +80,7 @@ export const OnboardingInput = React.forwardRef<OnboardingRef, InputProps>(
                         <DatePicker
                             selected={getDateObject(value)}
                             onChange={(date: Date | null) => {
-                                const stringValue = date ? date.toISOString().split('T')[0] : "";
+                                const stringValue = date ? formatDateInputValue(date) : "";
                                 onChange?.({ target: { name: props.name, value: stringValue } });
                             }}
                             onBlur={onBlur}

@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { MessageSquare, CornerUpLeft, EyeOff, Eye } from 'lucide-react'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
+import { parseDateValue } from '@/lib/date'
 import type { FundraiserInvestorMessage } from '@/types/fundraiser-investors-api'
 import { InboxFeedSkeleton } from '@/components/skeletons/table-skeletons'
 
@@ -21,8 +22,8 @@ interface InboxFeedProps {
 }
 
 function formatTimeAgo(value: string) {
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return ''
+    const date = parseDateValue(value)
+    if (!date) return ''
     const diffMs = Date.now() - date.getTime()
     const minutes = Math.max(1, Math.round(diffMs / 60_000))
     if (minutes < 60) return `${minutes}m ago`
