@@ -63,7 +63,7 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return <CompanyInformation />
 
         case "email":
-            return <EmailStep onNext={navigateToNext} />;
+            return <EmailStep onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "company-documentation":
             return <UploadBusinessDocument onBack={navigateToBack} />;

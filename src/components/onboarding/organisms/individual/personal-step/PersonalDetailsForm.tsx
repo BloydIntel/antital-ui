@@ -66,7 +66,7 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                         name="lastName"
                         autoComplete="family-name"
                         label="Last Name"
-                        placeholder="Doe"
+                        placeholder="Adamu"
                         value={formData.lastName}
                         error={getError('lastName')}
                         onChange={(e) => handleChange("lastName", e.target.value)}
@@ -90,7 +90,7 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                     name="alias"
                     autoComplete="nickname"
                     label="Preferred Name/Alias"
-                    placeholder="John Doe"
+                    placeholder="John"
                     value={formData.alias}
                     onChange={(e) => handleChange("alias", e.target.value)}
                 />
@@ -113,7 +113,7 @@ export function PersonalDetailsForm({ showErrors, levelLabel }: PersonalDetailsF
                         label="Date of Birth"
                         type="date"
                         value={formData.dob || ""}
-                        placeholder="DD/MM/YYYY"
+                        placeholder="1990-01-01"
                         icon={Calendar}
                         error={getError('dob')}
                         onChange={(e) => handleChange("dob", e.target.value)}

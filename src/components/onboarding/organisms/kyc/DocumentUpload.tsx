@@ -61,6 +61,9 @@ export function DocumentUpload({
 
     return (
         <div className="space-y-4">
+            <div className="rounded-lg border border-[#C7DDF6] bg-[#EDF4FC] px-4 py-3 text-sm text-[#3B73B5]">
+                Sandbox test values: `John Adamu`, DOB `1990-01-01`, NIN `70123456789`, BVN `22222222222`.
+            </div>
             <div className="space-y-1">
                 <div
                     className="flex justify-between items-center cursor-pointer group"
@@ -106,10 +109,10 @@ export function DocumentUpload({
                         label={`${selectedIdLabel} Number`}
                         placeholder={
                             data.idType === "passport"
-                                ? "A00123456"
+                                ? "Passport number exactly as on document"
                                 : data.idType === "drivers_licence"
-                                    ? "FKJ494A2133"
-                                    : "11-digit NIN"
+                                    ? "Driver's licence number exactly as on document"
+                                    : "Sandbox NIN e.g. 70123456789"
                         }
                         className="pb-0"
                         value={data.idNumber}
@@ -139,7 +142,7 @@ export function DocumentUpload({
                         name="bvn"
                         autoComplete="off"
                         label="Bank Verification Number"
-                        placeholder="11-digit BVN"
+                        placeholder="Sandbox BVN e.g. 22222222222"
                         className="pb-0"
                         value={data.bvn}
                         onChange={(e) => {
