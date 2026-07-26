@@ -277,6 +277,52 @@ async function saveFundraiserPayment(
   });
 }
 
+async function confirmSelfieVerification(referenceId: string): Promise<{
+  referenceId: string;
+  selfieCompleted: boolean;
+  selfieUrl: string | null;
+}> {
+  try {
+    const res = await request.post<
+      ApiResponse<{
+        referenceId: string;
+        selfieCompleted: boolean;
+        selfieUrl: string | null;
+      }>
+    >(
+      `${ONBOARDING_ENDPOINT}/kyc/confirm-selfie`,
+      { referenceId },
+      { headers: getAuthHeaders() }
+    );
+    return unwrap(res.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+async function getDojahWidgetConfig(): Promise<{
+  enabled: boolean;
+  appId: string;
+  publicKey: string;
+  widgetId: string;
+}> {
+  try {
+    const res = await request.get<
+      ApiResponse<{
+        enabled: boolean;
+        appId: string;
+        publicKey: string;
+        widgetId: string;
+      }>
+    >(`${ONBOARDING_ENDPOINT}/kyc/dojah-widget-config`, {
+      headers: getAuthHeaders(),
+    });
+    return unwrap(res.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
 async function submitOnboarding(): Promise<void> {
   try {
     const res = await request.post<ApiResponse<void>>(
@@ -306,6 +352,8 @@ const onboardingService = {
   saveFundraiserKycBundle,
   saveFundraiserPayment,
   saveKyc,
+  getDojahWidgetConfig,
+  confirmSelfieVerification,
   submitOnboarding,
 };
 

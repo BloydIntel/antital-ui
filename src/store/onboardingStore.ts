@@ -17,6 +17,8 @@ export interface KYCData {
     addressFilePathOrKey: string | null;
     selfie: File | null;
     selfiePathOrKey: string | null;
+    /** True after Dojah widget confirm-selfie succeeds (or hydrated from API). */
+    selfieCompleted: boolean;
     incomeDocuments: string[];
     incomeFile: File | null;
     incomeFilePathOrKey: string | null;
@@ -181,6 +183,7 @@ const initialFormData: OnboardingFormData = {
         addressFilePathOrKey: null,
         selfie: null,
         selfiePathOrKey: null,
+        selfieCompleted: false,
         incomeDocuments: [],
         incomeFile: null,
         incomeFilePathOrKey: null,

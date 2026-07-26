@@ -44,10 +44,27 @@ export class ApiError extends Error {
    * e.g. getFieldError("email") checks "email" and "Email".
    */
   getFieldError(field: string): string | undefined {
-    const direct = this.validationErrors[field]?.[0];
-    if (direct) return direct;
-    const pascal = field.charAt(0).toUpperCase() + field.slice(1);
-    return this.validationErrors[pascal]?.[0];
+    const candidates = [
+      field,
+      field.charAt(0).toUpperCase() + field.slice(1),
+      `kycPayload.${field}`,
+      `KycPayload.${field.charAt(0).toUpperCase() + field.slice(1)}`,
+      `kycPayload${field.charAt(0).toUpperCase() + field.slice(1)}`,
+    ];
+
+    for (const key of candidates) {
+      const message = this.validationErrors[key]?.[0];
+      if (message) return message;
+    }
+
+    const lowerField = field.toLowerCase();
+    for (const [key, messages] of Object.entries(this.validationErrors)) {
+      if (key.toLowerCase() === lowerField || key.toLowerCase().endsWith(`.${lowerField}`)) {
+        return messages[0];
+      }
+    }
+
+    return undefined;
   }
 
   /**

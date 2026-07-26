@@ -102,7 +102,7 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
                               kycData.boardResolution,
                               kycData.boardResolutionPathOrKey
                           ) &&
-                          hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey)
+                          (kycData.selfieCompleted || !!kycData.selfiePathOrKey)
                       )
                     : baseKyc &&
                       !!(
@@ -115,7 +115,7 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
                               kycData.boardResolution,
                               kycData.boardResolutionPathOrKey
                           ) &&
-                          hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey)
+                          (kycData.selfieCompleted || !!kycData.selfiePathOrKey)
                       );
             }
 
@@ -134,7 +134,7 @@ export function validateStep(step: StepKey, state: OnboardingState): boolean {
             // Individual KYC
             return (
                 baseKyc &&
-                hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey) &&
+                (kycData.selfieCompleted || !!kycData.selfiePathOrKey) &&
                 kycData.incomeDocuments.length > 0 &&
                 hasOnboardingDocument(kycData.incomeFile, kycData.incomeFilePathOrKey)
             );
