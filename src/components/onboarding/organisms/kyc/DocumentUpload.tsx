@@ -9,8 +9,27 @@ import { TYPOGRAPHY } from '@/constants/styles';
 import { type KYCData, useOnboardingStore } from '@/store/onboardingStore';
 import { useOnboardingFileUpload } from '@/hooks/onboarding/useOnboardingFileUpload';
 import { hasOnboardingDocument } from '@/lib/onboarding-file-upload';
+import {
+    bvnErrorMessage,
+    kycIdNumberErrorMessage,
+    normalizeKycIdNumber,
+    toElevenDigits,
+} from '@/lib/kyc-id-validation';
 
-export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
+export type DocumentUploadFieldErrors = {
+    idNumber?: string;
+    bvn?: string;
+};
+
+export function DocumentUpload({
+    showErrors,
+    apiFieldErrors,
+    onClearApiFieldError,
+}: {
+    showErrors: boolean;
+    apiFieldErrors?: DocumentUploadFieldErrors;
+    onClearApiFieldError?: (field: keyof DocumentUploadFieldErrors) => void;
+}) {
     const { formData, updateFormData } = useOnboardingStore();
     const data = formData.kycData;
     const { uploadKycDocument, isUploading } = useOnboardingFileUpload();
@@ -23,13 +42,6 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
         });
     };
 
-    const toElevenDigits = (value: string) => value.replace(/\D/g, "").slice(0, 11);
-    const normalizeIdNumber = (value: string, idType: string) => {
-        if (idType === "national_id") return toElevenDigits(value);
-        return value;
-    };
-
-    // UI state for toggles
     const [showGovId, setShowGovId] = useState(true);
     const [showAddress, setShowAddress] = useState(true);
 
@@ -39,12 +51,16 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
         { label: "Driver's Licence", value: 'drivers_licence' },
     ];
 
-    // Determine the label for the ID Number input based on store value
     const selectedIdLabel = idOptions.find(opt => opt.value === data.idType)?.label || "National ID Card";
+    const idNumberError =
+        apiFieldErrors?.idNumber ||
+        (showErrors ? kycIdNumberErrorMessage(data.idType, data.idNumber) : null);
+    const bvnError =
+        apiFieldErrors?.bvn ||
+        (showErrors ? bvnErrorMessage(data.bvn) : null);
 
     return (
         <div className="space-y-4">
-            {/* --- Section 1: Government ID --- */}
             <div className="space-y-1">
                 <div
                     className="flex justify-between items-center cursor-pointer group"
@@ -72,7 +88,14 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                             options={idOptions}
                             placeholder="Select ID Type"
                             value={data.idType}
-                            onChange={(val) => handleDataChange('idType', val)}
+                            onChange={(val) => {
+                                handleDataChange('idType', val);
+                                handleDataChange(
+                                    'idNumber',
+                                    normalizeKycIdNumber(data.idNumber, val)
+                                );
+                                onClearApiFieldError?.('idNumber');
+                            }}
                             error={showErrors && !data.idType ? "Please select an ID type" : ""}
                         />
                     </div>
@@ -81,11 +104,23 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         name="idNumber"
                         autoComplete="off"
                         label={`${selectedIdLabel} Number`}
-                        placeholder="Enter ID Number"
+                        placeholder={
+                            data.idType === "passport"
+                                ? "A00123456"
+                                : data.idType === "drivers_licence"
+                                    ? "FKJ494A2133"
+                                    : "11-digit NIN"
+                        }
                         className="pb-0"
                         value={data.idNumber}
-                        onChange={(e) => handleDataChange('idNumber', normalizeIdNumber(e.target.value, data.idType))}
-                        error={showErrors && !data.idNumber ? "ID number is required" : ""}
+                        onChange={(e) => {
+                            handleDataChange(
+                                'idNumber',
+                                normalizeKycIdNumber(e.target.value, data.idType)
+                            );
+                            onClearApiFieldError?.('idNumber');
+                        }}
+                        error={idNumberError || ""}
                     />
 
                     <UploadSection
@@ -104,16 +139,18 @@ export function DocumentUpload({ showErrors }: { showErrors: boolean }) {
                         name="bvn"
                         autoComplete="off"
                         label="Bank Verification Number"
-                        placeholder="1234567890"
+                        placeholder="11-digit BVN"
                         className="pb-0"
                         value={data.bvn}
-                        onChange={(e) => handleDataChange('bvn', toElevenDigits(e.target.value))}
-                        error={showErrors && !data.bvn ? "BVN is required" : ""}
+                        onChange={(e) => {
+                            handleDataChange('bvn', toElevenDigits(e.target.value));
+                            onClearApiFieldError?.('bvn');
+                        }}
+                        error={bvnError || ""}
                     />
                 </div>
             </div>
 
-            {/* --- Section 2: Proof of Address --- */}
             <div className="space-y-1 pt-4">
                 <div
                     className="flex justify-between items-center cursor-pointer group"

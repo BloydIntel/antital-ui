@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { DocumentUpload } from '@/components/onboarding/organisms/kyc/DocumentUpload'
+import { DocumentUpload, type DocumentUploadFieldErrors } from '@/components/onboarding/organisms/kyc/DocumentUpload'
 import { SelfieUpload } from '@/components/onboarding/organisms/kyc/SelfieUpload'
 import { IncomeVerification } from '@/components/onboarding/organisms/kyc/IncomeVerification'
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton'
@@ -13,8 +13,10 @@ import { AccountRepresentativeDetails } from '@/components/onboarding/organisms/
 import onboardingService from '@/services/onboardingService'
 import { mapToCorporateDocsPayload, mapToKycPayload } from '@/lib/onboarding-payload-mappers'
 import { showApiErrorToast } from '@/lib/error-feedback'
+import { ApiError, toApiError } from '@/lib/api-error'
 import { useFundraiserOnboardingApi } from '@/hooks/onboarding/useFundraiserOnboardingApi'
 import { hasOnboardingDocument } from '@/lib/onboarding-file-upload'
+import { isValidBvn, isValidKycIdNumber } from '@/lib/kyc-id-validation'
 
 interface IdentityVerificationProps {
     onNext: () => void
@@ -31,12 +33,12 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
     const categoryId = useOnboardingStore((s) => s.formData.selectedCategoryId);
     const [showErrors, setShowErrors] = useState(false);
     const [isSavingKyc, setIsSavingKyc] = useState(false);
+    const [apiFieldErrors, setApiFieldErrors] = useState<DocumentUploadFieldErrors>({});
     const { saveCombinedKycBundle } = useFundraiserOnboardingApi();
 
     const isCorporate = userType === 'corporate';
     const isFundraiser = userType === 'fundraiser';
 
-    // 1. Correct Step Array logic
     const currentSteps = useMemo(() => {
         if (isFundraiser) return FUNDRAISER_ACCOUNT_REP_KYC_SUB_STEPS;
         if (!isCorporate) return INDIVIDUAL_KYC_SUB_STEPS;
@@ -49,6 +51,18 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
     }, [isCorporate, isFundraiser, categoryId]);
 
     const currentHeader = currentSteps[subStep];
+    const docsSubStepIndex = currentSteps.findIndex((step) => step.id === 'docs');
+
+    const isDocsValid = useMemo(() => {
+        return !!(
+            kycData.idType &&
+            isValidKycIdNumber(kycData.idType, kycData.idNumber) &&
+            hasOnboardingDocument(kycData.idFile, kycData.idFilePathOrKey) &&
+            isValidBvn(kycData.bvn) &&
+            kycData.address &&
+            hasOnboardingDocument(kycData.addressFile, kycData.addressFilePathOrKey)
+        );
+    }, [kycData]);
 
     const isStep0Valid = useMemo(() => {
         if (isFundraiser) {
@@ -63,27 +77,15 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                 formData.repAddress
             );
         }
-        return !!(
-            kycData.idNumber &&
-            hasOnboardingDocument(kycData.idFile, kycData.idFilePathOrKey) &&
-            kycData.bvn &&
-            kycData.address &&
-            hasOnboardingDocument(kycData.addressFile, kycData.addressFilePathOrKey)
-        );
-    }, [isFundraiser, formData, kycData]);
+        return isDocsValid;
+    }, [isFundraiser, formData, isDocsValid]);
 
     const isStep1Valid = useMemo(() => {
         if (isFundraiser) {
-            return !!(
-                kycData.idNumber &&
-                hasOnboardingDocument(kycData.idFile, kycData.idFilePathOrKey) &&
-                kycData.bvn &&
-                kycData.address &&
-                hasOnboardingDocument(kycData.addressFile, kycData.addressFilePathOrKey)
-            );
+            return isDocsValid;
         }
-        return hasOnboardingDocument(kycData.selfie, kycData.selfiePathOrKey);
-    }, [isFundraiser, kycData]);
+        return Boolean(kycData.selfieCompleted || kycData.selfiePathOrKey);
+    }, [isFundraiser, isDocsValid, kycData]);
 
     const isStep2Valid = useMemo(() => {
         if (isFundraiser) return true;
@@ -112,6 +114,22 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
 
     const isAllKycValid = isStep0Valid && isStep1Valid && isStep2Valid;
 
+    const applyApiFieldErrors = (error: unknown) => {
+        const normalized = toApiError(error);
+        if (!(normalized instanceof ApiError)) return;
+
+        const nextErrors: DocumentUploadFieldErrors = {
+            idNumber: normalized.getFieldError("nin") || normalized.getFieldError("idNumber"),
+            bvn: normalized.getFieldError("bvn"),
+        };
+
+        setApiFieldErrors(nextErrors);
+
+        if ((nextErrors.idNumber || nextErrors.bvn) && docsSubStepIndex >= 0) {
+            setSubStep(docsSubStepIndex);
+        }
+    };
+
     const handleNext = async () => {
         const maxSubStep = currentSteps.length - 1;
         if (subStep < maxSubStep) {
@@ -121,6 +139,11 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                     return;
                 }
                 setSubStep(subStep + 1);
+                return;
+            }
+
+            if (currentHeader?.id === 'docs' && !isDocsValid) {
+                setShowErrors(true);
                 return;
             }
 
@@ -156,10 +179,12 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
                         isCorporate ? mapToCorporateDocsPayload(categoryId, kycData) : undefined
                     );
                 }
+                setApiFieldErrors({});
                 onNext();
             } catch (error) {
                 showApiErrorToast(error, "Unable to save KYC details.");
                 setShowErrors(true);
+                applyApiFieldErrors(error);
             } finally {
                 setIsSavingKyc(false);
             }
@@ -207,7 +232,15 @@ export function IdentityVerification({ onNext, onBack }: IdentityVerificationPro
             <div>
                 {currentHeader?.id === 'representative' && <AccountRepresentativeDetails showErrors={showErrors} />}
 
-                {currentHeader?.id === 'docs' && <DocumentUpload showErrors={showErrors} />}
+                {currentHeader?.id === 'docs' && (
+                    <DocumentUpload
+                        showErrors={showErrors}
+                        apiFieldErrors={apiFieldErrors}
+                        onClearApiFieldError={(field) =>
+                            setApiFieldErrors((prev) => ({ ...prev, [field]: undefined }))
+                        }
+                    />
+                )}
                 {currentHeader?.id === 'selfie' && <SelfieUpload showErrors={showErrors} />}
 
                 {currentHeader?.id === 'income' && <IncomeVerification showErrors={showErrors} />}

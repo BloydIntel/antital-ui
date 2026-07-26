@@ -7,6 +7,7 @@ import type {
   SaveKycIdType,
 } from "@/types/onboarding";
 import { pathOrKeyOrNull } from "@/lib/onboarding-file-upload";
+import { toApiBvnOrNull, toApiIdNumberOrNull } from "@/lib/kyc-id-validation";
 
 function toNumber(value: QuestionValue): number | null {
   if (typeof value === "number") return Number.isFinite(value) ? value : null;
@@ -220,8 +221,8 @@ export function mapToKycPayload(kycData: KYCData): SaveKycPayload {
 
   return {
     idType: mapKycIdType(kycData.idType),
-    nin: toElevenDigitsOrNull(kycData.idNumber),
-    bvn: toElevenDigitsOrNull(kycData.bvn),
+    nin: toApiIdNumberOrNull(kycData.idType, kycData.idNumber),
+    bvn: toApiBvnOrNull(kycData.bvn),
     governmentIdDocumentPathOrKey: pathOrKeyOrNull(kycData.idFilePathOrKey),
     proofOfAddressDocumentPathOrKey: pathOrKeyOrNull(kycData.addressFilePathOrKey),
     selfieVerificationPathOrKey: pathOrKeyOrNull(kycData.selfiePathOrKey),

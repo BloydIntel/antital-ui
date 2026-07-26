@@ -70,7 +70,7 @@ export function IndividualInvestorReview() {
                 onEditClick={() => handleEdit("kyc")}
                 items={[
                     { label: INDIVIDUAL_KYC_SUB_STEPS[0]!.title, value: hasOnboardingDocument(formData.kycData.idFile, formData.kycData.idFilePathOrKey) ? "Completed" : "Pending" },
-                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: hasOnboardingDocument(formData.kycData.selfie, formData.kycData.selfiePathOrKey) ? "Completed" : "Pending" },
+                    { label: INDIVIDUAL_KYC_SUB_STEPS[1]!.title, value: (formData.kycData.selfieCompleted || formData.kycData.selfiePathOrKey) ? "Completed" : "Pending" },
                     { label: INDIVIDUAL_KYC_SUB_STEPS[2]!.title, value: hasOnboardingDocument(formData.kycData.incomeFile, formData.kycData.incomeFilePathOrKey) ? "Completed" : "Pending" },
                 ]}
             />
