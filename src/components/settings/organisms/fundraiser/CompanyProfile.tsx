@@ -32,6 +32,35 @@ const EMPTY_FORM: CompanyFormState = {
   headquarters: '',
 };
 
+function formatDateLabel(value?: string | null) {
+  if (!value) return '—';
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
+function getCacStatusTone(status?: string | null) {
+  const normalized = status?.trim().toLowerCase();
+
+  if (normalized === 'active' || normalized === 'registered' || normalized === 'incorporated' || normalized === 'verified') {
+    return 'bg-[#ECFDF3] text-[#027A48] border-[#ABEFC6]';
+  }
+
+  if (normalized === 'bypassed') {
+    return 'bg-[#FFFAEB] text-[#B54708] border-[#FEDF89]';
+  }
+
+  return 'bg-[#F2F4F7] text-[#344054] border-[#D0D5DD]';
+}
+
 function mapProfileToForm(profile: FundraiserSettingsProfile): CompanyFormState {
   return {
     companyName: profile.companyName ?? '',
@@ -131,6 +160,7 @@ export function CompanyProfile({ onBack }: CompanyProfileProps) {
   const locationLabel = profile.locationLabel || 'Location not set';
   const avatarFallback = profile.companyAvatarFallback || 'FR';
   const completionPercentage = profile.completionPercentage ?? 0;
+  const cacStatusLabel = profile.cacVerificationStatus || 'Not verified';
 
   return (
     <div className="w-full font-sans space-y-6">
@@ -231,6 +261,40 @@ export function CompanyProfile({ onBack }: CompanyProfileProps) {
         </div>
 
         <div className="lg:col-span-4 space-y-4">
+          <div className="bg-white border border-[#F4F5F7] rounded-xl p-5 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-[16px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
+                CAC Verification
+              </h3>
+              <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[12px] font-semibold ${getCacStatusTone(profile.cacVerificationStatus)}`}>
+                {cacStatusLabel}
+              </span>
+            </div>
+
+            <div className="space-y-3 text-[14px]">
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#858585]">Verified company name</span>
+                <span className="text-right text-[#1B1B1B]">{profile.cacVerifiedCompanyName || '—'}</span>
+              </div>
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#858585]">Verified registration number</span>
+                <span className="text-right text-[#1B1B1B]">{profile.cacVerifiedRegistrationNumber || '—'}</span>
+              </div>
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#858585]">Company type</span>
+                <span className="text-right text-[#1B1B1B]">{profile.cacVerifiedCompanyType || '—'}</span>
+              </div>
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#858585]">Incorporation date</span>
+                <span className="text-right text-[#1B1B1B]">{formatDateLabel(profile.cacIncorporationDate)}</span>
+              </div>
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#858585]">Verified at</span>
+                <span className="text-right text-[#1B1B1B]">{formatDateLabel(profile.cacVerifiedAt)}</span>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white border border-[#F4F5F7] rounded-xl p-5 space-y-4">
             <h3 className="text-[16px] text-[#1B1B1B]" style={{ ...TYPOGRAPHY.body, fontWeight: 600 }}>
               Location

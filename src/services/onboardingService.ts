@@ -134,7 +134,7 @@ async function saveCorporateCompany(
   corporateCompanyPayload: NonNullable<SaveOnboardingRequest["corporateCompanyPayload"]>
 ): Promise<void> {
   await saveOnboarding({
-    step: "InvestmentProfile",
+    step: "InvestorCategory",
     investorCategoryPayload: null,
     investmentProfilePayload: null,
     kycPayload: null,
@@ -153,7 +153,7 @@ async function saveCorporateAddress(
   corporateAddressPayload: NonNullable<SaveOnboardingRequest["corporateAddressPayload"]>
 ): Promise<void> {
   await saveOnboarding({
-    step: "InvestmentProfile",
+    step: "InvestorCategory",
     investorCategoryPayload: null,
     investmentProfilePayload: null,
     kycPayload: null,
@@ -174,7 +174,7 @@ async function saveCorporateRepresentative(
   >
 ): Promise<void> {
   await saveOnboarding({
-    step: "InvestmentProfile",
+    step: "InvestorCategory",
     investorCategoryPayload: null,
     investmentProfilePayload: null,
     kycPayload: null,

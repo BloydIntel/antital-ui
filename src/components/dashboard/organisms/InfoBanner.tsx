@@ -5,17 +5,31 @@ import { AlertTriangle } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 
 export type BannerType = 'kyc' | 'email-verification' | 'two-factor' | 'bank-account';
+export type BannerState = 'action-required' | 'pending';
 
 interface InfoBannerProps {
     type: BannerType;
+    state?: BannerState;
     onActionClick?: () => void;
 }
 
-export function InfoBanner({ type, onActionClick }: InfoBannerProps) {
+export function InfoBanner({ type, state = 'action-required', onActionClick }: InfoBannerProps) {
 
     const getBannerConfig = () => {
         switch (type) {
             case 'kyc':
+                if (state === 'pending') {
+                    return {
+                        title: 'KYC Under Review',
+                        description: 'Your verification has been submitted and is currently under review.',
+                        buttonText: 'View Application',
+                        bgClass: 'bg-[#E8F1FD] border-[#7CA6E8]',
+                        titleColor: 'text-[#1A1A1A]',
+                        descColor: 'text-[#555555]',
+                        btnClass: 'bg-[#3B73B5] hover:bg-[#315f95] text-white',
+                        icon: <AlertTriangle className="w-5 h-5 text-[#3B73B5]" />
+                    };
+                }
                 return {
                     title: 'Complete KYC',
                     description: 'Update your personal details and profile to unlock all features',

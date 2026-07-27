@@ -39,7 +39,12 @@ export function hasOnboardingDocument(
   file: File | null | undefined,
   pathOrKey: string | null | undefined
 ): boolean {
-  return Boolean(pathOrKeyOrNull(pathOrKey) || (file instanceof File && file.size > 0));
+  const hasFileObject =
+    typeof File !== "undefined" &&
+    file instanceof File &&
+    file.size > 0;
+
+  return Boolean(pathOrKeyOrNull(pathOrKey) || hasFileObject);
 }
 
 export function displayNameFromPathOrKey(pathOrKey: string): string {
