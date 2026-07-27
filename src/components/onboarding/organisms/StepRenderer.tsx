@@ -81,7 +81,7 @@ export default function StepRenderer({ step, investorUserTypeFromUrl }: StepRend
             return <IdentityVerification onBack={navigateToBack} onNext={navigateToNext} />;
 
         case "application-fee":
-            return <PaymentApplicationFee />
+            return <PaymentApplicationFee onBack={navigateToBack} />
 
         case "review":
             return <Review onBack={navigateToBack} onNext={navigateToNext} />;

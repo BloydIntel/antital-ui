@@ -17,7 +17,7 @@ const COMPANY_FIELDS = [
     {
         name: "companyName",
         label: "Company Legal Name",
-        placeholder: "Exactly as registered with CAC",
+        placeholder: "Sandbox example: JOHN DOE LIMITED",
         autoComplete: "organization"
     },
     {
@@ -43,7 +43,7 @@ const COMPANY_FIELDS = [
             {
                 name: "registrationNumber",
                 label: "Registration Number",
-                placeholder: "BN1234567",
+                placeholder: "Sandbox example: 1261103 or 14320749",
                 autoComplete: "off"
             }
         ]

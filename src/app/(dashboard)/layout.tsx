@@ -10,6 +10,9 @@ import { InfoBanner } from "@/components/dashboard/organisms/InfoBanner";
 import { useRouter } from "next/navigation";
 import { SyncUserProfile } from "@/components/auth/sync-user-profile";
 import { useUserStore } from "@/store/userStore";
+import { useQuery } from "@tanstack/react-query";
+import onboardingService from "@/services/onboardingService";
+import { mapOnboardingStepToUiStep } from "@/lib/onboarding-hydration";
 
 export default function DashboardLayout({
   children,
@@ -20,9 +23,7 @@ export default function DashboardLayout({
 
   const [isMobile, setIsMobile] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
-
-  // Read the real-time KYC validation status from your store
-  const isKycCompleted = useUserStore((state) => state.isKycCompleted);
+  const userType = useUserStore((state) => state.userType);
 
   // Monitor store hydration to avoid server-client state mismatch
   useEffect(() => {
@@ -35,6 +36,42 @@ export default function DashboardLayout({
   }, []);
 
   const router = useRouter();
+  const onboardingQuery = useQuery({
+    queryKey: ["dashboard-onboarding-banner"],
+    queryFn: () => onboardingService.getOnboarding(),
+    enabled: hasHydrated,
+  });
+
+  const onboarding = onboardingQuery.data;
+  const onboardingStatus = onboarding?.status ? String(onboarding.status) : null;
+  const isPendingReview = onboardingStatus === "Submitted" || onboardingStatus === "UnderReview";
+  const isActivated = onboardingStatus === "Activated";
+  const isActionRequired =
+    !isActivated &&
+    !isPendingReview &&
+    onboarding != null &&
+    String(onboarding.currentStep) !== "Submitted" &&
+    String(onboarding.currentStep) !== "4";
+  const shouldShowKycBanner = hasHydrated && (isPendingReview || isActionRequired);
+
+  const handleBannerAction = () => {
+    if (isPendingReview) {
+      router.push("/documents");
+      return;
+    }
+
+    if (!onboarding) {
+      router.push("/settings");
+      return;
+    }
+
+    const investorUserType =
+      userType === "corporate" || userType === "fundraiser"
+        ? userType
+        : "individual";
+    const step = mapOnboardingStepToUiStep(onboarding.currentStep, investorUserType);
+    router.push(`/onboarding/${investorUserType}/${step}`);
+  };
 
   return (
     <>
@@ -58,11 +95,12 @@ export default function DashboardLayout({
       <SidebarInset className="bg-[#F8F8F8F8]">
         <DashboardHeader />
 
-        {hasHydrated && !isKycCompleted && (
+        {shouldShowKycBanner && (
           <div className='pt-8 px-4 lg:px-8'>
             <InfoBanner
               type='kyc'
-              onActionClick={() => router.push("/settings")}
+              state={isPendingReview ? "pending" : "action-required"}
+              onActionClick={handleBannerAction}
             />
           </div>
         )}

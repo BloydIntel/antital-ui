@@ -14,6 +14,7 @@ import { tokenStorage } from '@/lib/token-storage';
 import { showApiErrorToast } from '@/lib/error-feedback';
 import { useUserStore } from '@/store/userStore';
 import { mapApiUserTypeToStoreUserType } from '@/lib/user-type';
+import onboardingService from '@/services/onboardingService';
 
 const corporateHeaderLabels = [
     { id: 'details', title: 'Corporate Investment Account', desc: 'Register your organization to invest in vetted Nigerian startups' },
@@ -51,6 +52,53 @@ export function CompanyInformation() {
 
     const canProceedCurrent = validateSubStep(currentStep.id as CompanySubStepId, store);
 
+    const persistExistingAccountCompanyStep = async () => {
+        if (isFundraiser) {
+            await onboardingService.saveFundraiserCompany({
+                companyLegalName: store.formData.companyName,
+                tradingBrandName: store.formData.brandName || null,
+                registrationType: store.formData.registrationType,
+                registrationNumber: store.formData.registrationNumber,
+                companyLoginEmail: store.formData.loginEmail,
+                dateOfRegistration: store.formData.registrationDate || null,
+                companyWebsite: store.formData.companyWebsite || null,
+                businessAddress: store.formData.businessAddress || "",
+                registeredAddress: store.formData.registeredAddress || "",
+                companyEmail: store.formData.companyEmail || "",
+                companyPhone: store.formData.companyPhone || "",
+            });
+            return;
+        }
+
+        await onboardingService.saveCorporateCompany({
+            companyLegalName: store.formData.companyName,
+            tradingBrandName: store.formData.brandName,
+            registrationType: store.formData.registrationType,
+            registrationNumber: store.formData.registrationNumber,
+            companyLoginEmail: store.formData.loginEmail,
+        });
+
+        await onboardingService.saveCorporateAddress({
+            dateOfRegistration: store.formData.registrationDate || "",
+            companyWebsite: store.formData.companyWebsite || "",
+            businessAddress: store.formData.businessAddress || "",
+            registeredAddress: store.formData.registeredAddress || "",
+            companyEmail: store.formData.companyEmail || "",
+            companyPhone: store.formData.companyPhone || "",
+        });
+
+        await onboardingService.saveCorporateRepresentative({
+            representativeFullName: store.formData.repFullName,
+            representativeJobTitle: store.formData.repJobTitle,
+            representativePhoneNumber: store.formData.repPhoneNumber,
+            representativeDateOfBirth: store.formData.repDob,
+            representativeEmail: store.formData.repEmail,
+            representativeNationality: store.formData.repNationality,
+            representativeCountryOfResidence: store.formData.repResidence,
+            representativeAddress: store.formData.repAddress,
+        });
+    };
+
     const nextSubStep = async () => {
         // 1. Always validate the current view first
         if (!canProceedCurrent) {
@@ -74,10 +122,19 @@ export function CompanyInformation() {
 
             // Account already exists after email verification — keep edits and resume flow.
             if (store.emailVerified) {
-                const nextAfterEmail = isFundraiser
-                    ? "company-documentation"
-                    : "categorization";
-                router.push(`/onboarding/${investorUserType}/${nextAfterEmail}`);
+                setIsSubmitting(true);
+                try {
+                    await persistExistingAccountCompanyStep();
+                    const nextAfterEmail = isFundraiser
+                        ? "company-documentation"
+                        : "categorization";
+                    router.push(`/onboarding/${investorUserType}/${nextAfterEmail}`);
+                } catch (error) {
+                    showApiErrorToast(error, `Unable to save ${isFundraiser ? "fundraiser" : "corporate"} company details.`);
+                    setShowErrors(true);
+                } finally {
+                    setIsSubmitting(false);
+                }
                 return;
             }
 

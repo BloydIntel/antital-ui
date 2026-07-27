@@ -97,6 +97,12 @@ export interface OnboardingCorporateProfileDto {
     registrationType?: string | null;
     registrationNumber?: string | null;
     companyLoginEmail?: string | null;
+    cacVerifiedCompanyName?: string | null;
+    cacVerifiedRegistrationNumber?: string | null;
+    cacVerifiedCompanyType?: string | null;
+    cacVerificationStatus?: string | null;
+    cacVerifiedAt?: string | null;
+    cacIncorporationDate?: string | null;
   } | null;
   address?: {
     dateOfRegistration?: string | null;
@@ -133,6 +139,12 @@ export interface OnboardingFundRaiserProfileDto {
     registeredAddress?: string | null;
     companyEmail?: string | null;
     companyPhone?: string | null;
+    cacVerifiedCompanyName?: string | null;
+    cacVerifiedRegistrationNumber?: string | null;
+    cacVerifiedCompanyType?: string | null;
+    cacVerificationStatus?: string | null;
+    cacVerifiedAt?: string | null;
+    cacIncorporationDate?: string | null;
   } | null;
   representative?: {
     representativeFullName?: string | null;

@@ -61,6 +61,12 @@ export interface FundraiserSettingsContact {
 export interface FundraiserSettingsProfile {
   companyName: string | null;
   registrationNumber: string | null;
+  cacVerifiedCompanyName: string | null;
+  cacVerifiedRegistrationNumber: string | null;
+  cacVerifiedCompanyType: string | null;
+  cacVerificationStatus: string | null;
+  cacVerifiedAt: string | null;
+  cacIncorporationDate: string | null;
   bio: string | null;
   website: string | null;
   publicEmail: string | null;
