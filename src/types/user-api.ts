@@ -10,6 +10,12 @@ export interface UserCompanyProfile {
   registeredAddress?: string | null;
   companyEmail?: string | null;
   companyPhone?: string | null;
+  cacVerifiedCompanyName?: string | null;
+  cacVerifiedRegistrationNumber?: string | null;
+  cacVerifiedCompanyType?: string | null;
+  cacVerificationStatus?: string | null;
+  cacVerifiedAt?: string | null;
+  cacIncorporationDate?: string | null;
   representativeFullName?: string | null;
   representativeJobTitle?: string | null;
   representativePhoneNumber?: string | null;

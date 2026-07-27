@@ -10,7 +10,7 @@ const ADDRESS_FIELDS = [
     {
         name: "registrationDate",
         label: "Date of Registration",
-        placeholder: "DD/MM/YYYY",
+        placeholder: "Sandbox example: 19/07/2024",
         type: "date",
         autoComplete: "bday"
     },

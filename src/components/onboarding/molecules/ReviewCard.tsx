@@ -24,10 +24,13 @@ export function ReviewCard({ title, items, isStatusType, onEditClick }: ReviewCa
         const val = item.value;
         const label = item.label?.toLowerCase();
         const isCorporate = investorUserType === "corporate";
+        const isFileValue =
+            typeof File !== "undefined" &&
+            val instanceof File;
 
         if (val === null || val === undefined) return "Not set";
 
-        if (val instanceof File || val === "File Uploaded") {
+        if (isFileValue || val === "File Uploaded") {
             if (isCorporate) {
                 return label?.includes("selfie") ? "Verified" : "Uploaded";
             }

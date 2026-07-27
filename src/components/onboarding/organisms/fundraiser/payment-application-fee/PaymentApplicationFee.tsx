@@ -29,6 +29,7 @@ interface PaymentApplicationFeeProps {
     minInvestment?: number
     offeringId?: number
     offeringSlug?: string
+    onBack?: () => void
 }
 
 const FUNDRAISER_PAYMENT_STATE_KEY = "fundraiser_application_fee_state";
@@ -39,6 +40,7 @@ export function PaymentApplicationFee({
     unitPrice,
     minInvestment,
     offeringId,
+    onBack,
 }: PaymentApplicationFeeProps) {
 
     const pathName = usePathname()
@@ -247,6 +249,10 @@ export function PaymentApplicationFee({
         if (subStepIndex > 0) {
             setSubStepIndex(prev => prev - 1);
         } else {
+            if (onBack) {
+                onBack();
+                return;
+            }
             router.back();
         }
     };
