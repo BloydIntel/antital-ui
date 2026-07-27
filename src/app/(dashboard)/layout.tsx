@@ -56,6 +56,11 @@ export default function DashboardLayout({
 
   const handleBannerAction = () => {
     if (isPendingReview) {
+      if (userType === "individual" || userType === "corporate") {
+        router.push("/settings?tab=account");
+        return;
+      }
+
       router.push("/documents");
       return;
     }
