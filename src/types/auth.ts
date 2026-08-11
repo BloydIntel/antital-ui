@@ -46,7 +46,9 @@ export interface LoginResponse {
   userId: number;
   email: string;
   userType: string;
+  role: string;
   isEmailVerified: boolean;
+  requiresOtp: boolean;
 }
 
 export interface RefreshRequest {

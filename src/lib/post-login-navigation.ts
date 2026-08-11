@@ -2,7 +2,7 @@ import type { LoginResponse } from "@/services/authService";
 import { ONBOARDING_CONFIG, type InvestorUserType } from "@/constants/steps";
 import onboardingService from "@/services/onboardingService";
 import { mapOnboardingStepToUiStep } from "@/lib/onboarding-hydration";
-import { mapApiUserTypeToStoreUserType } from "@/lib/user-type";
+import { mapApiIdentityToStoreUserType, mapApiUserTypeToStoreUserType } from "@/lib/user-type";
 import type { OnboardingResponse } from "@/types/onboarding";
 import {
   buildCheckoutPath,
@@ -12,7 +12,8 @@ import {
 
 /** Maps API login `userType` (camelCase or PascalCase) to onboarding URL segment. */
 export function mapLoginUserTypeToInvestorPathSegment(userType: string): InvestorUserType {
-  return mapApiUserTypeToStoreUserType(userType);
+  const mappedType = mapApiUserTypeToStoreUserType(userType);
+  return mappedType === "admin" ? "individual" : mappedType;
 }
 
 function firstStepKeyForType(type: InvestorUserType): string {
@@ -49,9 +50,14 @@ export interface SessionResume {
  */
 export async function resolveSessionResumePath(input: {
   userType: string;
+  role?: string;
   isEmailVerified: boolean;
   fromTrading?: boolean;
 }): Promise<SessionResume> {
+  if (mapApiIdentityToStoreUserType(input.userType, input.role) === "admin") {
+    return { path: "/dashboard", kind: "dashboard" };
+  }
+
   const type = mapLoginUserTypeToInvestorPathSegment(input.userType);
   const pendingInvestment = readPendingInvestment();
 
@@ -89,6 +95,7 @@ export async function resolvePostLoginPath(
 ): Promise<string> {
   const resume = await resolveSessionResumePath({
     userType: login.userType,
+    role: login.role,
     isEmailVerified: login.isEmailVerified,
     fromTrading: options?.fromTrading,
   });
