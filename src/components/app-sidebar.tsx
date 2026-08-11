@@ -15,6 +15,9 @@ import {
   Megaphone,
   Users,
   FileText,
+  Flag,
+  ShieldCheck,
+  BadgeDollarSign,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -72,11 +75,37 @@ const fundraiserNavGroups = [
   },
 ];
 
+const adminNavGroups = [
+  {
+    label: "Admin operations",
+    items: [
+      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Flags and Alerts", url: "/flags-and-alerts", icon: Flag },
+      { title: "Investor Management", url: "/investor-management", icon: Users },
+      { title: "Fundraiser Management", url: "/fundraiser-management", icon: BriefcaseBusiness },
+      { title: "Financial Operations", url: "/financial-operations", icon: BadgeDollarSign },
+      { title: "Compliance & Regulatory", url: "/compliance", icon: ShieldCheck },
+    ],
+  },
+  {
+    label: "Admin support",
+    items: [
+      { title: "Support Hub", url: "/support-hub", icon: MessageCircle },
+      { title: "Settings", url: "/settings", icon: Settings },
+      { title: "Log Out", url: "#", icon: LogOut, action: "logout" as const },
+    ],
+  },
+];
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const userType = useUserStore((state) => state.userType);
 
-  const activeNavGroups = userType === "fundraiser" ? fundraiserNavGroups : investorNavGroups;
+  const activeNavGroups = userType === "admin"
+    ? adminNavGroups
+    : userType === "fundraiser"
+      ? fundraiserNavGroups
+      : investorNavGroups;
 
   return (
     <Sidebar {...props} className="bg-[#FFFFFF] shrink-0 scrollbar-hide">

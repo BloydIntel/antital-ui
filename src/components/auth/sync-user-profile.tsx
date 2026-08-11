@@ -12,10 +12,12 @@ export function SyncUserProfile() {
   useEffect(() => {
     if (!user) return;
 
-    const { updateProfile, setUserId } = useUserStore.getState();
+    const { updateProfile, setUserId, userType } = useUserStore.getState();
     updateProfile({
       emailAddress: user.email,
-      userType: mapApiUserTypeToStoreUserType(user.userType),
+      // The user profile endpoint does not expose Role yet. Preserve the admin
+      // identity established by login (or the local development override).
+      userType: userType === "admin" ? "admin" : mapApiUserTypeToStoreUserType(user.userType),
       isEmailVerified: user.isEmailVerified,
     });
     setUserId(String(user.id));

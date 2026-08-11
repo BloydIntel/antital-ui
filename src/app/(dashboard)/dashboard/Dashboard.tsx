@@ -15,6 +15,7 @@ import { useUserStore } from "@/store/userStore"
 import { FundingProgress } from "@/app/(dashboard)/dashboard/components/funding-progress"
 import { InvestorBreakdownChart } from "@/app/(dashboard)/dashboard/components/investor-breakdown-chart"
 import { FundraisingMilestones } from "@/app/(dashboard)/dashboard/components/fundraising-milestones"
+import { AdminDashboard } from "@/app/(dashboard)/dashboard/components/admin-dashboard"
 
 function formatVelocityLabel(amount: number, period: string): string {
     const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0
@@ -39,13 +40,14 @@ export function Dashboard() {
     }, [])
 
     const isFundraiser = hasHydrated && userType === "fundraiser"
+    const isAdmin = hasHydrated && userType === "admin"
 
     const {
         data: investorData,
         isLoading: isInvestorLoading,
         isError: isInvestorError,
         error: investorError,
-    } = useDashboard(period, hasHydrated && !isFundraiser)
+    } = useDashboard(period, hasHydrated && !isFundraiser && !isAdmin)
 
     const {
         data: fundraiserData,
@@ -61,10 +63,10 @@ export function Dashboard() {
     }, [isUserError, userError])
 
     useEffect(() => {
-        if (!isFundraiser && isInvestorError) {
+        if (!isFundraiser && !isAdmin && isInvestorError) {
             showApiErrorToast(investorError, "Unable to load dashboard.")
         }
-    }, [isFundraiser, isInvestorError, investorError])
+    }, [isAdmin, isFundraiser, isInvestorError, investorError])
 
     useEffect(() => {
         if (isFundraiser && isFundraiserError) {
@@ -75,6 +77,10 @@ export function Dashboard() {
     const displayName = resolveUserDisplayName(user)
     const currentUserType = hasHydrated ? userType : "individual"
     const isLoading = isFundraiser ? isFundraiserLoading : isInvestorLoading
+
+    if (isAdmin) {
+        return <AdminDashboard />
+    }
 
     return (
         <main>
@@ -135,7 +141,7 @@ export function Dashboard() {
                 <DataTable
                     holdings={investorData?.holdings}
                     isLoading={isLoading}
-                    userType={currentUserType}
+                    userType={currentUserType === "admin" ? "individual" : currentUserType}
                 />
             ) : (
                 <FundraisingMilestones
