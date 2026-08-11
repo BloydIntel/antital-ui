@@ -1,19 +1,19 @@
-import { Metadata } from "next"
-import Image from "next/image"
-import { AdminOtpForm } from "@/app/(auth)/admin/otp/components/admin-otp-form"
+"use client"
 
-export const metadata: Metadata = {
-    title: "OTP Verification | Antital Admin",
-    description: "Verify your admin account identity to continue to the portal.",
+import Image from "next/image"
+import { AdminOtpForm } from "./admin-otp-form"
+
+interface AdminOtpPageLayoutProps {
+    onVerifySuccess: () => void
 }
 
-export default function AdminOtpPage() {
+export function AdminOtpPageLayout({ onVerifySuccess }: AdminOtpPageLayoutProps) {
     return (
-        <div className="grid min-h-screen lg:grid-cols-5">
+        <div className="grid min-h-screen lg:grid-cols-5 bg-white -m-4 sm:-m-6 lg:-m-8">
             <div className="flex flex-col gap-4 p-6 md:p-10 col-span-3">
                 <div className="flex flex-1 items-center justify-center">
                     <div className="w-full max-w-xl">
-                        <AdminOtpForm />
+                        <AdminOtpForm onVerifySuccess={onVerifySuccess} />
                     </div>
                 </div>
 
@@ -31,7 +31,7 @@ export default function AdminOtpPage() {
             <div className="relative hidden lg:block col-span-2 min-h-screen">
                 <Image
                     src="/create-account/create-account-page.png"
-                    alt="Create Account illustration"
+                    alt=""
                     fill
                     className="object-cover"
                     priority
