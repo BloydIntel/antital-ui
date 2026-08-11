@@ -51,3 +51,7 @@ export function InvestorOnly({ children }: { children: ReactNode }) {
     <RequireUserType allow={["individual", "corporate"]}>{children}</RequireUserType>
   )
 }
+
+export function AdminOnly({ children }: { children: ReactNode }) {
+  return <RequireUserType allow="admin">{children}</RequireUserType>
+}
