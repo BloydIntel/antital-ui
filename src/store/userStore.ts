@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-export type UserType = "individual" | "corporate" | "fundraiser"
+export type UserType = "individual" | "corporate" | "fundraiser" | "admin"
 
 export interface UserData {
     userId: string | null
