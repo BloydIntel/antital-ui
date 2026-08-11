@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, type ComponentType, type ReactNode } from "react"
+import Link from "next/link"
 import {
   BriefcaseBusiness,
   CircleDollarSign,
@@ -195,9 +196,10 @@ export function AdminDashboard() {
             <h2 className="text-lg font-semibold text-[#292B29]">Recent Activity</h2>
             <Button
               variant="link"
+              asChild
               className="h-12 rounded-none px-5 text-base font-medium text-[#A8BD27] hover:bg-[#B7CB53] hover:text-[#123A30] hover:no-underline"
             >
-              View Log
+              <Link href="/activity-logs">View Log</Link>
             </Button>
           </div>
           <ol className="pt-3">

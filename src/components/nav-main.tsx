@@ -44,6 +44,8 @@ export function NavMain({
 }) {
   const pathname = usePathname()
   const logoutMutation = useLogout()
+  const isItemActive = (item: NavMainItem) =>
+    pathname === item.url || (item.url === "/dashboard" && pathname === "/activity-logs")
 
   // Check if any subitem is active to determine if parent should be open
   const shouldBeOpen = (item: NavMainItem) => {
@@ -121,7 +123,7 @@ export function NavMain({
                   asChild
                   tooltip={item.title}
                   className="cursor-pointer"
-                  isActive={pathname === item.url}
+                  isActive={isItemActive(item)}
                 >
                   <Link href={item.url}>
                     {item.icon && (
