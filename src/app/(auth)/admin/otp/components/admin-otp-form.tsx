@@ -116,7 +116,7 @@ export function AdminOtpForm() {
                                 onChange={(e) => handleChange(index, e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
                                 onPaste={handlePaste}
-                                className="w-[50px] sm:w-[79.33px] lg:w-[73px] xl-w-[79.33px] h-[48px] text-center text-[16px] text-[#505050] font-medium rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#CAD484] focus:border-[#CAD484] transition-all"
+                                className="w-[50px] sm:w-[79.33px] lg:w-[73px] xl:w-[79.33px] h-[48px] text-center text-[16px] text-[#505050] font-medium rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#CAD484] focus:border-[#CAD484] transition-all"
                             />
                             {index === 2 && <span className="text-[#858585] font-light">—</span>}
                         </React.Fragment>
