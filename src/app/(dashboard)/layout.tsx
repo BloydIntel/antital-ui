@@ -24,6 +24,7 @@ export default function DashboardLayout({
   const [isMobile, setIsMobile] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
   const userType = useUserStore((state) => state.userType);
+  const isAdmin = userType === "admin";
 
   // Monitor store hydration to avoid server-client state mismatch
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function DashboardLayout({
   const onboardingQuery = useQuery({
     queryKey: ["dashboard-onboarding-banner"],
     queryFn: () => onboardingService.getOnboarding(),
-    enabled: hasHydrated,
+    enabled: hasHydrated && !isAdmin,
   });
 
   const onboarding = onboardingQuery.data;
@@ -52,7 +53,7 @@ export default function DashboardLayout({
     onboarding != null &&
     String(onboarding.currentStep) !== "Submitted" &&
     String(onboarding.currentStep) !== "4";
-  const shouldShowKycBanner = hasHydrated && (isPendingReview || isActionRequired);
+  const shouldShowKycBanner = hasHydrated && !isAdmin && (isPendingReview || isActionRequired);
 
   const handleBannerAction = () => {
     if (isPendingReview) {
