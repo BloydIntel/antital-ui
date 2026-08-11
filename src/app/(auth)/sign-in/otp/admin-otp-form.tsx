@@ -7,7 +7,11 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
 
-export function AdminOtpForm() {
+interface AdminOtpFormProps {
+    onVerifySuccess?: () => void
+}
+
+export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const [isLoading, setIsLoading] = useState(false)
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
@@ -17,6 +21,8 @@ export function AdminOtpForm() {
         if (value.length > 1) {
             value = value.slice(-1)
         }
+
+        if (value && !/^\d$/.test(value)) return
 
         const newOtp = [...otp]
         newOtp[index] = value
@@ -53,8 +59,11 @@ export function AdminOtpForm() {
         setIsLoading(true)
 
         try {
-            // Mock OTP verification and navigate to admin dashboard
-            router.push("/admin/dashboard")
+            if (onVerifySuccess) {
+                onVerifySuccess()
+            } else {
+                router.push("/dashboard")
+            }
         } catch (error) {
             console.error("OTP verification error:", error)
         } finally {
@@ -65,7 +74,7 @@ export function AdminOtpForm() {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col items-start gap-2 pb-6">
-                <Link href="/admin/sign-in" className="block pb-8">
+                <Link href="/sign-in" className="block pb-8">
                     <ArrowLeft aria-label="Go Back" className="inline h-5 w-5 text-[#1B1B1B]" />
                     <Image
                         src="/icons/antital.svg"
@@ -96,7 +105,7 @@ export function AdminOtpForm() {
                 </p>
             </div>
 
-            <form onSubmit={handleVerify} className="flex flex-col gap-6">
+            <form onSubmit={handleVerify} autoComplete="off" className="flex flex-col gap-6">
                 <div className="flex items-center gap-2 sm:gap-3">
                     {otp.map((digit, index) => (
                         <React.Fragment key={index}>
@@ -108,7 +117,7 @@ export function AdminOtpForm() {
                                 inputMode="numeric"
                                 placeholder="-"
                                 maxLength={1}
-                                value={digit}
+                                aria-label={`OTP digit ${index + 1}`}
                                 autoComplete="one-time-code"
                                 autoCorrect="off"
                                 autoCapitalize="off"
