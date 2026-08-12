@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
+import authService from "@/services/authService"
 
 interface AdminOtpFormProps {
     onVerifySuccess?: () => void
@@ -15,7 +15,6 @@ export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const [isLoading, setIsLoading] = useState(false)
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-    const router = useRouter()
 
     const handleChange = (index: number, value: string) => {
         if (value.length > 1) {
@@ -54,15 +53,18 @@ export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
         inputRefs.current[nextIndex]?.focus()
     }
 
-    const handleVerify = (e: React.FormEvent) => {
+    const handleVerify = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
 
         try {
-            if (onVerifySuccess) {
-                onVerifySuccess()
-            } else {
-                router.push("/dashboard")
+            const code = otp.join("")
+            const response = await authService.verifyOtp({ code })
+
+            if (response.requiresOtp === false || response.token) {
+                if (onVerifySuccess) {
+                    onVerifySuccess()
+                }
             }
         } catch (error) {
             console.error("OTP verification error:", error)

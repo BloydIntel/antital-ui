@@ -88,3 +88,7 @@ export interface ResetPasswordRequest {
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface VerifyOtpRequest {
+  code: string;
+}
