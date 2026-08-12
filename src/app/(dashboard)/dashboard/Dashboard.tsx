@@ -34,8 +34,10 @@ export function Dashboard() {
     const { data: user, isError: isUserError, error: userError } = useCurrentUser()
 
     const userType = useUserStore((state) => state.userType)
+    const requiresOtp = useUserStore((state) => state.requiresOtp)
+    const setRequiresOtp = useUserStore((state) => state.setRequiresOtp)
+
     const [hasHydrated, setHasHydrated] = useState(false)
-    const [isAdminOtpVerified, setIsAdminOtpVerified] = useState(false)
 
     useEffect(() => {
         setHasHydrated(true)
@@ -43,6 +45,7 @@ export function Dashboard() {
 
     const isFundraiser = hasHydrated && userType === "fundraiser"
     const isAdmin = hasHydrated && userType === "admin"
+
 
     const {
         data: investorData,
@@ -81,8 +84,14 @@ export function Dashboard() {
     const isLoading = isFundraiser ? isFundraiserLoading : isInvestorLoading
 
     if (isAdmin) {
-        if (!isAdminOtpVerified) {
-            return <AdminOtpPageLayout onVerifySuccess={() => setIsAdminOtpVerified(true)} />
+        if (requiresOtp) {
+            return (
+                <AdminOtpPageLayout
+                    onVerifySuccess={() => {
+                        setRequiresOtp(false)
+                    }}
+                />
+            )
         }
         return <AdminDashboard />
     }

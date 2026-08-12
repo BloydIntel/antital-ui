@@ -33,6 +33,7 @@ const useLogin = (options?: UseLoginOptions) => {
       const userType = mapApiIdentityToStoreUserType(data.userType, data.role);
 
       useUserStore.getState().setUserId(String(data.userId));
+      useUserStore.getState().setRequiresOtp(Boolean(data.requiresOtp));
       useUserStore.getState().updateProfile({
         emailAddress: data.email,
         userType,
@@ -44,6 +45,15 @@ const useLogin = (options?: UseLoginOptions) => {
       }
 
       queryClient.invalidateQueries({ queryKey: CACHE_KEY_USER });
+
+      const isRoleAdmin = userType === "admin";
+
+      if (isRoleAdmin) {
+        requestAnimationFrame(() => {
+          router.replace("/dashboard");
+        });
+        return;
+      }
 
       const path = await resolvePostLoginPath(data, {
         fromTrading: options?.fromTrading,
