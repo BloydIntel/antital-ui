@@ -15,6 +15,7 @@ import type {
   ChangePasswordRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
+  VerifyOtpRequest,
 } from "@/types/auth";
 import type { ApiResponse } from "@/types/api";
 
@@ -42,6 +43,9 @@ const verifyEmailApi = new ApiClient<VerifyEmailRequest, void>(
 );
 const resendVerificationApi = new ApiClient<ResendVerificationRequest, void>(
   "/api/auth/resend-verification"
+);
+const verifyOtpApi = new ApiClient<VerifyOtpRequest, LoginResponse>(
+  "/api/auth/verify-otp"
 );
 const requestUnverifiedOtpApi = new ApiClient<RequestUnverifiedOtpRequest, void>(
   "/api/auth/unverified/otp"
@@ -74,6 +78,7 @@ const authService = {
   refresh,
   verifyEmail: (payload: VerifyEmailRequest) => verifyEmailApi.post(payload),
   resendVerification: (email: string) => resendVerificationApi.post({ email }),
+  verifyOtp: (payload: VerifyOtpRequest) => verifyOtpApi.post(payload),
   requestUnverifiedOtp: (payload: RequestUnverifiedOtpRequest) =>
     requestUnverifiedOtpApi.post(payload),
   deleteUnverified: async (payload: DeleteUnverifiedRequest): Promise<void> => {

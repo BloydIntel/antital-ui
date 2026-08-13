@@ -16,6 +16,7 @@ import { FundingProgress } from "@/app/(dashboard)/dashboard/components/funding-
 import { InvestorBreakdownChart } from "@/app/(dashboard)/dashboard/components/investor-breakdown-chart"
 import { FundraisingMilestones } from "@/app/(dashboard)/dashboard/components/fundraising-milestones"
 import { AdminDashboard } from "@/app/(dashboard)/dashboard/components/admin-dashboard"
+import { AdminOtpPageLayout } from "@/app/(auth)/sign-in/otp/admin-otp-page-layout"
 
 function formatVelocityLabel(amount: number, period: string): string {
     const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0
@@ -33,6 +34,9 @@ export function Dashboard() {
     const { data: user, isError: isUserError, error: userError } = useCurrentUser()
 
     const userType = useUserStore((state) => state.userType)
+    const requiresOtp = useUserStore((state) => state.requiresOtp)
+    const setRequiresOtp = useUserStore((state) => state.setRequiresOtp)
+
     const [hasHydrated, setHasHydrated] = useState(false)
 
     useEffect(() => {
@@ -41,6 +45,7 @@ export function Dashboard() {
 
     const isFundraiser = hasHydrated && userType === "fundraiser"
     const isAdmin = hasHydrated && userType === "admin"
+
 
     const {
         data: investorData,
@@ -79,6 +84,15 @@ export function Dashboard() {
     const isLoading = isFundraiser ? isFundraiserLoading : isInvestorLoading
 
     if (isAdmin) {
+        if (requiresOtp) {
+            return (
+                <AdminOtpPageLayout
+                    onVerifySuccess={() => {
+                        setRequiresOtp(false)
+                    }}
+                />
+            )
+        }
         return <AdminDashboard />
     }
 

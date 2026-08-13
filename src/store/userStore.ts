@@ -15,6 +15,8 @@ export interface UserData {
     userType: UserType
     isKycCompleted: boolean
     isEmailVerified: boolean
+    requiresOtp: boolean;
+    setRequiresOtp: (requiresOtp: boolean) => void;
 }
 
 interface UserState extends UserData {
@@ -38,6 +40,9 @@ export const useUserStore = create<UserState>()(
             userType: "individual",
             isKycCompleted: false,
             isEmailVerified: false,
+            requiresOtp: false,
+
+            setRequiresOtp: (requiresOtp) => set({ requiresOtp }),
 
             setUserId: (id) => set(() => ({ userId: id })),
 
