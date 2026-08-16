@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 interface OnboardingButtonProps {
-    label: string
+    label: React.ReactNode
     onClick?: () => void
     disabled?: boolean
     /** Shows a spinner like the sign-in button while an async action runs. */
