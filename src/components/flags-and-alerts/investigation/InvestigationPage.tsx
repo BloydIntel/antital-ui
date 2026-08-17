@@ -70,10 +70,9 @@ interface InvestigationPageProps {
 }
 
 export default function InvestigationPage({ params }: InvestigationPageProps) {
-    // Unwrap Next.js dynamic params
+
     const { flagId } = use(params);
 
-    // Fallback to FLG-1092 data if ID isn't explicitly matched
     const data = ALERTS_DATABASE[flagId] || {
         ...ALERTS_DATABASE["FLG-1092"],
         flagId: flagId,
