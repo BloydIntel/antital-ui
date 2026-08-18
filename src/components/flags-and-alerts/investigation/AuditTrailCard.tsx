@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from "@/constants/styles";
 import React from "react";
 
 export interface AuditTrailItem {
@@ -14,8 +15,8 @@ interface AuditTrailCardProps {
 
 export function AuditTrailCard({ items }: AuditTrailCardProps) {
     return (
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 shadow-xs">
-            <h2 className="text-[16px] font-semibold text-[#11110F] mb-4">
+        <div className="bg-white rounded-xl border border-[#E2E8F0] py-6 px-4">
+            <h2 className="text-[18px] font-semibold text-[#021310] mb-4">
                 Audit Trail
             </h2>
 
@@ -24,17 +25,17 @@ export function AuditTrailCard({ items }: AuditTrailCardProps) {
                     <div key={item.id} className="relative pl-3">
                         <div
                             className={`absolute -left-[15px] top-1.5 w-2.5 h-2.5 rounded-full ${item.color === "blue"
-                                ? "bg-[#2563EB]"
+                                ? "bg-[#3B82F6]"
                                 : item.color === "red"
                                     ? "bg-[#DC2626]"
                                     : "bg-[#16A34A]"
                                 }`}
                         />
-                        <h4 className="text-[14px] font-medium text-[#11110F]">
+                        <h4 className="text-[16px] text-[#1F1F1F]" style={{ ...TYPOGRAPHY.body, fontWeight: 400 }}>
                             {item.event}
                         </h4>
-                        <p className="text-[12px] text-[#64748B] mt-0.5">{item.details}</p>
-                        <p className="text-[11px] text-[#94A3B8] mt-0.5">{item.time}</p>
+                        <p className="text-[14px] text-[#858585] mt-0.5">{item.details}</p>
+                        <p className="text-[12px] text-[#858585] mt-0.5">{item.time}</p>
                     </div>
                 ))}
             </div>

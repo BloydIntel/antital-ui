@@ -1,12 +1,14 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { InvestigationHeader } from "@/components/flags-and-alerts/investigation/InvestigationHeader";
 import { TriggerContextCard, TriggerContextData } from "@/components/flags-and-alerts/investigation/TriggerContextCard";
 import { EntityDetailsCard, EntityDetailsData } from "@/components/flags-and-alerts/investigation/EntityDetailsCard";
 import { FlaggedTransactionCard, FlaggedTransactionData } from "@/components/flags-and-alerts/investigation/FlaggedTransactionCard";
 import { ResolutionActionsCard } from "@/components/flags-and-alerts/investigation/ResolutionActionsCard";
 import { AuditTrailCard, AuditTrailItem } from "@/components/flags-and-alerts/investigation/AuditTrailCard";
+import { FreezeAccountModal } from "@/components/flags-and-alerts/investigation/FreezeAccountModal";
+import { ClearFlagModal } from "@/components/flags-and-alerts/investigation/ClearFlagModal";
 
 export interface InvestigationDetail {
     flagId: string;
@@ -73,14 +75,31 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
 
     const { flagId } = use(params);
 
+    const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false);
+    const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+
     const data = ALERTS_DATABASE[flagId] || {
         ...ALERTS_DATABASE["FLG-1092"],
         flagId: flagId,
         title: `Investigation details for flag ${flagId}`,
     };
 
-    const handleResolutionAction = (action: string, notes: string) => {
-        console.log(`Action [${action}] submitted for ${flagId}:`, { notes });
+    const handleConfirmFreeze = (formData: { reason: string; notes: string; notifyUser: boolean }) => {
+        console.log("Account Frozen with payload:", formData);
+        setIsFreezeModalOpen(false);
+    };
+
+    const handleConfirmClear = (formData: { category: string; notes: string }) => {
+        console.log(`Flag ${flagId} cleared with payload:`, formData);
+        setIsClearModalOpen(false);
+    };
+
+    const handleResolutionAction = (action: "clear" | "str" | "reject") => {
+        if (action === "clear") {
+            setIsClearModalOpen(true);
+        } else {
+            console.log(`Action [${action}] triggered for ${flagId}`);
+        }
     };
 
     return (
@@ -89,7 +108,7 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
                 flagId={data.flagId}
                 title={data.title}
                 onReassign={() => console.log("Reassign clicked")}
-                onFreezeAccount={() => console.log("Freeze clicked")}
+                onFreezeAccount={() => setIsFreezeModalOpen(true)}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -109,6 +128,23 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
                     <AuditTrailCard items={data.auditTrail} />
                 </div>
             </div>
+
+            <FreezeAccountModal
+                isOpen={isFreezeModalOpen}
+                onClose={() => setIsFreezeModalOpen(false)}
+                onConfirm={handleConfirmFreeze}
+                entityName="John Doe"
+                entityId="INV-8921"
+            />
+
+            <ClearFlagModal
+                isOpen={isClearModalOpen}
+                onClose={() => setIsClearModalOpen(false)}
+                onConfirm={handleConfirmClear}
+                flagId={data.flagId}
+                entityName={data.entityDetails.name}
+                entityId={data.entityDetails.entityId}
+            />
         </div>
     );
 }
