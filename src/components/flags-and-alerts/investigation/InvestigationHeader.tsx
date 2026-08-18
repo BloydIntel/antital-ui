@@ -56,7 +56,7 @@ export function InvestigationHeader({
                                 <LockKeyhole className="w-4 h-4" />
                             </span>
                         }
-                        className="group my-0 w-fit border-white bg-[#D4001A]"
+                        className="group my-0 w-fit border-[#858585] bg-[#D4001A]"
                     />
                 </div>
             </div>

@@ -51,7 +51,7 @@ export function ResolutionActionsCard({ onAction }: ResolutionActionsCardProps) 
                     <OnboardingButton
                         variant="plain"
                         label="Reject & Refund"
-                        onClick={() => onAction("str", notes)}
+                        onClick={() => onAction("reject", notes)}
                         icon={<X className="w-4 h-4 text-[#D4001A] group-hover:text-[#D4001A]" />}
                         className="group border-[#D4001A] text-[#D4001A] bg-[#FFF5F6] hover:text-black hover:border-none"
                     />

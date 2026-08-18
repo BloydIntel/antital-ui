@@ -9,6 +9,9 @@ import { ResolutionActionsCard } from "@/components/flags-and-alerts/investigati
 import { AuditTrailCard, AuditTrailItem } from "@/components/flags-and-alerts/investigation/AuditTrailCard";
 import { FreezeAccountModal } from "@/components/flags-and-alerts/investigation/FreezeAccountModal";
 import { ClearFlagModal } from "@/components/flags-and-alerts/investigation/ClearFlagModal";
+import { ReassignInvestigationModal } from "@/components/flags-and-alerts/investigation/ReassignInvestigationModal";
+import { RejectTransactionModal } from "@/components/flags-and-alerts/investigation/RejectTransactionModal";
+import { FileStrModal } from "@/components/flags-and-alerts/investigation/FileStrModal";
 
 export interface InvestigationDetail {
     flagId: string;
@@ -77,6 +80,9 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
 
     const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false);
     const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+    const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+    const [isStrModalOpen, setIsStrModalOpen] = useState(false);
 
     const data = ALERTS_DATABASE[flagId] || {
         ...ALERTS_DATABASE["FLG-1092"],
@@ -94,12 +100,37 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
         setIsClearModalOpen(false);
     };
 
+    const handleConfirmReject = (formData: {
+        reason: string;
+        narrative: string;
+        sendNotification: boolean;
+    }) => {
+        console.log("Transaction rejected & refunded:", formData);
+        setIsRejectModalOpen(false);
+    };
+
+    const handleConfirmStr = (formData: {
+        indicator: string;
+        narrative: string;
+        includeAttachments: boolean;
+    }) => {
+        console.log("STR Filed successfully:", formData);
+        setIsStrModalOpen(false);
+    };
+
     const handleResolutionAction = (action: "clear" | "str" | "reject") => {
         if (action === "clear") {
             setIsClearModalOpen(true);
-        } else {
-            console.log(`Action [${action}] triggered for ${flagId}`);
+        } else if (action === "str") {
+            setIsStrModalOpen(true);
+        } else if (action === "reject") {
+            setIsRejectModalOpen(true);
         }
+    };
+
+    const handleConfirmReassign = (formData: { assignee: string; note: string }) => {
+        console.log(`Reassigned ${data.flagId} with payload:`, formData);
+        setIsReassignModalOpen(false);
     };
 
     return (
@@ -107,7 +138,7 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
             <InvestigationHeader
                 flagId={data.flagId}
                 title={data.title}
-                onReassign={() => console.log("Reassign clicked")}
+                onReassign={() => setIsReassignModalOpen(true)}
                 onFreezeAccount={() => setIsFreezeModalOpen(true)}
             />
 
@@ -144,6 +175,33 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
                 flagId={data.flagId}
                 entityName={data.entityDetails.name}
                 entityId={data.entityDetails.entityId}
+            />
+
+            <ReassignInvestigationModal
+                isOpen={isReassignModalOpen}
+                onClose={() => setIsReassignModalOpen(false)}
+                onConfirm={handleConfirmReassign}
+                flagId={data.flagId}
+            />
+
+            <RejectTransactionModal
+                isOpen={isRejectModalOpen}
+                onClose={() => setIsRejectModalOpen(false)}
+                onConfirm={handleConfirmReject}
+                transactionId={data.flaggedTransaction.transactionId}
+                amount={data.flaggedTransaction.amount}
+                entityName={data.entityDetails.name}
+                entityId={data.entityDetails.entityId}
+                destination={data.flaggedTransaction.paymentMethod}
+            />
+
+            <FileStrModal
+                isOpen={isStrModalOpen}
+                onClose={() => setIsStrModalOpen(false)}
+                onConfirm={handleConfirmStr}
+                entityName={data.entityDetails.name}
+                entityId={data.entityDetails.entityId}
+                transactionId={data.flaggedTransaction.transactionId}
             />
         </div>
     );

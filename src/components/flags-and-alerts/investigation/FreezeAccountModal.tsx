@@ -149,7 +149,7 @@ export function FreezeAccountModal({
                                     <LockKeyhole className="w-4 h-4" />
                                 </span>
                             }
-                            className="group my-0 border-white bg-[#D4001A]"
+                            className="group my-0 border-[#858585] bg-[#D4001A]"
                         />
                     </div>
                 </form>
