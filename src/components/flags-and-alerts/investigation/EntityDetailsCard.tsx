@@ -1,4 +1,3 @@
-import React from "react";
 import { User, CheckCircle2 } from "lucide-react";
 
 export interface EntityDetailsData {

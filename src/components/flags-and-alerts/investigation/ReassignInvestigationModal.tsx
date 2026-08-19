@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { X, ChevronDown } from "lucide-react";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 
@@ -33,7 +33,7 @@ export function ReassignInvestigationModal({
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         onConfirm({ assignee, note });
     };

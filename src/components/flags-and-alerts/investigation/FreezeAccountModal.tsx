@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { X, ChevronDown, LockKeyhole } from "lucide-react";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 
@@ -36,7 +36,7 @@ export function FreezeAccountModal({
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         onConfirm({ reason, notes, notifyUser });
     };
@@ -149,7 +149,7 @@ export function FreezeAccountModal({
                                     <LockKeyhole className="w-4 h-4" />
                                 </span>
                             }
-                            className="group my-0 border-[#858585] bg-[#D4001A]"
+                            className="group my-0 border-white hover:border-[#858585] bg-[#D4001A]"
                         />
                     </div>
                 </form>

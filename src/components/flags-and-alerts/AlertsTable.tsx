@@ -1,4 +1,3 @@
-import React from "react";
 import { AlertItem } from "@/types/flags-and-alerts";
 import { SeverityBadge } from "./SeverityBadge";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";

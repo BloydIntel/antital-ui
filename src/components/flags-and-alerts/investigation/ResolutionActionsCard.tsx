@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Check, FileText, X } from "lucide-react";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";

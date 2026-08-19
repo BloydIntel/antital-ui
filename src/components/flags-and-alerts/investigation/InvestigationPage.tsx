@@ -1,6 +1,7 @@
 "use client";
 
-import React, { use, useState } from "react";
+import { use, useState } from "react";
+import { useRouter } from "next/navigation";
 import { InvestigationHeader } from "@/components/flags-and-alerts/investigation/InvestigationHeader";
 import { TriggerContextCard, TriggerContextData } from "@/components/flags-and-alerts/investigation/TriggerContextCard";
 import { EntityDetailsCard, EntityDetailsData } from "@/components/flags-and-alerts/investigation/EntityDetailsCard";
@@ -75,7 +76,7 @@ interface InvestigationPageProps {
 }
 
 export default function InvestigationPage({ params }: InvestigationPageProps) {
-
+    const router = useRouter();
     const { flagId } = use(params);
 
     const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false);
@@ -133,8 +134,12 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
         setIsReassignModalOpen(false);
     };
 
+    const handleViewProfile = () => {
+        router.push(`/investor-profile/${data.entityDetails.entityId}`);
+    };
+
     return (
-        <div className="min-h-screen bg-[#F8F9FA] font-sans text-[#11110F]">
+        <div className="min-h-screen font-sans text-[#11110F]">
             <InvestigationHeader
                 flagId={data.flagId}
                 title={data.title}
@@ -148,7 +153,7 @@ export default function InvestigationPage({ params }: InvestigationPageProps) {
                     <TriggerContextCard data={data.triggerContext} />
                     <EntityDetailsCard
                         data={data.entityDetails}
-                        onViewProfile={() => console.log("View profile clicked")}
+                        onViewProfile={handleViewProfile}
                     />
                     <FlaggedTransactionCard data={data.flaggedTransaction} />
                 </div>

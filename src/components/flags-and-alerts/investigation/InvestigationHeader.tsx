@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { ArrowLeft, LockKeyhole } from "lucide-react";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
@@ -21,7 +20,7 @@ export function InvestigationHeader({
         <div className="space-y-4 mb-6">
             <Link
                 href="/flags-and-alerts"
-                className="inline-flex items-center gap-2 text-[16px] text-[#8D8D8D] hover:text-[#11110F] transition-colors"
+                className="hidden lg:inline-flex items-center gap-2 text-[16px] text-[#8D8D8D] hover:text-[#11110F] transition-colors"
             >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Flags and Alerts
@@ -56,7 +55,7 @@ export function InvestigationHeader({
                                 <LockKeyhole className="w-4 h-4" />
                             </span>
                         }
-                        className="group my-0 w-fit border-[#858585] bg-[#D4001A]"
+                        className="group my-0 w-fit border-white hover:border-[#858585] bg-[#D4001A]"
                     />
                 </div>
             </div>

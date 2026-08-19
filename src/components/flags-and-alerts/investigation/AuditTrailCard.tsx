@@ -1,5 +1,4 @@
 import { TYPOGRAPHY } from "@/constants/styles";
-import React from "react";
 
 export interface AuditTrailItem {
     id: string;

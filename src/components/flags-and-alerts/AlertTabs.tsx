@@ -1,5 +1,4 @@
 import { TYPOGRAPHY } from "@/constants/styles";
-import React from "react";
 
 interface AlertTabsProps {
     activeTab: string;

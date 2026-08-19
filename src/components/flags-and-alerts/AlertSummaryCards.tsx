@@ -1,4 +1,3 @@
-import React from "react";
 import { AlertSummary } from "@/types/flags-and-alerts";
 
 interface AlertSummaryCardsProps {
