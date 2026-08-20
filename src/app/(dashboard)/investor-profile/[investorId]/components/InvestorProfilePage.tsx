@@ -105,19 +105,19 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
             />
 
             {/* Grid Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
                 {/* Left Column (Sidebar - 4 cols) */}
-                <div className="lg:col-span-4">
+                <div className="lg:col-span-3">
                     <IdentityKycSidebar data={MOCK_KYC_DATA} />
                 </div>
 
                 {/* Right Column (Main View - 8 cols) */}
-                <div className="lg:col-span-8 space-y-6">
+                <div className="lg:col-span-4 space-y-6">
                     {/* Top Metric Cards */}
                     <InvestmentStatsCards
                         totalInvested="₦1,250,000"
                         activePositions={3}
-                        estimatedReturns="₦185,000"
+                        estimatedReturns="+₦185,000"
                     />
 
                     {/* Active Portfolio Table */}

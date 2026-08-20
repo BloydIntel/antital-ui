@@ -20,55 +20,54 @@ interface RecentTransactionsProps {
 
 export function RecentTransactionsList({ items, onViewAll }: RecentTransactionsProps) {
     return (
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
-                <h3 className="text-[15px] font-bold text-[#11110F]">Recent Transactions</h3>
+        <div className="bg-white rounded-md">
+            {/* Header section with full-width bottom border */}
+            <div className="flex items-center justify-between border-b border-[#EAEAEA] py-4 px-6">
+                <h3 className="text-[16px] font-medium text-[#040C17]">Recent Transactions</h3>
                 <button
                     type="button"
                     onClick={onViewAll}
-                    className="text-[13px] font-medium text-[#858585] hover:text-[#11110F] transition-colors cursor-pointer"
+                    className="text-[16px] font-medium text-[#7BA147] hover:text-[#7BA147]/70 hover:underline transition-colors cursor-pointer"
                 >
-                    View All
+                    View all
                 </button>
             </div>
 
-            <div className="space-y-4 divide-y divide-[#F1F5F9]">
-                {items.map((txn, index) => {
+            {/* List content section */}
+            <div className="px-4 py-5 space-y-4">
+                {items.map((txn) => {
                     const isCredit = txn.type === "credit";
                     return (
                         <div
                             key={txn.id}
-                            className={`flex items-center justify-between ${index !== 0 ? "pt-4" : ""
-                                }`}
+                            className="flex items-center justify-between"
                         >
                             {/* Title and details */}
-                            <div className="space-y-0.5">
+                            <div className="space-y-2">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="text-[14px] font-semibold text-[#11110F]">
+                                    <span className="text-[14px] lg:text-[16px] text-[#1F1F1F]">
                                         {txn.title}
                                     </span>
                                     {txn.isFlagged && (
-                                        <AlertCircle className="w-4 h-4 text-[#D4001A]" />
+                                        <AlertCircle className="w-4 lg:w-5 h-4 lg:h-5 text-[#D4001A]" />
                                     )}
                                 </div>
-                                <span className="block text-[12px] text-[#858585]">
+                                <span className="block text-[12px] lg:text-[14px] text-[#858585]">
                                     {txn.txnCode} – {txn.date}
                                 </span>
                             </div>
 
                             {/* Amount and Status */}
-                            <div className="text-right space-y-0.5">
+                            <div className="text-right space-y-2">
                                 <span
-                                    className={`block text-[14px] font-bold ${isCredit
-                                        ? "text-[#10B981]"
-                                        : txn.isFlagged
-                                            ? "text-[#D4001A]"
-                                            : "text-[#D4001A]"
+                                    className={`block text-[14px] lg:text-[16px] font-bold ${isCredit
+                                        ? "text-[#45B424]"
+                                        : "text-[#D4001A]"
                                         }`}
                                 >
                                     {isCredit ? `+${txn.amount}` : `-${txn.amount}`}
                                 </span>
-                                <span className="block text-[12px] text-[#858585]">
+                                <span className="block text-[12px] lg:text-[14px] text-[#858585]">
                                     {txn.status}
                                 </span>
                             </div>
