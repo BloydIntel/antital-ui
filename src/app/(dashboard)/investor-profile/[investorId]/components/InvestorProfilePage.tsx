@@ -1,14 +1,25 @@
 "use client";
 
+import { useState } from "react";
+import { AddNoteModal } from "@/components/flags-and-alerts/view-profile/AddNoteModal";
 import { ActivePortfolioTable, PortfolioItem } from "@/components/flags-and-alerts/view-profile/ActivePortfolioTable";
 import { IdentityKycData, IdentityKycSidebar } from "@/components/flags-and-alerts/view-profile/IdentityKycSidebar";
 import { InvestmentStatsCards } from "@/components/flags-and-alerts/view-profile/InvestmentStatsCards";
 import { ProfileHeader } from "@/components/flags-and-alerts/view-profile/ProfileHeader";
 import { RecentTransactionsList, TransactionItem } from "@/components/flags-and-alerts/view-profile/RecentTransactionsList";
+import { SuspendInvestorModal } from "@/components/flags-and-alerts/view-profile/SuspendInvestorModal";
 
 interface InvestorProfilePageProps {
     investorId: string;
 }
+
+const MOCK_USER_DATA = {
+    name: "John Doe",
+    role: "Retail Investor",
+    joinedDate: "14 months ago",
+    initials: "JD",
+    avatarUrl: undefined,
+};
 
 const MOCK_KYC_DATA: IdentityKycData = {
     email: "johndoe@gmail.com",
@@ -24,6 +35,12 @@ const MOCK_KYC_DATA: IdentityKycData = {
         label: "AML/Fraud Suspicion",
         url: "/investigations/FLG-1092",
     },
+};
+
+const MOCK_STATS_DATA = {
+    totalInvested: "₦1,250,000",
+    activePositions: 3,
+    estimatedReturns: "+₦185,000",
 };
 
 const MOCK_PORTFOLIO: PortfolioItem[] = [
@@ -91,33 +108,49 @@ const MOCK_TRANSACTIONS: TransactionItem[] = [
 ];
 
 export default function InvestorProfilePage({ investorId }: InvestorProfilePageProps) {
+    const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+    const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
+
+    const handleSaveNote = (noteData: { category: string; content: string }) => {
+        console.log("Note saved:", noteData);
+    };
+
+    const handleConfirmSuspension = (suspensionData: {
+        reason: string;
+        details: string;
+        notifyUser: boolean;
+        requirePasswordReset: boolean;
+    }) => {
+        console.log("Account suspended with data:", suspensionData);
+    };
+
     return (
         <div className="min-h-screen space-y-6 font-sans text-[#11110F]">
             {/* Header Component */}
             <ProfileHeader
-                name="John Doe"
-                role="Retail Investor"
+                name={MOCK_USER_DATA.name}
+                role={MOCK_USER_DATA.role}
                 id={investorId}
-                joinedDate="14 months ago"
-                initials="JD"
-                onAddNote={() => console.log("Add Note Clicked")}
-                onSuspend={() => console.log("Suspend Clicked")}
+                joinedDate={MOCK_USER_DATA.joinedDate}
+                initials={MOCK_USER_DATA.initials}
+                onAddNote={() => setIsNoteModalOpen(true)}
+                onSuspend={() => setIsSuspendModalOpen(true)}
             />
 
             {/* Grid Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-                {/* Left Column (Sidebar - 4 cols) */}
+                {/* Left Column (Sidebar - 3 cols) */}
                 <div className="lg:col-span-3">
                     <IdentityKycSidebar data={MOCK_KYC_DATA} />
                 </div>
 
-                {/* Right Column (Main View - 8 cols) */}
+                {/* Right Column (Main View - 4 cols) */}
                 <div className="lg:col-span-4 space-y-6">
                     {/* Top Metric Cards */}
                     <InvestmentStatsCards
-                        totalInvested="₦1,250,000"
-                        activePositions={3}
-                        estimatedReturns="+₦185,000"
+                        totalInvested={MOCK_STATS_DATA.totalInvested}
+                        activePositions={MOCK_STATS_DATA.activePositions}
+                        estimatedReturns={MOCK_STATS_DATA.estimatedReturns}
                     />
 
                     {/* Active Portfolio Table */}
@@ -133,6 +166,29 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                     />
                 </div>
             </div>
+
+            {/* Modal Handler */}
+            <AddNoteModal
+                isOpen={isNoteModalOpen}
+                onClose={() => setIsNoteModalOpen(false)}
+                onSubmit={handleSaveNote}
+                user={{
+                    name: MOCK_USER_DATA.name,
+                    id: investorId,
+                    initials: MOCK_USER_DATA.initials,
+                    avatarUrl: MOCK_USER_DATA.avatarUrl,
+                }}
+            />
+
+            <SuspendInvestorModal
+                isOpen={isSuspendModalOpen}
+                onClose={() => setIsSuspendModalOpen(false)}
+                onSubmit={handleConfirmSuspension}
+                user={{
+                    name: MOCK_USER_DATA.name,
+                    id: investorId,
+                }}
+            />
         </div>
     );
 }

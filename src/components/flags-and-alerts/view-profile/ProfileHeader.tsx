@@ -63,20 +63,20 @@ export function ProfileHeader({
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
+                <div className="grid grid-cols-2 gap-3">
                     <OnboardingButton
                         variant="plain"
                         label=" Add Note"
                         icon={<FilePlus className="w-4 h-4 text-[#11110F]" />}
                         onClick={onAddNote}
-                        className="my-0 w-fit border-[#EAEAEA]"
+                        className="my-0 lg:w-fit border-[#EAEAEA] col-span-1"
                     />
 
                     <OnboardingButton
                         label="Suspend"
                         icon={<X className="w-4 h-4 text-[#D4001A]" />}
                         onClick={onSuspend}
-                        className="my-0 w-fit text-[#D4001A] border-[#D4001A] bg-transparent"
+                        className="my-0 lg:w-fit text-[#D4001A] border-[#D4001A] bg-transparent col-span-1"
                     />
                 </div>
             </div>
