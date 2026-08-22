@@ -27,7 +27,9 @@ const CUSTOM_MOBILE_HEADERS: Record<string, string> = {
     "/marketplace/invest": "Invest",
     "/balance-funding/invoice": "Transaction History",
     "/settings/": "Settings",
-    "/flags-and-alerts/investigation/": "Flags and Alerts"
+    "/flags-and-alerts/investigation/": "Flags and Alerts",
+    "/investor-profile/": "Investor Profile",
+
 };
 
 export function DashboardHeader() {

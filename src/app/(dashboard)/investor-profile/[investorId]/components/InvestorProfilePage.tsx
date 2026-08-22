@@ -8,6 +8,7 @@ import { InvestmentStatsCards } from "@/components/flags-and-alerts/view-profile
 import { ProfileHeader } from "@/components/flags-and-alerts/view-profile/ProfileHeader";
 import { RecentTransactionsList, TransactionItem } from "@/components/flags-and-alerts/view-profile/RecentTransactionsList";
 import { SuspendInvestorModal } from "@/components/flags-and-alerts/view-profile/SuspendInvestorModal";
+import { useRouter } from "next/navigation";
 
 interface InvestorProfilePageProps {
     investorId: string;
@@ -108,6 +109,7 @@ const MOCK_TRANSACTIONS: TransactionItem[] = [
 ];
 
 export default function InvestorProfilePage({ investorId }: InvestorProfilePageProps) {
+    const router = useRouter();
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
 
@@ -122,6 +124,10 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
         requirePasswordReset: boolean;
     }) => {
         console.log("Account suspended with data:", suspensionData);
+    };
+
+    const handleNavigateToTransactions = () => {
+        router.push(`/investor-profile/investor-transactions/${investorId}`);
     };
 
     return (
@@ -162,7 +168,7 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                     {/* Recent Transactions */}
                     <RecentTransactionsList
                         items={MOCK_TRANSACTIONS}
-                        onViewAll={() => console.log("View All Transactions")}
+                        onViewAll={handleNavigateToTransactions}
                     />
                 </div>
             </div>
