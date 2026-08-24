@@ -10,6 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { TablePagination } from "@/components/watchlist/molecules/TablePagination";
 
 export interface TransactionRecord {
     id: string;
@@ -24,6 +25,8 @@ export interface TransactionRecord {
 interface InvestorTransactionsTableProps {
     transactions: TransactionRecord[];
     onViewTransaction?: (txn: TransactionRecord) => void;
+    currentPage?: number;
+    onPageChange?: (page: number) => void;
 }
 
 const TAB_OPTIONS = [
@@ -37,10 +40,19 @@ const TAB_OPTIONS = [
     "Pending",
 ];
 
+const PAGE_SIZE = 7;
+
 export function InvestorTransactionsTable({
     transactions,
     onViewTransaction,
+    currentPage: externalPage,
+    onPageChange: externalOnPageChange,
 }: InvestorTransactionsTableProps) {
+    // Local pagination state if external controls aren't provided
+    const [internalPage, setInternalPage] = useState(1);
+    const currentPage = externalPage ?? internalPage;
+    const handlePageChange = externalOnPageChange ?? setInternalPage;
+
     const [activeTab, setActiveTab] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -75,39 +87,19 @@ export function InvestorTransactionsTable({
 
     // DRY Filter Configuration Map
     const filterConfigs = [
-        {
-            key: "type",
-            label: "Type",
-            value: selectedType,
-            onChange: setSelectedType,
-            options: typeOptions,
-        },
-        {
-            key: "campaign",
-            label: "Campaign",
-            value: selectedCampaign,
-            onChange: setSelectedCampaign,
-            options: campaignOptions,
-        },
-        {
-            key: "paymentMethod",
-            label: "Payment Method",
-            value: selectedPaymentMethod,
-            onChange: setSelectedPaymentMethod,
-            options: paymentMethodOptions,
-        },
-        {
-            key: "status",
-            label: "Status",
-            value: selectedStatus,
-            onChange: setSelectedStatus,
-            options: statusOptions,
-        },
+        { key: "type", label: "Type", value: selectedType, onChange: setSelectedType, options: typeOptions },
+        { key: "campaign", label: "Campaign", value: selectedCampaign, onChange: setSelectedCampaign, options: campaignOptions },
+        { key: "paymentMethod", label: "Payment Method", value: selectedPaymentMethod, onChange: setSelectedPaymentMethod, options: paymentMethodOptions },
+        { key: "status", label: "Status", value: selectedStatus, onChange: setSelectedStatus, options: statusOptions },
     ];
+
+    // Reset pagination to page 1 whenever any filter or search changes
+    const resetToFirstPage = () => handlePageChange(1);
 
     // Tab Sync Handler
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
+        resetToFirstPage();
         if (tab === "Flagged" || tab === "Pending") {
             setSelectedStatus(tab);
             setSelectedType("All");
@@ -128,12 +120,12 @@ export function InvestorTransactionsTable({
         setSelectedCampaign("All");
         setSelectedPaymentMethod("All");
         setSelectedStatus("All");
+        resetToFirstPage();
     };
 
     // Filter Logic
     const filteredTransactions = useMemo(() => {
         return transactions.filter((row) => {
-            // Tab Matching
             if (activeTab !== "All") {
                 if (activeTab === "Flagged" && row.status !== "Flagged") return false;
                 if (activeTab === "Pending" && row.status !== "Pending") return false;
@@ -146,13 +138,11 @@ export function InvestorTransactionsTable({
                 }
             }
 
-            // Dropdown Filter Matching
             if (selectedType !== "All" && row.type !== selectedType) return false;
             if (selectedCampaign !== "All" && row.campaign !== selectedCampaign) return false;
             if (selectedPaymentMethod !== "All" && row.paymentMethod !== selectedPaymentMethod) return false;
             if (selectedStatus !== "All" && row.status !== selectedStatus) return false;
 
-            // Search Bar Matching
             if (searchQuery.trim() !== "") {
                 const query = searchQuery.toLowerCase();
                 const matchesId = row.id.toLowerCase().includes(query);
@@ -178,6 +168,14 @@ export function InvestorTransactionsTable({
         searchQuery,
     ]);
 
+    // Calculate Page Counts & Current Page Slice
+    const totalPages = Math.ceil(filteredTransactions.length / PAGE_SIZE) || 1;
+
+    const paginatedTransactions = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return filteredTransactions.slice(start, start + PAGE_SIZE);
+    }, [filteredTransactions, currentPage]);
+
     return (
         <div className="bg-white border border-[#EAEAEA] rounded-xl overflow-hidden space-y-4">
             {/* Nav Tabs */}
@@ -200,12 +198,15 @@ export function InvestorTransactionsTable({
                 })}
             </div>
 
-            {/* Search & DRY Select Filters */}
-            <div className="px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Search & Select Filters */}
+            <div className="px-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="w-full md:w-[320px]">
                     <SearchInputBar
                         value={searchQuery}
-                        onChange={(val) => setSearchQuery(val)}
+                        onChange={(val) => {
+                            setSearchQuery(val);
+                            resetToFirstPage();
+                        }}
                         placeholder="Search for anything..."
                     />
                 </div>
@@ -213,7 +214,13 @@ export function InvestorTransactionsTable({
                 <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
                     {filterConfigs.map((filter) => (
                         <div key={filter.key}>
-                            <Select value={filter.value} onValueChange={filter.onChange}>
+                            <Select
+                                value={filter.value}
+                                onValueChange={(val) => {
+                                    filter.onChange(val);
+                                    resetToFirstPage();
+                                }}
+                            >
                                 <SelectTrigger className="w-full px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#1A1C1E] h-9 text-[14px]">
                                     <div className="flex items-center gap-1.5 truncate">
                                         <span className="text-[#858585] shrink-0">{filter.label}:</span>
@@ -231,7 +238,6 @@ export function InvestorTransactionsTable({
                         </div>
                     ))}
 
-                    {/* Reset Button */}
                     <button
                         type="button"
                         onClick={handleResetFilters}
@@ -243,41 +249,41 @@ export function InvestorTransactionsTable({
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto px-4 scrollbar-hide">
+                <table className="w-full min-w-[800px] text-left border-collapse">
                     <thead>
-                        <tr className="border-y border-[#EAEAEA] bg-[#FAFADA]/20 text-[13px] text-[#858585]">
-                            <th className="py-3 px-6 font-medium">Transaction ID</th>
-                            <th className="py-3 px-4 font-medium">Type</th>
-                            <th className="py-3 px-4 font-medium">Campaign</th>
-                            <th className="py-3 px-4 font-medium">Amount</th>
-                            <th className="py-3 px-4 font-medium">Date</th>
-                            <th className="py-3 px-4 font-medium">Payment Method</th>
-                            <th className="py-3 px-4 font-medium">Status</th>
-                            <th className="py-3 px-6 font-medium text-right">Action</th>
+                        <tr className="border-y border-[#EAEAEA] text-[14px] text-[#858585] whitespace-nowrap">
+                            <th className="py-3 pr-3 font-medium">Transaction ID</th>
+                            <th className="py-3 px-3 font-medium">Type</th>
+                            <th className="py-3 px-3 font-medium">Campaign</th>
+                            <th className="py-3 px-3 font-medium">Amount</th>
+                            <th className="py-3 px-3 font-medium">Date</th>
+                            <th className="py-3 px-3 font-medium">Payment Method</th>
+                            <th className="py-3 px-3 font-medium text-center">Status</th>
+                            <th className="py-3 px-3 font-medium text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#EAEAEA] text-[14px]">
-                        {filteredTransactions.length > 0 ? (
-                            filteredTransactions.map((row) => (
+                    <tbody className="divide-y divide-[#EAEAEA] text-[14px] whitespace-nowrap">
+                        {paginatedTransactions.length > 0 ? (
+                            paginatedTransactions.map((row) => (
                                 <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="py-4 px-6 text-[#11110F] font-medium">{row.id}</td>
-                                    <td className="py-4 px-4 text-[#323232]">{row.type}</td>
-                                    <td className="py-4 px-4 text-[#323232]">{row.campaign}</td>
-                                    <td className="py-4 px-4 font-semibold text-[#11110F]">{row.amount}</td>
-                                    <td className="py-4 px-4 text-[#858585]">{row.date}</td>
-                                    <td className="py-4 px-4 text-[#323232]">{row.paymentMethod}</td>
-                                    <td className="py-4 px-4">
+                                    <td className="py-4 px-3 text-[#1B1B1B]">{row.id}</td>
+                                    <td className="py-4 px-3 text-[#1B1B1B]">{row.type}</td>
+                                    <td className="py-4 px-3 text-[#1B1B1B]">{row.campaign}</td>
+                                    <td className="py-4 px-3 text-[#1B1B1B]">{row.amount}</td>
+                                    <td className="py-4 px-3 text-[#1B1B1B]">{row.date}</td>
+                                    <td className="py-4 px-3 text-[#1B1B1B]">{row.paymentMethod}</td>
+                                    <td className="py-4 px-3 text-center">
                                         {row.status === "Flagged" ? (
-                                            <span className="inline-flex items-center rounded-md bg-[#FFE3E0] px-2.5 py-1 text-[12px] font-medium text-[#D4001A]">
+                                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#D4001A]">
                                                 Flagged
                                             </span>
                                         ) : row.status === "Pending" || row.status === "Hold" ? (
-                                            <span className="inline-flex items-center rounded-md bg-[#FEF3C7] px-2.5 py-1 text-[12px] font-medium text-[#D97706]">
+                                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#D97706]">
                                                 {row.status}
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center rounded-md bg-[#F0F9FF] px-2.5 py-1 text-[12px] font-medium text-[#16A34A]">
+                                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#45B424]">
                                                 Completed
                                             </span>
                                         )}
@@ -303,23 +309,15 @@ export function InvestorTransactionsTable({
                 </table>
             </div>
 
-            {/* Pagination Footer */}
-            <div className="flex items-center justify-between border-t border-[#EAEAEA] px-6 py-4 text-[13px] text-[#858585]">
-                <span>
-                    Showing {filteredTransactions.length > 0 ? 1 : 0}-{filteredTransactions.length} of {transactions.length} records
-                </span>
-                <div className="flex items-center gap-2">
-                    <button className="rounded-lg border border-[#E2E8F0] px-3 py-1.5 hover:bg-gray-50 cursor-pointer">
-                        Previous
-                    </button>
-                    <button className="rounded-lg bg-[#0F221E] px-3 py-1.5 text-white font-medium cursor-pointer">
-                        1
-                    </button>
-                    <button className="rounded-lg border border-[#E2E8F0] px-3 py-1.5 hover:bg-gray-50 cursor-pointer">
-                        Next
-                    </button>
-                </div>
-            </div>
+            {/* Detailed Pagination */}
+            <TablePagination
+                variant="detailed"
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalRecords={filteredTransactions.length}
+                pageSize={PAGE_SIZE}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 }

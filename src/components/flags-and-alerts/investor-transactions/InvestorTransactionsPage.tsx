@@ -9,6 +9,7 @@ import {
     InvestorTransactionsTable,
     TransactionRecord,
 } from "@/components/flags-and-alerts/investor-transactions/InvestorTransactionsTable";
+import { useRouter } from "next/navigation";
 
 interface InvestorTransactionsPageProps {
     investorId: string;
@@ -48,7 +49,7 @@ const TRANSACTIONS_DATA: TransactionRecord[] = [
         amount: "₦82,500,000",
         date: "May 22, 2025",
         paymentMethod: "Wallet",
-        status: "Completed",
+        status: "Pending",
     },
     {
         id: "TXN-7387487",
@@ -59,9 +60,52 @@ const TRANSACTIONS_DATA: TransactionRecord[] = [
         paymentMethod: "Auto-Credit",
         status: "Completed",
     },
+    {
+        id: "TXN-7387474",
+        type: "Investment",
+        campaign: "TechHub Series A",
+        amount: "₦82,500,000",
+        date: "May 22, 2025",
+        paymentMethod: "Bank Transfer",
+        status: "Flagged",
+    },
+    {
+        id: "TXN-7387475",
+        type: "Wallet Deposit",
+        campaign: "-",
+        amount: "₦82,500,000",
+        date: "May 22, 2025",
+        paymentMethod: "Paystack",
+        status: "Completed",
+    },
+    {
+        id: "TXN-7387476",
+        type: "Secondary Market",
+        campaign: "AgriGrow Fund Series B",
+        amount: "₦82,500,000",
+        date: "May 22, 2025",
+        paymentMethod: "Wallet",
+        status: "Pending",
+    },
+    {
+        id: "TXN-7387477",
+        type: "Dividend",
+        campaign: "FinTech Alpha",
+        amount: "₦82,500,000",
+        date: "May 22, 2025",
+        paymentMethod: "Auto-Credit",
+        status: "Completed",
+    },
 ];
 
 export default function InvestorTransactionsPage({ investorId }: InvestorTransactionsPageProps) {
+
+    const router = useRouter();
+
+    const handleViewTransaction = (txn: TransactionRecord) => {
+        router.push(`/investor-profile/investor-transactions/${investorId}/${txn.id}`);
+    };
+
     return (
         <div className="min-h-screen space-y-6 font-sans text-[#11110F] bg-[#FAFAFA]">
             {/* Dynamic Header */}
@@ -82,7 +126,7 @@ export default function InvestorTransactionsPage({ investorId }: InvestorTransac
             {/* Data Table */}
             <InvestorTransactionsTable
                 transactions={TRANSACTIONS_DATA}
-                onViewTransaction={(txn) => console.log("Viewing transaction:", txn)}
+                onViewTransaction={handleViewTransaction}
             />
         </div>
     );

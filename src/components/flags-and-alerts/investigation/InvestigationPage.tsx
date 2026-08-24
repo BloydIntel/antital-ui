@@ -39,7 +39,7 @@ const ALERTS_DATABASE: Record<string, InvestigationDetail> = {
         entityDetails: {
             name: "John Doe",
             avatarInitials: "JD",
-            entityId: "INV-8921",
+            entityId: "ANT-8921",
             type: "Retail Investor",
             kycVerified: true,
             totalInvested: "₦450,000",
