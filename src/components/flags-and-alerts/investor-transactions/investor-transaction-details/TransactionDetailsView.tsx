@@ -6,6 +6,9 @@ import { TransactionDetailsData } from "@/types/transaction";
 import { DetailSection } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details/DetailSection";
 import { DetailGridItem } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details/DetailGridItem";
 import { TransactionTimeline } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details//TransactionTimeline";
+import { TYPOGRAPHY } from "@/constants/styles";
+import { StatusBadge } from "@/components/flags-and-alerts/atom/StatusBadge";
+import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 
 
 interface TransactionDetailsViewProps {
@@ -16,10 +19,10 @@ interface TransactionDetailsViewProps {
 export function TransactionDetailsView({ data, onClose }: TransactionDetailsViewProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
-            <div className="relative w-full max-w-[680px] bg-white rounded-2xl border border-[#EAEAEA] shadow-xl my-8 overflow-hidden">
+            <div className="relative w-full max-w-[746px] bg-white rounded-2xl border border-[#EAEAEA] shadow-xl my-8 overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#EAEAEA]">
-                    <h2 className="text-[16px] font-semibold text-[#1B1B1B]">
+                    <h2 className="text-[16px] font-medium text-[#1B1B1B]">
                         Transaction Details
                     </h2>
                     <button
@@ -37,22 +40,20 @@ export function TransactionDetailsView({ data, onClose }: TransactionDetailsView
                     <div className="flex items-start justify-between">
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                                <h1 className="text-[22px] font-bold text-[#1B1B1B]">
+                                <h1 className="text-[24px] text-[#1B1B1B]" style={TYPOGRAPHY.heading}>
                                     {data.type}
                                 </h1>
                                 {data.flagged && (
-                                    <span className="bg-[#FFF1F2] text-[#D4001A] border border-[#FECDD3] text-[12px] font-medium px-2 py-0.5 rounded-md">
+                                    <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#D4001A]">
                                         Flagged
                                     </span>
                                 )}
                             </div>
-                            <p className="text-[13px] text-[#858585] font-normal">{data.id}</p>
+                            <p className="text-[14px] text-[#858585] font-normal">{data.id}</p>
                         </div>
                         <div className="text-right space-y-1">
-                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#45B424] font-medium">
-                                {data.status}
-                            </span>
-                            <p className="text-[13px] text-[#858585]">{data.date}</p>
+                            <StatusBadge status={data.status} />
+                            <p className="text-[14px] text-[#858585]">{data.date}</p>
                         </div>
                     </div>
 
@@ -62,11 +63,7 @@ export function TransactionDetailsView({ data, onClose }: TransactionDetailsView
                             <DetailGridItem label="Transaction Type" value={data.overview.type} />
                             <DetailGridItem
                                 label="Transaction Status"
-                                value={
-                                    <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-0.5 text-[12px] text-[#45B424] font-medium">
-                                        {data.overview.status}
-                                    </span>
-                                }
+                                value={<StatusBadge status={data.overview.status} />}
                             />
                             <DetailGridItem label="Amount" value={data.overview.amount} />
                             <DetailGridItem label="Campaign" value={data.overview.campaign} />
@@ -116,13 +113,12 @@ export function TransactionDetailsView({ data, onClose }: TransactionDetailsView
 
                     {/* Action Button */}
                     <div className="pt-4 border-t border-[#EAEAEA]">
-                        <button
-                            type="button"
+                        <OnboardingButton
+                            variant="plain"
+                            label="Close"
                             onClick={onClose}
-                            className="w-full py-2.5 rounded-xl border border-[#EAEAEA] text-[14px] font-medium text-[#11110F] hover:bg-gray-50 transition-colors cursor-pointer"
-                        >
-                            Close
-                        </button>
+                            className="my-0"
+                        />
                     </div>
                 </div>
             </div>

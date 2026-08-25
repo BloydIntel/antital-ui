@@ -11,6 +11,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { TablePagination } from "@/components/watchlist/molecules/TablePagination";
+import { StatusBadge } from "@/components/flags-and-alerts/atom/StatusBadge";
 
 export interface TransactionRecord {
     id: string;
@@ -274,19 +275,7 @@ export function InvestorTransactionsTable({
                                     <td className="py-4 px-3 text-[#1B1B1B]">{row.date}</td>
                                     <td className="py-4 px-3 text-[#1B1B1B]">{row.paymentMethod}</td>
                                     <td className="py-4 px-3 text-center">
-                                        {row.status === "Flagged" ? (
-                                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#D4001A]">
-                                                Flagged
-                                            </span>
-                                        ) : row.status === "Pending" || row.status === "Hold" ? (
-                                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#D97706]">
-                                                {row.status}
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#45B424]">
-                                                Completed
-                                            </span>
-                                        )}
+                                        <StatusBadge status={row.status} />
                                     </td>
                                     <td className="py-4 px-6 text-right">
                                         <OnboardingButton

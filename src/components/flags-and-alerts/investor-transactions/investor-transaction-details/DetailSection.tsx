@@ -6,9 +6,11 @@ interface DetailSectionProps {
 
 export function DetailSection({ title, children }: DetailSectionProps) {
     return (
-        <div className="space-y-4 pt-4 border-t border-[#EAEAEA]">
-            <h3 className="text-[15px] font-semibold text-[#11110F]">{title}</h3>
-            {children}
+        <div className="pt-4.5 border-t border-[#EAEAEA]">
+            <h3 className="text-[16px] font-medium text-[#11110F] pb-4">{title}</h3>
+            <div className="space-y-8.5 ">
+                {children}
+            </div>
         </div>
     );
 }
