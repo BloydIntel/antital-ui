@@ -1,8 +1,6 @@
 "use client";
 
-import { use } from "react";
 import { useRouter } from "next/navigation";
-
 import { TransactionDetailsData } from "@/types/transaction";
 import { TransactionDetailsView } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details/TransactionDetailsView";
 
@@ -57,15 +55,12 @@ const mockTransactionDetails: TransactionDetailsData = {
 };
 
 interface TransactionDetailsPageProps {
-    params: Promise<{
-        investorId: string;
-        transactionId: string;
-    }>;
+    investorId: string;
+    transactionId: string;
 }
 
-export default function TransactionDetailsPage({ params }: TransactionDetailsPageProps) {
+export default function TransactionDetailsPage({ transactionId }: TransactionDetailsPageProps) {
     const router = useRouter();
-    const { transactionId } = use(params);
 
     const data: TransactionDetailsData = {
         ...mockTransactionDetails,

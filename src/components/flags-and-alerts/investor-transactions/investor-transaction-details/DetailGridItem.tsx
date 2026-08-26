@@ -1,7 +1,8 @@
+import { ReactNode } from "react";
 
 interface DetailGridItemProps {
     label: string;
-    value: React.ReactNode;
+    value: ReactNode;
 }
 
 export function DetailGridItem({ label, value }: DetailGridItemProps) {

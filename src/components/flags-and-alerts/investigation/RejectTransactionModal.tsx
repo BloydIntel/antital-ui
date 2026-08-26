@@ -22,7 +22,7 @@ interface RejectTransactionModalProps {
 }
 
 const REJECTION_REASONS = [
-    "Complaince Violation - High Risk Source",
+    "Compliance Violation - High Risk Source",
     "AML Proxy Match",
     "Unverified Identity / KYC Failure",
     "Suspicious Activity Detected",
@@ -34,7 +34,7 @@ export function RejectTransactionModal({
     onClose,
     onConfirm,
     transactionId = "TXN-928583",
-    amount = "NGN2,500,00",
+    amount = "NGN2,500,000",
     entityName = "John Doe",
     entityId = "INV-89344",
     destination = "GTBank *3747",

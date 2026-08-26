@@ -4,6 +4,7 @@ interface PageProps {
     params: Promise<{ flagId: string }>;
 }
 
-export default function Page({ params }: PageProps) {
-    return <InvestigationPage params={params} />;
+export default async function Page({ params }: PageProps) {
+    const { flagId } = await params;
+    return <InvestigationPage flagId={flagId} />;
 }

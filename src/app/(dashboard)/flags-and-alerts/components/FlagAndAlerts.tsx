@@ -172,7 +172,7 @@ export default function FlagsAndAlertsPage() {
     const handleInvestigate = (alert: AlertItem) => {
 
         router.push(`/flags-and-alerts/investigation/${alert.flagId}`);
-    };;
+    };
 
     return (
         <main className="space-y-6">

@@ -34,7 +34,7 @@ const MOCK_KYC_DATA: IdentityKycData = {
     activeFlag: {
         flagId: "FLG-1092",
         label: "AML/Fraud Suspicion",
-        url: "/investigations/FLG-1092",
+        url: "/flags-and-alerts/investigation/FLG-1092",
     },
 };
 

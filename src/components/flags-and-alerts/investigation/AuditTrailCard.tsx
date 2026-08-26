@@ -12,6 +12,13 @@ interface AuditTrailCardProps {
     items: AuditTrailItem[];
 }
 
+const COLOR_MAP: Record<AuditTrailItem["color"], string> = {
+    blue: "bg-[#3B82F6]",
+    red: "bg-[#DC2626]",
+    green: "bg-[#16A34A]",
+    gray: "bg-[#6B7280]",
+};
+
 export function AuditTrailCard({ items }: AuditTrailCardProps) {
     return (
         <div className="bg-white rounded-xl border border-[#E2E8F0] py-6 px-4">
@@ -23,11 +30,7 @@ export function AuditTrailCard({ items }: AuditTrailCardProps) {
                 {items.map((item) => (
                     <div key={item.id} className="relative pl-3">
                         <div
-                            className={`absolute -left-[15px] top-1.5 w-2.5 h-2.5 rounded-full ${item.color === "blue"
-                                ? "bg-[#3B82F6]"
-                                : item.color === "red"
-                                    ? "bg-[#DC2626]"
-                                    : "bg-[#16A34A]"
+                            className={`absolute -left-[15px] top-1.5 w-2.5 h-2.5 rounded-full ${COLOR_MAP[item.color] ?? COLOR_MAP.gray
                                 }`}
                         />
                         <h4 className="text-[16px] text-[#1F1F1F]" style={{ ...TYPOGRAPHY.body, fontWeight: 400 }}>

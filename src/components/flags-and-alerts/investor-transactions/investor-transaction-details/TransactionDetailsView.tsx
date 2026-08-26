@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { TransactionDetailsData } from "@/types/transaction";
 import { DetailSection } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details/DetailSection";
 import { DetailGridItem } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details/DetailGridItem";
-import { TransactionTimeline } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details//TransactionTimeline";
+import { TransactionTimeline } from "@/components/flags-and-alerts/investor-transactions/investor-transaction-details/TransactionTimeline";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { StatusBadge } from "@/components/flags-and-alerts/atom/StatusBadge";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";

@@ -45,7 +45,7 @@ export function TriggerContextCard({ data }: TriggerContextCardProps) {
                     <p className="text-[#1F1F1F] text-[16px]">
                         <span className="text-[#D4001A]">{data.sourceIp}</span>{" "}
                         {data.ipNote && (
-                            <span className="text-[##858585] font-normal text-[12px]">{data.ipNote}</span>
+                            <span className="text-[#858585] font-normal text-[12px]">{data.ipNote}</span>
                         )}
                     </p>
                 </div>

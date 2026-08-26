@@ -12,7 +12,7 @@ export function ResolutionActionsCard({ onAction }: ResolutionActionsCardProps) 
 
     return (
         <div className="bg-white rounded-xl border border-[#E2E8F0] py-6 px-4">
-            <h2 className="text-[18px] text-[##0F172A] mb-4" style={{ ...TYPOGRAPHY.heading, fontWeight: 700 }}>
+            <h2 className="text-[18px] text-[#0F172A] mb-4" style={{ ...TYPOGRAPHY.heading, fontWeight: 700 }}>
                 Resolution actions
             </h2>
 

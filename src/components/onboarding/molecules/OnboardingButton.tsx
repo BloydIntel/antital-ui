@@ -1,19 +1,20 @@
 import { Loader2 } from "lucide-react"
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { CSSProperties, ReactNode } from "react"
 
 interface OnboardingButtonProps {
-    label: React.ReactNode
+    label: ReactNode
     onClick?: () => void
     disabled?: boolean
     /** Shows a spinner like the sign-in button while an async action runs. */
     loading?: boolean
     variant?: 'solid' | 'plain'
     type?: "button" | "submit" | "reset"
-    icon?: React.ReactNode
+    icon?: ReactNode
     className?: string
     fontFamily?: string
-    style?: React.CSSProperties
+    style?: CSSProperties
 }
 
 export function OnboardingButton({
@@ -38,7 +39,7 @@ export function OnboardingButton({
 
     const isBusy = loading || disabled
 
-    const combinedStyles: React.CSSProperties = {
+    const combinedStyles: CSSProperties = {
         fontFamily: fontFamily || style?.fontFamily || "var(--font-rethink-sans)",
         ...style,
     }

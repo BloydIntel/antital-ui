@@ -144,7 +144,7 @@ export function FileStrModal({
                             className="w-4 h-4 rounded border-[#E2E8F0] text-[#042E27] focus:ring-[#042E27] cursor-pointer accent-[#042E27]"
                         />
                         <span className="text-[14px] text-[#11110F]">
-                            Include Attachements
+                            Include Attachments
                         </span>
                     </label>
 

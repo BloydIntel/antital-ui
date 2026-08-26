@@ -1,13 +1,12 @@
-
 interface StatusBadgeProps {
     status: string;
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-    if (status === "Flagged") {
+    if (status === "Flagged" || status === "Failed") {
         return (
             <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#D4001A]">
-                Flagged
+                {status}
             </span>
         );
     }
@@ -22,7 +21,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
     return (
         <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#45B424]">
-            Completed
+            {status === "Completed" ? "Completed" : status}
         </span>
     );
 }

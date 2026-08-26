@@ -1,6 +1,5 @@
 import TransactionDetailsPage from "@/app/(dashboard)/investor-profile/investor-transactions/[investorId]/[transactionId]/TransactionDetailsPage";
 
-
 interface PageProps {
     params: Promise<{
         investorId: string;
@@ -8,6 +7,7 @@ interface PageProps {
     }>;
 }
 
-export default function Page({ params }: PageProps) {
-    return <TransactionDetailsPage params={params} />;
+export default async function Page({ params }: PageProps) {
+    const { investorId, transactionId } = await params;
+    return <TransactionDetailsPage investorId={investorId} transactionId={transactionId} />;
 }

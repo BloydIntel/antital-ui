@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { X, ChevronDown } from "lucide-react";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 import Image from "next/image";
@@ -35,7 +35,7 @@ export function AddNoteModal({
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (onSubmit) {
             onSubmit({ category, content });
@@ -52,7 +52,7 @@ export function AddNoteModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-full p-1  text-[#11110F]hover:bg-[#F8F9FA] hover:text-[#858585] transition-colors cursor-pointer"
+                        className="rounded-full p-1  text-[#11110F] hover:bg-[#F8F9FA] hover:text-[#858585] transition-colors cursor-pointer"
                     >
                         <X className="w-5 h-5" />
                     </button>

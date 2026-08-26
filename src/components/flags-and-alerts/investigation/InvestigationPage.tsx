@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { InvestigationHeader } from "@/components/flags-and-alerts/investigation/InvestigationHeader";
 import { TriggerContextCard, TriggerContextData } from "@/components/flags-and-alerts/investigation/TriggerContextCard";
@@ -72,12 +72,11 @@ const ALERTS_DATABASE: Record<string, InvestigationDetail> = {
 };
 
 interface InvestigationPageProps {
-    params: Promise<{ flagId: string }>;
+    flagId: string;
 }
 
-export default function InvestigationPage({ params }: InvestigationPageProps) {
+export default function InvestigationPage({ flagId }: InvestigationPageProps) {
     const router = useRouter();
-    const { flagId } = use(params);
 
     const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false);
     const [isClearModalOpen, setIsClearModalOpen] = useState(false);

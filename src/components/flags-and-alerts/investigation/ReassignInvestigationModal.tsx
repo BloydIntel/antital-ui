@@ -26,7 +26,7 @@ export function ReassignInvestigationModal({
     onConfirm,
     flagId,
     defaultAssignee = "Sarah Michelle (Senior compliance officer)",
-    defaultNote = "Hey sarah, I did the initial pass but need yur senior approval on the OFAC check before we clear this. Documents are attached",
+    defaultNote = "Hey Sarah, I did the initial pass but need your senior approval on the OFAC check before we clear this. Documents are attached",
 }: ReassignInvestigationModalProps) {
     const [assignee, setAssignee] = useState<string>(defaultAssignee);
     const [note, setNote] = useState<string>(defaultNote);
