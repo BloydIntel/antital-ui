@@ -130,6 +130,10 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
         router.push(`/investor-profile/investor-transactions/${investorId}`);
     };
 
+    const handleNavigateToPortfolio = () => {
+        router.push(`/investor-profile/investor-portfolio/${investorId}`);
+    };
+
     return (
         <div className="min-h-screen space-y-6 font-sans text-[#11110F]">
             {/* Header Component */}
@@ -162,7 +166,7 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                     {/* Active Portfolio Table */}
                     <ActivePortfolioTable
                         items={MOCK_PORTFOLIO}
-                        onViewAll={() => console.log("View All Portfolio")}
+                        onViewAll={handleNavigateToPortfolio}
                     />
 
                     {/* Recent Transactions */}
