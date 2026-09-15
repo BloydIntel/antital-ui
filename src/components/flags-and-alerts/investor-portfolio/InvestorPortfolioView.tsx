@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ArrowLeft, Filter, Search } from "lucide-react";
+import { ArrowLeft, Filter } from "lucide-react";
 import { PortfolioPosition, PortfolioMetric } from "@/types/portfolio";
-import { PortfolioStatusBadge } from "@/components/flags-and-alerts/investor-portfolio/atoms/PortfolioStatusBadge";
+import { PortfolioStatusBadge } from "@/components/flags-and-alerts/investor-portfolio/PortfolioStatusBadge";
 import {
     Select,
     SelectContent,
@@ -12,6 +12,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { TYPOGRAPHY } from "@/constants/styles";
+import { SearchInputBar } from "@/components/watchlist/organisms/SearchInputBar";
+import { TablePagination } from "@/components/watchlist/molecules/TablePagination";
 
 
 interface InvestorPortfolioViewProps {
@@ -25,6 +27,8 @@ interface InvestorPortfolioViewProps {
 
 type TabType = "All Positions" | "Active" | "Pending Close" | "Exited";
 
+const PAGE_SIZE = 7;
+
 export function InvestorPortfolioView({
     investorName,
     investorCode,
@@ -36,6 +40,7 @@ export function InvestorPortfolioView({
     const [activeTab, setActiveTab] = useState<TabType>("All Positions");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedAssetClass, setSelectedAssetClass] = useState<string>("All");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const assetClassOptions = useMemo(() => {
         const uniqueAssets = Array.from(new Set(positions.map((p) => p.assetClass)));
@@ -64,6 +69,28 @@ export function InvestorPortfolioView({
         });
     }, [positions, activeTab, selectedAssetClass, searchQuery]);
 
+    const totalPages = Math.ceil(filteredPositions.length / PAGE_SIZE);
+
+    const paginatedPositions = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return filteredPositions.slice(start, start + PAGE_SIZE);
+    }, [filteredPositions, currentPage]);
+
+    const handleTabChange = (tab: TabType) => {
+        setActiveTab(tab);
+        setCurrentPage(1);
+    };
+
+    const handleSearchChange = (val: string) => {
+        setSearchQuery(val);
+        setCurrentPage(1);
+    };
+
+    const handleAssetClassChange = (val: string) => {
+        setSelectedAssetClass(val);
+        setCurrentPage(1);
+    };
+
     return (
         <div className="min-h-screen space-y-6 font-sans text-[#11110F] bg-[#FAFAFA] pb-12">
             {/* Top Header Navigation */}
@@ -89,7 +116,7 @@ export function InvestorPortfolioView({
                     <div className="w-fit min-w-[180px] max-w-[280px]">
                         <Select
                             value={selectedAssetClass}
-                            onValueChange={(val) => setSelectedAssetClass(val)}
+                            onValueChange={handleAssetClassChange}
                         >
                             <SelectTrigger className="w-full px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#1A1C1E] h-9 text-[14px]">
                                 <div className="flex items-center gap-1.5 truncate">
@@ -123,19 +150,20 @@ export function InvestorPortfolioView({
             </div>
 
             {/* Main Table Container */}
-            <div className="bg-white rounded-xl border border-[#EAEAEA] shadow-xs overflow-hidden">
+            <div className="bg-white rounded-xl border border-[#EAEAEA] overflow-hidden">
                 {/* Table Controls (Tabs & Search) */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 border-b border-[#EAEAEA]">
-                    {/* Tabs */}
-                    <div className="flex items-center space-x-6 border-b sm:border-b-0 border-[#EAEAEA]">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4">
+                    {/* Tabs Wrapper with Horizontal Scroll */}
+                    <div className="flex items-center space-x-2 overflow-x-auto whitespace-nowrap border-b border-[#EAEAEA] py-4 scrollbar-hide">
                         {(["All Positions", "Active", "Pending Close", "Exited"] as TabType[]).map((tab) => (
                             <button
                                 key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`pb-2 sm:pb-0 text-[14px] font-medium transition-colors relative cursor-pointer ${activeTab === tab
-                                    ? "text-[#11110F] font-semibold after:absolute after:bottom-[-16px] after:left-0 after:right-0 after:h-[2px] after:bg-[#11110F]"
-                                    : "text-[#666666] hover:text-[#11110F]"
+                                onClick={() => handleTabChange(tab)}
+                                className={`pb-2 sm:pb-0 px-6 text-[14px] transition-colors relative cursor-pointer shrink-0 ${activeTab === tab
+                                    ? "text-[#042E27] after:absolute after:bottom-[-16px] after:left-0 after:right-0 after:h-[2px] after:bg-[#A7B832]"
+                                    : "text-[#858585] hover:text-[#11110F]"
                                     }`}
+                                style={TYPOGRAPHY.body}
                             >
                                 {tab}
                             </button>
@@ -143,34 +171,31 @@ export function InvestorPortfolioView({
                     </div>
 
                     {/* Search Bar */}
-                    <div className="relative w-full sm:w-[280px]">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#858585]" />
-                        <input
-                            type="text"
+                    <div className="w-full sm:max-w-[317px] sm:pr-4">
+                        <SearchInputBar
                             placeholder="Search campaigns..."
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-3 py-1.5 bg-[#FCFCFC] border border-[#EAEAEA] rounded-lg text-[13px] text-[#11110F] placeholder-[#858585] focus:outline-none focus:border-[#11110F] transition-colors"
+                            onChange={handleSearchChange}
                         />
                     </div>
                 </div>
 
                 {/* Positions Table */}
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="border-b border-[#EAEAEA] bg-[#FAFAFA] text-[12px] font-normal text-[#666666]">
-                                <th className="py-3 px-5">Campaign / ID</th>
-                                <th className="py-3 px-4">Asset Class</th>
-                                <th className="py-3 px-4">Date Invested</th>
-                                <th className="py-3 px-4">Initial Amount</th>
-                                <th className="py-3 px-4">Current Value / ROI</th>
-                                <th className="py-3 px-4 text-center">Status</th>
-                                <th className="py-3 px-5 text-right">Actions</th>
+                            <tr className="border-b border-[#EAEAEA] text-[14px] font-normal text-[#505050]" style={TYPOGRAPHY.body}>
+                                <th className="py-3 px-5 font-normal w-[15%] whitespace-nowrap">Campaign / ID</th>
+                                <th className="py-3 px-4 font-normal w-[12%] whitespace-nowrap">Asset Class</th>
+                                <th className="py-3 px-4 font-normal w-[14%] whitespace-nowrap">Date Invested</th>
+                                <th className="py-3 px-4 font-normal w-[13%] whitespace-nowrap">Initial Amount</th>
+                                <th className="py-3 px-4 font-normal text-right w-[13%] whitespace-nowrap">Current Value / ROI</th>
+                                <th className="py-3 px-4 font-normal text-left w-[13%] whitespace-nowrap">Status</th>
+                                <th className="py-3 px-5 font-normal text-center w-[13%] whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[#EAEAEA] text-[13px]">
-                            {filteredPositions.map((row) => (
+                            {paginatedPositions.map((row) => (
                                 <tr key={row.id} className="hover:bg-[#FAFAFA]/60 transition-colors">
                                     <td className="py-4 px-5">
                                         <div className="font-medium text-[#11110F]">{row.campaign}</div>
@@ -179,7 +204,7 @@ export function InvestorPortfolioView({
                                     <td className="py-4 px-4 text-[#11110F]">{row.assetClass}</td>
                                     <td className="py-4 px-4 text-[#11110F]">{row.dateInvested}</td>
                                     <td className="py-4 px-4 font-medium text-[#11110F]">{row.initialAmount}</td>
-                                    <td className="py-4 px-4">
+                                    <td className="py-4 px-4 text-right">
                                         <div className="font-medium text-[#11110F]">{row.currentValue}</div>
                                         <div
                                             className={`text-[12px] mt-0.5 ${row.roi.startsWith("+")
@@ -192,13 +217,14 @@ export function InvestorPortfolioView({
                                             {row.roi}
                                         </div>
                                     </td>
-                                    <td className="py-4 px-4 text-center">
+                                    <td className="py-4 px-4 text-left whitespace-nowrap">
                                         <PortfolioStatusBadge status={row.status} />
                                     </td>
-                                    <td className="py-4 px-5 text-right">
+                                    <td className="py-4 px-5 text-center">
                                         <button
                                             onClick={() => onViewDetails(row)}
-                                            className="bg-[#0A251E] hover:bg-[#061713] text-white text-[12px] font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                                            className="bg-[#042E27] hover:bg-[#061713] text-[#F4F5F7] text-[14px]  px-3 py-1.5 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+                                            style={TYPOGRAPHY.body}
                                         >
                                             View Details
                                         </button>
@@ -210,23 +236,16 @@ export function InvestorPortfolioView({
                 </div>
 
                 {/* Footer Pagination */}
-                <div className="flex items-center justify-between p-4 border-t border-[#EAEAEA] text-[13px] text-[#666666]">
-                    <span>Showing {filteredPositions.length} of {positions.length} records</span>
-                    <div className="flex items-center space-x-2">
-                        <button
-                            disabled
-                            className="px-3 py-1.5 border border-[#EAEAEA] rounded-md text-[#858585] bg-[#FAFAFA] cursor-not-allowed"
-                        >
-                            Previous
-                        </button>
-                        <button
-                            disabled
-                            className="px-3 py-1.5 border border-[#EAEAEA] rounded-md text-[#858585] bg-[#FAFAFA] cursor-not-allowed"
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
+                <TablePagination
+                    variant="simple"
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalRecords={positions.length}
+                    filteredCount={filteredPositions.length}
+                    pageSize={PAGE_SIZE}
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
+
             </div>
         </div>
     );
