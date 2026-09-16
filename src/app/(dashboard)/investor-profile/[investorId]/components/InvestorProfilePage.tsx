@@ -9,6 +9,7 @@ import { ProfileHeader } from "@/components/flags-and-alerts/view-profile/Profil
 import { RecentTransactionsList, TransactionItem } from "@/components/flags-and-alerts/view-profile/RecentTransactionsList";
 import { SuspendInvestorModal } from "@/components/flags-and-alerts/view-profile/SuspendInvestorModal";
 import { useRouter } from "next/navigation";
+import { DocumentModalData, ViewDocumentModal } from "@/components/flags-and-alerts/view-profile/ViewDocumentModal";
 
 interface InvestorProfilePageProps {
     investorId: string;
@@ -112,6 +113,23 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
     const router = useRouter();
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
+    const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
+
+    const [documentData] = useState<DocumentModalData>({
+        title: "Identity Document",
+        userName: MOCK_USER_DATA.name,
+        userId: investorId,
+        verificationStatus: "Verified Match",
+        documentImageUrl: "/admin-investor-profile/identityCardMockup.png",
+        ocrData: {
+            documentType: "National ID Card",
+            issuingCountry: "Nigeria (NGA)",
+            documentNumber: "AO1234567",
+            fullName: MOCK_USER_DATA.name.toUpperCase(),
+            dateOfBirth: "15 SEP 1985",
+            expiryDate: "12 OCT 2028",
+        },
+    });
 
     const handleSaveNote = (noteData: { category: string; content: string }) => {
         console.log("Note saved:", noteData);
@@ -151,7 +169,10 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
             <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
                 {/* Left Column (Sidebar - 3 cols) */}
                 <div className="lg:col-span-3">
-                    <IdentityKycSidebar data={MOCK_KYC_DATA} />
+                    <IdentityKycSidebar
+                        data={MOCK_KYC_DATA}
+                        onViewDocument={() => setIsDocumentModalOpen(true)}
+                    />
                 </div>
 
                 {/* Right Column (Main View - 4 cols) */}
@@ -198,6 +219,12 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                     name: MOCK_USER_DATA.name,
                     id: investorId,
                 }}
+            />
+
+            <ViewDocumentModal
+                isOpen={isDocumentModalOpen}
+                onClose={() => setIsDocumentModalOpen(false)}
+                data={documentData}
             />
         </div>
     );

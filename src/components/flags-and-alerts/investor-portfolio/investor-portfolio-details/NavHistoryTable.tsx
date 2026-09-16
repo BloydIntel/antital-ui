@@ -33,7 +33,7 @@ export function NavHistoryTable({ records }: NavHistoryTableProps) {
                 NAV History (per unit)
             </h2>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-hide">
                 <table className="w-full text-left text-[14px] border-collapse">
                     <tbody className="divide-y divide-[#EAEAEA] text-[#2C2C2C]">
                         {records.map((rec, idx) => (

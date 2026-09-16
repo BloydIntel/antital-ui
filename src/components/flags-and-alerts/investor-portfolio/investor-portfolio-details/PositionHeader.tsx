@@ -46,21 +46,23 @@ export function PositionHeader({
 
             {/* Header Card */}
             <div className="bg-white rounded-xl border border-[#EAEAEA] p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col lg:flex-row items-center gap-4">
                     {/* Logo Avatar */}
                     <div className="w-16 h-16 rounded-full bg-[#FCFCFC] border border-[#A8A8A8] flex items-center justify-center font-medium text-[#333333] text-[28px]">
                         {initials}
                     </div>
 
                     <div>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex flex-col lg:flex-row items-center gap-2 flex-wrap">
                             <h1 className="text-[24px] font-medium text-[#11110F]">{title}</h1>
-                            <span className="bg-[#FCFCFC] border border-[#EAEAEA] text-[#137333] text-[12px] px-2 py-1 rounded-md">
-                                {status}
-                            </span>
-                            <span className="text-[#858585] text-[12px] border border-[#EAEAEA] bg-[#FCFCFC] px-2 py-1 rounded-md">
-                                {assetClass}
-                            </span>
+                            <div className="space-x-4">
+                                <span className="bg-[#FCFCFC] border border-[#EAEAEA] text-[#137333] text-[12px] px-2 py-1 rounded-md">
+                                    {status}
+                                </span>
+                                <span className="text-[#858585] text-[12px] border border-[#EAEAEA] bg-[#FCFCFC] px-2 py-1 rounded-md">
+                                    {assetClass}
+                                </span>
+                            </div>
                         </div>
 
                         <p className="text-[12px] text-[#A8A8A8] mt-2">
@@ -78,7 +80,7 @@ export function PositionHeader({
                     label="Download Certificate"
                     icon={<Download className="w-4 h-4 text-[#505050]" />}
                     onClick={onDownloadCertificate}
-                    className="my-0 w-fit border-[#EAEAEA]"
+                    className="my-0 lg:w-fit border-[#EAEAEA]"
                 />
             </div>
         </div>

@@ -25,7 +25,7 @@ export const MOCK_POSITION_DETAIL: PositionDetailData = {
         amountInvested: "5,000,000",
         investmentDate: "Jan 02, 2024",
         currentValue: "5,410,000",
-        valueChange: "-410,000",
+        valueChange: "+410,000",
         unrealizedRoi: "+8.2%",
         escrowPercentage: "1%",
         unitsHeld: "50,000",

@@ -11,14 +11,14 @@ export function PositionTransactionHistoryTable({ transactions }: PositionTransa
         <div className="bg-white rounded-xl border border-[#EAEAEA] px-4 overflow-hidden">
             <h2 className="text-[16px] font-medium text-[#040C17] border-b border-[#EAEAEA] p-4 -mx-4">Position Transaction History</h2>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-hide">
                 <table className="w-full text-left text-[14px] border-collapse">
                     <thead>
                         <tr className="border-b border-[#EAEAEA] text-[#666666] font-normal">
                             <th className="py-3 px-4 font-normal">Reference</th>
                             <th className="py-3 px-4 font-normal">Type</th>
                             <th className="py-3 px-4 font-normal">Date</th>
-                            <th className="py-3 px-4 font-normal">Payment method</th>
+                            <th className="py-3 px-4 font-normal whitespace-nowrap">Payment method</th>
                             <th className="py-3 px-4 font-normal text-right">Amount</th>
                             <th className="py-3 px-4 font-normal text-right">Status</th>
                         </tr>
