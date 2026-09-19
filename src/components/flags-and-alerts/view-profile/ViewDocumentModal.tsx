@@ -50,7 +50,11 @@ export function ViewDocumentModal({ isOpen, onClose, data }: ViewDocumentModalPr
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-[694px] overflow-hidden rounded-2xl bg-white">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+                className="w-full max-w-[694px] overflow-hidden rounded-2xl bg-white">
                 {/* Header */}
                 <div className="flex flex-col-reverse gap-1 lg:flex-row lg:items-center justify-between border-b border-[#EAEAEA] p-4">
                     <div className="flex items-center gap-3">

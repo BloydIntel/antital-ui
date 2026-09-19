@@ -190,7 +190,7 @@ export function InvestorPortfolioView({
                                 <th className="py-3 px-4 font-normal w-[14%] whitespace-nowrap">Date Invested</th>
                                 <th className="py-3 px-4 font-normal w-[13%] whitespace-nowrap">Initial Amount</th>
                                 <th className="py-3 px-4 font-normal text-right w-[13%] whitespace-nowrap">Current Value / ROI</th>
-                                <th className="py-3 px-4 font-normal text-left w-[13%] whitespace-nowrap">Status</th>
+                                <th className="py-3 px-4 font-normal text-center w-[13%] whitespace-nowrap">Status</th>
                                 <th className="py-3 px-5 font-normal text-center w-[13%] whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
@@ -217,7 +217,7 @@ export function InvestorPortfolioView({
                                             {row.roi}
                                         </div>
                                     </td>
-                                    <td className="py-4 px-4 text-left whitespace-nowrap">
+                                    <td className="py-4 px-4 text-center whitespace-nowrap">
                                         <PortfolioStatusBadge status={row.status} />
                                     </td>
                                     <td className="py-4 px-5 text-center">
