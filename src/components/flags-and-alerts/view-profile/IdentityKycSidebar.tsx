@@ -20,8 +20,12 @@ export interface IdentityKycData {
     accountNumber: string;
 }
 
+interface IdentityKycSidebarProps {
+    data: IdentityKycData;
+    onViewDocument?: () => void;
+}
 
-export function IdentityKycSidebar({ data }: { data: IdentityKycData }) {
+export function IdentityKycSidebar({ data, onViewDocument }: IdentityKycSidebarProps) {
     const CONTACT_FIELDS = [
         { label: "Email address", value: data.email },
         { label: "Phone Number", value: data.phone },
@@ -69,7 +73,7 @@ export function IdentityKycSidebar({ data }: { data: IdentityKycData }) {
                     <div className="flex items-center justify-between">
                         <span className="text-[16px] text-[#858585]">BVN Match</span>
                         {data.bvnMatch && (
-                            <span className="inline-flex items-center gap-1 text-[16px]  text-[#45B424]">
+                            <span className="inline-flex items-center gap-1 text-[16px] text-[#45B424]">
                                 <Check className="w-3.5 h-3.5" /> Verified
                             </span>
                         )}
@@ -77,12 +81,13 @@ export function IdentityKycSidebar({ data }: { data: IdentityKycData }) {
 
                     <div className="flex items-center justify-between">
                         <span className="text-[16px] text-[#858585]">ID Document</span>
-                        <a
-                            href={data.idDocumentUrl || "#"}
-                            className="text-[16px] text-[#7BA147] font-normal underline hover:opacity-70 transition-opacity"
+                        <button
+                            type="button"
+                            onClick={onViewDocument}
+                            className="text-[16px] text-[#7BA147] font-normal underline hover:opacity-70 transition-opacity cursor-pointer"
                         >
                             View Document
-                        </a>
+                        </button>
                     </div>
 
                     {/* Active Flags Banner */}
