@@ -24,7 +24,7 @@ export function InvestorTable({
                     label="View Profile"
                     variant="plain"
                     onClick={() => onViewProfile(investor)}
-                    className="my-0 !py-1.5 !px-4 text-[14px] font-normal"
+                    className="my-0 max-w-[150px] !py-1.5 !px-4 text-[14px] font-normal"
                 />
             );
         }
@@ -35,7 +35,7 @@ export function InvestorTable({
                     label="Review Document"
                     variant="plain"
                     onClick={() => onReviewDocument(investor)}
-                    className="my-0 !py-1.5 !px-4 text-[14px] font-normal"
+                    className="my-0 max-w-[150px] !py-1.5 !px-4 text-[14px] font-normal"
                 />
             );
         }
@@ -45,7 +45,7 @@ export function InvestorTable({
                 label="Review Case"
                 variant="plain"
                 onClick={() => onReviewCase(investor)}
-                className="my-0 !py-1.5 !px-4 text-[14px] font-normal"
+                className="my-0 max-w-[150px] !py-1.5 !px-4 text-[14px] font-normal"
             />
         );
     };
@@ -55,11 +55,11 @@ export function InvestorTable({
             <table className="w-full text-left text-[14px] border-collapse">
                 <thead>
                     <tr className="border-b border-[#EAEAEA] text-[#858585] font-normal">
-                        <th className="py-3.5 px-4 font-normal">Investor</th>
-                        <th className="py-3.5 px-4 font-normal text-right">Wallet Balance</th>
-                        <th className="py-3.5 px-4 font-normal">Joined Date</th>
-                        <th className="py-3.5 px-4 font-normal">Status</th>
-                        <th className="py-3.5 px-4 font-normal text-right">Action</th>
+                        <th className="py-3.5 px-4 font-normal whitespace-nowrap">Investor</th>
+                        <th className="py-3.5 px-4 font-normal whitespace-nowrap text-right">Wallet Balance</th>
+                        <th className="py-3.5 px-4 font-normal whitespace-nowrap text-center">Joined Date</th>
+                        <th className="py-3.5 px-4 font-normal whitespace-nowrap text-center">Status</th>
+                        <th className="py-3.5 px-4 font-normal whitespace-nowrap text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EAEAEA] text-[#2C2C2C]">
@@ -68,12 +68,12 @@ export function InvestorTable({
                             {/* Investor Identity Column */}
                             <td className="py-4 px-4 whitespace-nowrap">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-[#EAEAEA] text-[#444444] font-medium flex items-center justify-center text-[14px] shrink-0">
+                                    <div className="w-10 h-10 rounded-full bg-[#EAEAEA] text-[#1B1B1B] font-medium flex items-center justify-center text-[16px] shrink-0">
                                         {investor.initials}
                                     </div>
-                                    <div>
-                                        <p className="font-medium text-[#11110F]">{investor.name}</p>
-                                        <p className="text-[13px] text-[#858585]">
+                                    <div className="space-y-2">
+                                        <p className="text-[#11110F] text-[14px]">{investor.name}</p>
+                                        <p className="text-[14px] text-[#858585]">
                                             {investor.id} • {investor.email}
                                         </p>
                                     </div>
@@ -81,22 +81,22 @@ export function InvestorTable({
                             </td>
 
                             {/* Wallet Balance */}
-                            <td className="py-4 px-4 text-right font-medium text-[#11110F] whitespace-nowrap">
+                            <td className="py-4 px-4 text-right text-[#11110F] text-[14px] whitespace-nowrap">
                                 {investor.walletBalance}
                             </td>
 
                             {/* Joined Date */}
-                            <td className="py-4 px-4 text-[#505050] whitespace-nowrap">
+                            <td className="py-4 px-4 text-[#505050] text-[14px] whitespace-nowrap text-center">
                                 {investor.joinedDate}
                             </td>
 
                             {/* Status */}
-                            <td className="py-4 px-4 whitespace-nowrap">
+                            <td className="py-4 px-4 whitespace-nowrap text-center">
                                 <InvestorStatusBadge status={investor.status} />
                             </td>
 
                             {/* Action Button */}
-                            <td className="py-4 px-4 text-right whitespace-nowrap">
+                            <td className="py-4 px-4 whitespace-nowrap flex justify-center">
                                 {renderActionButton(investor)}
                             </td>
                         </tr>

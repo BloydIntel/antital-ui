@@ -9,6 +9,7 @@ import { InvestorTable } from "@/components/investor-management/molecules/Invest
 import { TablePagination } from "@/components/watchlist/molecules/TablePagination";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const DATE_RANGE_OPTIONS = [
     "All Time",
@@ -19,34 +20,17 @@ const DATE_RANGE_OPTIONS = [
     "Year to Date",
 ] as const;
 
+const DATE_LABEL_MAP: Record<DateRangeOption, string> = {
+    "All Time": "all time",
+    "Last 7 Days": "this week",
+    "Last 30 Days": "last 30 days",
+    "Last Month": "last month",
+    "Last 90 Days": "last 90 days",
+    "Year to Date": "this year",
+};
+
 export type DateRangeOption = (typeof DATE_RANGE_OPTIONS)[number];
 
-const METRICS_DATA: MetricCardData[] = [
-    {
-        title: "Total Investors",
-        value: "14,596",
-        subtext: "+124 this week",
-        subtextColor: "#16A34A",
-    },
-    {
-        title: "Pending KYC",
-        value: "342",
-        subtext: "Requires manual review",
-        subtextColor: "#D97706",
-    },
-    {
-        title: "Suspended Accounts",
-        value: "28",
-        subtext: "AML/Fraud locked",
-        subtextColor: "#D4001A",
-    },
-    {
-        title: "Total Wallet Balance",
-        value: "₦84.2M",
-        subtext: "Access all accounts",
-        subtextColor: "#858585",
-    },
-];
 
 const MOCK_INVESTORS: Investor[] = [
     {
@@ -117,10 +101,38 @@ const MOCK_INVESTORS: Investor[] = [
 const TABS = ["All Investors", "Pending KYC", "Suspended", "High Net Worth"] as const;
 
 export default function InvestorManagementPage() {
+
+    const router = useRouter();
+
     const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("All Investors");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize] = useState<number>(7);
     const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption | "">("");
+
+    const metricsData: MetricCardData[] = [
+        {
+            title: "Total Investors",
+            value: "14,596",
+            changeValue: 124, // Positive (+124) -> yields #45B424
+            subtext: "",
+        },
+        {
+            title: "Pending KYC",
+            value: "342", // Metric value automatically colored #F4B942
+            subtext: "Requires manual review",
+        },
+        {
+            title: "Suspended Accounts",
+            value: "28", // Metric value automatically colored #D4001A
+            subtext: "AML/Fraud locked",
+        },
+        {
+            title: "Total Wallet Balance",
+            value: "₦84.2M",
+            subtext: "Access all accounts",
+        },
+    ];
+
 
     // Filter list based on selected tab
     const filteredInvestors = useMemo(() => {
@@ -143,6 +155,10 @@ export default function InvestorManagementPage() {
         return filteredInvestors.slice(start, start + pageSize);
     }, [filteredInvestors, currentPage, pageSize]);
 
+    const currentRangeLabel = selectedDateRange
+        ? DATE_LABEL_MAP[selectedDateRange]
+        : "this period";
+
     const handleTabChange = (tab: (typeof TABS)[number]) => {
         setActiveTab(tab);
         setCurrentPage(1);
@@ -158,8 +174,7 @@ export default function InvestorManagementPage() {
     };
 
     const handleViewProfile = (investor: Investor) => {
-        // Route to investor details
-        console.log(investor);
+        router.push(`/investor-profile/${investor.id}`);
     };
 
     const handleReviewDocument = (investor: Investor) => {
@@ -208,24 +223,24 @@ export default function InvestorManagementPage() {
                         label="Export"
                         icon={<Upload className="w-4 h-4 text-white" />}
                         onClick={handleExport}
-                        className="my-0 w-fit text-[14px] h-[42px]"
+                        className="my-0 max-w-[200px] lg:w-fit text-[14px] h-[42px]"
                     />
                 </div>
             </div>
 
             {/* Metrics */}
-            <InvestorMetrics metrics={METRICS_DATA} />
+            <InvestorMetrics metrics={metricsData} dateRangeLabel={currentRangeLabel} />
 
             {/* Table Container Card */}
-            <div className="bg-white rounded-2xl border border-[#EAEAEA] p-6 space-y-4">
+            <div className="bg-white rounded-xl border border-[#EAEAEA] px-4">
                 {/* Tabs */}
-                <div className="flex items-center gap-6 border-b border-[#EAEAEA]">
+                <div className="flex items-center gap-6 border-b border-[#EAEAEA] overflow-x-auto scrollbar-hide -mx-4">
                     {TABS.map((tab) => (
                         <button
                             key={tab}
                             type="button"
                             onClick={() => handleTabChange(tab)}
-                            className={`pb-3 text-[14px] font-medium transition-colors relative ${activeTab === tab ? "text-[#7BA147]" : "text-[#858585] hover:text-[#11110F]"
+                            className={`py-4 px-4 text-[14px] font-medium transition-colors relative whitespace-nowrap shrink-0 cursor-pointer ${activeTab === tab ? "text-[#7BA147]" : "text-[#858585] hover:text-[#11110F]"
                                 }`}
                         >
                             {tab}

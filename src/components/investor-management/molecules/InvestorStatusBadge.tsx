@@ -10,19 +10,19 @@ export function InvestorStatusBadge({ status }: InvestorStatusBadgeProps) {
     const getStatusStyles = (status: InvestorStatus) => {
         switch (status) {
             case "Active":
-                return "bg-[#ECFDF3] text-[#16A34A]";
+                return "bg-[#FCFCFC] text-[#45B424]";
             case "Pending KYC":
-                return "bg-[#FFFAEB] text-[#D97706]";
+                return "bg-[#FCFCFC] text-[#F4B942]";
             case "Suspended":
-                return "bg-[#FEF3F2] text-[#D4001A]";
+                return "bg-[#FCFCFC] text-[#D4001A]";
             default:
-                return "bg-[#F4F4F4] text-[#666666]";
+                return "bg-[#FCFCFC] text-[#858585]";
         }
     };
 
     return (
         <span
-            className={`inline-block px-3 py-1 rounded-full text-[13px] font-medium ${getStatusStyles(
+            className={`inline-block px-2 py-1 rounded-md text-[12px] border border-[#EAEAEA] ${getStatusStyles(
                 status
             )}`}
         >

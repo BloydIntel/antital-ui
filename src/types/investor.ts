@@ -31,4 +31,5 @@ export interface MetricCardData {
     value: string;
     subtext: string;
     subtextColor?: string;
+    changeValue?: number;
 }
