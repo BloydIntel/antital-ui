@@ -96,8 +96,10 @@ export function InvestorTable({
                             </td>
 
                             {/* Action Button */}
-                            <td className="py-4 px-4 whitespace-nowrap flex justify-center">
-                                {renderActionButton(investor)}
+                            <td className="py-4 px-4 whitespace-nowrap text-center">
+                                <div className="flex justify-center">
+                                    {renderActionButton(investor)}
+                                </div>
                             </td>
                         </tr>
                     ))}

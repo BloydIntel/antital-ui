@@ -41,6 +41,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦1,450,000.00",
         joinedDate: "Nov 23, 2024",
         status: "Active",
+        investorCategory: "hni",
     },
     {
         id: "INV-8931",
@@ -50,6 +51,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦124,500.00",
         joinedDate: "Oct 31, 2024",
         status: "Active",
+        investorCategory: "ordinary",
     },
     {
         id: "INV-8923",
@@ -59,6 +61,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦0.00",
         joinedDate: "Jan 04, 2024",
         status: "Pending KYC",
+        investorCategory: "sophisticated",
     },
     {
         id: "INV-8924",
@@ -68,6 +71,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦45,200.00",
         joinedDate: "Feb 02, 2024",
         status: "Suspended",
+        investorCategory: "ordinary",
     },
     {
         id: "INV-8925",
@@ -77,6 +81,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦320,000.00",
         joinedDate: "Sep 22, 2024",
         status: "Active",
+        investorCategory: "sophisticated",
     },
     {
         id: "INV-8926",
@@ -86,6 +91,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦2,100,000.00",
         joinedDate: "May 15, 2024",
         status: "Active",
+        investorCategory: "hni",
     },
     {
         id: "INV-8927",
@@ -95,6 +101,7 @@ const MOCK_INVESTORS: Investor[] = [
         walletBalance: "₦0.00",
         joinedDate: "Mar 12, 2024",
         status: "Pending KYC",
+        investorCategory: "ordinary",
     },
 ];
 
@@ -142,6 +149,9 @@ export default function InvestorManagementPage() {
         if (activeTab === "Suspended") {
             return MOCK_INVESTORS.filter((inv) => inv.status === "Suspended");
         }
+        if (activeTab === "High Net Worth") {
+            return MOCK_INVESTORS.filter((inv) => inv.investorCategory === "hni");
+        }
         return MOCK_INVESTORS;
     }, [activeTab]);
 
@@ -170,7 +180,30 @@ export default function InvestorManagementPage() {
     };
 
     const handleExport = () => {
-        // Export logic
+        const headings = ["Investor ID", "Name", "Email", "Wallet Balance", "Joined Date", "Status"];
+        const rows = filteredInvestors.map((investor) => [
+            investor.id,
+            investor.name,
+            investor.email,
+            investor.walletBalance,
+            investor.joinedDate,
+            investor.status,
+        ]);
+
+        const csvContent = [headings, ...rows]
+            .map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+            .join("\n");
+
+        // Add \uFEFF BOM to force UTF-8 decoding in Excel
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = `investors-${new Date().toISOString().split("T")[0]}.csv`;
+        anchor.click();
+
+        URL.revokeObjectURL(url);
     };
 
     const handleViewProfile = (investor: Investor) => {
@@ -206,7 +239,7 @@ export default function InvestorManagementPage() {
                         >
                             <SelectTrigger className="w-full px-3 border-[#EAEAEA] bg-white rounded-lg cursor-pointer text-[#2C2C2C] !h-[42px] text-[14px]">
                                 <div className="flex items-center gap-1.5 truncate">
-                                    <SelectValue placeholder="Filter by Priority" />
+                                    <SelectValue placeholder="Filter by Date" />
                                 </div>
                             </SelectTrigger>
                             <SelectContent className="bg-white border border-[#EAEAEA] rounded-md z-50">

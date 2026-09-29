@@ -16,6 +16,8 @@ export interface InvestorCategory {
 
 export type InvestorStatus = "Active" | "Pending KYC" | "Suspended";
 
+export type AminInvestorCategory = "ordinary" | "sophisticated" | "hni";
+
 export interface Investor {
     id: string;
     name: string;
@@ -23,7 +25,8 @@ export interface Investor {
     initials: string;
     walletBalance: string;
     joinedDate: string;
-    status: InvestorStatus;
+    status: "Active" | "Pending KYC" | "Suspended";
+    investorCategory?: AminInvestorCategory;
 }
 
 export interface MetricCardData {
