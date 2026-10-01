@@ -9,12 +9,7 @@ interface InvestorMetricsProps {
 }
 
 export function InvestorMetrics({ metrics, dateRangeLabel = "this period" }: InvestorMetricsProps) {
-    /**
-     * Determines metric value text color based on title rules:
-     * - Pending KYC: #F4B942
-     * - Suspended Accounts: #D4001A
-     * - Default: #11110F
-     */
+
     const getValueColor = (title: string): string => {
         const normalized = title.toLowerCase();
         if (normalized.includes("pending")) return "#F4B942";
@@ -22,11 +17,6 @@ export function InvestorMetrics({ metrics, dateRangeLabel = "this period" }: Inv
         return "#11110F";
     };
 
-    /**
-     * Determines subtext color based on title rules:
-     * - Total Investors: #45B424 (positive), #D4001A (negative), #858585 (zero)
-     * - All other cards: #858585
-     */
     const getSubtextColor = (metric: MetricCardData): string => {
         if (metric.title.toLowerCase().includes("total investors")) {
             const numVal = metric.changeValue ?? 0;
@@ -37,9 +27,7 @@ export function InvestorMetrics({ metrics, dateRangeLabel = "this period" }: Inv
         return "#858585";
     };
 
-    /**
-     * Formats subtext for Total Investors dynamically according to filter timeframe
-     */
+
     const renderSubtext = (metric: MetricCardData) => {
         if (metric.title.toLowerCase().includes("total investors")) {
             const val = metric.changeValue ?? 0;
@@ -50,7 +38,7 @@ export function InvestorMetrics({ metrics, dateRangeLabel = "this period" }: Inv
     };
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
             {metrics.map((metric, idx) => {
                 const valueColor = getValueColor(metric.title);
                 const subtextColor = getSubtextColor(metric);

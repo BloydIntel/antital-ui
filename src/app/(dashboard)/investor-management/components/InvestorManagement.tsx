@@ -207,7 +207,7 @@ export default function InvestorManagementPage() {
     };
 
     const handleViewProfile = (investor: Investor) => {
-        router.push(`/investor-profile/${investor.id}`);
+        router.push(`/investor-profile/${investor.id}?from=investor-management`);
     };
 
     const handleReviewDocument = (investor: Investor) => {

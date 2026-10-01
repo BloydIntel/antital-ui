@@ -134,7 +134,7 @@ export default function InvestigationPage({ flagId }: InvestigationPageProps) {
     };
 
     const handleViewProfile = () => {
-        router.push(`/investor-profile/${data.entityDetails.entityId}`);
+        router.push(`/investor-profile/${data.entityDetails.entityId}?from=investigation`);
     };
 
     return (
@@ -146,9 +146,9 @@ export default function InvestigationPage({ flagId }: InvestigationPageProps) {
                 onFreezeAccount={() => setIsFreezeModalOpen(true)}
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                 {/* Left Column */}
-                <div className="lg:col-span-8 space-y-6">
+                <div className="xl:col-span-8 space-y-6">
                     <TriggerContextCard data={data.triggerContext} />
                     <EntityDetailsCard
                         data={data.entityDetails}
@@ -158,7 +158,7 @@ export default function InvestigationPage({ flagId }: InvestigationPageProps) {
                 </div>
 
                 {/* Right Column */}
-                <div className="lg:col-span-4 space-y-6">
+                <div className="xl:col-span-4 space-y-6">
                     <ResolutionActionsCard onAction={handleResolutionAction} />
                     <AuditTrailCard items={data.auditTrail} />
                 </div>
