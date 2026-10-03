@@ -11,14 +11,15 @@ export interface PortfolioItem {
 interface ActivePortfolioProps {
     items: PortfolioItem[];
     onViewAll?: () => void;
+    isInvestorManagement: boolean
 }
 
-export function ActivePortfolioTable({ items, onViewAll }: ActivePortfolioProps) {
+export function ActivePortfolioTable({ items, onViewAll, isInvestorManagement }: ActivePortfolioProps) {
     return (
         <div className="bg-white rounded-md">
 
             <div className="flex items-center justify-between border-b border-[#EAEAEA] py-4 px-6">
-                <h3 className="text-[16px] font-medium text-[#040C17]">Active Portfolio</h3>
+                <h3 className="text-[16px] font-medium text-[#040C17]">{isInvestorManagement ? "Active Portfolio (Top Positions)" : "Active Portfolio"}</h3>
                 <button
                     type="button"
                     onClick={onViewAll}

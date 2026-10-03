@@ -9,48 +9,52 @@ export interface ProfileHeaderProps {
     name: string;
     role: string;
     id: string;
-    joinedDate: string;
-    initials: string;
+    timeOnPlatform?: string;
+    registeredDate?: string;
     backText?: string;
-    onBackClick?: () => void;
+    initials: string;
     onAddNote?: () => void;
     onSuspend?: () => void;
     onExport?: () => void;
     showExport?: boolean;
+    isInvestorManagement?: boolean;
+    investorCategory?: string;
 }
 
 export function ProfileHeader({
     name,
     role,
     id,
-    joinedDate,
+    timeOnPlatform,
+    registeredDate,
+    backText,
     initials,
-    backText = "Back to Investigation",
-    onBackClick,
     onAddNote,
     onSuspend,
     onExport,
     showExport = false,
+    isInvestorManagement,
+    investorCategory
 }: ProfileHeaderProps) {
     const router = useRouter();
 
-    const handleBack = () => {
-        if (onBackClick) {
-            onBackClick();
-        } else {
-            router.back();
-        }
-    };
+    const displayBackText =
+        backText ??
+        (isInvestorManagement ? "Back to Investor Management" : "Back to Investigation");
 
     return (
         <div className="space-y-4">
             <button
                 type="button"
-                onClick={handleBack}
+                onClick={() =>
+                    isInvestorManagement
+                        ? router.push("/investor-management")
+                        : router.back()
+                }
                 className="hidden lg:inline-flex items-center gap-2 text-[16px] text-[#858585] hover:text-[#11110F] transition-colors cursor-pointer"
             >
                 <ArrowLeft className="w-4 h-4" />
-                {backText}
+                {displayBackText}
             </button>
 
             {/* Profile Info & Top Actions Bar */}
@@ -70,12 +74,23 @@ export function ProfileHeader({
                             <h1 className="text-[24px] font-medium text-[#11110F]">
                                 {name}
                             </h1>
-                            <span className="text-[14px] font-medium text-[#7BA147]">
-                                {role}
-                            </span>
+                            {isInvestorManagement ? (
+                                <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#45B424]">
+                                    Active
+                                </span>
+                            ) : (
+                                <span className="text-[14px] font-medium text-[#7BA147]">
+                                    {role}
+                                </span>
+                            )}
                         </div>
                         <p className="text-[14px] text-[#858585] mt-0.5">
-                            {id} <span className="mx-1">•</span> Joined {joinedDate}
+                            {isInvestorManagement ?
+                                <>
+                                    {id} <span className="mx-1">•<span className="mx-1">{investorCategory}</span>•</span> Joined {registeredDate}
+                                </> : <>
+                                    {id} <span className="mx-1">•</span> Joined {timeOnPlatform}
+                                </>}
                         </p>
                     </div>
                 </div>
@@ -91,22 +106,26 @@ export function ProfileHeader({
                             className="my-0 lg:w-fit border-[#EAEAEA]"
                         />
                     ) : (
-                        <div className="w-full grid grid-cols-2 gap-3">
-                            {onAddNote && (
+                        <div className="w-full flex items-center gap-3">
+                            {/* Show 'Add Note' ONLY when NOT coming from Investor Management */}
+                            {!isInvestorManagement && onAddNote && (
                                 <OnboardingButton
                                     variant="plain"
                                     label="Add Note"
                                     icon={<FilePlus className="w-4 h-4 text-[#11110F]" />}
                                     onClick={onAddNote}
-                                    className="my-0 lg:w-fit border-[#EAEAEA] col-span-1"
+                                    className="my-0 lg:w-fit border-[#EAEAEA]"
                                 />
                             )}
+
+                            {/* Show 'Suspend Account' for both Investor Management and Investigation */}
                             {onSuspend && (
                                 <OnboardingButton
-                                    label="Suspend"
+                                    variant="plain"
+                                    label={isInvestorManagement ? "Suspend Account" : "Suspend"}
                                     icon={<X className="w-4 h-4 text-[#D4001A]" />}
                                     onClick={onSuspend}
-                                    className="my-0 lg:w-fit text-[#D4001A] border-[#D4001A] bg-transparent col-span-1"
+                                    className={`my-0 lg:w-fit text-[#D4001A] border-[#D4001A] bg-transparent ${isInvestorManagement ? "hover:text-black" : "hover:bg-[#D4001A]/5"}`}
                                 />
                             )}
                         </div>

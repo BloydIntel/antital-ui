@@ -10,6 +10,7 @@ import { RecentTransactionsList, TransactionItem } from "@/components/flags-and-
 import { SuspendInvestorModal } from "@/components/flags-and-alerts/view-profile/SuspendInvestorModal";
 import { useRouter } from "next/navigation";
 import { DocumentModalData, ViewDocumentModal } from "@/components/flags-and-alerts/view-profile/ViewDocumentModal";
+import { useSearchParams } from "next/navigation";
 
 interface InvestorProfilePageProps {
     investorId: string;
@@ -18,9 +19,12 @@ interface InvestorProfilePageProps {
 const MOCK_USER_DATA = {
     name: "John Doe",
     role: "Retail Investor",
-    joinedDate: "14 months ago",
+    timeOnPlatform: "14 months ago",
     initials: "JD",
     avatarUrl: undefined,
+    investorCategory: "Institutional/HNWI",
+    status: "Active",
+    tierLevel: "Tier 3"
 };
 
 const MOCK_KYC_DATA: IdentityKycData = {
@@ -30,13 +34,25 @@ const MOCK_KYC_DATA: IdentityKycData = {
     tierLevel: "Tier 2 (Verified)",
     bvnMatch: true,
     walletBalance: "₦124,500.00",
-    bankName: "Guaranty Trust Bank",
-    accountNumber: "0123456789",
+    bankAccounts: [
+        {
+            id: "bank-1",
+            bankName: "Stanbic IBTC Bank",
+            accountNumber: "9012345678",
+        },
+        {
+            id: "bank-2",
+            bankName: "Access Bank",
+            accountNumber: "0011223344",
+        },
+    ],
     activeFlag: {
         flagId: "FLG-1092",
         label: "AML/Fraud Suspicion",
         url: "/flags-and-alerts/investigation/FLG-1092",
     },
+    sourceofFundsVerified: true,
+    lastReviewDate: "Jan 10, 2024",
 };
 
 const MOCK_STATS_DATA = {
@@ -111,6 +127,11 @@ const MOCK_TRANSACTIONS: TransactionItem[] = [
 
 export default function InvestorProfilePage({ investorId }: InvestorProfilePageProps) {
     const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const source = searchParams.get("from");
+    const isInvestorManagement = source === "investor-management";
+
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
     const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
@@ -159,10 +180,12 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 name={MOCK_USER_DATA.name}
                 role={MOCK_USER_DATA.role}
                 id={investorId}
-                joinedDate={MOCK_USER_DATA.joinedDate}
+                timeOnPlatform={MOCK_USER_DATA.timeOnPlatform}
                 initials={MOCK_USER_DATA.initials}
                 onAddNote={() => setIsNoteModalOpen(true)}
                 onSuspend={() => setIsSuspendModalOpen(true)}
+                isInvestorManagement={isInvestorManagement}
+                investorCategory={MOCK_USER_DATA.investorCategory}
             />
 
             {/* Grid Layout */}
@@ -172,6 +195,7 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                     <IdentityKycSidebar
                         data={MOCK_KYC_DATA}
                         onViewDocument={() => setIsDocumentModalOpen(true)}
+                        isInvestorManagement={isInvestorManagement}
                     />
                 </div>
 
@@ -182,12 +206,14 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                         totalInvested={MOCK_STATS_DATA.totalInvested}
                         activePositions={MOCK_STATS_DATA.activePositions}
                         estimatedReturns={MOCK_STATS_DATA.estimatedReturns}
+                        isInvestorManagement={isInvestorManagement}
                     />
 
                     {/* Active Portfolio Table */}
                     <ActivePortfolioTable
                         items={MOCK_PORTFOLIO}
                         onViewAll={handleNavigateToPortfolio}
+                        isInvestorManagement={isInvestorManagement}
                     />
 
                     {/* Recent Transactions */}
@@ -218,7 +244,11 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 user={{
                     name: MOCK_USER_DATA.name,
                     id: investorId,
+                    status: MOCK_USER_DATA.status,
+                    tierLevel: MOCK_USER_DATA.tierLevel,
+                    investorCategory: MOCK_USER_DATA.investorCategory
                 }}
+                isInvestorManagement={isInvestorManagement}
             />
 
             <ViewDocumentModal

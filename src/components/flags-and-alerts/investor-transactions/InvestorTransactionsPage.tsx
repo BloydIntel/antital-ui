@@ -113,7 +113,7 @@ export default function InvestorTransactionsPage({ investorId }: InvestorTransac
                 name="John Doe"
                 role="Retail Investor"
                 id={investorId}
-                joinedDate="14 months ago"
+                timeOnPlatform="14 months ago"
                 initials="JD"
                 backText="Back to Investor Profile"
                 showExport
