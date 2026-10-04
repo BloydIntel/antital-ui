@@ -19,6 +19,7 @@ export interface ProfileHeaderProps {
     showExport?: boolean;
     isInvestorManagement?: boolean;
     investorCategory?: string;
+    status?: string;
 }
 
 export function ProfileHeader({
@@ -34,7 +35,8 @@ export function ProfileHeader({
     onExport,
     showExport = false,
     isInvestorManagement,
-    investorCategory
+    investorCategory,
+    status
 }: ProfileHeaderProps) {
     const router = useRouter();
 
@@ -76,7 +78,7 @@ export function ProfileHeader({
                             </h1>
                             {isInvestorManagement ? (
                                 <span className="inline-flex items-center rounded-md bg-[#FCFCFC] border border-[#EAEAEA] px-2.5 py-1 text-[12px] text-[#45B424]">
-                                    Active
+                                    {status ?? "Active"}
                                 </span>
                             ) : (
                                 <span className="text-[14px] font-medium text-[#7BA147]">
@@ -122,7 +124,7 @@ export function ProfileHeader({
                             {onSuspend && (
                                 <OnboardingButton
                                     variant="plain"
-                                    label={isInvestorManagement ? "Suspend Account" : "Suspend"}
+                                    label={isInvestorManagement && status === "Suspended" ? "Unsuspend Account" : isInvestorManagement ? "Suspend Account" : "Suspend"}
                                     icon={<X className="w-4 h-4 text-[#D4001A]" />}
                                     onClick={onSuspend}
                                     className={`my-0 lg:w-fit text-[#D4001A] border-[#D4001A] bg-transparent ${isInvestorManagement ? "hover:text-black" : "hover:bg-[#D4001A]/5"}`}
