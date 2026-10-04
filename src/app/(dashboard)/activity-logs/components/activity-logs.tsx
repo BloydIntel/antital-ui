@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, CircleCheck, Download, Filter, Search } from "lucide-react"
 
@@ -8,50 +8,22 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { useAdminActivityLogs } from "@/hooks/use-admin-activity-logs"
+import type { AdminActivityLogItem } from "@/types/admin-activity-log-api"
 
 type Priority = "Low" | "Medium" | "High" | "Critical"
 type LogStatus = "Completed" | "Pending Review" | "Success" | "Complete" | "Submitted" | "Failed"
 
-interface ActivityLog {
-  id: number
+interface ActivityLog extends Omit<AdminActivityLogItem, "occurredAtUtc" | "priority" | "status" | "detail"> {
   date: string
   time: string
-  event: string
-  eventType: string
-  module: string
-  entity: string
-  performedBy: string
   priority: Priority
   status: LogStatus
+  occurredAtUtc: string
+  detail?: string | null
 }
 
-const summaryCards = [
-  { label: "Total Activities", value: "18,452", valueClassName: "text-[#292B29]" },
-  { label: "Critical Alerts", value: "8", valueClassName: "text-[#E4002B]" },
-  { label: "Financial Events", value: "426", valueClassName: "text-[#292B29]" },
-  { label: "Compliance Events", value: "426", valueClassName: "text-[#292B29]" },
-  { label: "Support Activities", value: "342", valueClassName: "text-[#F2A900]" },
-  { label: "System Events", value: "426", valueClassName: "text-[#292B29]" },
-] as const
-
 const tabs = ["All", "Financial", "Compliance", "Fundraising", "Investment", "Support", "System", "Security", "Critical"] as const
-
-const activityLogs: ActivityLog[] = [
-  { id: 1, date: "Oct 31, 2024", time: "02:45:72", event: "Investment Received", eventType: "Investment", module: "Financial Operations", entity: "FinTech Alpha Series B", performedBy: "Sarah Mitchell", priority: "Low", status: "Completed" },
-  { id: 2, date: "Oct 31, 2024", time: "02:45:72", event: "KYC Approved", eventType: "Compliance", module: "Compliance", entity: "AML-2025-00231", performedBy: "Sarah Adebayo", priority: "Medium", status: "Completed" },
-  { id: 3, date: "Oct 31, 2024", time: "02:45:72", event: "AML Case Created", eventType: "Compliance", module: "Compliance", entity: "GreenGrid Series A", performedBy: "System", priority: "High", status: "Pending Review" },
-  { id: 4, date: "Oct 31, 2024", time: "02:45:72", event: "Support Ticket Closed", eventType: "Support", module: "Support Hub", entity: "TKT-00258", performedBy: "Tosin Adewale", priority: "Medium", status: "Completed" },
-  { id: 5, date: "Oct 31, 2024", time: "02:45:72", event: "Administrator Login", eventType: "Security", module: "Security", entity: "John Admin", performedBy: "System", priority: "Medium", status: "Success" },
-  { id: 6, date: "Oct 31, 2024", time: "02:45:72", event: "Settings Updated", eventType: "System", module: "System", entity: "Platform Configuration", performedBy: "John Admin", priority: "Low", status: "Complete" },
-  { id: 7, date: "Oct 31, 2024", time: "02:45:72", event: "SEC Filing Submitted", eventType: "Compliance", module: "Compliance", entity: "SEC Monthly Filing", performedBy: "Sarah Adebayo", priority: "Low", status: "Submitted" },
-  { id: 8, date: "Oct 30, 2024", time: "18:21:09", event: "Campaign Approved", eventType: "Fundraising", module: "Fundraiser Management", entity: "SunWind Techno", performedBy: "John Admin", priority: "Medium", status: "Completed" },
-  { id: 9, date: "Oct 30, 2024", time: "16:08:41", event: "Payout Failed", eventType: "Financial", module: "Financial Operations", entity: "PAY-00984", performedBy: "System", priority: "Critical", status: "Failed" },
-  { id: 10, date: "Oct 30, 2024", time: "13:30:15", event: "Investor Flagged", eventType: "Security", module: "Investor Management", entity: "INV-04128", performedBy: "Risk Engine", priority: "High", status: "Pending Review" },
-  { id: 11, date: "Oct 30, 2024", time: "11:14:03", event: "Campaign Updated", eventType: "Fundraising", module: "Fundraiser Management", entity: "AgriGrow Fund", performedBy: "Bola James", priority: "Low", status: "Completed" },
-  { id: 12, date: "Oct 30, 2024", time: "09:52:27", event: "Document Uploaded", eventType: "Compliance", module: "Compliance", entity: "DOC-00871", performedBy: "Sarah Adebayo", priority: "Low", status: "Submitted" },
-  { id: 13, date: "Oct 29, 2024", time: "22:07:44", event: "Password Reset", eventType: "Security", module: "Security", entity: "USR-01834", performedBy: "System", priority: "Medium", status: "Success" },
-  { id: 14, date: "Oct 29, 2024", time: "17:45:12", event: "Refund Completed", eventType: "Financial", module: "Financial Operations", entity: "REF-00312", performedBy: "Sarah Mitchell", priority: "Medium", status: "Complete" },
-]
 
 const priorityStyles: Record<Priority, string> = {
   Low: "border-[#DDEED8] bg-[#F8FCF7] text-[#52A83C]",
@@ -118,27 +90,23 @@ export function ActivityLogs() {
   const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null)
   const pageSize = 7
 
-  const filteredLogs = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase()
-    return activityLogs.filter((log) => {
-      const tabMatches = activeTab === "All" || activeTab === "Critical"
-        ? activeTab === "All" || log.priority === "Critical"
-        : log.eventType === activeTab || log.module.startsWith(activeTab)
-      const searchMatches = !normalizedSearch || Object.values(log).some((value) => String(value).toLowerCase().includes(normalizedSearch))
-      return tabMatches
-        && searchMatches
-        && (eventType === "All" || log.eventType === eventType)
-        && (module === "All" || log.module === module)
-        && (priority === "All" || log.priority === priority)
-        && (status === "All" || log.status === status)
-    })
-  }, [activeTab, eventType, module, priority, search, status])
-
-  const pageCount = Math.max(1, Math.ceil(filteredLogs.length / pageSize))
+  const apiParams = {
+    page,
+    pageSize,
+    search: search.trim() || undefined,
+    eventType: activeTab !== "All" && activeTab !== "Critical" ? activeTab : eventType !== "All" ? eventType : undefined,
+    module: module !== "All" ? module : undefined,
+    priority: activeTab === "Critical" ? "Critical" : priority !== "All" ? priority : undefined,
+    status: status !== "All" ? status : undefined,
+  }
+  const { data, isLoading, isError } = useAdminActivityLogs(apiParams)
+  const visibleLogs = (data?.items ?? []).map((log) => {
+    const date = new Date(log.occurredAtUtc)
+    return { ...log, date: date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }), time: date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) } as ActivityLog
+  })
+  const pageCount = Math.max(1, data?.totalPages ?? 1)
   const safePage = Math.min(page, pageCount)
-  const visibleLogs = filteredLogs.slice((safePage - 1) * pageSize, safePage * pageSize)
-  const isUnfiltered = activeTab === "All" && !search.trim() && eventType === "All" && module === "All" && priority === "All" && status === "All"
-  const displayedRecordCount = isUnfiltered ? 14_208 : filteredLogs.length
+  const displayedRecordCount = data?.totalCount ?? 0
 
   const updateFilter = (setter: (value: string) => void) => (value: string) => {
     setter(value)
@@ -157,7 +125,7 @@ export function ActivityLogs() {
 
   const exportLogs = () => {
     const headings = ["Date", "Time", "Event", "Module", "Entity", "Performed by", "Priority", "Status"]
-    const rows = filteredLogs.map((log) => [log.date, log.time, log.event, log.module, log.entity, log.performedBy, log.priority, log.status])
+    const rows = visibleLogs.map((log) => [log.date, log.time, log.event, log.module, log.entity, log.performedBy, log.priority, log.status])
     const csv = [headings, ...rows].map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(",")).join("\n")
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }))
     const anchor = document.createElement("a")
@@ -199,7 +167,14 @@ export function ActivityLogs() {
       </section>
 
       <section aria-label="Activity summary" className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
-        {summaryCards.map((card) => (
+        {[
+          { label: "Total Activities", value: data?.summary.totalActivities ?? 0, valueClassName: "text-[#292B29]" },
+          { label: "Critical Alerts", value: data?.summary.criticalAlerts ?? 0, valueClassName: "text-[#E4002B]" },
+          { label: "Financial Events", value: data?.summary.financialEvents ?? 0, valueClassName: "text-[#292B29]" },
+          { label: "Compliance Events", value: data?.summary.complianceEvents ?? 0, valueClassName: "text-[#292B29]" },
+          { label: "Support Activities", value: data?.summary.supportActivities ?? 0, valueClassName: "text-[#F2A900]" },
+          { label: "System Events", value: data?.summary.systemEvents ?? 0, valueClassName: "text-[#292B29]" },
+        ].map((card) => (
           <article key={card.label} className="min-h-[110px] rounded-lg border border-[#E0E4E1] bg-white p-4">
             <p className="text-sm text-[#858885]">{card.label}</p>
             <p className={cn("mt-2 text-[28px] leading-none", card.valueClassName)}>{card.value}</p>
@@ -237,7 +212,7 @@ export function ActivityLogs() {
           </label>
           <div className="flex flex-wrap gap-3">
             <FilterSelect label="Event Type" value={eventType} options={["Investment", "Compliance", "Support", "Security", "System", "Fundraising", "Financial"]} onChange={updateFilter(setEventType)} />
-            <FilterSelect label="Module" value={module} options={[...new Set(activityLogs.map((log) => log.module))]} onChange={updateFilter(setModule)} />
+            <FilterSelect label="Module" value={module} options={["Investor Management", "Compliance", "Fundraiser Management", "Financial Operations"]} onChange={updateFilter(setModule)} />
             <FilterSelect label="Priority" value={priority} options={Object.keys(priorityStyles)} onChange={updateFilter(setPriority)} />
             <FilterSelect label="Status" value={status} options={Object.keys(statusStyles)} onChange={updateFilter(setStatus)} />
             <Button variant="outline" onClick={resetFilters} className="h-10 gap-2 border-[#E1E5E2] text-[#38534B]">
@@ -256,7 +231,9 @@ export function ActivityLogs() {
               </tr>
             </thead>
             <tbody>
-              {visibleLogs.map((log) => (
+              {isLoading && <tr><td colSpan={8} className="px-4 py-16 text-center text-[#858885]">Loading activity logs…</td></tr>}
+              {isError && <tr><td colSpan={8} className="px-4 py-16 text-center text-[#D60025]">Unable to load activity logs.</td></tr>}
+              {!isLoading && !isError && visibleLogs.map((log) => (
                 <tr key={log.id} className="border-b border-[#E8EBE9] text-[#292B29] hover:bg-[#FBFCFB]">
                   <td className="px-4 py-5"><span className="block">{log.date}</span><span className="mt-1 block text-[#939693]">{log.time}</span></td>
                   <td className="max-w-[150px] px-4 py-5">{log.event}</td>
@@ -268,7 +245,7 @@ export function ActivityLogs() {
                   <td className="px-4 py-5 text-center"><Button variant="outline" onClick={() => setSelectedLog(log)} className="h-11 min-w-[92px] border-[#E1E5E2] bg-white">View</Button></td>
                 </tr>
               ))}
-              {visibleLogs.length === 0 && (
+              {!isLoading && !isError && visibleLogs.length === 0 && (
                 <tr><td colSpan={8} className="px-4 py-16 text-center text-[#858885]">No activity logs match these filters.</td></tr>
               )}
             </tbody>
@@ -276,7 +253,7 @@ export function ActivityLogs() {
         </div>
 
         <footer className="flex flex-col gap-4 px-4 py-4 text-xs text-[#858885] sm:flex-row sm:items-center sm:justify-between">
-          <p>Showing {filteredLogs.length === 0 ? 0 : (safePage - 1) * pageSize + 1}-{Math.min(safePage * pageSize, filteredLogs.length)} of {displayedRecordCount.toLocaleString()} records</p>
+          <p>Showing {visibleLogs.length === 0 ? 0 : (safePage - 1) * pageSize + 1}-{Math.min((safePage - 1) * pageSize + visibleLogs.length, displayedRecordCount)} of {displayedRecordCount.toLocaleString()} records</p>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={safePage === 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</Button>
             {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
@@ -305,7 +282,7 @@ export function ActivityLogs() {
                     <h2 className="text-2xl font-semibold tracking-[-0.02em] text-[#292B29]">{selectedLog.event}</h2>
                     <span className={cn("inline-flex rounded border px-2 py-1 text-xs", priorityStyles[selectedLog.priority])}>{selectedLog.priority}</span>
                   </div>
-                  <p className="mt-2 text-sm text-[#858885]">ACT-2025-00736{236 + selectedLog.id}</p>
+            <p className="mt-2 text-sm text-[#858885]">{selectedLog.id}</p>
                 </div>
                 <div className="sm:text-right">
                   <span className={cn("inline-flex rounded border px-2 py-1 text-xs", statusStyles[selectedLog.status])}>{selectedLog.status}</span>
@@ -316,7 +293,7 @@ export function ActivityLogs() {
               <section className="border-b border-[#E5E8E6] py-6">
                 <h3 className="font-medium text-[#292B29]">Activity Details</h3>
                 <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
-                  <DetailField label="Activity ID">ACT-2025-{String(1581 + selectedLog.id).padStart(6, "0")}</DetailField>
+                  <DetailField label="Activity ID">{selectedLog.id}</DetailField>
                   <DetailField label="Activity Status"><span className={cn("inline-flex rounded border px-2 py-1 text-xs", statusStyles[selectedLog.status])}>{selectedLog.status}</span></DetailField>
                   <DetailField label="Module">{selectedLog.module}</DetailField>
                   <DetailField label="Event Type">{selectedLog.event}</DetailField>
@@ -332,12 +309,12 @@ export function ActivityLogs() {
                 <h3 className="font-medium text-[#292B29]">Transaction Details</h3>
                 <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
                   <DetailField label="Entity">{selectedLog.entity}</DetailField>
-                  <DetailField label="Reference ID">INV-{String(341 + selectedLog.id).padStart(5, "0")}</DetailField>
+                  <DetailField label="Reference ID">{selectedLog.id}</DetailField>
                   <DetailField label="Investor">John Doe</DetailField>
                   <DetailField label="Transaction Amount">₦5,000,000</DetailField>
                   <DetailField label="Payment Method">Wallet</DetailField>
                   <DetailField label="Processing Time">2.3 Seconds</DetailField>
-                  <DetailField label="Session ID">SES-{239947 + selectedLog.id}</DetailField>
+                  <DetailField label="Session ID">{selectedLog.id}</DetailField>
                   <DetailField label="IP Address">197.xxx.xxx.xxx</DetailField>
                 </div>
               </section>
