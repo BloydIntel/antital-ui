@@ -1,6 +1,6 @@
 export type AlertSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 
-export type AlertCategory = "AML/Fraud" | "Regulatory" | "Operational";
+export type AlertCategory = "AML/Fraud" | "Regulatory" | "Operational" | string;
 
 export interface AlertItem {
     id: string;
