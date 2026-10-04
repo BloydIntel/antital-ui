@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { AddNoteModal } from "@/components/flags-and-alerts/view-profile/AddNoteModal";
 import { ActivePortfolioTable, PortfolioItem } from "@/components/flags-and-alerts/view-profile/ActivePortfolioTable";
 import { IdentityKycData, IdentityKycSidebar } from "@/components/flags-and-alerts/view-profile/IdentityKycSidebar";
@@ -13,6 +13,7 @@ import { DocumentModalData, ViewDocumentModal } from "@/components/flags-and-ale
 import { useSearchParams } from "next/navigation";
 import { useAdminInvestor, useUpdateAdminInvestor } from "@/hooks/use-admin-investors";
 import { toast } from "sonner";
+import { KycReviewPage } from "./KycReviewPage";
 
 interface InvestorProfilePageProps {
     investorId: string;
@@ -139,11 +140,11 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
     const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
-    const hasOpenedReview = useRef(false);
     const documentData = useMemo<DocumentModalData>(() => ({ title: "Identity Document", userName: apiInvestor ? `${apiInvestor.firstName} ${apiInvestor.lastName}` : MOCK_USER_DATA.name, userId: investorId, verificationStatus: "Verified Match", documentImageUrl: "/admin-investor-profile/identityCardMockup.png", ocrData: { documentType: "National ID Card", issuingCountry: "Nigeria (NGA)", documentNumber: "AO1234567", fullName: (apiInvestor ? `${apiInvestor.firstName} ${apiInvestor.lastName}` : MOCK_USER_DATA.name).toUpperCase(), dateOfBirth: "15 SEP 1985", expiryDate: "12 OCT 2028" } }), [apiInvestor, investorId]);
-    useEffect(() => { if (review === "kyc" && apiInvestor && !hasOpenedReview.current) { hasOpenedReview.current = true; setIsDocumentModalOpen(true); } }, [review, apiInvestor]);
     if (isInvestorManagement && isLoading) return <div className="p-10 text-center">Loading investor profile…</div>;
     if (isInvestorManagement && (isError || !apiInvestor)) return <div className="p-10 text-center">Unable to load investor profile.</div>;
+    const updateKyc = (status: "Approved" | "Rejected" | "DocumentsRequested", note: string) => updateInvestor.mutate({ kycStatus: status, note }, { onSuccess: () => toast.success(status === "DocumentsRequested" ? "Additional information requested." : `KYC ${status.toLowerCase()}.`), onError: () => toast.error("Unable to update KYC status.") });
+    if (isInvestorManagement && review === "kyc" && apiInvestor) return <KycReviewPage investor={apiInvestor} onBack={() => router.push("/investor-management")} onUpdate={({ kycStatus, note }) => updateKyc(kycStatus as "Approved" | "Rejected" | "DocumentsRequested", note)} isUpdating={updateInvestor.isPending} />;
     const userData = apiInvestor ? { ...MOCK_USER_DATA, name: `${apiInvestor.firstName} ${apiInvestor.lastName}`, role: apiInvestor.userType, initials: `${apiInvestor.firstName[0] ?? ""}${apiInvestor.lastName[0] ?? ""}`, investorCategory: apiInvestor.userType, status: apiInvestor.accountStatus, tierLevel: apiInvestor.kycStatus } : MOCK_USER_DATA;
     const kycData = apiInvestor ? { ...MOCK_KYC_DATA, email: apiInvestor.email, phone: apiInvestor.phoneNumber, address: `${apiInvestor.residentialAddress}, ${apiInvestor.stateOfResidence}`, walletBalance: new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(apiInvestor.walletBalance), lastReviewDate: apiInvestor.kycReviewedAt ? new Date(apiInvestor.kycReviewedAt).toLocaleDateString() : "Not reviewed" } : MOCK_KYC_DATA;
     const statsData = apiInvestor ? { totalInvested: new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(apiInvestor.totalInvested), activePositions: apiInvestor.activePositions, estimatedReturns: `+${new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(apiInvestor.estimatedReturns)}` } : MOCK_STATS_DATA;
@@ -161,8 +162,7 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
         if (apiInvestor?.accountStatus === "Suspended") updateInvestor.mutate({ suspended: false }, { onSuccess: () => toast.success("Investor account unsuspended."), onError: () => toast.error("Unable to unsuspend investor account.") });
         else setIsSuspendModalOpen(true);
     };
-    const updateKyc = (status: "Approved" | "Rejected") => updateInvestor.mutate({ kycStatus: status, note: status === "Approved" ? "Identity document reviewed and approved." : "Identity document rejected during admin review." }, { onSuccess: () => { setIsDocumentModalOpen(false); toast.success(`KYC ${status.toLowerCase()}.`); }, onError: () => toast.error("Unable to update KYC status.") });
-    const requestDocuments = () => updateInvestor.mutate({ kycStatus: "DocumentsRequested", note: "Additional identity documents are required for KYC review." }, { onSuccess: () => { setIsDocumentModalOpen(false); toast.success("Additional documents requested."); }, onError: () => toast.error("Unable to request documents.") });
+    const requestDocuments = () => updateKyc("DocumentsRequested", "Additional identity documents are required for KYC review.");
 
     const handleNavigateToTransactions = () => {
         router.push(`/investor-profile/investor-transactions/${investorId}`);
@@ -255,8 +255,8 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 isOpen={isDocumentModalOpen}
                 onClose={() => setIsDocumentModalOpen(false)}
                 data={documentData}
-                onApprove={isInvestorManagement ? () => updateKyc("Approved") : undefined}
-                onReject={isInvestorManagement ? () => updateKyc("Rejected") : undefined}
+                onApprove={isInvestorManagement ? () => updateKyc("Approved", "Identity document reviewed and approved.") : undefined}
+                onReject={isInvestorManagement ? () => updateKyc("Rejected", "Identity document rejected during admin review.") : undefined}
                 onRequestDocuments={isInvestorManagement ? requestDocuments : undefined}
             />
         </div>
