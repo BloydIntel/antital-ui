@@ -13,6 +13,11 @@ import { ClearFlagModal } from "@/components/flags-and-alerts/investigation/Clea
 import { ReassignInvestigationModal } from "@/components/flags-and-alerts/investigation/ReassignInvestigationModal";
 import { RejectTransactionModal } from "@/components/flags-and-alerts/investigation/RejectTransactionModal";
 import { FileStrModal } from "@/components/flags-and-alerts/investigation/FileStrModal";
+import { useAdminAlert } from "@/hooks/use-admin-alert";
+import service from "@/services/adminAlertsService";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { showApiErrorToast } from "@/lib/error-feedback";
 
 export interface InvestigationDetail {
     flagId: string;
@@ -23,60 +28,14 @@ export interface InvestigationDetail {
     auditTrail: AuditTrailItem[];
 }
 
-const ALERTS_DATABASE: Record<string, InvestigationDetail> = {
-    "FLG-1092": {
-        flagId: "FLG-1092",
-        title: "Large transaction from blacklisted IP address detected.",
-        triggerContext: {
-            flagType: "AML / Fraud",
-            timeDetected: "Oct 24, 2023 – 14:32:01 UTC",
-            sourceIp: "192.168.1.100",
-            ipNote: "(Known Proxy)",
-            location: "Moscow, Russia",
-            systemNote:
-                "System flagged this transaction due to a high–risk IP address matching our OFAC sanctions proxy list. The transaction volume is also 400% higher than the user's historical average.",
-        },
-        entityDetails: {
-            name: "John Doe",
-            avatarInitials: "JD",
-            entityId: "ANT-8921",
-            type: "Retail Investor",
-            kycVerified: true,
-            totalInvested: "₦450,000",
-            accountAge: "14 Months",
-            previousFlags: 0,
-        },
-        flaggedTransaction: {
-            transactionId: "TXN-99382100",
-            amount: "₦2,500,000",
-            destinationCampaign: "AgriGrow Fund Series B (CMP-104)",
-            paymentMethod: "Bank Transfer (GTBank *4431)",
-        },
-        auditTrail: [
-            {
-                id: "1",
-                event: "Investigation Opened",
-                details: "By Sarah Jenkins (Super Admin)",
-                time: "Today, 14:45 UTC",
-                color: "blue" as const,
-            },
-            {
-                id: "2",
-                event: "Flag Triggered by System",
-                details: "Rule: High-risk IP match",
-                time: "Today, 14:32 UTC",
-                color: "red" as const,
-            },
-        ],
-    },
-};
-
 interface InvestigationPageProps {
     flagId: string;
 }
 
 export default function InvestigationPage({ flagId }: InvestigationPageProps) {
     const router = useRouter();
+    const queryClient = useQueryClient();
+    const { data: alert, isLoading, isError } = useAdminAlert(flagId);
 
     const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false);
     const [isClearModalOpen, setIsClearModalOpen] = useState(false);
@@ -84,20 +43,62 @@ export default function InvestigationPage({ flagId }: InvestigationPageProps) {
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [isStrModalOpen, setIsStrModalOpen] = useState(false);
 
-    const data = ALERTS_DATABASE[flagId] || {
-        ...ALERTS_DATABASE["FLG-1092"],
-        flagId: flagId,
-        title: `Investigation details for flag ${flagId}`,
+    const data: InvestigationDetail | undefined = alert ? {
+        flagId: alert.flagId,
+        title: alert.description,
+        triggerContext: {
+            flagType: alert.type,
+            timeDetected: new Date(alert.occurredAtUtc).toUTCString(),
+            sourceIp: "Unavailable",
+            ipNote: "",
+            location: "Unavailable",
+            systemNote: `${alert.severity} severity alert with status ${alert.status}.`,
+        },
+        entityDetails: {
+            name: alert.entityAffected,
+            avatarInitials: alert.entityAffected.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+            entityId: alert.entityAffected,
+            type: alert.type,
+            kycVerified: false,
+            totalInvested: "Unavailable",
+            accountAge: "Unavailable",
+            previousFlags: 0,
+        },
+        flaggedTransaction: {
+            transactionId: alert.flagId,
+            amount: "Unavailable",
+            destinationCampaign: "Unavailable",
+            paymentMethod: "Unavailable",
+        },
+        auditTrail: [{
+            id: String(alert.id),
+            event: "Flag Triggered by System",
+            details: `${alert.severity} severity · ${alert.status}`,
+            time: new Date(alert.occurredAtUtc).toUTCString(),
+            color: alert.severity === "CRITICAL" ? "red" : "blue",
+        }],
+    } : undefined;
+
+    const handleConfirmFreeze = async (formData: { reason: string; notes: string; notifyUser: boolean }) => {
+        try {
+            await service.updateAlert(flagId, { status: "Acknowledged", resolutionNote: `${formData.reason}: ${formData.notes}` });
+            await queryClient.invalidateQueries({ queryKey: ["admin-flag", flagId] });
+            setIsFreezeModalOpen(false);
+            toast.success("Account freeze recorded.");
+        } catch (error) {
+            showApiErrorToast(error, "Unable to freeze this account.");
+        }
     };
 
-    const handleConfirmFreeze = (formData: { reason: string; notes: string; notifyUser: boolean }) => {
-        console.log("Account Frozen with payload:", formData);
-        setIsFreezeModalOpen(false);
-    };
-
-    const handleConfirmClear = (formData: { category: string; notes: string }) => {
-        console.log(`Flag ${flagId} cleared with payload:`, formData);
-        setIsClearModalOpen(false);
+    const handleConfirmClear = async (formData: { category: string; notes: string }) => {
+        try {
+            await service.updateAlert(flagId, { status: "Dismissed", resolutionNote: `${formData.category}: ${formData.notes}` });
+            await queryClient.invalidateQueries({ queryKey: ["admin-flag", flagId] });
+            setIsClearModalOpen(false);
+            toast.success("Flag cleared.");
+        } catch (error) {
+            showApiErrorToast(error, "Unable to clear this flag.");
+        }
     };
 
     const handleConfirmReject = (formData: {
@@ -128,14 +129,25 @@ export default function InvestigationPage({ flagId }: InvestigationPageProps) {
         }
     };
 
-    const handleConfirmReassign = (formData: { assignee: string; note: string }) => {
-        console.log(`Reassigned ${data.flagId} with payload:`, formData);
-        setIsReassignModalOpen(false);
+    const handleConfirmReassign = async (formData: { assignee: string; note: string }) => {
+        try {
+            const assigneeUserId = Number(formData.assignee);
+            await service.updateAlert(flagId, { ...(Number.isInteger(assigneeUserId) ? { assigneeUserId } : {}), resolutionNote: formData.note });
+            await queryClient.invalidateQueries({ queryKey: ["admin-flag", flagId] });
+            setIsReassignModalOpen(false);
+            toast.success("Investigation reassigned.");
+        } catch (error) {
+            showApiErrorToast(error, "Unable to reassign this investigation.");
+        }
     };
 
     const handleViewProfile = () => {
+        if (!data) return;
         router.push(`/investor-profile/${data.entityDetails.entityId}?from=investigation`);
     };
+
+    if (isLoading) return <div className="rounded-xl border border-[#E6E6E6] bg-white p-8 text-[#666]">Loading investigation details…</div>;
+    if (isError || !data) return <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-red-700">Unable to load this flag. It may no longer exist.</div>;
 
     return (
         <div className="min-h-screen font-sans text-[#11110F]">
@@ -168,8 +180,8 @@ export default function InvestigationPage({ flagId }: InvestigationPageProps) {
                 isOpen={isFreezeModalOpen}
                 onClose={() => setIsFreezeModalOpen(false)}
                 onConfirm={handleConfirmFreeze}
-                entityName="John Doe"
-                entityId="INV-8921"
+                entityName={data.entityDetails.name}
+                entityId={data.entityDetails.entityId}
             />
 
             <ClearFlagModal
