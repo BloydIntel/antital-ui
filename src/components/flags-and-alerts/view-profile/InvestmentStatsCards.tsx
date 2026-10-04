@@ -1,15 +1,19 @@
 "use client";
 
+import { TYPOGRAPHY } from "@/constants/styles";
+
 interface InvestmentStatsProps {
     totalInvested: string;
     activePositions: number;
     estimatedReturns: string;
+    isInvestorManagement: boolean;
 }
 
 export function InvestmentStatsCards({
     totalInvested,
     activePositions,
     estimatedReturns,
+    isInvestorManagement,
 }: InvestmentStatsProps) {
     const isNegative = estimatedReturns.trim().startsWith("-");
     const isPositive = estimatedReturns.trim().startsWith("+");
@@ -21,13 +25,19 @@ export function InvestmentStatsCards({
             : "text-[#2C2C2C]";
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             {/* Total Invested */}
             <div className="bg-white rounded-lg border border-[#EAEAEA] px-4 py-6">
                 <span className="block text-[16px] text-[#858585] mb-2">
                     Total Invested
                 </span>
-                <span className="text-[28px] font-bold text-[#2C2C2C]">
+                <span
+                    className="text-[28px] text-[#2C2C2C]"
+                    style={{
+                        ...TYPOGRAPHY.heading,
+                        fontWeight: isInvestorManagement ? 500 : 700,
+                    }}
+                >
                     {totalInvested}
                 </span>
             </div>
@@ -37,7 +47,13 @@ export function InvestmentStatsCards({
                 <span className="block text-[16px] text-[#858585] mb-2">
                     Active Positions
                 </span>
-                <span className="text-[28px] font-bold text-[#2C2C2C]">
+                <span
+                    className="text-[28px] text-[#2C2C2C]"
+                    style={{
+                        ...TYPOGRAPHY.heading,
+                        fontWeight: isInvestorManagement ? 500 : 700,
+                    }}
+                >
                     {activePositions}
                 </span>
             </div>
@@ -47,7 +63,13 @@ export function InvestmentStatsCards({
                 <span className="block text-[16px] text-[#858585] mb-2">
                     EST. RETURNS
                 </span>
-                <span className={`text-[28px] font-bold ${returnsColorClass}`}>
+                <span
+                    className={`text-[28px] ${returnsColorClass}`}
+                    style={{
+                        ...TYPOGRAPHY.heading,
+                        fontWeight: isInvestorManagement ? 500 : 700,
+                    }}
+                >
                     {estimatedReturns}
                 </span>
             </div>
