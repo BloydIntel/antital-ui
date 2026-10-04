@@ -8,6 +8,8 @@ import { SectionCards } from "@/app/(dashboard)/dashboard/components/section-car
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { useDashboard } from "@/hooks/use-dashboard"
 import { useFundraiserDashboard } from "@/hooks/use-fundraiser-dashboard"
+import { useAdminDashboard } from "@/hooks/use-admin-dashboard"
+import type { AdminDashboardPeriod } from "@/lib/admin-dashboard-period"
 import { buildDashboardMonthOptions, toDashboardPeriod } from "@/lib/dashboard-period"
 import { showApiErrorToast } from "@/lib/error-feedback"
 import { resolveUserDisplayName } from "@/lib/user-display-name"
@@ -30,6 +32,7 @@ function formatVelocityLabel(amount: number, period: string): string {
 export function Dashboard() {
     const months = useMemo(() => buildDashboardMonthOptions(), [])
     const [selectedMonth, setSelectedMonth] = useState("This month")
+    const [adminPeriod, setAdminPeriod] = useState<AdminDashboardPeriod>("last-30-days")
     const period = toDashboardPeriod(selectedMonth)
     const { data: user, isError: isUserError, error: userError } = useCurrentUser()
 
@@ -61,6 +64,13 @@ export function Dashboard() {
         error: fundraiserError,
     } = useFundraiserDashboard(period, isFundraiser)
 
+    const {
+        data: adminData,
+        isLoading: isAdminLoading,
+        isError: isAdminError,
+        error: adminError,
+    } = useAdminDashboard(adminPeriod, hasHydrated && isAdmin && !requiresOtp)
+
     useEffect(() => {
         if (isUserError) {
             showApiErrorToast(userError, "Unable to load user profile.")
@@ -79,6 +89,12 @@ export function Dashboard() {
         }
     }, [isFundraiser, isFundraiserError, fundraiserError])
 
+    useEffect(() => {
+        if (isAdmin && isAdminError) {
+            showApiErrorToast(adminError, "Unable to load admin dashboard.")
+        }
+    }, [isAdmin, isAdminError, adminError])
+
     const displayName = resolveUserDisplayName(user)
     const currentUserType = hasHydrated ? userType : "individual"
     const isLoading = isFundraiser ? isFundraiserLoading : isInvestorLoading
@@ -93,7 +109,7 @@ export function Dashboard() {
                 />
             )
         }
-        return <AdminDashboard />
+        return <AdminDashboard data={adminData} isLoading={isAdminLoading} period={adminPeriod} onPeriodChange={setAdminPeriod} />
     }
 
     return (
