@@ -211,8 +211,7 @@ export default function InvestorManagementPage() {
     };
 
     const handleReviewDocument = (investor: Investor) => {
-        // Open Document Viewer modal
-        console.log(investor);
+        router.push(`/investor-management/kyc-document-review/${investor.id}`);
     };
 
     const handleReviewCase = (investor: Investor) => {
@@ -223,7 +222,7 @@ export default function InvestorManagementPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-[28px] text-[#040C17] mb-1" style={TYPOGRAPHY.heading}>Investor Management</h1>
                     <p className="text-[16px] text-[#666666]">

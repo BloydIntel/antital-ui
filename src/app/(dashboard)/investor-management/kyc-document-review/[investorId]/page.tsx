@@ -1,4 +1,4 @@
-import InvestorProfilePage from "@/app/(dashboard)/investor-profile/[investorId]/components/InvestorProfilePage";
+import { KycReviewPage } from "@/app/(dashboard)/investor-management/kyc-document-review/[investorId]/components/KycReviewPage";
 
 interface PageProps {
     params: Promise<{
@@ -9,5 +9,5 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
     const { investorId } = await params;
 
-    return <InvestorProfilePage investorId={investorId} />;
+    return <KycReviewPage investorId={investorId} />;
 }
