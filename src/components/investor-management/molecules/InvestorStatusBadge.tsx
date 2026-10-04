@@ -15,6 +15,10 @@ export function InvestorStatusBadge({ status }: InvestorStatusBadgeProps) {
                 return "bg-[#FCFCFC] text-[#F4B942]";
             case "Suspended":
                 return "bg-[#FCFCFC] text-[#D4001A]";
+            case "Rejected":
+                return "bg-[#FCFCFC] text-[#D4001A]";
+            case "Info Requested":
+                return "bg-[#FCFCFC] text-[#F4B942]";
             default:
                 return "bg-[#FCFCFC] text-[#858585]";
         }
