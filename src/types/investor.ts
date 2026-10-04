@@ -14,7 +14,7 @@ export interface InvestorCategory {
 
 // Admin Dashboard Types
 
-export type InvestorStatus = "Active" | "Pending KYC" | "Suspended";
+export type InvestorStatus = "Active" | "Pending KYC" | "Info Requested" | "Rejected" | "Suspended";
 
 export type AminInvestorCategory = "ordinary" | "sophisticated" | "hni";
 
@@ -25,7 +25,7 @@ export interface Investor {
     initials: string;
     walletBalance: string;
     joinedDate: string;
-    status: "Active" | "Pending KYC" | "Suspended";
+    status: InvestorStatus;
     investorCategory?: AminInvestorCategory;
 }
 
