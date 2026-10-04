@@ -7,12 +7,14 @@ import { FloatingChatButton } from "@/components/dashboard/molecules/FloatingCha
 import { useSidebarConfig } from "@/hooks/use-sidebar-config";
 import { DashboardHeader } from "@/components/dashboard/organisms/DashboardHeader";
 import { InfoBanner } from "@/components/dashboard/organisms/InfoBanner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SyncUserProfile } from "@/components/auth/sync-user-profile";
 import { useUserStore } from "@/store/userStore";
 import { useQuery } from "@tanstack/react-query";
 import onboardingService from "@/services/onboardingService";
 import { mapOnboardingStepToUiStep } from "@/lib/onboarding-hydration";
+import { tokenStorage } from "@/lib/token-storage";
+import { isAuthenticatedDashboardRoute } from "@/lib/dashboard-route-access";
 
 export default function DashboardLayout({
   children,
@@ -25,6 +27,12 @@ export default function DashboardLayout({
   const [hasHydrated, setHasHydrated] = useState(false);
   const userType = useUserStore((state) => state.userType);
   const isAdmin = userType === "admin";
+  const pathname = usePathname();
+  const router = useRouter();
+  const requiresAuthentication = isAuthenticatedDashboardRoute(pathname);
+  const hasSession = hasHydrated && Boolean(
+    tokenStorage.getAccessToken() || tokenStorage.getRefreshToken()
+  );
 
   // Monitor store hydration to avoid server-client state mismatch
   useEffect(() => {
@@ -36,11 +44,16 @@ export default function DashboardLayout({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const router = useRouter();
+  useEffect(() => {
+    if (hasHydrated && requiresAuthentication && !hasSession) {
+      router.replace("/sign-in");
+    }
+  }, [hasHydrated, hasSession, requiresAuthentication, router]);
+
   const onboardingQuery = useQuery({
     queryKey: ["dashboard-onboarding-banner"],
     queryFn: () => onboardingService.getOnboarding(),
-    enabled: hasHydrated && !isAdmin,
+    enabled: hasSession && !isAdmin,
   });
 
   const onboarding = onboardingQuery.data;
@@ -78,6 +91,12 @@ export default function DashboardLayout({
     const step = mapOnboardingStepToUiStep(onboarding.currentStep, investorUserType);
     router.push(`/onboarding/${investorUserType}/${step}`);
   };
+
+  // Do not mount authenticated page content or its API hooks until the
+  // browser-side token storage has been checked.
+  if (requiresAuthentication && !hasSession) {
+    return null;
+  }
 
   return (
     <>
