@@ -27,9 +27,12 @@ interface ViewDocumentModalProps {
     isOpen: boolean;
     onClose: () => void;
     data: DocumentModalData;
+    onApprove?: () => void;
+    onReject?: () => void;
+    onRequestDocuments?: () => void;
 }
 
-export function ViewDocumentModal({ isOpen, onClose, data }: ViewDocumentModalProps) {
+export function ViewDocumentModal({ isOpen, onClose, data, onApprove, onReject, onRequestDocuments }: ViewDocumentModalProps) {
     if (!isOpen) return null;
 
     const ocrFields: { label: string; key: keyof OcrData }[] = [
@@ -101,6 +104,9 @@ export function ViewDocumentModal({ isOpen, onClose, data }: ViewDocumentModalPr
 
                 {/* Footer */}
                 <div className="flex items-center justify-end gap-3 border-t border-[#EAEAEA] p-4 bg-white">
+                    {onReject && <OnboardingButton label="Reject" variant="plain" onClick={onReject} className="my-0 w-fit text-[#D4001A] border-[#D4001A]" />}
+                    {onRequestDocuments && <OnboardingButton label="Request Documents" variant="plain" onClick={onRequestDocuments} className="my-0 w-fit" />}
+                    {onApprove && <OnboardingButton label="Approve" onClick={onApprove} className="my-0 w-fit" />}
                     <OnboardingButton
                         label="Download"
                         variant="plain"
