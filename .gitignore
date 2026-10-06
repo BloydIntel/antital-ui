@@ -53,8 +53,15 @@ Thumbs.db
 # Turbopack
 .turbo
 
+# Graphify generated code graphs and reports
+graphify-out/
+.playwright-mcp/
+flags-and-alerts-outline.md
+investor-management-outline.md
+kyc-review-experience-outline.md
+CLAUDE.md
+
 # Optional: Uncomment if you want to ignore lock files
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
-

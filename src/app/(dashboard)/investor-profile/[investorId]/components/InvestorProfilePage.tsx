@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AddNoteModal } from "@/components/flags-and-alerts/view-profile/AddNoteModal";
 import { ActivePortfolioTable, PortfolioItem } from "@/components/flags-and-alerts/view-profile/ActivePortfolioTable";
 import { IdentityKycData, IdentityKycSidebar } from "@/components/flags-and-alerts/view-profile/IdentityKycSidebar";
@@ -11,6 +11,9 @@ import { SuspendInvestorModal } from "@/components/flags-and-alerts/view-profile
 import { useRouter } from "next/navigation";
 import { DocumentModalData, ViewDocumentModal } from "@/components/flags-and-alerts/view-profile/ViewDocumentModal";
 import { useSearchParams } from "next/navigation";
+import { useAdminInvestor, useUpdateAdminInvestor } from "@/hooks/use-admin-investors";
+import { toast } from "sonner";
+import { KycReviewPage } from "./KycReviewPage";
 
 interface InvestorProfilePageProps {
     investorId: string;
@@ -127,43 +130,39 @@ const MOCK_TRANSACTIONS: TransactionItem[] = [
 
 export default function InvestorProfilePage({ investorId }: InvestorProfilePageProps) {
     const router = useRouter();
+    const { data: apiInvestor, isLoading, isError } = useAdminInvestor(investorId);
+    const updateInvestor = useUpdateAdminInvestor(investorId);
 
     const searchParams = useSearchParams();
     const source = searchParams.get("from");
+    const review = searchParams.get("review");
     const isInvestorManagement = source === "investor-management";
-
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
     const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
-
-    const [documentData] = useState<DocumentModalData>({
-        title: "Identity Document",
-        userName: MOCK_USER_DATA.name,
-        userId: investorId,
-        verificationStatus: "Verified Match",
-        documentImageUrl: "/admin-investor-profile/identityCardMockup.png",
-        ocrData: {
-            documentType: "National ID Card",
-            issuingCountry: "Nigeria (NGA)",
-            documentNumber: "AO1234567",
-            fullName: MOCK_USER_DATA.name.toUpperCase(),
-            dateOfBirth: "15 SEP 1985",
-            expiryDate: "12 OCT 2028",
-        },
-    });
+    const documentData = useMemo<DocumentModalData>(() => ({ title: "Identity Document", userName: apiInvestor ? `${apiInvestor.firstName} ${apiInvestor.lastName}` : MOCK_USER_DATA.name, userId: investorId, verificationStatus: "Verified Match", documentImageUrl: "/admin-investor-profile/identityCardMockup.png", ocrData: { documentType: "National ID Card", issuingCountry: "Nigeria (NGA)", documentNumber: "AO1234567", fullName: (apiInvestor ? `${apiInvestor.firstName} ${apiInvestor.lastName}` : MOCK_USER_DATA.name).toUpperCase(), dateOfBirth: "15 SEP 1985", expiryDate: "12 OCT 2028" } }), [apiInvestor, investorId]);
+    if (isInvestorManagement && isLoading) return <div className="p-10 text-center">Loading investor profile…</div>;
+    if (isInvestorManagement && (isError || !apiInvestor)) return <div className="p-10 text-center">Unable to load investor profile.</div>;
+    const updateKyc = (status: "Approved" | "Rejected" | "DocumentsRequested", note: string) => updateInvestor.mutate({ kycStatus: status, note }, { onSuccess: () => toast.success(status === "DocumentsRequested" ? "Additional information requested." : `KYC ${status.toLowerCase()}.`), onError: () => toast.error("Unable to update KYC status.") });
+    if (isInvestorManagement && review === "kyc" && apiInvestor) return <KycReviewPage investor={apiInvestor} onBack={() => router.push("/investor-management")} onUpdate={({ kycStatus, note }) => updateKyc(kycStatus as "Approved" | "Rejected" | "DocumentsRequested", note)} isUpdating={updateInvestor.isPending} />;
+    const userData = apiInvestor ? { ...MOCK_USER_DATA, name: `${apiInvestor.firstName} ${apiInvestor.lastName}`, role: apiInvestor.userType, initials: `${apiInvestor.firstName[0] ?? ""}${apiInvestor.lastName[0] ?? ""}`, investorCategory: apiInvestor.userType, status: apiInvestor.accountStatus, tierLevel: apiInvestor.kycStatus } : MOCK_USER_DATA;
+    const kycData = apiInvestor ? { ...MOCK_KYC_DATA, email: apiInvestor.email, phone: apiInvestor.phoneNumber, address: `${apiInvestor.residentialAddress}, ${apiInvestor.stateOfResidence}`, walletBalance: new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(apiInvestor.walletBalance), lastReviewDate: apiInvestor.kycReviewedAt ? new Date(apiInvestor.kycReviewedAt).toLocaleDateString() : "Not reviewed" } : MOCK_KYC_DATA;
+    const statsData = apiInvestor ? { totalInvested: new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(apiInvestor.totalInvested), activePositions: apiInvestor.activePositions, estimatedReturns: `+${new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(apiInvestor.estimatedReturns)}` } : MOCK_STATS_DATA;
+    const portfolio = apiInvestor ? apiInvestor.holdings.map((x, i) => ({ id: String(i), campaign: x.campaign, instrument: x.instrument, amount: new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(x.amount), status: x.status })) : MOCK_PORTFOLIO;
+    const transactions = apiInvestor ? apiInvestor.transactions.slice(0, 4).map(x => ({ id: String(x.id), title: x.type, txnCode: `TXN-${x.id}`, date: new Date(x.occurredAt).toLocaleDateString(), amount: new Intl.NumberFormat("en-NG", { style: "currency", currency: x.currency }).format(x.amount), status: x.status, type: "debit" as const })) : MOCK_TRANSACTIONS;
 
     const handleSaveNote = (noteData: { category: string; content: string }) => {
         console.log("Note saved:", noteData);
     };
 
-    const handleConfirmSuspension = (suspensionData: {
-        reason: string;
-        details: string;
-        notifyUser: boolean;
-        requirePasswordReset: boolean;
-    }) => {
-        console.log("Account suspended with data:", suspensionData);
+    const handleConfirmSuspension = () => {
+        updateInvestor.mutate({ suspended: true }, { onSuccess: () => { setIsSuspendModalOpen(false); toast.success("Investor account suspended."); }, onError: () => toast.error("Unable to suspend investor account.") });
     };
+    const handleAccountAction = () => {
+        if (apiInvestor?.accountStatus === "Suspended") updateInvestor.mutate({ suspended: false }, { onSuccess: () => toast.success("Investor account unsuspended."), onError: () => toast.error("Unable to unsuspend investor account.") });
+        else setIsSuspendModalOpen(true);
+    };
+    const requestDocuments = () => updateKyc("DocumentsRequested", "Additional identity documents are required for KYC review.");
 
     const handleNavigateToTransactions = () => {
         router.push(`/investor-profile/investor-transactions/${investorId}`);
@@ -177,15 +176,16 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
         <div className="min-h-screen space-y-6 font-sans text-[#11110F]">
             {/* Header Component */}
             <ProfileHeader
-                name={MOCK_USER_DATA.name}
-                role={MOCK_USER_DATA.role}
+                name={userData.name}
+                role={userData.role}
                 id={investorId}
-                timeOnPlatform={MOCK_USER_DATA.timeOnPlatform}
-                initials={MOCK_USER_DATA.initials}
+                timeOnPlatform={userData.timeOnPlatform}
+                initials={userData.initials}
                 onAddNote={() => setIsNoteModalOpen(true)}
-                onSuspend={() => setIsSuspendModalOpen(true)}
+                onSuspend={handleAccountAction}
                 isInvestorManagement={isInvestorManagement}
-                investorCategory={MOCK_USER_DATA.investorCategory}
+                investorCategory={userData.investorCategory}
+                status={userData.status}
             />
 
             {/* Grid Layout */}
@@ -193,7 +193,7 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 {/* Left Column (Sidebar - 3 cols) */}
                 <div className="lg:col-span-3">
                     <IdentityKycSidebar
-                        data={MOCK_KYC_DATA}
+                        data={kycData}
                         onViewDocument={() => setIsDocumentModalOpen(true)}
                         isInvestorManagement={isInvestorManagement}
                     />
@@ -203,22 +203,22 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 <div className="lg:col-span-4 space-y-6">
                     {/* Top Metric Cards */}
                     <InvestmentStatsCards
-                        totalInvested={MOCK_STATS_DATA.totalInvested}
-                        activePositions={MOCK_STATS_DATA.activePositions}
-                        estimatedReturns={MOCK_STATS_DATA.estimatedReturns}
+                        totalInvested={statsData.totalInvested}
+                        activePositions={statsData.activePositions}
+                        estimatedReturns={statsData.estimatedReturns}
                         isInvestorManagement={isInvestorManagement}
                     />
 
                     {/* Active Portfolio Table */}
                     <ActivePortfolioTable
-                        items={MOCK_PORTFOLIO}
+                        items={portfolio}
                         onViewAll={handleNavigateToPortfolio}
                         isInvestorManagement={isInvestorManagement}
                     />
 
                     {/* Recent Transactions */}
                     <RecentTransactionsList
-                        items={MOCK_TRANSACTIONS}
+                        items={transactions}
                         onViewAll={handleNavigateToTransactions}
                     />
                 </div>
@@ -230,9 +230,9 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 onClose={() => setIsNoteModalOpen(false)}
                 onSubmit={handleSaveNote}
                 user={{
-                    name: MOCK_USER_DATA.name,
+                    name: userData.name,
                     id: investorId,
-                    initials: MOCK_USER_DATA.initials,
+                    initials: userData.initials,
                     avatarUrl: MOCK_USER_DATA.avatarUrl,
                 }}
             />
@@ -242,11 +242,11 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 onClose={() => setIsSuspendModalOpen(false)}
                 onSubmit={handleConfirmSuspension}
                 user={{
-                    name: MOCK_USER_DATA.name,
+                    name: userData.name,
                     id: investorId,
-                    status: MOCK_USER_DATA.status,
-                    tierLevel: MOCK_USER_DATA.tierLevel,
-                    investorCategory: MOCK_USER_DATA.investorCategory
+                    status: userData.status,
+                    tierLevel: userData.tierLevel,
+                    investorCategory: userData.investorCategory
                 }}
                 isInvestorManagement={isInvestorManagement}
             />
@@ -255,6 +255,9 @@ export default function InvestorProfilePage({ investorId }: InvestorProfilePageP
                 isOpen={isDocumentModalOpen}
                 onClose={() => setIsDocumentModalOpen(false)}
                 data={documentData}
+                onApprove={isInvestorManagement ? () => updateKyc("Approved", "Identity document reviewed and approved.") : undefined}
+                onReject={isInvestorManagement ? () => updateKyc("Rejected", "Identity document rejected during admin review.") : undefined}
+                onRequestDocuments={isInvestorManagement ? requestDocuments : undefined}
             />
         </div>
     );
