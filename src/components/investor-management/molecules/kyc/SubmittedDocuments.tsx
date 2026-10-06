@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { CheckCircle2, ExternalLink } from "lucide-react";
+import { CheckCircle2, MoveDiagonal } from "lucide-react";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 
 type TabType = "id" | "address" | "selfie";
@@ -58,19 +58,18 @@ export function SubmittedDocuments() {
     return (
         <div className="bg-white rounded-lg border border-[#EAEAEA] font-sans text-[#11110F]">
             {/* Header & Tabs */}
-            <div className="flex items-center justify-between py-5 px-4 border-b border-[#EAEAEA]">
+            <div className="flex flex-col gap-3 xl:flex-row items-center justify-between py-5 px-4 border-b border-[#EAEAEA]">
                 <h3 className="font-bold text-[16px] text-[#11110F]">Submitted Documents</h3>
-                <div className="flex gap-2">
+                <div className="flex flex-col lg:flex-row gap-2 w-full xl:w-auto">
                     {TABS.map(({ id, label }) => (
-
                         <OnboardingButton
                             key={id}
                             onClick={() => setActiveTab(id)}
                             label={label}
                             variant={activeTab === id ? "solid" : "plain"}
-                            className={`my-0 w-fit ${activeTab === id ? "bg-[#365852]" : ""}`}
+                            className={`my-0 lg:flex-1 lg:w-full xl:w-fit ${activeTab === id ? "bg-[#365852]" : ""
+                                }`}
                         />
-
                     ))}
                 </div>
             </div>
@@ -104,7 +103,7 @@ export function SubmittedDocuments() {
                 </div>
 
                 {/* Footer Info & Full View Action */}
-                <div className="flex items-center justify-between mt-3 text-xs text-[#858585]">
+                <div className="flex items-center gap-2 mt-3 text-[11px] lg:text-[14px] text-[#858585]">
                     <span>
                         {activeTab === "selfie"
                             ? currentDoc.footerInfo
@@ -112,9 +111,9 @@ export function SubmittedDocuments() {
                     </span>
                     <button
                         onClick={() => window.open(currentDoc.imageSrc, "_blank")}
-                        className="flex items-center gap-1 text-[#7BA147] font-medium hover:underline"
+                        className="flex items-center gap-2 text-[#83AB4B] text-[11px] lg:text-[14px] font-bold hover:underline"
                     >
-                        Full view <ExternalLink className="w-3.5 h-3.5" />
+                        <MoveDiagonal className="w-3 lg:w-4 h-3 lg:h-4" /> Full view
                     </button>
                 </div>
             </div>

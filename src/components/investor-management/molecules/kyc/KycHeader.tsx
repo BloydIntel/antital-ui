@@ -101,7 +101,7 @@ export function KycHeader({
                             label="Send Approval Email"
                             onClick={() => onSendApprovalEmail?.()}
                             icon={<Mail className="w-5 h-5" />}
-                            className="my-0 lg:w-fit"
+                            className="my-0 lg:w-fit bg-[#365852]"
                         />
                     )}
                 </div>

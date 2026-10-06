@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { KycHeader } from "@/components/investor-management/molecules/kyc/KycHeader";
 import { PersonalInformationCard } from "@/components/investor-management/molecules/kyc/PersonalInformationCard";
 import { VerifiedSummaryCard } from "@/components/investor-management/molecules/kyc/VerifiedSummaryCard";
@@ -68,6 +68,10 @@ const INITIAL_KYC_DATA: KycVerificationData = {
     ],
 };
 
+const APPROVALLOG = {
+    refNo: "KYC-REV-2024-78234"
+}
+
 export function KycReviewPage({ investorId }: KycReviewPageProps) {
     const [data, setData] = useState<KycVerificationData>({
         ...INITIAL_KYC_DATA,
@@ -100,17 +104,20 @@ export function KycReviewPage({ investorId }: KycReviewPageProps) {
             />
 
             {isApproved && showBanner && (
-                <div className="bg-green-50 border border-green-200 p-4 rounded-lg flex items-center justify-between text-xs text-green-900">
-                    <div className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" />
+                <div className="bg-[#FFFFFF] border border-[#45B424] p-4 rounded-lg flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-[#C1F0B2] flex items-center justify-center">
+                            <div className="h-3.5 w-3.5 rounded-full bg-[#45B424]"><Check className="w-3.5 h-3.5 text-white" /></div>
+                        </div>
+
                         <div>
-                            <p className="font-bold text-sm text-emerald-950">KYC Approved successfully</p>
-                            <p className="text-[#858585] mt-0.5">
-                                {data.user.name} KYC has been approved and an approval notification has been queued. Review log saved as KYC-REV-2024-78234.
+                            <p className="font-medium text-[18px] text-[#36861E]">KYC Approved successfully</p>
+                            <p className="text-[#858585] mt-2 text-[14px]">
+                                {data.user.name} KYC has been approved and an approval notification has been queued. Review log saved as <span className="uppercase underline font-medium">{APPROVALLOG.refNo}</span> .
                             </p>
                         </div>
                     </div>
-                    <button onClick={() => setShowBanner(false)} className="text-gray-400 hover:text-black">
+                    <button onClick={() => setShowBanner(false)} className="text-[#2C2C2C]">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
