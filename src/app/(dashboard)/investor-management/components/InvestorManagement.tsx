@@ -306,7 +306,7 @@ export default function InvestorManagementPage() {
                         }
                         onReviewDocument={(x) =>
                             router.push(
-                                `/investor-profile/${x.id}?from=investor-management&review=kyc`
+                                `/investor-management/kyc-document-review/${x.id}?from=investor-management`
                             )
                         }
                         onReviewCase={(x) =>

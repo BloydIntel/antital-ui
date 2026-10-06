@@ -21,7 +21,7 @@ const DOCUMENTS_DATA: Record<TabType, DocumentData> = {
     id: {
         title: "International passport",
         referenceNo: "AUE89289",
-        imageSrc: "/images/kyc-international-passport.jpg",
+        imageSrc: "/admin-investor-profile/identityCardMockup.png",
         issuedDate: "Jan 2019",
         expiryDate: "Jan 2029",
     },
@@ -109,12 +109,15 @@ export function SubmittedDocuments() {
                             ? currentDoc.footerInfo
                             : `Issued: ${currentDoc.issuedDate} - Expires: ${currentDoc.expiryDate}`}
                     </span>
-                    <button
-                        onClick={() => window.open(currentDoc.imageSrc, "_blank")}
+                    <a
+                        href={currentDoc.imageSrc}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex items-center gap-2 text-[#83AB4B] text-[11px] lg:text-[14px] font-bold hover:underline"
                     >
-                        <MoveDiagonal className="w-3 lg:w-4 h-3 lg:h-4" /> Full view
-                    </button>
+                        <MoveDiagonal className="w-3 lg:w-4 h-3 lg:h-4" />
+                        Full view
+                    </a>
                 </div>
             </div>
         </div>
