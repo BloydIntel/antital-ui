@@ -1,4 +1,4 @@
-import InvestorProfilePage from "./components/InvestorProfilePage";
+import InvestorProfilePage from "@/app/(dashboard)/investor-profile/[investorId]/components/InvestorProfilePage";
 
 interface PageProps {
     params: Promise<{

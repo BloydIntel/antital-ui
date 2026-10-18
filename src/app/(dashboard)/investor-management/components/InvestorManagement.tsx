@@ -1,4 +1,5 @@
 "use client";
+
 import { useMemo, useState } from "react";
 import { Upload, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -7,22 +8,327 @@ import { InvestorMetrics } from "@/components/investor-management/molecules/Inve
 import { InvestorTable } from "@/components/investor-management/molecules/InvestorTable";
 import { TablePagination } from "@/components/watchlist/molecules/TablePagination";
 import { TYPOGRAPHY } from "@/constants/styles";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { useAdminInvestors } from "@/hooks/use-admin-investors";
 import type { Investor } from "@/types/investor";
 import type { AdminInvestorItem } from "@/types/admin-investors-api";
 
-const TABS = ["All Investors", "Pending KYC", "Suspended", "High Net Worth"] as const;
-const DATE_RANGE_OPTIONS = ["All Time", "Last 7 Days", "Last 30 Days", "Last Month", "Last 90 Days", "Year to Date"] as const;
-type DateRange = typeof DATE_RANGE_OPTIONS[number];
+const TABS = [
+    "All Investors",
+    "Pending KYC",
+    "Suspended",
+    "High Net Worth",
+] as const;
+
+const DATE_RANGE_OPTIONS = [
+    "All Time",
+    "Last 7 Days",
+    "Last 30 Days",
+    "Last Month",
+    "Last 90 Days",
+    "Year to Date",
+] as const;
+
+type DateRange = (typeof DATE_RANGE_OPTIONS)[number];
 type SortBy = "name" | "wallet" | "joinedDate";
-const money = (value: number) => new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 2 }).format(value);
-const mapInvestor = (item: AdminInvestorItem): Investor => ({ id: item.investorId, name: `${item.firstName} ${item.lastName}`, email: item.email, initials: `${item.firstName[0] ?? ""}${item.lastName[0] ?? ""}`, walletBalance: money(item.walletBalance), joinedDate: new Date(item.joinedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }), status: item.accountStatus === "Suspended" ? "Suspended" : item.kycStatus === "Pending" ? "Pending KYC" : item.kycStatus === "DocumentsRequested" ? "Info Requested" : item.kycStatus === "Rejected" ? "Rejected" : "Active", investorCategory: item.walletBalance >= 1_000_000 ? "hni" : "ordinary" });
+
+const money = (value: number) =>
+    new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        maximumFractionDigits: 2,
+    }).format(value);
+
+const mapInvestor = (item: AdminInvestorItem): Investor => ({
+    id: item.investorId,
+    name: `${item.firstName} ${item.lastName}`,
+    email: item.email,
+    initials: `${item.firstName[0] ?? ""}${item.lastName[0] ?? ""}`,
+    walletBalance: money(item.walletBalance),
+    joinedDate: new Date(item.joinedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+    }),
+    status:
+        item.accountStatus === "Suspended"
+            ? "Suspended"
+            : item.kycStatus === "Pending"
+                ? "Pending KYC"
+                : item.kycStatus === "DocumentsRequested"
+                    ? "Info Requested"
+                    : item.kycStatus === "Rejected"
+                        ? "Rejected"
+                        : "Active",
+    investorCategory: item.walletBalance >= 1_000_000 ? "hni" : "ordinary",
+});
 
 export default function InvestorManagementPage() {
-  const router = useRouter(); const [tab, setTab] = useState<(typeof TABS)[number]>("All Investors"); const [dateRange, setDateRange] = useState<DateRange | "">(""); const [search, setSearch] = useState(""); const [sortBy, setSortBy] = useState<SortBy>("joinedDate"); const [descending, setDescending] = useState(true); const [page, setPage] = useState(1); const pageSize = 7;
-  const params = useMemo(() => { const now = new Date(); const from = dateRange === "Last 7 Days" ? new Date(now.getTime() - 7 * 86400000) : dateRange === "Last 30 Days" ? new Date(now.getTime() - 30 * 86400000) : dateRange === "Last 90 Days" ? new Date(now.getTime() - 90 * 86400000) : dateRange === "Year to Date" ? new Date(now.getFullYear(), 0, 1) : undefined; return { page, pageSize, sortBy, descending, ...(search.trim() ? { search: search.trim() } : {}), ...(from ? { from: from.toISOString() } : {}), ...(tab === "Pending KYC" ? { kycStatus: "Pending" } : {}), ...(tab === "Suspended" ? { status: "Suspended" } : {}), ...(tab === "High Net Worth" ? { highNetWorth: true } : {}) }; }, [page, tab, dateRange, search, sortBy, descending]);
-  const { data, isLoading, isError, refetch } = useAdminInvestors(params); const investors = (data?.items ?? []).map(mapInvestor); const metrics = data ? [{ title: "Total Investors", value: data.summary.totalInvestors.toLocaleString(), changeValue: 0, subtext: "" }, { title: "Pending KYC", value: data.summary.pendingKyc.toLocaleString(), subtext: "Requires manual review" }, { title: "Suspended Accounts", value: data.summary.suspendedAccounts.toLocaleString(), subtext: "AML/Fraud locked" }, { title: "Total Wallet Balance", value: money(data.summary.totalWalletBalance), subtext: "Access all accounts" }] : [];
-  const exportCsv = () => { const rows = [["Investor ID", "Name", "Email", "Wallet Balance", "Joined Date", "Status"], ...investors.map(x => [x.id, x.name, x.email, x.walletBalance, x.joinedDate, x.status])]; const blob = new Blob(["\uFEFF" + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n")], { type: "text/csv" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `investors-${new Date().toISOString().slice(0, 10)}.csv`; a.click(); URL.revokeObjectURL(a.href); };
-  return <div className="space-y-6"><div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h1 className="text-[28px] text-[#040C17] mb-1" style={TYPOGRAPHY.heading}>Investor Management</h1><p className="text-[16px] text-[#666666]">Manage user profiles, review KYC, and monitor account health</p></div><div className="flex items-center gap-3"><Select value={dateRange} onValueChange={v => { setDateRange(v as DateRange); setPage(1); }}><SelectTrigger className="w-fit px-3 border-[#EAEAEA] bg-white rounded-lg !h-[42px] text-[14px]"><SelectValue placeholder="Filter by Date" /></SelectTrigger><SelectContent>{DATE_RANGE_OPTIONS.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent></Select><OnboardingButton label="Export" icon={<Upload className="w-4 h-4 text-white" />} onClick={exportCsv} className="my-0 max-w-[200px] lg:w-fit text-[14px] h-[42px]" /></div></div>{metrics.length > 0 && <InvestorMetrics metrics={metrics} dateRangeLabel={dateRange ? dateRange.toLowerCase() : "this period"} />}<div className="bg-white rounded-xl border border-[#EAEAEA] px-4"><div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#EAEAEA] py-3"><div className="flex items-center gap-2 border border-[#EAEAEA] rounded-lg px-3 h-10 w-full max-w-sm"><Search className="w-4 h-4 text-[#858585]" /><input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search investors" className="w-full outline-none text-sm" aria-label="Search investors" /></div><div className="flex items-center gap-2"><Select value={sortBy} onValueChange={v => { setSortBy(v as SortBy); setPage(1); }}><SelectTrigger className="w-[150px] h-10 text-sm" aria-label="Sort investors"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="joinedDate">Joined date</SelectItem><SelectItem value="name">Name</SelectItem><SelectItem value="wallet">Wallet balance</SelectItem></SelectContent></Select><button type="button" className="h-10 rounded-md border border-[#EAEAEA] px-3 text-sm" onClick={() => { setDescending(value => !value); setPage(1); }} aria-label="Toggle sort direction">{descending ? "Newest first" : "Oldest first"}</button></div></div><div className="flex items-center gap-6 border-b border-[#EAEAEA] overflow-x-auto scrollbar-hide -mx-4">{TABS.map(value => <button key={value} type="button" onClick={() => { setTab(value); setPage(1); }} className={`py-4 px-4 text-[14px] font-medium relative whitespace-nowrap ${tab === value ? "text-[#7BA147]" : "text-[#858585]"}`}>{value}{tab === value && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#7BA147] rounded-full" />}</button>)}</div>{isLoading ? <div className="p-10 text-center">Loading investors…</div> : isError ? <div className="p-10 text-center">Unable to load investors. <button className="underline" onClick={() => refetch()}>Retry</button></div> : <InvestorTable investors={investors} onViewProfile={x => router.push(`/investor-profile/${x.id}?from=investor-management`)} onReviewDocument={x => router.push(`/investor-profile/${x.id}?from=investor-management&review=kyc`)} onReviewCase={x => router.push(`/investor-profile/${x.id}?from=investor-management&review=case`)} />}{data && <TablePagination variant="detailed" currentPage={page} totalPages={data.totalPages} totalRecords={data.totalCount} pageSize={pageSize} onPageChange={setPage} />}</div></div>;
+    const router = useRouter();
+    const [tab, setTab] = useState<(typeof TABS)[number]>("All Investors");
+    const [dateRange, setDateRange] = useState<DateRange | "">("");
+    const [search, setSearch] = useState("");
+    const [sortBy, setSortBy] = useState<SortBy>("joinedDate");
+    const [descending, setDescending] = useState(true);
+    const [page, setPage] = useState(1);
+    const pageSize = 7;
+
+    const params = useMemo(() => {
+        const now = new Date();
+        const from =
+            dateRange === "Last 7 Days"
+                ? new Date(now.getTime() - 7 * 86400000)
+                : dateRange === "Last 30 Days"
+                    ? new Date(now.getTime() - 30 * 86400000)
+                    : dateRange === "Last 90 Days"
+                        ? new Date(now.getTime() - 90 * 86400000)
+                        : dateRange === "Year to Date"
+                            ? new Date(now.getFullYear(), 0, 1)
+                            : undefined;
+
+        return {
+            page,
+            pageSize,
+            sortBy,
+            descending,
+            ...(search.trim() ? { search: search.trim() } : {}),
+            ...(from ? { from: from.toISOString() } : {}),
+            ...(tab === "Pending KYC" ? { kycStatus: "Pending" } : {}),
+            ...(tab === "Suspended" ? { status: "Suspended" } : {}),
+            ...(tab === "High Net Worth" ? { highNetWorth: true } : {}),
+        };
+    }, [page, tab, dateRange, search, sortBy, descending]);
+
+    const { data, isLoading, isError, refetch } = useAdminInvestors(params);
+    const investors = (data?.items ?? []).map(mapInvestor);
+
+    const metrics = data
+        ? [
+            {
+                title: "Total Investors",
+                value: data.summary.totalInvestors.toLocaleString(),
+                changeValue: 0,
+                subtext: "",
+            },
+            {
+                title: "Pending KYC",
+                value: data.summary.pendingKyc.toLocaleString(),
+                subtext: "Requires manual review",
+            },
+            {
+                title: "Suspended Accounts",
+                value: data.summary.suspendedAccounts.toLocaleString(),
+                subtext: "AML/Fraud locked",
+            },
+            {
+                title: "Total Wallet Balance",
+                value: money(data.summary.totalWalletBalance),
+                subtext: "Access all accounts",
+            },
+        ]
+        : [];
+
+    const exportCsv = () => {
+        const rows = [
+            ["Investor ID", "Name", "Email", "Wallet Balance", "Joined Date", "Status"],
+            ...investors.map((x) => [
+                x.id,
+                x.name,
+                x.email,
+                x.walletBalance,
+                x.joinedDate,
+                x.status,
+            ]),
+        ];
+        const blob = new Blob(
+            [
+                "\uFEFF" +
+                rows
+                    .map((r) =>
+                        r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
+                    )
+                    .join("\n"),
+            ],
+            { type: "text/csv;charset=utf-8;" }
+        );
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `investors-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    };
+
+    return (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1
+                        className="text-[28px] text-[#040C17] mb-1"
+                        style={TYPOGRAPHY.heading}
+                    >
+                        Investor Management
+                    </h1>
+                    <p className="text-[16px] text-[#666666]">
+                        Manage user profiles, review KYC, and monitor account health
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <Select
+                        value={dateRange}
+                        onValueChange={(v) => {
+                            setDateRange(v as DateRange);
+                            setPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="w-fit px-3 border-[#EAEAEA] bg-white rounded-lg !h-[42px] text-[14px]">
+                            <SelectValue placeholder="Filter by Date" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border border-[#EAEAEA] rounded-md z-50">
+                            {DATE_RANGE_OPTIONS.map((v) => (
+                                <SelectItem key={v} value={v} className="text-[13px] cursor-pointer">
+                                    {v}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <OnboardingButton
+                        label="Export"
+                        icon={<Upload className="w-4 h-4 text-white" />}
+                        onClick={exportCsv}
+                        className="my-0 max-w-[200px] lg:w-fit text-[14px] h-[42px]"
+                    />
+                </div>
+            </div>
+
+            {/* Metrics */}
+            {metrics.length > 0 && (
+                <InvestorMetrics
+                    metrics={metrics}
+                    dateRangeLabel={dateRange ? dateRange.toLowerCase() : "this period"}
+                />
+            )}
+
+            {/* Table Container Card */}
+            <div className="bg-white rounded-xl border border-[#EAEAEA] px-4">
+                {/* Controls Bar: Search & Sort */}
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#EAEAEA] py-3">
+                    <div className="flex items-center gap-2 border border-[#EAEAEA] rounded-lg px-3 h-10 w-full max-w-sm">
+                        <Search className="w-4 h-4 text-[#858585]" />
+                        <input
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1);
+                            }}
+                            placeholder="Search investors"
+                            className="w-full outline-none text-sm"
+                            aria-label="Search investors"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Select
+                            value={sortBy}
+                            onValueChange={(v) => {
+                                setSortBy(v as SortBy);
+                                setPage(1);
+                            }}
+                        >
+                            <SelectTrigger className="w-[150px] h-10 text-sm" aria-label="Sort investors">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="joinedDate">Joined date</SelectItem>
+                                <SelectItem value="name">Name</SelectItem>
+                                <SelectItem value="wallet">Wallet balance</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <button
+                            type="button"
+                            className="h-10 rounded-md border border-[#EAEAEA] px-3 text-sm"
+                            onClick={() => {
+                                setDescending((value) => !value);
+                                setPage(1);
+                            }}
+                            aria-label="Toggle sort direction"
+                        >
+                            {descending ? "Newest first" : "Oldest first"}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Tabs */}
+                <div className="flex items-center gap-6 border-b border-[#EAEAEA] overflow-x-auto scrollbar-hide -mx-4">
+                    {TABS.map((value) => (
+                        <button
+                            key={value}
+                            type="button"
+                            onClick={() => {
+                                setTab(value);
+                                setPage(1);
+                            }}
+                            className={`py-4 px-4 text-[14px] font-medium transition-colors relative whitespace-nowrap shrink-0 cursor-pointer ${tab === value ? "text-[#7BA147]" : "text-[#858585] hover:text-[#11110F]"
+                                }`}
+                        >
+                            {value}
+                            {tab === value && (
+                                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#7BA147] rounded-full" />
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Table Content */}
+                {isLoading ? (
+                    <div className="p-10 text-center text-[#858585]">Loading investors…</div>
+                ) : isError ? (
+                    <div className="p-10 text-center text-[#858585]">
+                        Unable to load investors.{" "}
+                        <button className="underline text-[#7BA147]" onClick={() => refetch()}>
+                            Retry
+                        </button>
+                    </div>
+                ) : (
+                    <InvestorTable
+                        investors={investors}
+                        onViewProfile={(x) =>
+                            router.push(`/investor-profile/${x.id}?from=investor-management`)
+                        }
+                        onReviewDocument={(x) =>
+                            router.push(
+                                `/investor-management/kyc-document-review/${x.id}?from=investor-management`
+                            )
+                        }
+                        onReviewCase={(x) =>
+                            router.push(
+                                `/investor-profile/${x.id}?from=investor-management&review=case`
+                            )
+                        }
+                    />
+                )}
+
+                {/* Pagination */}
+                {data && (
+                    <TablePagination
+                        variant="detailed"
+                        currentPage={page}
+                        totalPages={data.totalPages}
+                        totalRecords={data.totalCount}
+                        pageSize={pageSize}
+                        onPageChange={setPage}
+                    />
+                )}
+            </div>
+        </div>
+    );
 }
