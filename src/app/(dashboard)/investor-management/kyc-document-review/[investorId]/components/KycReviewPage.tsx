@@ -72,6 +72,14 @@ const APPROVALLOG = {
     refNo: "KYC-REV-2024-78234"
 }
 
+const REQUEST_INFORMATION_OPTIONS = [
+    "Clearer copy of government-issued ID",
+    "Proof of address (utility bill or bank statement less than 3 months old)",
+    "Updated selfie with ID held next to face",
+    "Source of funds declaration",
+    "Director / beneficial ownership documents",
+];
+
 export function KycReviewPage({ investorId }: KycReviewPageProps) {
     const [data, setData] = useState<KycVerificationData>({
         ...INITIAL_KYC_DATA,
@@ -81,6 +89,16 @@ export function KycReviewPage({ investorId }: KycReviewPageProps) {
         },
     });
     const [showBanner, setShowBanner] = useState<boolean>(false);
+    const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+    const [selectedInfoRequests, setSelectedInfoRequests] = useState<string[]>([
+        REQUEST_INFORMATION_OPTIONS[0],
+        REQUEST_INFORMATION_OPTIONS[1],
+    ]);
+    const [responseDeadline, setResponseDeadline] = useState("7");
+    const [requestMessage, setRequestMessage] = useState(
+        `Dear ${data.user.name}, we reviewed your KYC submission and need the selected information before we can proceed.`
+    );
+    const [notificationChannels, setNotificationChannels] = useState<string[]>(["Email", "In App"]);
 
     const isApproved = data.user.status === "approved";
 
@@ -96,11 +114,32 @@ export function KycReviewPage({ investorId }: KycReviewPageProps) {
         setShowBanner(true);
     };
 
+    const handleToggleInfoRequest = (value: string) => {
+        setSelectedInfoRequests((current) =>
+            current.includes(value)
+                ? current.filter((item) => item !== value)
+                : [...current, value]
+        );
+    };
+
+    const handleToggleNotificationChannel = (value: string) => {
+        setNotificationChannels((current) =>
+            current.includes(value)
+                ? current.filter((item) => item !== value)
+                : [...current, value]
+        );
+    };
+
+    const handleSendRequest = () => {
+        setIsRequestModalOpen(false);
+    };
+
     return (
-        <div className="min-h-screen bg-[#F8F9FA space-y-4 font-sans text-[#11110F]">
+        <div className="min-h-screen bg-[#F8F9FA] space-y-4 font-sans text-[#11110F]">
             <KycHeader
                 user={data.user}
                 onApprove={handleApprove}
+                onRequestMoreInfo={() => setIsRequestModalOpen(true)}
             />
 
             {isApproved && showBanner && (
@@ -173,6 +212,107 @@ export function KycReviewPage({ investorId }: KycReviewPageProps) {
                     )}
                 </div>
             </div>
+
+            {isRequestModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6"
+                    >
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-semibold">Request More Information</h2>
+                            <button
+                                type="button"
+                                onClick={() => setIsRequestModalOpen(false)}
+                                aria-label="Close request information"
+                                className="text-[#2C2C2C]"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                        <p className="mt-1 text-sm text-[#666]">
+                            Select the information required before KYC can proceed.
+                        </p>
+
+                        <div className="mt-5 space-y-3">
+                            {REQUEST_INFORMATION_OPTIONS.map((item) => (
+                                <label
+                                    key={item}
+                                    className="flex items-center gap-3 rounded-lg border border-[#EAEAEA] p-3"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedInfoRequests.includes(item)}
+                                        onChange={() => handleToggleInfoRequest(item)}
+                                    />
+                                    {item}
+                                </label>
+                            ))}
+                        </div>
+
+                        <label className="mt-5 block text-sm font-medium">
+                            Response deadline
+                            <select
+                                value={responseDeadline}
+                                onChange={(event) => setResponseDeadline(event.target.value)}
+                                className="mt-2 w-full rounded-lg border border-[#EAEAEA] p-3"
+                            >
+                                <option value="3">3 days</option>
+                                <option value="7">7 days</option>
+                                <option value="14">14 days</option>
+                            </select>
+                        </label>
+
+                        <label className="mt-4 block text-sm font-medium">
+                            Message to investor
+                            <textarea
+                                value={requestMessage}
+                                onChange={(event) => setRequestMessage(event.target.value)}
+                                className="mt-2 min-h-24 w-full rounded-lg border border-[#EAEAEA] p-3"
+                            />
+                        </label>
+
+                        <div className="mt-4">
+                            <p className="text-sm font-medium">Notify investor</p>
+                            <div className="mt-2 flex gap-4">
+                                {["Email", "In App", "SMS"].map((channel) => (
+                                    <label key={channel} className="flex items-center gap-2 text-sm">
+                                        <input
+                                            type="checkbox"
+                                            checked={notificationChannels.includes(channel)}
+                                            onChange={() => handleToggleNotificationChannel(channel)}
+                                        />
+                                        {channel}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <p className="mt-4 rounded-lg bg-[#FFF8E7] p-3 text-sm text-[#795C00]">
+                            Sending this request changes the KYC status to Info Requested and sets a {responseDeadline}-day response window.
+                        </p>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setIsRequestModalOpen(false)}
+                                className="rounded-lg border border-[#EAEAEA] px-4 py-2 text-sm font-medium text-[#2C2C2C]"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleSendRequest}
+                                disabled={!selectedInfoRequests.length || !requestMessage.trim() || !notificationChannels.length}
+                                className="rounded-lg bg-[#365852] px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                Send Request
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
