@@ -7,6 +7,7 @@ import { SuspensionReasonCard } from "@/components/investor-management/molecules
 import { InvestigationNotes } from "@/components/investor-management/molecules/review-case/InvestigationNotes";
 import { InvestorSnapshot } from "@/components/investor-management/molecules/review-case/InvestorSnapshot";
 import { FinancialImpactCard } from "@/components/investor-management/molecules/review-case/FinancialImpactCard";
+import { ArrowLeft } from "lucide-react";
 
 interface ReviewCaseProps {
     investorId: string;
@@ -86,13 +87,13 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8F9FA] space-y-6 p-4 lg:p-6 font-sans text-[#11110F] max-w-7xl mx-auto">
+        <div className="min-h-screen bg-[#F8F9FA] space-y-6 font-sans text-[#11110F]">
             {/* Top Navigation Back */}
             <button
-                type="button"
                 onClick={() => router.back()}
-                className="hidden lg:inline-flex items-center gap-2 text-[15px] text-[#858585] hover:text-[#11110F] transition-colors cursor-pointer"
+                className="hidden lg:inline-flex items-center gap-2 text-[16px] text-[#858585] hover:text-[#11110F] transition-colors cursor-pointer mb-4"
             >
+                <ArrowLeft className="w-4 h-4" />
                 <span>Back to Suspended Accounts</span>
             </button>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Lock, AlertTriangle } from "lucide-react";
+import { Mail, Info, LockKeyholeOpen } from "lucide-react";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 
@@ -25,14 +25,14 @@ export function ReviewCaseHeader({ user, investorId }: ReviewCaseHeaderProps) {
         <div className="bg-white text-[#11110F] p-4 lg:p-5 rounded-xl flex flex-col xl:flex-row xl:items-center justify-between gap-4 border border-[#EAEAEA]">
             <div className="flex items-center gap-4">
                 <div
-                    className="w-16 h-16 rounded-full bg-[#FCFCFC] border border-[#A8A8A8] flex items-center justify-center text-[#505050] text-[26px]"
-                    style={{ ...TYPOGRAPHY.heading, fontWeight: 700 }}
+                    className="w-17 h-17 rounded-full bg-[#FCFCFC] border border-[#A8A8A8] flex items-center justify-center text-[#505050] text-[28px]"
+                    style={{ ...TYPOGRAPHY.heading, fontWeight: 500 }}
                 >
                     {initials}
                 </div>
                 <div>
                     <div className="flex items-center gap-2.5">
-                        <h1 className="text-[24px] font-bold">{user.name}</h1>
+                        <h1 className="text-[24px]" style={TYPOGRAPHY.heading}>{user.name}</h1>
                         <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#FCFCFC] border border-[#EAEAEA] text-[#D4001A] font-medium">
                             {user.status}
                         </span>
@@ -44,26 +44,24 @@ export function ReviewCaseHeader({ user, investorId }: ReviewCaseHeaderProps) {
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-                <button
-                    type="button"
-                    onClick={() => console.log("Send email")}
-                    className="w-10 h-10 rounded-lg border border-[#EAEAEA] flex items-center justify-center text-[#505050] hover:bg-gray-50 transition-colors"
-                    aria-label="Send Email"
-                >
-                    <Mail className="w-4 h-4" />
-                </button>
+
+                <OnboardingButton
+                    variant="plain"
+                    label=""
+                    icon={<Mail className="w-4 h-4 text-[#11110F]" />}
+                    className="my-0 w-fit border-[#EAEAEA]"
+                />
+
                 <OnboardingButton
                     variant="plain"
                     label="Lift Suspension"
-                    onClick={() => console.log("Lift suspension")}
-                    icon={<Lock className="w-4 h-4 text-[#11110F]" />}
-                    className="my-0 border-[#EAEAEA] text-[#11110F]"
+                    icon={<LockKeyholeOpen className="w-4 h-4 text-[#11110F]" />}
+                    className="my-0 w-fit border-[#EAEAEA]"
                 />
                 <OnboardingButton
                     label="Escalate to STR"
-                    onClick={() => console.log("Escalate to STR")}
-                    icon={<AlertTriangle className="w-4 h-4 text-white" />}
-                    className="my-0 bg-[#30534C] text-white hover:bg-[#25423C]"
+                    icon={<Info className="w-4 h-4 text-white" />}
+                    className="my-0 w-fit bg-[#365852]"
                 />
             </div>
         </div>
