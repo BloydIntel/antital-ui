@@ -12,9 +12,10 @@ interface ReviewCaseHeaderProps {
         suspendedDate: string;
     };
     investorId: string;
+    onEscalateStr?: () => void;
 }
 
-export function ReviewCaseHeader({ user, investorId }: ReviewCaseHeaderProps) {
+export function ReviewCaseHeader({ user, investorId, onEscalateStr }: ReviewCaseHeaderProps) {
     const initials = user.name
         .split(" ")
         .map((n) => n[0])
@@ -43,25 +44,26 @@ export function ReviewCaseHeader({ user, investorId }: ReviewCaseHeaderProps) {
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex flex-col lg:flex-row items-center gap-3 flex-wrap">
 
                 <OnboardingButton
                     variant="plain"
                     label=""
                     icon={<Mail className="w-4 h-4 text-[#11110F]" />}
-                    className="my-0 w-fit border-[#EAEAEA]"
+                    className="my-0 lg:w-fit border-[#EAEAEA]"
                 />
 
                 <OnboardingButton
                     variant="plain"
                     label="Lift Suspension"
                     icon={<LockKeyholeOpen className="w-4 h-4 text-[#11110F]" />}
-                    className="my-0 w-fit border-[#EAEAEA]"
+                    className="my-0 lg:w-fit border-[#EAEAEA]"
                 />
                 <OnboardingButton
                     label="Escalate to STR"
                     icon={<Info className="w-4 h-4 text-white" />}
-                    className="my-0 w-fit bg-[#365852]"
+                    className="my-0 lg:w-fit bg-[#365852]"
+                    onClick={() => onEscalateStr?.()}
                 />
             </div>
         </div>

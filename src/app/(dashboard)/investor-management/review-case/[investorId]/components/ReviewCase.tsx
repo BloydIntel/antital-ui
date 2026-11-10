@@ -8,6 +8,7 @@ import { InvestigationNotes } from "@/components/investor-management/molecules/r
 import { InvestorSnapshot } from "@/components/investor-management/molecules/review-case/InvestorSnapshot";
 import { FinancialImpactCard } from "@/components/investor-management/molecules/review-case/FinancialImpactCard";
 import { ArrowLeft } from "lucide-react";
+import { EscalateStrModal } from "@/components/investor-management/molecules/review-case/EscalateStrModal";
 
 interface ReviewCaseProps {
     investorId: string;
@@ -69,6 +70,7 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
     const router = useRouter();
     const [data, setData] = useState(INITIAL_INVESTIGATION_DATA);
     const [newNote, setNewNote] = useState("");
+    const [isStrModalOpen, setIsStrModalOpen] = useState(false);
 
     const handleAddNote = () => {
         if (!newNote.trim()) return;
@@ -98,7 +100,11 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
             </button>
 
             {/* Header Component */}
-            <ReviewCaseHeader user={data.user} investorId={investorId} />
+            <ReviewCaseHeader
+                user={data.user}
+                investorId={investorId}
+                onEscalateStr={() => setIsStrModalOpen(true)}
+            />
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -123,6 +129,12 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
                     <FinancialImpactCard financialImpact={data.financialImpact} />
                 </div>
             </div>
+
+            <EscalateStrModal
+                isOpen={isStrModalOpen}
+                onClose={() => setIsStrModalOpen(false)}
+                user={data.user}
+            />
         </div>
     );
 }
