@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, AlertCircle, XCircle } from "lucide-react";
+import { X, AlertCircle, XCircle, LockKeyhole } from "lucide-react";
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton";
 import { TYPOGRAPHY } from "@/constants/styles";
 import { UserAvatar } from "@/components/investor-management/organisms/UserAvatar";
@@ -71,15 +71,15 @@ export function EscalateStrModal({ isOpen, onClose, user }: EscalateStrModalProp
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 lg:p-4">
             <div
                 role="dialog"
                 aria-modal="true"
                 className="max-h-[90vh] w-full max-w-[718px] overflow-y-auto rounded-xl bg-white scrollbar-hide"
             >
                 {/* Header */}
-                <div className="flex items-center justify-between border-b border-[#EAEAEA] p-6">
-                    <h2 className="text-[18px] text-[#11110F]"
+                <div className="flex items-center justify-between border-b border-[#EAEAEA] p-3 lg:p-6">
+                    <h2 className="text-[16px] lg:text-[18px] text-[#11110F]"
                         style={{ ...TYPOGRAPHY.body, fontWeight: 500 }}
                     >
                         Escalate to Suspicious Transaction Report
@@ -94,9 +94,9 @@ export function EscalateStrModal({ isOpen, onClose, user }: EscalateStrModalProp
                     </button>
                 </div>
 
-                <div className="p-6 space-y-4">
+                <div className="p-3 lg:p-6 space-y-4">
                     {/* Warning Banner */}
-                    <div className="flex items-start gap-3 rounded-lg border border-[#FF7082] bg-[#FFEBED] p-4 text-[14px] text-[#D4001A]">
+                    <div className="flex items-start gap-3 rounded-lg border border-[#FF7082] bg-[#FFEBED] p-2 lg:p-4 text-[14px] text-[#D4001A]">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                         <span>
                             Submitting this STR will generate an NFIU-formatted report and add it to the regulatory dispatch queue.
@@ -105,19 +105,21 @@ export function EscalateStrModal({ isOpen, onClose, user }: EscalateStrModalProp
                     </div>
 
                     {/* User Summary Card */}
-                    <div className="flex items-center justify-between rounded-lg border border-[#EAEAEA] px-4 py-5">
-                        <div className="flex items-center gap-3">
-                            <UserAvatar name={user.name} size={55} />
-                            <div>
+                    <div className="flex items-center rounded-lg border border-[#EAEAEA] px-2 lg:px-4 py-2.5 lg:py-5 gap-3">
+
+                        <UserAvatar name={user.name} size={55} />
+                        <div className="w-full space-y-2">
+                            <div className="flex justify-between">
                                 <p className="font-medium text-[18px] text-[#11110F]">{user.name}</p>
-                                <p className="text-[14px] text-[#858585]">
-                                    {user.investorId} • Suspended {user.suspendedDate} • {user.email}
-                                </p>
+                                <span className="text-xs px-2.5 py-1 rounded-md border bg-[#FCFCFC] border-[#EAEAEA] text-[#D4001A]">
+                                    Forgery Suspected
+                                </span>
                             </div>
+                            <p className="text-[14px] text-[#858585]">
+                                {user.investorId} • Suspended {user.suspendedDate} • {user.email}
+                            </p>
                         </div>
-                        <span className="text-xs px-2.5 py-1 rounded-md border bg-[#FCFCFC] border-[#EAEAEA] text-[#D4001A]">
-                            Forgery Suspected
-                        </span>
+
                     </div>
 
                     {/* Form Controls */}
@@ -266,7 +268,7 @@ export function EscalateStrModal({ isOpen, onClose, user }: EscalateStrModalProp
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="grid grid-cols-2 gap-3 p-6 border-t border-[#EAEAEA] ">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 p-3 lg:p-6 border-t border-[#EAEAEA] ">
                     <OnboardingButton
                         variant="plain"
                         label="Cancel"
@@ -274,12 +276,22 @@ export function EscalateStrModal({ isOpen, onClose, user }: EscalateStrModalProp
                         className="my-0 border-[#EAEAEA]"
                     />
                     <OnboardingButton
-                        label="Submit STR to NFIU"
+                        label={
+                            <span className="relative inline-flex items-center justify-center">
+
+                                <span className="absolute left-0 -translate-x-full opacity-0 scale-75 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:scale-100 group-hover:-translate-x-[20px] flex items-center justify-center">
+                                    <LockKeyhole className="w-4 h-4 text-white" />
+                                </span>
+
+                                <span className="transition-transform duration-300 ease-out group-hover:translate-x-2.5">
+                                    Submit STR to NFIU
+                                </span>
+                            </span>
+                        }
+                        className="group my-0 bg-[#365852]"
                         onClick={() => {
-                            console.log("Submitting STR...");
                             onClose();
                         }}
-                        className="my-0 bg-[#365852]"
                     />
                 </div>
             </div>

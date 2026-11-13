@@ -13,9 +13,11 @@ interface ReviewCaseHeaderProps {
     };
     investorId: string;
     onEscalateStr?: () => void;
+    onLiftSuspension?: () => void;
+    onContactInvestor?: () => void;
 }
 
-export function ReviewCaseHeader({ user, investorId, onEscalateStr }: ReviewCaseHeaderProps) {
+export function ReviewCaseHeader({ user, investorId, onEscalateStr, onLiftSuspension, onContactInvestor }: ReviewCaseHeaderProps) {
     const initials = user.name
         .split(" ")
         .map((n) => n[0])
@@ -51,6 +53,7 @@ export function ReviewCaseHeader({ user, investorId, onEscalateStr }: ReviewCase
                     label=""
                     icon={<Mail className="w-4 h-4 text-[#11110F]" />}
                     className="my-0 lg:w-fit border-[#EAEAEA]"
+                    onClick={() => onContactInvestor?.()}
                 />
 
                 <OnboardingButton
@@ -58,6 +61,7 @@ export function ReviewCaseHeader({ user, investorId, onEscalateStr }: ReviewCase
                     label="Lift Suspension"
                     icon={<LockKeyholeOpen className="w-4 h-4 text-[#11110F]" />}
                     className="my-0 lg:w-fit border-[#EAEAEA]"
+                    onClick={() => onLiftSuspension?.()}
                 />
                 <OnboardingButton
                     label="Escalate to STR"

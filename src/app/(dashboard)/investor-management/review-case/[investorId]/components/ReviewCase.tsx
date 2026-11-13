@@ -9,6 +9,8 @@ import { InvestorSnapshot } from "@/components/investor-management/molecules/rev
 import { FinancialImpactCard } from "@/components/investor-management/molecules/review-case/FinancialImpactCard";
 import { ArrowLeft } from "lucide-react";
 import { EscalateStrModal } from "@/components/investor-management/molecules/review-case/EscalateStrModal";
+import { LiftSuspensionModal } from "@/components/investor-management/molecules/review-case/LiftSuspensionModal";
+import { ContactInvestorModal } from "@/components/investor-management/molecules/review-case/ContactInvestorModal";
 
 interface ReviewCaseProps {
     investorId: string;
@@ -71,6 +73,8 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
     const [data, setData] = useState(INITIAL_INVESTIGATION_DATA);
     const [newNote, setNewNote] = useState("");
     const [isStrModalOpen, setIsStrModalOpen] = useState(false);
+    const [isLiftModalOpen, setIsLiftModalOpen] = useState(false);
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
     const handleAddNote = () => {
         if (!newNote.trim()) return;
@@ -104,6 +108,8 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
                 user={data.user}
                 investorId={investorId}
                 onEscalateStr={() => setIsStrModalOpen(true)}
+                onLiftSuspension={() => setIsLiftModalOpen(true)}
+                onContactInvestor={() => setIsContactModalOpen(true)}
             />
 
             {/* Main Content Grid */}
@@ -133,6 +139,18 @@ export function ReviewCase({ investorId }: ReviewCaseProps) {
             <EscalateStrModal
                 isOpen={isStrModalOpen}
                 onClose={() => setIsStrModalOpen(false)}
+                user={data.user}
+            />
+
+            <LiftSuspensionModal
+                isOpen={isLiftModalOpen}
+                onClose={() => setIsLiftModalOpen(false)}
+                user={data.user}
+            />
+
+            <ContactInvestorModal
+                isOpen={isContactModalOpen}
+                onClose={() => setIsContactModalOpen(false)}
                 user={data.user}
             />
         </div>
