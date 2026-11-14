@@ -47,18 +47,32 @@ export function ContactInvestorModal({ isOpen, onClose, user }: ContactInvestorM
         `Dear Aisha, your account (INV-3457) has been temporarily suspended following a routine identity verification review. Our system flagged an issue with the submitted ID document. To restore full access, please re-submit a clear, unobstructed scan of a valid government-issued ID via your profile settings. If you believe this is an error or need assistance, please reply to this email or contact our support team at support@platform.ng. We aim to resolve verified cases within 2 business days.`
     );
     const [isEditingMessage, setIsEditingMessage] = useState(false);
-    const [ccEmail,] = useState("Compliance@platform.ng");
+    const [ccEmails, setCcEmails] = useState<string[]>(["Compliance@platform.ng"]);
+    const [newCcInput, setNewCcInput] = useState("");
+    const [isAddingCc, setIsAddingCc] = useState(false);
     const [optionsState, setOptionsState] = useState({
         logToNotes: true,
         sendCopyToOfficer: true,
         readReceipt: true,
     });
+
     const handleToggleChannel = (channelId: NotificationChannel, checked: boolean) => {
         setSendVia((prev) =>
             checked
                 ? [...prev, channelId]
                 : prev.filter((id) => id !== channelId)
         );
+    };
+
+    const handleAddCc = () => {
+        if (newCcInput.trim() && !ccEmails.includes(newCcInput.trim())) {
+            setCcEmails([...ccEmails, newCcInput.trim()]);
+            setNewCcInput("");
+        }
+    };
+
+    const handleRemoveCc = (emailToRemove: string) => {
+        setCcEmails(ccEmails.filter((email) => email !== emailToRemove));
     };
 
     if (!isOpen) return null;
@@ -190,13 +204,61 @@ export function ContactInvestorModal({ isOpen, onClose, user }: ContactInvestorM
                     {/* CC Field */}
                     <div className="flex flex-col gap-2">
                         <label className="text-[14px] font-medium text-[#1B1B1B]">CC</label>
-                        <div className="flex items-center gap-2 w-full h-[48px] px-4 rounded-lg border border-[#EAEAEA] bg-white">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F4F5F7] text-xs font-medium text-[#2C2C2C]">
-                                {ccEmail}
-                            </span>
-                            <button type="button" className="text-[#858585] hover:text-[#11110F]">
-                                <Plus className="w-4 h-4" />
-                            </button>
+                        <div className="flex flex-wrap items-center gap-2 w-full min-h-[48px] px-3 py-2 rounded-lg border border-[#EAEAEA] bg-white focus-within:border-[#11110F]">
+                            {ccEmails.map((email) => (
+                                <span
+                                    key={email}
+                                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#F5F5F5] text-[14px] text-[#2C2C2C]"
+                                >
+                                    {email}
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveCc(email)}
+                                        className="text-[#858585] hover:text-[#11110F] cursor-pointer"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </span>
+                            ))}
+
+                            {!isAddingCc ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddingCc(true)}
+                                    className="flex items-center justify-center w-7 h-7 rounded-md text-[#858585] hover:text-[#11110F] hover:border-[#11110F] transition-colors cursor-pointer"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                </button>
+                            ) : (
+                                <div className="flex items-center gap-1 flex-1 min-w-[200px]">
+                                    <input
+                                        type="email"
+                                        autoFocus
+                                        placeholder="Type email and press Enter..."
+                                        value={newCcInput}
+                                        onChange={(e) => setNewCcInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === ",") {
+                                                e.preventDefault();
+                                                if (newCcInput.trim()) {
+                                                    handleAddCc();
+                                                    setIsAddingCc(false);
+                                                }
+                                            } else if (e.key === "Escape") {
+                                                setIsAddingCc(false);
+                                                setNewCcInput("");
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            if (newCcInput.trim()) {
+                                                handleAddCc();
+                                            }
+                                            setIsAddingCc(false);
+                                        }}
+                                        className="w-full text-xs text-[#2C2C2C] bg-transparent focus:outline-none placeholder:text-[#A8A8A8]"
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -211,7 +273,7 @@ export function ContactInvestorModal({ isOpen, onClose, user }: ContactInvestorM
                             return (
                                 <label
                                     key={item.key}
-                                    className="flex items-center gap-2.5 text-xs font-medium text-[#11110F] cursor-pointer"
+                                    className="flex items-center gap-2.5 text-[16px] text-[#858585] cursor-pointer"
                                 >
                                     <Checkbox
                                         checked={isChecked}
@@ -235,7 +297,7 @@ export function ContactInvestorModal({ isOpen, onClose, user }: ContactInvestorM
                     <button
                         type="button"
                         onClick={() => console.log("Request previous messages...")}
-                        className="text-xs font-medium text-[#505050] hover:text-[#11110F] transition-colors underline"
+                        className="text-[16px] text-[#858585] hover:text-[#11110F] transition-colors hover:underline"
                     >
                         Request previous messages (2)
                     </button>
