@@ -127,7 +127,7 @@ export function ProfileHeader({
                                     label={isInvestorManagement && status === "Suspended" ? "Unsuspend Account" : isInvestorManagement ? "Suspend Account" : "Suspend"}
                                     icon={<X className="w-4 h-4 text-[#D4001A]" />}
                                     onClick={onSuspend}
-                                    className={`my-0 lg:w-fit text-[#D4001A] border-[#D4001A] bg-transparent ${isInvestorManagement ? "hover:text-black" : "hover:bg-[#D4001A]/5"}`}
+                                    className="my-0 lg:w-fit text-[#D4001A] border-[#D4001A] hover:text-[#11110F]"
                                 />
                             )}
                         </div>
