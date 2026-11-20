@@ -311,7 +311,7 @@ export default function InvestorManagementPage() {
                         }
                         onReviewCase={(x) =>
                             router.push(
-                                `/investor-profile/${x.id}?from=investor-management&review=case`
+                                `/investor-management/review-case/${x.id}?from=investor-management`
                             )
                         }
                     />
