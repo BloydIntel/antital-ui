@@ -305,7 +305,7 @@ export function NotificationCenter() {
             {/* Notifications Feed Area */}
             <div className="space-y-3">
                 {isLoading ? (
-                   <NotificationCenterSkeleton rows="{5}"/>
+                    <NotificationCenterSkeleton rows={5} />
                 ) : isError ? (
                     <div className="text-center py-12 bg-white rounded-xl border border-[#F0F0F0] text-[#858585]" style={TYPOGRAPHY.body}>
                         <p className="mb-3">{error instanceof Error ? error.message : 'Unable to load notifications.'}</p>
