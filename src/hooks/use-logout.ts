@@ -7,9 +7,11 @@ import { tokenStorage } from "@/lib/token-storage";
 import { showApiErrorToast } from "@/lib/error-feedback";
 import { useUserStore } from "@/store/userStore";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { usePendingOtpStore } from "@/store/pendingOtpStore";
 
 function clearLocalSession(queryClient: ReturnType<typeof useQueryClient>) {
   tokenStorage.clear();
+  usePendingOtpStore.getState().clearPendingOtp();
   useUserStore.getState().clearUser();
   useOnboardingStore.getState().resetOnboarding();
   if (typeof window !== "undefined") {

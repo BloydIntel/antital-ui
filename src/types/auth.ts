@@ -49,6 +49,7 @@ export interface LoginResponse {
   role: string;
   isEmailVerified: boolean;
   requiresOtp: boolean;
+  otpChallengeId: string | null;
 }
 
 export interface RefreshRequest {
@@ -90,5 +91,6 @@ export interface ResetPasswordRequest {
 }
 
 export interface VerifyOtpRequest {
+  challengeId: string;
   code: string;
 }
