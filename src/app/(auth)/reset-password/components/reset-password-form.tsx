@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useResetPassword } from '@/hooks/use-settings';
-import { showApiErrorToast } from '@/lib/error-feedback';
+import { ApiError } from '@/lib/api-error';
 import { cn } from '@/lib/utils';
 
 const resetPasswordSchema = z
@@ -43,10 +43,11 @@ export function ResetPasswordForm({
 }: React.ComponentProps<'div'>) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = useMemo(() => searchParams.get('token')?.trim() ?? '', [searchParams]);
+  const token = useMemo(() => searchParams.get('token') ?? '', [searchParams]);
   const resetPassword = useResetPassword();
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -54,8 +55,10 @@ export function ResetPasswordForm({
   });
 
   const onSubmit = (values: ResetPasswordValues) => {
+    setSubmitError(null);
+
     if (!token) {
-      toast.error('Reset link is missing or invalid.');
+      setSubmitError('Reset link is missing or invalid.');
       return;
     }
 
@@ -71,7 +74,33 @@ export function ResetPasswordForm({
           router.push('/sign-in');
         },
         onError: (error) => {
-          showApiErrorToast(error, 'Unable to reset password.');
+          if (error instanceof ApiError) {
+            const newPasswordError = error.getFieldError('newPassword');
+            const confirmPasswordError = error.getFieldError('confirmPassword');
+
+            if (newPasswordError) {
+              form.setError('newPassword', { type: 'server', message: newPasswordError });
+            }
+            if (confirmPasswordError) {
+              form.setError('confirmPassword', { type: 'server', message: confirmPasswordError });
+            }
+
+            const hasFieldErrors = Boolean(newPasswordError || confirmPasswordError);
+            const isInvalidTokenError = error.status === 500 || error.errors.some((message) =>
+              /token|jwt|expired|invalid/i.test(message),
+            );
+            const generalError = isInvalidTokenError
+              ? 'This reset link is invalid or has expired. Request a new one.'
+              : error.errors.find((message) =>
+                  ![newPasswordError, confirmPasswordError].includes(message),
+                ) ?? (!hasFieldErrors ? error.primaryMessage : undefined);
+
+            if (generalError) {
+              setSubmitError(generalError);
+            }
+          } else {
+            setSubmitError('Unable to reset password. Please try again.');
+          }
         },
       },
     );
@@ -113,6 +142,7 @@ export function ResetPasswordForm({
       {!token ? (
         <div className="space-y-4">
           <p
+            role="alert"
             className="text-[16px] text-[#D4001A]"
             style={{ fontFamily: 'var(--font-dm-sans)' }}
           >
@@ -129,6 +159,16 @@ export function ResetPasswordForm({
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-[540px]">
+            {submitError && (
+              <p
+                role="alert"
+                className="rounded-lg border border-[#F5B5BE] bg-[#FFF4F5] p-3 text-[14px] text-[#B00020]"
+                style={{ fontFamily: 'var(--font-dm-sans)' }}
+              >
+                {submitError}
+              </p>
+            )}
+
             <FormField
               control={form.control}
               name="newPassword"

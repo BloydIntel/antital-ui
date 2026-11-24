@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/form';
 import { useForgotPassword } from '@/hooks/use-settings';
 import { showApiErrorToast } from '@/lib/error-feedback';
+import { ApiError } from '@/lib/api-error';
 import { cn } from '@/lib/utils';
 
 const forgotPasswordSchema = z.object({
@@ -49,6 +50,12 @@ export function ForgotPasswordForm({
           toast.success('If that email exists, a reset link has been sent.');
         },
         onError: (error) => {
+          if (error instanceof ApiError) {
+            const emailError = error.getFieldError('email');
+            if (emailError) {
+              form.setError('email', { type: 'server', message: emailError });
+            }
+          }
           showApiErrorToast(error, 'Unable to send reset link.');
         },
       },
