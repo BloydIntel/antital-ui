@@ -15,6 +15,7 @@ const AUTHENTICATED_DASHBOARD_ROUTES = [
   "/portfolio",
   "/settings",
   "/watchlist",
+  "/notifications",
 ] as const;
 
 export function isAuthenticatedDashboardRoute(pathname: string): boolean {

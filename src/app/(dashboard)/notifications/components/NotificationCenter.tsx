@@ -58,6 +58,7 @@ export function NotificationCenter() {
     const [debouncedSearch, setDebouncedSearch] = useState<string>('');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
+    const [readFilter, setReadFilter] = useState<ReadFilterValue>('all');
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -68,10 +69,17 @@ export function NotificationCenter() {
         return () => window.clearTimeout(timer);
     }, [searchQuery]);
 
+    const isReadParam = useMemo<boolean | undefined>(() => {
+        if (readFilter === 'unread') return false;
+        if (readFilter === 'read') return true;
+        return undefined;
+    }, [readFilter]);
+
     const { data, isLoading, isError, error, refetch } = useNotifications({
         page,
         pageSize: PAGE_SIZE,
         category: categoryFilter === 'all' ? 'all' : (categoryFilter as NotificationCategory),
+        isRead: isReadParam,
         search: debouncedSearch,
     });
 
@@ -95,6 +103,11 @@ export function NotificationCenter() {
 
     const handleCategoryChange = (value: string) => {
         setCategoryFilter(value);
+        setPage(1);
+    };
+
+    const handleReadFilterChange = (value: ReadFilterValue) => {
+        setReadFilter(value);
         setPage(1);
     };
 
@@ -255,6 +268,23 @@ export function NotificationCenter() {
                             value={searchQuery}
                             onChange={setSearchQuery}
                         />
+
+                        <Select
+                            value={readFilter}
+                            onValueChange={(value) => handleReadFilterChange(value as ReadFilterValue)}
+                        >
+                            <SelectTrigger
+                                aria-label="Read status filter"
+                                className="px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#2C2C2C] focus:ring-1 focus:ring-[#042E27]"
+                            >
+                                <SelectValue placeholder="All" className="text-[16px]" style={TYPOGRAPHY.body} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border border-[#EAEAEA] rounded-md shadow-lg">
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="unread">Unread</SelectItem>
+                                <SelectItem value="read">Read</SelectItem>
+                            </SelectContent>
+                        </Select>
 
                         <Select value={categoryFilter} onValueChange={handleCategoryChange}>
                             <SelectTrigger className="px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#2C2C2C] focus:ring-1 focus:ring-[#042E27]">
