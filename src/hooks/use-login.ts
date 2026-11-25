@@ -10,6 +10,7 @@ import { resolvePostLoginPath } from "@/lib/post-login-navigation";
 import { mapApiIdentityToStoreUserType } from "@/lib/user-type";
 import { useUserStore } from "@/store/userStore";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { usePendingOtpStore } from "@/store/pendingOtpStore";
 
 export type { LoginRequest, LoginResponse };
 
@@ -26,11 +27,28 @@ const useLogin = (options?: UseLoginOptions) => {
     mutationFn: authService.login,
     onSuccess: async (data, variables) => {
       const persistent = variables.remember === true;
+
+      const userType = mapApiIdentityToStoreUserType(data.userType, data.role);
+      const isOtpRequired = userType === "admin" && data.requiresOtp;
+
+      if (isOtpRequired) {
+        if (!data.otpChallengeId) {
+          showApiErrorToast(
+            new Error("The admin OTP challenge was not returned."),
+            "Unable to start OTP verification."
+          );
+          return;
+        }
+
+        tokenStorage.clear();
+        usePendingOtpStore.getState().setPendingOtp(data.otpChallengeId, persistent);
+        router.replace("/sign-in/otp");
+        return;
+      }
+
       tokenStorage.setAccessToken(data.token, persistent);
       if (data.refreshToken)
         tokenStorage.setRefreshToken(data.refreshToken, persistent);
-
-      const userType = mapApiIdentityToStoreUserType(data.userType, data.role);
 
       useUserStore.getState().setUserId(String(data.userId));
       useUserStore.getState().setRequiresOtp(Boolean(data.requiresOtp));

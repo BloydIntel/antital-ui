@@ -3,9 +3,17 @@
 import React, { useState, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { AlertCircle, ArrowLeft } from "lucide-react"
 import { OnboardingButton } from "@/components/onboarding/molecules/OnboardingButton"
 import authService from "@/services/authService"
+import { ApiError } from "@/lib/api-error"
+import { tokenStorage } from "@/lib/token-storage"
+import { usePendingOtpStore } from "@/store/pendingOtpStore"
+import { useUserStore } from "@/store/userStore"
+import { useOnboardingStore } from "@/store/onboardingStore"
+import { mapApiIdentityToStoreUserType } from "@/lib/user-type"
+import { useQueryClient } from "@tanstack/react-query"
+import { CACHE_KEY_USER } from "@/constants"
 
 interface AdminOtpFormProps {
     onVerifySuccess?: () => void
@@ -14,7 +22,12 @@ interface AdminOtpFormProps {
 export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const [isLoading, setIsLoading] = useState(false)
+    const [submitError, setSubmitError] = useState<string | null>(null)
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+    const queryClient = useQueryClient()
+    const challengeId = usePendingOtpStore((state) => state.challengeId)
+    const remember = usePendingOtpStore((state) => state.remember)
+    const clearPendingOtp = usePendingOtpStore((state) => state.clearPendingOtp)
 
     const handleChange = (index: number, value: string) => {
         if (value.length > 1) {
@@ -55,19 +68,56 @@ export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
 
     const handleVerify = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        const code = otp.join("")
+        if (code.length !== 6) {
+            setSubmitError("Enter the six-digit code sent to your email.")
+            return
+        }
+
+        if (!challengeId) {
+            setSubmitError("This OTP session has expired. Please sign in again.")
+            return
+        }
+
+        setSubmitError(null)
         setIsLoading(true)
 
         try {
-            const code = otp.join("")
-            const response = await authService.verifyOtp({ code })
+            const response = await authService.verifyOtp({ challengeId, code })
 
-            if (response.requiresOtp === false || response.token) {
-                if (onVerifySuccess) {
-                    onVerifySuccess()
-                }
+            if (response.requiresOtp || !response.token) {
+                setSubmitError("OTP verification could not be completed. Please try again.")
+                return
             }
+
+            tokenStorage.setAccessToken(response.token, remember)
+            if (response.refreshToken) {
+                tokenStorage.setRefreshToken(response.refreshToken, remember)
+            }
+
+            const userType = mapApiIdentityToStoreUserType(response.userType, response.role)
+            useUserStore.getState().setUserId(String(response.userId))
+            useUserStore.getState().setRequiresOtp(false)
+            useUserStore.getState().updateProfile({
+                emailAddress: response.email,
+                userType,
+                isEmailVerified: response.isEmailVerified,
+            })
+            useOnboardingStore.getState().setEmailVerified(response.isEmailVerified)
+            clearPendingOtp()
+            queryClient.invalidateQueries({ queryKey: CACHE_KEY_USER })
+            onVerifySuccess?.()
         } catch (error) {
-            console.error("OTP verification error:", error)
+            if (error instanceof ApiError) {
+                setSubmitError(
+                    error.getFieldError("code") ??
+                    error.primaryMessage ??
+                    "The code is invalid or has expired. Request a new code and try again."
+                )
+            } else {
+                setSubmitError("Unable to verify the code. Please try again.")
+            }
         } finally {
             setIsLoading(false)
         }
@@ -76,7 +126,7 @@ export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col items-start gap-2 pb-6">
-                <Link href="/sign-in" className="block pb-8">
+                <Link href="/sign-in" className="block pb-8" onClick={clearPendingOtp}>
                     <ArrowLeft aria-label="Go Back" className="inline h-5 w-5 text-[#1B1B1B]" />
                     <Image
                         src="/icons/antital.svg"
@@ -133,6 +183,16 @@ export function AdminOtpForm({ onVerifySuccess }: AdminOtpFormProps) {
                         </React.Fragment>
                     ))}
                 </div>
+
+                {submitError && (
+                    <div
+                        role="alert"
+                        className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+                    >
+                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                        <span>{submitError}</span>
+                    </div>
+                )}
 
                 <OnboardingButton
                     type="submit"
