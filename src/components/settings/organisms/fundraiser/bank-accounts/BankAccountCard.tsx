@@ -1,26 +1,29 @@
 'use client';
 
 import React from 'react';
-import { Landmark, MoreVertical, CheckCircle2 } from 'lucide-react';
+import { Landmark, CheckCircle2, Clock3, Pencil, ShieldCheck, Star, Trash2 } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingButton';
 
 export interface BankAccountDetails {
-    id: string;
+    id: number;
     bankName: string;
     accountHolder: string;
     accountNumberMasked: string;
     isPrimary?: boolean;
-    isVerified?: boolean;
+    isVerified: boolean;
+    verificationStatus: string;
 }
 
 interface BankAccountCardProps {
     account: BankAccountDetails;
-    onViewDetails?: (id: string) => void;
-    onMoreOptions?: (id: string) => void;
+    onEdit?: (id: number) => void;
+    onVerify?: (id: number) => void;
+    onSetPrimary?: (id: number) => void;
+    onDelete?: (id: number) => void;
 }
 
-export function BankAccountCard({ account, onViewDetails, onMoreOptions }: BankAccountCardProps) {
+export function BankAccountCard({ account, onEdit, onVerify, onSetPrimary, onDelete }: BankAccountCardProps) {
     return (
         <div className="bg-white border border-[#F4F5F7] rounded-md p-4 lg:p-6 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2 lg:gap-4">
             <div className="flex items-center gap-4">
@@ -45,10 +48,15 @@ export function BankAccountCard({ account, onViewDetails, onMoreOptions }: BankA
                         {account.accountHolder} – {account.accountNumberMasked}
                     </p>
 
-                    {account.isVerified && (
+                    {account.isVerified ? (
                         <div className="flex items-center gap-1.5 mt-2 text-[#34C759] text-[14px] font-bold tracking-wide uppercase">
                             <CheckCircle2 className="w-4 h-4" />
                             <span>VERIFIED</span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-1.5 mt-2 text-[#B7791F] text-[14px] font-bold tracking-wide uppercase">
+                            <Clock3 className="w-4 h-4" />
+                            <span>{account.verificationStatus}</span>
                         </div>
                     )}
                 </div>
@@ -58,17 +66,31 @@ export function BankAccountCard({ account, onViewDetails, onMoreOptions }: BankA
             <div className="flex items-center gap-2">
                 <OnboardingButton
                     variant="plain"
-                    label="View Details"
-                    onClick={() => onViewDetails?.(account.id)}
+                    label="Edit"
+                    onClick={() => onEdit?.(account.id)}
+                    icon={<Pencil className="h-4 w-4" />}
                     className="lg:w-fit bg-[#F4F5F7] text-[#505050] hover:text-[#1B1B1B] border-none"
                 />
-                <button
-                    type="button"
-                    onClick={() => onMoreOptions?.(account.id)}
-                    className="hidden lg:block p-2 text-[#858585] hover:text-[#1B1B1B] hover:bg-[#F9FAFB] rounded-lg transition-colors cursor-pointer"
-                    aria-label="More options"
-                >
-                    <MoreVertical className="w-5 h-5" />
+                {!account.isVerified && (
+                    <OnboardingButton
+                        variant="plain"
+                        label="Verify"
+                        onClick={() => onVerify?.(account.id)}
+                        icon={<ShieldCheck className="h-4 w-4" />}
+                        className="lg:w-fit bg-[#EDF1D6] text-[#042E27] border-none"
+                    />
+                )}
+                {account.isVerified && !account.isPrimary && (
+                    <OnboardingButton
+                        variant="plain"
+                        label="Make primary"
+                        onClick={() => onSetPrimary?.(account.id)}
+                        icon={<Star className="h-4 w-4" />}
+                        className="lg:w-fit bg-[#F4F5F7] text-[#505050] border-none"
+                    />
+                )}
+                <button type="button" onClick={() => onDelete?.(account.id)} className="p-2 text-[#858585] hover:text-red-600" aria-label={`Delete ${account.bankName}`}>
+                    <Trash2 className="w-5 h-5" />
                 </button>
             </div>
         </div>
