@@ -7,12 +7,14 @@ import { OnboardingButton } from '@/components/onboarding/molecules/OnboardingBu
 interface PayoutSettingsCardProps {
     currency?: string;
     payoutMethod?: string;
+    primaryBankAccountId?: number | null;
     onEdit?: () => void;
 }
 
 export function PayoutSettingsCard({
     currency = "NGN (₦)",
     payoutMethod = "Direct Deposit",
+    primaryBankAccountId,
     onEdit,
 }: PayoutSettingsCardProps) {
     return (
@@ -26,6 +28,13 @@ export function PayoutSettingsCard({
                     <span className="text-[14px] text-[#858585] block">Default currency</span>
                     <span className="text-[16px] lg:text-[18px] text-[#F4F5F7] font-bold mt-1 block">
                         {currency}
+                    </span>
+                </div>
+
+                <div>
+                    <span className="text-[14px] text-[#858585] block">Primary account</span>
+                    <span className="text-[16px] lg:text-[18px] text-[#F4F5F7] font-bold mt-1 block">
+                        {primaryBankAccountId ? `Account #${primaryBankAccountId}` : "Not selected"}
                     </span>
                 </div>
 
