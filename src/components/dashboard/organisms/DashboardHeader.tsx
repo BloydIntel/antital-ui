@@ -14,11 +14,11 @@ import {
 import { TYPOGRAPHY } from '@/constants/styles'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import useLogout from '@/hooks/use-logout'
+import { useNotificationUnreadCount } from '@/hooks/use-notifications'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 const dashboardHeaderData = {
-    notificationBadge: 4,
     userAvatarURL: "/dashboard/User-Avatar.png",
     userAvatarFallback: "JD"
 }
@@ -29,13 +29,22 @@ const CUSTOM_MOBILE_HEADERS: Record<string, string> = {
     "/settings/": "Settings",
     "/flags-and-alerts/investigation/": "Flags and Alerts",
     "/investor-profile/": "Investor Profile",
+    "/investor-management/": "Investor Management",
 
 };
+
+function formatUnreadBadgeLabel(unreadCount: number): string {
+    return unreadCount > 9 ? "9+" : String(unreadCount)
+}
 
 export function DashboardHeader() {
     const pathname = usePathname()
     const router = useRouter();
     const logoutMutation = useLogout()
+    const { data: unreadData, isError: isUnreadError } = useNotificationUnreadCount()
+
+    const unreadCount = isUnreadError ? 0 : (unreadData?.unreadCount ?? 0)
+    const showUnreadBadge = !isUnreadError && unreadCount > 0
 
     const onHelpIconClick = () => {
         router.push('/help-center/')
@@ -107,9 +116,14 @@ export function DashboardHeader() {
                             <div className='flex items-center justify-center cursor-pointer' onClick={onNotificationIconClick}>
                                 <Bell size={24} className="text-[#1A1C1E]" />
                             </div>
-                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white font-bold">
-                                {dashboardHeaderData.notificationBadge}
-                            </span>
+                            {showUnreadBadge && (
+                                <span
+                                    data-unread-count={unreadCount}
+                                    className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[#D11313] text-[10px] text-white border-2 border-white font-bold"
+                                >
+                                    {formatUnreadBadgeLabel(unreadCount)}
+                                </span>
+                            )}
                         </div>
                     </div>
 

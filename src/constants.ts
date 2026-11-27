@@ -19,6 +19,8 @@ export const CACHE_KEY_FUNDRAISER_SETTINGS_PROFILE = ["fundraiser-settings-profi
 export const CACHE_KEY_FUNDRAISER_SETTINGS_NOTIFICATIONS = ["fundraiser-settings-notifications"] as const;
 export const CACHE_KEY_FUNDRAISER_SETTINGS_BANK_ACCOUNTS = ["fundraiser-settings-bank-accounts"] as const;
 export const CACHE_KEY_FUNDRAISER_SETTINGS_PAYOUT = ["fundraiser-settings-payout"] as const;
+export const CACHE_KEY_NOTIFICATIONS = "notifications";
+export const CACHE_KEY_NOTIFICATION_UNREAD_COUNT = "notification-unread-count";
 
 export const ACCESS_TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";

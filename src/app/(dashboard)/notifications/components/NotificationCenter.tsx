@@ -1,152 +1,131 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Trash2, Settings, CheckCircle2, Filter, Clock3, ArrowUpRight, TrendingUp, Smartphone, Mail, Wallet, Bell } from 'lucide-react';
 import { TYPOGRAPHY } from '@/constants/styles';
 import { cn } from '@/lib/utils';
 import { SearchInputBar } from '@/components/watchlist/organisms/SearchInputBar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useRouter } from 'next/navigation';
+import {
+    useBulkDeleteNotifications,
+    useDeleteNotification,
+    useMarkAllNotificationsRead,
+    useMarkNotificationRead,
+    useNotifications,
+} from "@/hooks/use-notifications";
+import { toNotificationListItem } from "@/lib/notification-display";
+import { getApiPrimaryMessage, isApiErrorStatus } from "@/lib/api-error";
+import type { NotificationCategory, NotificationListItem } from "@/types/notifications-api";
+import { toast } from "sonner";
+import { TablePagination } from "@/components/watchlist/molecules/TablePagination";
+import { NotificationCenterSkeleton } from "@/components/skeletons/notification-center-skeleton";
 
-export type NotificationCategory = 'Urgent' | 'Portfolio' | 'Market' | 'Account' | 'Marketing' | 'Finance';
+export type { NotificationCategory, NotificationListItem };
+export type ReadFilterValue = "all" | "unread" | "read";
 
-export interface NotificationItem {
-    id: string;
-    title: string;
-    description: string;
-    timestamp: string; // ISO format or string representation from API
-    category: NotificationCategory;
-    isUnread: boolean;
-    actionLabel?: string;
-    actionUrl?: string;
-}
+const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 350;
 
-// Map categories to colors match the reference image mock design UI
 const CATEGORY_TAG_STYLING: Record<NotificationCategory, string> = {
-    'Urgent': 'bg-[#D4001A] text-white text-[12px] px-2 py-0.5 rounded',
-    'Portfolio': 'bg-[#7D8A26] text-white text-[12px] px-2 py-0.5 rounded',
-    'Market': 'bg-[#D4001A] text-white text-[12px] px-2 py-0.5 rounded', // Reference markup used identical color space or separate as needed
-    'Account': 'bg-[#7A6FF0] text-white text-[12px] px-2 py-0.5 rounded',
-    'Marketing': 'bg-[#D30A1A] text-white text-[12px] px-2 py-0.5 rounded',
-    'Finance': 'bg-[#45B424] text-white text-[12px] px-2 py-0.5 rounded'
+    Urgent: "bg-[#D4001A] text-white text-[12px] px-2 py-0.5 rounded",
+    Portfolio: "bg-[#7D8A26] text-white text-[12px] px-2 py-0.5 rounded",
+    Market: "bg-[#D4001A] text-white text-[12px] px-2 py-0.5 rounded",
+    Account: "bg-[#7A6FF0] text-white text-[12px] px-2 py-0.5 rounded",
+    Marketing: "bg-[#D30A1A] text-white text-[12px] px-2 py-0.5 rounded",
+    Finance: "bg-[#45B424] text-white text-[12px] px-2 py-0.5 rounded",
 };
 
 const CATEGORY_ICONS: Record<NotificationCategory, React.ComponentType<{ className?: string }>> = {
-    'Urgent': Clock3,
-    'Portfolio': ArrowUpRight,
-    'Market': TrendingUp,
-    'Account': Smartphone,
-    'Marketing': Mail,
-    'Finance': Wallet
+    Urgent: Clock3,
+    Portfolio: ArrowUpRight,
+    Market: TrendingUp,
+    Account: Smartphone,
+    Marketing: Mail,
+    Finance: Wallet,
 };
 
-interface NotificationCenterProps {
-    initialNotifications?: NotificationItem[];
-    onNotificationDelete?: (id: string) => Promise<void> | void;
-    onMarkAllRead?: () => Promise<void> | void;
-    onActionClick?: (notification: NotificationItem) => void;
-    onSettingsClick?: () => void;
+function isSafeRelativeRoute(url?: string): url is string {
+    if (!url) return false;
+    return url.startsWith("/") && !url.startsWith("//");
 }
 
-const mockDefaultNotifications: NotificationItem[] = [
-    {
-        id: '1',
-        title: 'GreenTech Solutions deadline approaching',
-        description: 'Only 15 days left to invest. You set a reminder for 3 days before closing.',
-        timestamp: '28/08/2025',
-        category: 'Urgent',
-        isUnread: true,
-        actionLabel: 'Invest Now'
-    },
-    {
-        id: '2',
-        title: 'Investment confirmed',
-        description: 'Your ₦75,000 investment in GreenTech Solutions has been processed successfully.',
-        timestamp: '19/08/2025',
-        category: 'Portfolio',
-        isUnread: true
-    },
-    {
-        id: '3',
-        title: 'Investment confirmed',
-        description: 'Your ₦75,000 investment in GreenTech Solutions has been processed successfully.',
-        timestamp: '19/08/2025',
-        category: 'Portfolio',
-        isUnread: true
-    },
-    {
-        id: '4',
-        title: 'Trade executed',
-        description: 'Your sell order for 50 units of FoodTech Africa at ₦31/unit has been executed',
-        timestamp: '05/08/2025',
-        category: 'Market',
-        isUnread: true
-    },
-    {
-        id: '5',
-        title: 'New device login',
-        description: 'New login detected from MacBook Pro in Lagos. If this wasn\'t you, secure your account immediately.',
-        timestamp: '30/07/2025',
-        category: 'Account',
-        isUnread: false
-    },
-    {
-        id: '6',
-        title: 'Weekly market insights',
-        description: 'African startup funding increased 23% this quarter. Read our latest market analysis.',
-        timestamp: '14/07/2025',
-        category: 'Marketing',
-        isUnread: false
-    },
-    {
-        id: '7',
-        title: 'Low wallet balance',
-        description: 'Your wallet balance is ₦15,000. Fund your wallet to avoid missing investment opportunities.',
-        timestamp: '07/07/2025',
-        category: 'Finance',
-        isUnread: false
-    }
-];
+export function NotificationCenter() {
+    const router = useRouter();
 
-export function NotificationCenter({
-    initialNotifications = mockDefaultNotifications,
-    onNotificationDelete,
-    onMarkAllRead,
-    onActionClick,
-}: NotificationCenterProps) {
-
-    const router = useRouter()
-
-    const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
+    const [page, setPage] = useState<number>(1);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [debouncedSearch, setDebouncedSearch] = useState<string>('');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
+    const [readFilter, setReadFilter] = useState<ReadFilterValue>('all');
 
-    // Compute unread runtime values
-    const unreadCount = useMemo(() => {
-        return notifications.filter(n => n.isUnread).length;
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setPage(1);
+        }, SEARCH_DEBOUNCE_MS);
+
+        return () => window.clearTimeout(timer);
+    }, [searchQuery]);
+
+    const isReadParam = useMemo<boolean | undefined>(() => {
+        if (readFilter === 'unread') return false;
+        if (readFilter === 'read') return true;
+        return undefined;
+    }, [readFilter]);
+
+    const { data, isLoading, isError, error, refetch } = useNotifications({
+        page,
+        pageSize: PAGE_SIZE,
+        category: categoryFilter === 'all' ? 'all' : (categoryFilter as NotificationCategory),
+        isRead: isReadParam,
+        search: debouncedSearch,
+    });
+
+    const markOneReadMutation = useMarkNotificationRead();
+    const markAllReadMutation = useMarkAllNotificationsRead();
+    const deleteOneMutation = useDeleteNotification();
+    const bulkDeleteMutation = useBulkDeleteNotifications();
+
+    const notifications: NotificationListItem[] = useMemo(() => {
+        if (!data?.items) return [];
+        return data.items.map(toNotificationListItem);
+    }, [data?.items]);
+
+    const unreadCount = data?.unreadCount ?? 0;
+    const currentPage = data?.page ?? page;
+    const totalPages = data?.totalPages ?? 1;
+
+    useEffect(() => {
+        setSelectedIds(new Set());
     }, [notifications]);
 
-    // Handle search query and category filter updates
-    const filteredNotifications = useMemo(() => {
-        return notifications.filter(item => {
-            const matchesSearch = searchQuery === '' ||
-                item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.category.toLowerCase().includes(searchQuery.toLowerCase());
-            
-            const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
-            
-            return matchesSearch && matchesCategory;
-        });
-    }, [notifications, searchQuery, categoryFilter]);
+    const handleCategoryChange = (value: string) => {
+        setCategoryFilter(value);
+        setPage(1);
+    };
+
+    const handleReadFilterChange = (value: ReadFilterValue) => {
+        setReadFilter(value);
+        setPage(1);
+    };
+
+    const handleMutationError = (err: unknown, fallbackMessage: string) => {
+        if (isApiErrorStatus(err, 404)) {
+            toast.error('This notification no longer exists or was already updated.');
+            void refetch();
+            return;
+        }
+        toast.error(getApiPrimaryMessage(err, fallbackMessage));
+    };
 
     // Bulk action toggles
     const handleSelectAll = () => {
-        if (selectedIds.size === filteredNotifications.length) {
+        if (selectedIds.size === notifications.length && notifications.length > 0) {
             setSelectedIds(new Set());
         } else {
-            setSelectedIds(new Set(filteredNotifications.map(n => n.id)));
+            setSelectedIds(new Set(notifications.map(n => n.id)));
         }
     };
 
@@ -160,40 +139,76 @@ export function NotificationCenter({
         setSelectedIds(next);
     };
 
-    const handleDeleteSingle = async (id: string) => {
-        const previousNotifications = notifications;
-        setNotifications(prev => prev.filter(n => n.id !== id));
-        
-        if (onNotificationDelete) {
-            try {
-                await onNotificationDelete(id);
-            } catch {
-                setNotifications(previousNotifications);
-            }
+    const handleMarkOneRead = async (id: string) => {
+        const numericId = Number(id);
+        if (Number.isNaN(numericId)) return;
+
+        try {
+            await markOneReadMutation.mutateAsync(numericId);
+        } catch (err) {
+            handleMutationError(err, 'Failed to mark notification as read');
         }
     };
 
-    const handleMarkAllReadLocal = async () => {
-        setNotifications(prev => prev.map(n => ({ ...n, isUnread: false })));
-        if (onMarkAllRead) await onMarkAllRead();
+    const handleDeleteSingle = async (id: string) => {
+        const numericId = Number(id);
+        if (Number.isNaN(numericId)) return;
+
+        try {
+            await deleteOneMutation.mutateAsync(numericId);
+        } catch (err) {
+            handleMutationError(err, 'Failed to delete notification');
+        }
+    };
+
+    const handleMarkAllReadAction = async () => {
+        try {
+            await markAllReadMutation.mutateAsync();
+        } catch (err) {
+            handleMutationError(err, 'Failed to mark all notifications as read');
+        }
     };
 
     const handleBulkDelete = async () => {
-        if (selectedIds.size === 0) return;
-        
-        const previousNotifications = notifications;
-        const idsToDelete = Array.from(selectedIds);
-        
-        setNotifications(prev => prev.filter(n => !selectedIds.has(n.id)));
-        setSelectedIds(new Set());
-        
-        if (onNotificationDelete) {
-            try {
-                await Promise.all(idsToDelete.map(id => onNotificationDelete(id)));
-            } catch {
-                setNotifications(previousNotifications);
-                setSelectedIds(new Set(idsToDelete));
-            }
+        if (selectedIds.size === 0 || bulkDeleteMutation.isPending) return;
+
+        const numericIds = Array.from(selectedIds)
+            .map(id => Number(id))
+            .filter(id => !Number.isNaN(id));
+
+        if (numericIds.length === 0) return;
+
+        try {
+            await bulkDeleteMutation.mutateAsync(numericIds);
+            setSelectedIds(new Set());
+        } catch (err) {
+            handleMutationError(err, 'Failed to delete selected notifications');
+        }
+    };
+
+    const handleActionClick = (notification: NotificationListItem) => {
+        if (isSafeRelativeRoute(notification.actionUrl)) {
+            router.push(notification.actionUrl);
+        }
+    };
+
+    const handleRowClick = (
+        event: React.MouseEvent<HTMLDivElement>,
+        item: NotificationListItem
+    ) => {
+        const target = event.target as HTMLElement;
+        if (target.closest("[data-stop-row-click='true']")) {
+            return;
+        }
+
+        const isMutating =
+            markOneReadMutation.isPending ||
+            markAllReadMutation.isPending ||
+            deleteOneMutation.isPending ||
+            bulkDeleteMutation.isPending;
+
+        if (item.isUnread && !isMutating) {
+            void handleMarkOneRead(item.id);
         }
     };
 
@@ -223,8 +238,9 @@ export function NotificationCenter({
                     </button>
                     <button
                         type="button"
-                        onClick={handleMarkAllReadLocal}
-                        className="flex items-center gap-2 px-4 py-2 border border-[#EAEAEA] bg-white rounded-lg text-[14px] text-[#1F1F1F] hover:bg-gray-50 transition-colors cursor-pointer"
+                        disabled={markAllReadMutation.isPending || isLoading || isError}
+                        onClick={() => void handleMarkAllReadAction()}
+                        className="flex items-center gap-2 px-4 py-2 border border-[#EAEAEA] bg-white rounded-lg text-[14px] text-[#1F1F1F] hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50"
                         style={TYPOGRAPHY.heading}
                     >
                         <CheckCircle2 size={16} />
@@ -238,7 +254,7 @@ export function NotificationCenter({
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h2 className="text-[16px] md:text-[20px] text-[#1F1F1F] mb-2" style={TYPOGRAPHY.body}>
-                            Notifications ({unreadCount > 0 ? unreadCount : notifications.length})
+                            Notifications ({unreadCount})
                         </h2>
                         <p className='text-[#505050] text-[16px]'>
                             All your unread updates and reminders are listed below
@@ -253,7 +269,24 @@ export function NotificationCenter({
                             onChange={setSearchQuery}
                         />
 
-                        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                        <Select
+                            value={readFilter}
+                            onValueChange={(value) => handleReadFilterChange(value as ReadFilterValue)}
+                        >
+                            <SelectTrigger
+                                aria-label="Read status filter"
+                                className="px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#2C2C2C] focus:ring-1 focus:ring-[#042E27]"
+                            >
+                                <SelectValue placeholder="All" className="text-[16px]" style={TYPOGRAPHY.body} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border border-[#EAEAEA] rounded-md shadow-lg">
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="unread">Unread</SelectItem>
+                                <SelectItem value="read">Read</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <Select value={categoryFilter} onValueChange={handleCategoryChange}>
                             <SelectTrigger className="px-2.5 border-[#EAEAEA] bg-white rounded-md cursor-pointer text-[#2C2C2C] focus:ring-1 focus:ring-[#042E27]">
                                 <div className="flex items-center gap-2 justify-between">
                                     <div className="flex items-center gap-1.5 truncate">
@@ -276,7 +309,7 @@ export function NotificationCenter({
                         <label className="flex items-center gap-2 text-[16px] text-[#2C2C2C] cursor-pointer select-none ml-2">
                             <input
                                 type="checkbox"
-                                checked={selectedIds.size === filteredNotifications.length && filteredNotifications.length > 0}
+                                checked={selectedIds.size === notifications.length && notifications.length > 0}
                                 onChange={handleSelectAll}
                                 className="rounded border-gray-300 text-[#042E27] focus:ring-[#042E27] w-3 h-3"
                             />
@@ -286,8 +319,9 @@ export function NotificationCenter({
                         {selectedIds.size > 0 && (
                             <button
                                 type="button"
-                                onClick={handleBulkDelete}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D30A1A] text-white text-[14px] rounded-md hover:bg-red-700 transition-colors cursor-pointer"
+                                disabled={bulkDeleteMutation.isPending}
+                                onClick={() => void handleBulkDelete()}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D30A1A] text-white text-[14px] rounded-md hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50"
                                 style={TYPOGRAPHY.body}
                             >
                                 <Trash2 size={14} />
@@ -300,23 +334,38 @@ export function NotificationCenter({
 
             {/* Notifications Feed Area */}
             <div className="space-y-3">
-                {filteredNotifications.length === 0 ? (
+                {isLoading ? (
+                    <NotificationCenterSkeleton rows={5} />
+                ) : isError ? (
+                    <div className="text-center py-12 bg-white rounded-xl border border-[#F0F0F0] text-[#858585]" style={TYPOGRAPHY.body}>
+                        <p className="mb-3">{error instanceof Error ? error.message : 'Unable to load notifications.'}</p>
+                        <button
+                            type="button"
+                            onClick={() => void refetch()}
+                            className="px-4 py-1.5 bg-[#042E27] text-white text-[13px] font-medium rounded-md hover:bg-[#03201B] transition-colors cursor-pointer"
+                            style={TYPOGRAPHY.body}
+                        >
+                            Retry
+                        </button>
+                    </div>
+                ) : notifications.length === 0 ? (
                     <div className="text-center py-12 bg-white rounded-xl border border-[#F0F0F0] text-[#858585]" style={TYPOGRAPHY.body}>
                         No notifications found.
                     </div>
                 ) : (
-                    filteredNotifications.map((item) => {
+                    notifications.map((item) => {
                         const CategoryIcon = CATEGORY_ICONS[item.category] || Bell;
                         return (
                             <div
                                 key={item.id}
+                                onClick={(e) => handleRowClick(e, item)}
                                 className={cn(
                                     "flex items-center bg-white border rounded-xl p-4 transition-all relative group",
                                     item.isUnread ? "border-l-4 border-l-[#042E27]" : "border-[#F0F0F0]"
                                 )}
                             >
                                 {/* Checkbox selector */}
-                                <div className="pt-1 pr-3">
+                                <div className="pt-1 pr-3" data-stop-row-click="true">
                                     <input
                                         type="checkbox"
                                         checked={selectedIds.has(item.id)}
@@ -361,10 +410,10 @@ export function NotificationCenter({
                                         </div>
 
                                         {item.actionLabel && (
-                                            <div className="mt-3">
+                                            <div className="mt-3" data-stop-row-click="true">
                                                 <button
                                                     type="button"
-                                                    onClick={() => onActionClick && onActionClick(item)}
+                                                    onClick={() => handleActionClick(item)}
                                                     className="px-4 py-1.5 bg-[#042E27] text-white text-[13px] font-medium rounded-md hover:bg-[#03201B] transition-colors"
                                                     style={TYPOGRAPHY.body}
                                                 >
@@ -375,10 +424,11 @@ export function NotificationCenter({
                                     </div>
 
                                     {/* Row Level Action Actions Overlay Controls */}
-                                    <div className="absolute right-4 top-4">
+                                    <div className="absolute right-4 top-4" data-stop-row-click="true">
                                         <button
                                             type="button"
-                                            onClick={() => handleDeleteSingle(item.id)}
+                                            disabled={deleteOneMutation.isPending}
+                                            onClick={() => void handleDeleteSingle(item.id)}
                                             className="hidden lg:block text-gray-400 hover:text-[#D30A1A] transition-colors p-1.5 rounded-lg hover:bg-gray-50 cursor-pointer"
                                             aria-label="Delete Notification item row data"
                                         >
@@ -391,6 +441,16 @@ export function NotificationCenter({
                     })
                 )}
             </div>
+
+            {!isLoading && !isError && totalPages > 1 && (
+                <div className="mt-6">
+                    <TablePagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setPage}
+                    />
+                </div>
+            )}
         </div>
     );
 }
