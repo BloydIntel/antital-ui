@@ -122,3 +122,41 @@ export interface FundraiserNotificationPreferences {
 }
 
 export type UpdateFundraiserNotificationPreferencesRequest = FundraiserNotificationPreferences;
+
+export interface FundraiserBankAccount {
+  id: number;
+  bankName: string;
+  accountHolder: string;
+  accountNumberMasked: string;
+  isPrimary: boolean;
+  isVerified: boolean;
+  verificationStatus: string;
+}
+
+export interface FundraiserBankAccountsResponse {
+  accounts: FundraiserBankAccount[];
+}
+
+export interface AddFundraiserBankAccountRequest {
+  bankName: string;
+  accountHolder: string;
+  accountNumber: string;
+}
+
+export interface UpdateFundraiserBankAccountRequest {
+  bankName: string;
+  accountHolder: string;
+  accountNumber?: string | null;
+}
+
+export interface FundraiserPayoutSettings {
+  currency: string;
+  payoutMethod: string;
+  primaryBankAccountId: number | null;
+}
+
+export interface UpdateFundraiserPayoutSettingsRequest {
+  currency: string;
+  payoutMethod: string;
+  primaryBankAccountId: number | null;
+}

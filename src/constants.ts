@@ -17,6 +17,8 @@ export const CACHE_KEY_INVESTOR_PROFILE = ["investor-profile"] as const;
 export const CACHE_KEY_INVESTOR_ACCOUNT = ["investor-account"] as const;
 export const CACHE_KEY_FUNDRAISER_SETTINGS_PROFILE = ["fundraiser-settings-profile"] as const;
 export const CACHE_KEY_FUNDRAISER_SETTINGS_NOTIFICATIONS = ["fundraiser-settings-notifications"] as const;
+export const CACHE_KEY_FUNDRAISER_SETTINGS_BANK_ACCOUNTS = ["fundraiser-settings-bank-accounts"] as const;
+export const CACHE_KEY_FUNDRAISER_SETTINGS_PAYOUT = ["fundraiser-settings-payout"] as const;
 export const CACHE_KEY_NOTIFICATIONS = "notifications";
 export const CACHE_KEY_NOTIFICATION_UNREAD_COUNT = "notification-unread-count";
 

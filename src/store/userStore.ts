@@ -60,6 +60,7 @@ export const useUserStore = create<UserState>()(
                 userType: "individual",
                 isKycCompleted: false,
                 isEmailVerified: false,
+                requiresOtp: false,
             })),
         }),
         {
